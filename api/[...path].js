@@ -198,6 +198,14 @@ export default async function handler(req,res){
           return json(res,200,{feedback:inMemoryFeedback});
         }
       }
+      if(req.method==='GET'&&path==='/admin/payments'){
+        try {
+          const data=await db.select('payments','select=*&order=created_at.desc&limit=500');
+          return json(res,200,{payments:data || inMemoryPayments});
+        } catch {
+          return json(res,200,{payments:inMemoryPayments});
+        }
+      }
       if(req.method==='GET'&&path==='/admin/vip'){
         try {
           const data=await db.select('vip_codes','select=id,display_code,active,uses,max_uses,created_at&order=created_at.desc&limit=1000');

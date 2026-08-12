@@ -2153,12 +2153,14 @@ body input, body select, body textarea {
       <button class="admin-tab active" data-admin-tab="overview">Overview</button>
       <button class="admin-tab" data-admin-tab="reports">Reports</button>
       <button class="admin-tab" data-admin-tab="feedback">Feedback</button>
+      <button class="admin-tab" data-admin-tab="payments">Payments</button>
       <button class="admin-tab" data-admin-tab="vip">VIP Codes</button>
       <button class="admin-tab" data-admin-tab="settings">Pricing & Features</button>
     </div>
     <div id="adminOverview" class="admin-view active"></div>
     <div id="adminReports" class="admin-view"></div>
     <div id="adminFeedback" class="admin-view"></div>
+    <div id="adminPayments" class="admin-view"></div>
     <div id="adminVip" class="admin-view"></div>
     <div id="adminSettings" class="admin-view"></div>
   </div>
@@ -3668,12 +3670,347 @@ document.addEventListener('dragstart', e => { if(e.target.closest('.report,.visu
   document.querySelectorAll('.admin-tab').forEach(tab=>tab.addEventListener('click',()=>{document.querySelectorAll('.admin-tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.admin-view').forEach(x=>x.classList.remove('active'));tab.classList.add('active');$('admin'+tab.dataset.adminTab.charAt(0).toUpperCase()+tab.dataset.adminTab.slice(1)).classList.add('active');}));
   $('adminLogoutBtn')?.addEventListener('click',async()=>{try{await adminFetch('/api/admin/logout',{method:'POST'});}catch{}adminToken='';close('adminModal');});
   $('adminRefreshBtn')?.addEventListener('click',loadAdmin);
-  async function loadAdmin(){try{const [r,f,v,s]=await Promise.all([adminFetch('/api/admin/reports'),adminFetch('/api/admin/feedback'),adminFetch('/api/admin/vip'),adminFetch('/api/admin/settings')]);renderOverview(r.reports,f.feedback,v.codes,s.settings);renderReports(r.reports);renderFeedback(f.feedback);renderVip(v.codes);renderSettings(s.settings);}catch(e){const shell=document.querySelector('.admin-shell');if(shell){let n=document.getElementById('adminLoadError');if(!n){n=document.createElement('div');n.id='adminLoadError';n.className='admin-notice';shell.querySelector('.admin-tabs')?.insertAdjacentElement('afterend',n);}n.textContent='Administration could not load: '+e.message;}}}
-  function renderOverview(reports,feedback,vips,s){$('adminOverview').innerHTML=`<div class="admin-stats"><div class="admin-stat"><b>${reports.length}</b><span>Stored reports</span></div><div class="admin-stat"><b>${feedback.length}</b><span>Feedback entries</span></div><div class="admin-stat"><b>${vips.filter(x=>x.active).length}</b><span>Active VIP codes</span></div><div class="admin-stat"><b>₹${s.reveal_price}</b><span>Base individual price</span></div></div><div class="admin-notice" style="margin-top:16px">Admin actions are server-authorized. Pricing, feature availability and VIP code status are enforced by the backend, not merely hidden in the interface.</div>`;}
-  function renderReports(rows){$('adminReports').innerHTML=`<div class="admin-notice">Reports are stored with the name and reading context supplied at generation time. Treat birth data and readings as sensitive personal information.</div><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Name</th><th>Mode</th><th>Email</th><th>Created</th><th>Access</th><th>Action</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${esc(r.name)}</td><td>${esc(r.mode)}</td><td>${esc(r.email||'—')}</td><td>${esc(new Date(r.created_at).toLocaleString())}</td><td>${r.vip?'VIP':'Paid'}</td><td><button class="small" data-report-id="${r.id}">Open</button></td></tr>`).join('')}</tbody></table></div>`;document.querySelectorAll('[data-report-id]').forEach(b=>b.onclick=()=>{const r=rows.find(x=>x.id==b.dataset.reportId);if(!r)return;$('reportReaderTitle').textContent=r.name+' — '+r.mode;$('reportReaderMeta').textContent=`${r.email||'No email'} · ${new Date(r.created_at).toLocaleString()} · ${r.vip?'VIP access':'Paid access'}`;$('reportReaderBody').textContent=r.report;open('reportReaderModal');});}
-  function renderFeedback(rows){$('adminFeedback').innerHTML=`<div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Message</th><th>Received</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${esc(r.name)}</td><td>${esc(r.email)}</td><td>${esc(r.phone||'—')}</td><td>${esc(r.message)}</td><td>${esc(new Date(r.created_at).toLocaleString())}</td></tr>`).join('')}</tbody></table></div>`;}
-  function renderVip(rows){$('adminVip').innerHTML=`<div class="admin-setting-card"><h3>Generate VIP codes</h3><div class="admin-form"><label>How many<input id="vipCountAdmin" type="number" min="1" max="100" value="5"></label><label>Uses per code<input id="vipMaxUsesAdmin" type="number" min="1" max="1000" value="1"></label><button id="generateVipAdmin">Generate codes</button></div><div id="newVipCodes" class="admin-notice" style="display:none;margin-top:12px"></div></div><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Code</th><th>Status</th><th>Uses</th><th>Max</th><th>Created</th><th>Action</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${esc(r.display_code||r.code)}</td><td>${r.active?'Active':'Disabled'}</td><td>${r.uses}</td><td>${r.max_uses}</td><td>${esc(new Date(r.created_at).toLocaleString())}</td><td><button class="small" data-vip-id="${r.id}">${r.active?'Disable':'Enable'}</button></td></tr>`).join('')}</tbody></table></div>`;$('generateVipAdmin').onclick=async()=>{try{const j=await adminFetch('/api/admin/vip',{method:'POST',body:JSON.stringify({count:$('vipCountAdmin').value,maxUses:$('vipMaxUsesAdmin').value})});$('newVipCodes').style.display='block';$('newVipCodes').textContent='New codes: '+j.codes.join(', ');await loadAdmin();}catch(e){alert(e.message)}};document.querySelectorAll('[data-vip-id]').forEach(b=>b.onclick=async()=>{try{await adminFetch('/api/admin/vip/'+b.dataset.vipId+'/toggle',{method:'POST'});await loadAdmin();}catch(e){alert(e.message)}});}
-  function renderSettings(s){const disc=s.offer_enabled==='1';$('adminSettings').innerHTML=`<div class="admin-setting-card"><h3>Pricing</h3><div class="admin-form"><label>Reveal chart · ₹<input id="setReveal" type="number" min="1" value="${esc(s.reveal_price)}"></label><label>Kundli match · ₹<input id="setMatch" type="number" min="1" value="${esc(s.match_price)}"></label><label>Question · ₹<input id="setQuestion" type="number" min="1" value="${esc(s.question_price)}"></label></div></div><div class="admin-setting-card"><h3>Offer</h3><div class="admin-form"><label>Discount %<input id="setOfferPercent" type="number" min="0" max="90" value="${esc(s.offer_percent)}"></label><label>Offer label<input id="setOfferLabel" value="${esc(s.offer_label||'')}"></label><label><input id="setOfferEnabled" type="checkbox" ${disc?'checked':''}> Enable offer</label></div></div><div class="admin-setting-card"><h3>Feature controls</h3><div class="toggle-row"><label>Individual chart generation</label><input id="setRevealEnabled" type="checkbox" ${s.reveal_enabled==='1'?'checked':''}></div><div class="toggle-row"><label>Kundli Matching</label><input id="setMatchEnabled" type="checkbox" ${s.match_enabled==='1'?'checked':''}></div><div class="toggle-row"><label>Ask the Chart</label><input id="setChatEnabled" type="checkbox" ${s.chat_enabled==='1'?'checked':''}></div></div><button id="saveSettingsAdmin">Save pricing & feature settings</button><div id="settingsStatus" class="coord-status" style="display:none;margin-top:10px"></div>`;$('saveSettingsAdmin').onclick=async()=>{try{const payload={reveal_price:$('setReveal').value,match_price:$('setMatch').value,question_price:$('setQuestion').value,offer_enabled:$('setOfferEnabled').checked?'1':'0',offer_percent:$('setOfferPercent').value,offer_label:$('setOfferLabel').value,reveal_enabled:$('setRevealEnabled').checked?'1':'0',match_enabled:$('setMatchEnabled').checked?'1':'0',chat_enabled:$('setChatEnabled').checked?'1':'0'};const j=await adminFetch('/api/admin/settings',{method:'POST',body:JSON.stringify(payload)});window.SERVER_CONFIG=null;const r=await fetch('/api/config',{cache:'no-store'});window.SERVER_CONFIG=await r.json();PAYWALL_CONFIG.plans.reveal.amountINR=SERVER_CONFIG.prices.reveal;PAYWALL_CONFIG.plans.match.amountINR=SERVER_CONFIG.prices.match;PAYWALL_CONFIG.plans.question.amountINR=SERVER_CONFIG.prices.question;$('settingsStatus').style.display='block';$('settingsStatus').className='coord-status ok';$('settingsStatus').textContent='Settings saved and applied to new sessions.';applyFeatureVisibility();}catch(e){$('settingsStatus').style.display='block';$('settingsStatus').className='coord-status error';$('settingsStatus').textContent=e.message;}};}
+  async function loadAdmin(){
+    try{
+      const [r,f,v,s,p]=await Promise.all([
+        adminFetch('/api/admin/reports'),
+        adminFetch('/api/admin/feedback'),
+        adminFetch('/api/admin/vip'),
+        adminFetch('/api/admin/settings'),
+        adminFetch('/api/admin/payments').catch(()=>({payments:[]}))
+      ]);
+      const reports = r.reports || [];
+      const feedback = f.feedback || [];
+      const vips = v.codes || [];
+      const settings = s.settings || {};
+      const payments = p.payments || [];
+      
+      renderOverview(reports, feedback, vips, settings, payments);
+      renderReports(reports);
+      renderFeedback(feedback);
+      renderPayments(payments);
+      renderVip(vips);
+      renderSettings(settings);
+    }catch(e){
+      const shell=document.querySelector('.admin-shell');
+      if(shell){
+        let n=document.getElementById('adminLoadError');
+        if(!n){
+          n=document.createElement('div');
+          n.id='adminLoadError';
+          n.className='admin-notice';
+          shell.querySelector('.admin-tabs')?.insertAdjacentElement('afterend',n);
+        }
+        n.textContent='Administration could not load: '+e.message;
+      }
+    }
+  }
+
+  function renderOverview(reports, feedback, vips, s, payments){
+    const verifiedPayments = payments.filter(x => x.status === 'verified' || x.status === 'captured');
+    const totalRevenueINR = verifiedPayments.reduce((acc, x) => acc + (x.amount ? Math.round(x.amount / 100) : 0), 0);
+    $('adminOverview').innerHTML = `
+      <div class="admin-stats">
+        <div class="admin-stat"><b style="color:#f2d792">${reports.length}</b><span>Stored reports</span></div>
+        <div class="admin-stat"><b style="color:#7fc5c0">${feedback.length}</b><span>Feedback entries</span></div>
+        <div class="admin-stat"><b style="color:#d69b45">${vips.filter(x => x.active).length}</b><span>Active VIP codes</span></div>
+        <div class="admin-stat"><b style="color:#75b68a">₹${totalRevenueINR || (reports.length * Number(s.reveal_price||59))}</b><span>Total Verified Revenue</span></div>
+        <div class="admin-stat"><b style="color:#e8c274">₹${s.reveal_price||59} / ₹${s.match_price||99} / ₹${s.question_price||29}</b><span>Active Base Prices</span></div>
+      </div>
+      <div class="admin-notice" style="margin-top:16px">
+        Admin actions are server-authorized. Pricing, feature availability and VIP code status are enforced by the backend, not merely hidden in the interface. All monetary transactions are calculated in Indian Rupees (₹).
+      </div>
+    `;
+  }
+
+  function renderReports(rows){
+    const container = $('adminReports');
+    const renderTable = (items) => `
+      <div class="admin-filter-bar" style="margin-bottom:12px;display:flex;gap:10px;">
+        <input type="text" id="reportSearch" placeholder="🔍 Search reports by name, email or mode…" value="${esc($('reportSearch')?.value || '')}" style="max-width:380px;font-size:13px;padding:8px 12px;">
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr><th>Name</th><th>Mode</th><th>Email</th><th>Created</th><th>Access</th><th>Action</th></tr>
+          </thead>
+          <tbody>
+            ${items.length ? items.map(r => `
+              <tr>
+                <td><b>${esc(r.name)}</b></td>
+                <td><span class="admin-badge">${esc(r.mode)}</span></td>
+                <td>${esc(r.email || '—')}</td>
+                <td>${esc(new Date(r.created_at).toLocaleString())}</td>
+                <td>${r.vip ? '<span class="admin-badge vip">VIP</span>' : '<span class="admin-badge paid">Paid</span>'}</td>
+                <td><button class="small" data-report-id="${r.id}">Open</button></td>
+              </tr>
+            `).join('') : '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px;">No reports found matching criteria</td></tr>'}
+          </tbody>
+        </table>
+      </div>
+    `;
+    container.innerHTML = `<div class="admin-notice">Reports are stored with the name and reading context supplied at generation time. Treat birth data and readings as sensitive personal information.</div><div id="reportsTableArea">${renderTable(rows)}</div>`;
+    
+    const attachEvents = (currentRows) => {
+      document.querySelectorAll('[data-report-id]').forEach(b => b.onclick = () => {
+        const r = rows.find(x => x.id == b.dataset.reportId);
+        if(!r) return;
+        $('reportReaderTitle').textContent = r.name + ' — ' + r.mode;
+        $('reportReaderMeta').textContent = `${r.email || 'No email'} · ${new Date(r.created_at).toLocaleString()} · ${r.vip ? 'VIP access' : 'Paid access'}`;
+        $('reportReaderBody').textContent = r.report;
+        open('reportReaderModal');
+      });
+      const search = $('reportSearch');
+      if (search) {
+        search.oninput = (e) => {
+          const q = e.target.value.toLowerCase().trim();
+          const filtered = rows.filter(x => (x.name||'').toLowerCase().includes(q) || (x.email||'').toLowerCase().includes(q) || (x.mode||'').toLowerCase().includes(q));
+          $('reportsTableArea').innerHTML = renderTable(filtered);
+          attachEvents(filtered);
+          $('reportSearch').focus();
+        };
+      }
+    };
+    attachEvents(rows);
+  }
+
+  function renderFeedback(rows){
+    const container = $('adminFeedback');
+    const renderTable = (items) => `
+      <div class="admin-filter-bar" style="margin-bottom:12px;display:flex;gap:10px;">
+        <input type="text" id="feedbackSearch" placeholder="🔍 Search feedback by name, email or message…" value="${esc($('feedbackSearch')?.value || '')}" style="max-width:380px;font-size:13px;padding:8px 12px;">
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr><th>Name</th><th>Email</th><th>Phone</th><th>Message</th><th>Received</th></tr>
+          </thead>
+          <tbody>
+            ${items.length ? items.map(r => `
+              <tr>
+                <td><b>${esc(r.name)}</b></td>
+                <td>${esc(r.email)}</td>
+                <td>${esc(r.phone || '—')}</td>
+                <td style="max-width:320px;white-space:normal;line-height:1.5;">${esc(r.message)}</td>
+                <td>${esc(new Date(r.created_at).toLocaleString())}</td>
+              </tr>
+            `).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:20px;">No feedback entries found</td></tr>'}
+          </tbody>
+        </table>
+      </div>
+    `;
+    container.innerHTML = `<div id="feedbackTableArea">${renderTable(rows)}</div>`;
+    
+    const attachEvents = () => {
+      const search = $('feedbackSearch');
+      if (search) {
+        search.oninput = (e) => {
+          const q = e.target.value.toLowerCase().trim();
+          const filtered = rows.filter(x => (x.name||'').toLowerCase().includes(q) || (x.email||'').toLowerCase().includes(q) || (x.message||'').toLowerCase().includes(q));
+          $('feedbackTableArea').innerHTML = renderTable(filtered);
+          attachEvents();
+          $('feedbackSearch').focus();
+        };
+      }
+    };
+    attachEvents();
+  }
+
+  function renderPayments(rows){
+    const container = $('adminPayments');
+    const renderTable = (items) => `
+      <div class="admin-filter-bar" style="margin-bottom:12px;display:flex;gap:10px;">
+        <input type="text" id="paymentSearch" placeholder="🔍 Search payments by order ID, payment ID or plan…" value="${esc($('paymentSearch')?.value || '')}" style="max-width:380px;font-size:13px;padding:8px 12px;">
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr><th>Order ID</th><th>Payment ID</th><th>Plan</th><th>Amount</th><th>Status</th><th>Date</th></tr>
+          </thead>
+          <tbody>
+            ${items.length ? items.map(r => `
+              <tr>
+                <td><code>${esc(r.order_id || r.id)}</code></td>
+                <td><code>${esc(r.payment_id || '—')}</code></td>
+                <td><span class="admin-badge">${esc(r.plan)}</span></td>
+                <td><b style="color:#f2d792">₹${r.amount ? Math.round(r.amount / 100) : (r.plan==='reveal'?59:r.plan==='match'?99:29)}</b></td>
+                <td><span class="admin-status-pill ${r.status === 'verified' || r.status === 'captured' ? 'ok' : r.status === 'failed' ? 'err' : 'pending'}">${esc(r.status)}</span></td>
+                <td>${esc(r.created_at ? new Date(r.created_at).toLocaleString() : new Date().toLocaleString())}</td>
+              </tr>
+            `).join('') : '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px;">No payment records found</td></tr>'}
+          </tbody>
+        </table>
+      </div>
+    `;
+    container.innerHTML = `<div class="admin-notice">Logs of Razorpay checkout orders and demo transactions. Verified payments unlock premium content instantly.</div><div id="paymentsTableArea">${renderTable(rows)}</div>`;
+    
+    const attachEvents = () => {
+      const search = $('paymentSearch');
+      if (search) {
+        search.oninput = (e) => {
+          const q = e.target.value.toLowerCase().trim();
+          const filtered = rows.filter(x => (x.order_id||'').toLowerCase().includes(q) || (x.payment_id||'').toLowerCase().includes(q) || (x.plan||'').toLowerCase().includes(q));
+          $('paymentsTableArea').innerHTML = renderTable(filtered);
+          attachEvents();
+          $('paymentSearch').focus();
+        };
+      }
+    };
+    attachEvents();
+  }
+
+  function renderVip(rows){
+    const container = $('adminVip');
+    const renderTable = (items) => `
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr><th>Code</th><th>Status</th><th>Uses</th><th>Max</th><th>Created</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            ${items.length ? items.map(r => {
+              const code = esc(r.display_code || r.code);
+              return `
+                <tr>
+                  <td><code style="color:#f2d792;font-size:14px;font-weight:bold;">${code}</code></td>
+                  <td><span class="admin-status-pill ${r.active ? 'ok' : 'err'}">${r.active ? 'Active' : 'Disabled'}</span></td>
+                  <td>${r.uses}</td>
+                  <td>${r.max_uses}</td>
+                  <td>${esc(new Date(r.created_at).toLocaleString())}</td>
+                  <td>
+                    <button class="small secondary copy-code-btn" data-code="${code}" style="margin-right:4px;">Copy</button>
+                    <button class="small" data-vip-id="${r.id}">${r.active ? 'Disable' : 'Enable'}</button>
+                  </td>
+                </tr>
+              `;
+            }).join('') : '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px;">No VIP codes created</td></tr>'}
+          </tbody>
+        </table>
+      </div>
+    `;
+    
+    container.innerHTML = `
+      <div class="admin-setting-card">
+        <h3>Generate VIP codes</h3>
+        <div class="admin-form" style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
+          <label>How many<input id="vipCountAdmin" type="number" min="1" max="100" value="5" style="width:90px;"></label>
+          <label>Uses per code<input id="vipMaxUsesAdmin" type="number" min="1" max="1000" value="1" style="width:90px;"></label>
+          <button id="generateVipAdmin" type="button" style="height:42px;">Generate codes</button>
+        </div>
+        <div id="newVipCodes" class="admin-notice" style="display:none;margin-top:12px"></div>
+      </div>
+      <div id="vipTableArea">${renderTable(rows)}</div>
+    `;
+    
+    $('generateVipAdmin').onclick = async () => {
+      try {
+        const count = $('vipCountAdmin').value;
+        const maxUses = $('vipMaxUsesAdmin').value;
+        const j = await adminFetch('/api/admin/vip', { method: 'POST', body: JSON.stringify({ count, maxUses }) });
+        $('newVipCodes').style.display = 'block';
+        $('newVipCodes').innerHTML = '<strong>Generated ' + j.codes.length + ' codes:</strong><br><code style="color:#ffe099;display:block;margin-top:6px;">' + j.codes.join(', ') + '</code>';
+        await loadAdmin();
+      } catch (e) {
+        alert(e.message);
+      }
+    };
+
+    const attachVipEvents = () => {
+      document.querySelectorAll('.copy-code-btn').forEach(btn => {
+        btn.onclick = () => {
+          const code = btn.getAttribute('data-code');
+          navigator.clipboard.writeText(code).then(() => {
+            const orig = btn.textContent;
+            btn.textContent = 'Copied!';
+            setTimeout(() => { btn.textContent = orig; }, 1500);
+          });
+        };
+      });
+      document.querySelectorAll('[data-vip-id]').forEach(b => {
+        b.onclick = async () => {
+          try {
+            await adminFetch('/api/admin/vip/' + b.dataset.vipId + '/toggle', { method: 'POST' });
+            await loadAdmin();
+          } catch (e) {
+            alert(e.message);
+          }
+        };
+      });
+    };
+    attachVipEvents();
+  }
+
+  function renderSettings(s){
+    const disc = s.offer_enabled === '1';
+    $('adminSettings').innerHTML = `
+      <div class="admin-setting-card">
+        <h3>Pricing Configuration (Rupees ₹)</h3>
+        <div class="admin-form" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;">
+          <label>Reveal chart · ₹<input id="setReveal" type="number" min="1" value="${esc(s.reveal_price)}"></label>
+          <label>Kundli match · ₹<input id="setMatch" type="number" min="1" value="${esc(s.match_price)}"></label>
+          <label>Ask Question · ₹<input id="setQuestion" type="number" min="1" value="${esc(s.question_price)}"></label>
+        </div>
+      </div>
+      <div class="admin-setting-card">
+        <h3>Promotional Offer</h3>
+        <div class="admin-form" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;align-items:center;">
+          <label>Discount %<input id="setOfferPercent" type="number" min="0" max="90" value="${esc(s.offer_percent)}"></label>
+          <label>Offer label<input id="setOfferLabel" value="${esc(s.offer_label||'')}" placeholder="e.g. Festival Offer"></label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-top:18px;">
+            <input id="setOfferEnabled" type="checkbox" ${disc ? 'checked' : ''} style="width:auto;"> Enable discount offer
+          </label>
+        </div>
+      </div>
+      <div class="admin-setting-card">
+        <h3>Feature Controls</h3>
+        <div class="toggle-row" style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+          <label style="margin:0;">Individual chart generation</label>
+          <input id="setRevealEnabled" type="checkbox" ${s.reveal_enabled === '1' ? 'checked' : ''} style="width:auto;">
+        </div>
+        <div class="toggle-row" style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+          <label style="margin:0;">Kundli Matching (Guna Milan)</label>
+          <input id="setMatchEnabled" type="checkbox" ${s.match_enabled === '1' ? 'checked' : ''} style="width:auto;">
+        </div>
+        <div class="toggle-row" style="display:flex;justify-content:space-between;padding:10px 0;">
+          <label style="margin:0;">Ask the Chart (Chat)</label>
+          <input id="setChatEnabled" type="checkbox" ${s.chat_enabled === '1' ? 'checked' : ''} style="width:auto;">
+        </div>
+      </div>
+      <button id="saveSettingsAdmin" type="button" style="margin-top:12px;padding:12px 24px;">Save pricing & feature settings</button>
+      <div id="settingsStatus" class="coord-status" style="display:none;margin-top:10px"></div>
+    `;
+
+    $('saveSettingsAdmin').onclick = async () => {
+      try {
+        const payload = {
+          reveal_price: $('setReveal').value,
+          match_price: $('setMatch').value,
+          question_price: $('setQuestion').value,
+          offer_enabled: $('setOfferEnabled').checked ? '1' : '0',
+          offer_percent: $('setOfferPercent').value,
+          offer_label: $('setOfferLabel').value,
+          reveal_enabled: $('setRevealEnabled').checked ? '1' : '0',
+          match_enabled: $('setMatchEnabled').checked ? '1' : '0',
+          chat_enabled: $('setChatEnabled').checked ? '1' : '0'
+        };
+        await adminFetch('/api/admin/settings', { method: 'POST', body: JSON.stringify(payload) });
+        window.SERVER_CONFIG = null;
+        const r = await fetch('/api/config', { cache: 'no-store' });
+        window.SERVER_CONFIG = await r.json();
+        PAYWALL_CONFIG.plans.reveal.amountINR = SERVER_CONFIG.prices.reveal;
+        PAYWALL_CONFIG.plans.match.amountINR = SERVER_CONFIG.prices.match;
+        PAYWALL_CONFIG.plans.question.amountINR = SERVER_CONFIG.prices.question;
+        $('settingsStatus').style.display = 'block';
+        $('settingsStatus').className = 'coord-status ok';
+        $('settingsStatus').textContent = 'Settings saved and applied to new sessions.';
+        applyFeatureVisibility();
+      } catch (e) {
+        $('settingsStatus').style.display = 'block';
+        $('settingsStatus').className = 'coord-status error';
+        $('settingsStatus').textContent = e.message;
+      }
+    };
+  }
   function applyFeatureVisibility(){const f=window.SERVER_CONFIG?.features||{};const revealBtn=$('genBtn'),matchBtn=$('matchBtn'),chat=$('chatCard'),matchTab=$('tabKundli');if(revealBtn)revealBtn.disabled=f.reveal===false;if(matchBtn)matchBtn.disabled=f.match===false;if(matchTab)matchTab.style.display=f.match===false?'none':'';if(chat&&f.chat===false)chat.style.display='none';}
   function esc(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
   window.applyFeatureVisibility=applyFeatureVisibility;
@@ -4028,6 +4365,41 @@ button:hover{transform:translateY(-1px);filter:brightness(1.035);}
 .placement-table{font-family:'Manrope',sans-serif !important;font-size:13px !important;}
 .placement-table th{font-family:'Manrope',sans-serif !important;font-weight:700 !important;letter-spacing:.12em !important;color:#d9bf7e !important;}
 .placement-table td{font-family:'Manrope',sans-serif !important;color:#c7cece !important;line-height:1.65 !important;}
+
+/* Rashi popup positioned below the wheel circle */
+.rashi-detail {
+  position: absolute !important;
+  top: calc(100% + 25px) !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: min(460px, 92vw) !important;
+  background: radial-gradient(ellipse at 50% 0%, rgba(16, 28, 40, 0.98), rgba(6, 12, 18, 0.99)) !important;
+  border: 1.5px solid rgba(242, 215, 146, 0.75) !important;
+  border-radius: 16px !important;
+  padding: 18px 22px !important;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.95), 0 0 45px rgba(242, 215, 146, 0.3) !important;
+  backdrop-filter: blur(20px) !important;
+  z-index: 100 !important;
+  color: #f3efe6 !important;
+  text-align: center !important;
+}
+
+.rashi-detail b {
+  display: block !important;
+  font-family: 'Bodoni Moda', 'Marcellus', serif !important;
+  font-size: 20px !important;
+  color: #f2d792 !important;
+  margin-bottom: 6px !important;
+  letter-spacing: 0.05em !important;
+}
+
+.rashi-detail small {
+  display: block !important;
+  font-family: 'Manrope', sans-serif !important;
+  font-size: 13.5px !important;
+  color: #b8c4c7 !important;
+  line-height: 1.6 !important;
+}
 
 @media(max-width:680px){
   body{font-size:14px !important;}
