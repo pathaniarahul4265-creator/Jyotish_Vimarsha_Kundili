@@ -1,0 +1,6 @@
+{
+  "name": "Jyotish Vimarsha",
+  "description": "Sacred Chart Reading and Vedic Astrology App",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
