@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Jyotish Vimarsha — Sacred Chart Reading</title>
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-  <link rel="shortcut icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3CradialGradient id='bg' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%232a1b08'/%3E%3Cstop offset='100%25' stop-color='%23060301'/%3E%3C/radialGradient%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23ffe8a3'/%3E%3Cstop offset='50%25' stop-color='%23e2b153'/%3E%3Cstop offset='100%25' stop-color='%239e6d19'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='32' cy='32' r='30' fill='url(%23bg)' stroke='url(%23g)' stroke-width='2'/%3E%3Ccircle cx='32' cy='32' r='26' fill='none' stroke='url(%23g)' stroke-width='0.8' stroke-dasharray='2 2' opacity='0.8'/%3E%3Ctext x='32' y='42' font-size='28' font-weight='bold' fill='url(%23g)' text-anchor='middle'%3E%26%232384%3B%3C/text%3E%3C/svg%3E">
+  <link rel="shortcut icon" href="/favicon.svg">
   <meta name="theme-color" content="#071218">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -563,8 +563,11 @@ button:hover{transform:translateY(-1px);box-shadow:0 10px 28px color-mix(in srgb
 /* Premium static Rashi mandala: no spinning glyph ring. */
 .zodiac-wheel{filter:drop-shadow(0 0 46px var(--glow));}
 .zodiac-wheel:before{inset:19px;border-width:1px;box-shadow:0 0 0 10px color-mix(in srgb,var(--accent) 3%,transparent),0 0 0 34px color-mix(in srgb,var(--accent2) 4%,transparent),0 0 0 66px rgba(255,255,255,.012);}
-.zodiac-wheel:after{inset:53px;border-style:dotted;animation:none;opacity:.42;}
-.zodiac-wheel .wheel-track{animation-duration:140s!important;opacity:.22!important;}
+.zodiac-wheel:after{inset:36px!important;border:1.5px dashed color-mix(in srgb,var(--accent) 55%,transparent)!important;border-radius:50%!important;animation:ringSpinDashed 55s linear infinite!important;opacity:.85!important;pointer-events:none!important;}
+@keyframes ringSpinDashed{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.mandala-geometry{position:absolute!important;inset:0!important;animation:sacredGeomRotate 90s linear infinite!important;transform-origin:center center!important;pointer-events:none!important;}
+@keyframes sacredGeomRotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.zodiac-wheel .wheel-track{animation-duration:95s!important;opacity:.45!important;}
 .z-sign{width:56px;height:56px;margin:-28px;font-size:30px;color:var(--heading-bright);border:1px solid color-mix(in srgb,var(--accent) 13%,transparent);border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.035),transparent 70%);box-shadow:inset 0 0 18px rgba(255,255,255,.018);transition:transform .3s,filter .3s,background .3s;}
 .z-sign:hover{filter:drop-shadow(0 0 12px var(--glow));background:radial-gradient(circle,color-mix(in srgb,var(--accent) 12%,transparent),transparent 70%);}
 .z-sign .z-glyph{transform:rotate(calc(var(--a) * -1));font-family:'Noto Serif Devanagari',serif;font-size:32px;}
@@ -603,9 +606,9 @@ body{font-family:var(--ui-font),Manrope,Arial,sans-serif;padding-bottom:72px;}
 .planet-gold{color:#d9b568}.planet-blue{color:#7db7d5}.planet-bronze{color:#c58d52}.planet-teal{color:#68b9ae}.planet-ivory{color:#e7e0c8}.planet-red{color:#b66b54}
 .orbit-2 .bg-planet{right:18%;top:4%;width:5px;height:5px}.orbit-3 .bg-planet{right:8%;top:22%;width:10px;height:10px}.orbit-4 .bg-planet{right:22%;top:8%;width:6px;height:6px}.orbit-5 .bg-planet{right:11%;top:30%;width:4px;height:4px}.orbit-6 .bg-planet{right:25%;top:15%;width:7px;height:7px}
 @keyframes deepOrbit{from{rotate:0deg}to{rotate:360deg}}
-/* Rotate only the fine astronomical tracks around the Rashi wheel. Glyphs remain fixed. */
+/* Smooth celestial rotation for the Rashi wheel tracks & ring */
 .zodiac-wheel .wheel-track{animation:wheelTrackSpin 95s linear infinite!important;transform-origin:center!important;}
-.zodiac-wheel .track-two{animation-duration:135s!important;animation-direction:reverse!important;}
+.zodiac-wheel .track-two{animation:innerRashiRing 52s linear infinite reverse !important;opacity:.55!important;}
 @keyframes wheelTrackSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 /* First/outer Rashi ring: clearly visible, slow observatory rotation. */
 .zodiac-wheel .track-one{
@@ -620,10 +623,7 @@ body{font-family:var(--ui-font),Manrope,Arial,sans-serif;padding-bottom:72px;}
 }
 .zodiac-wheel .track-one::after{content:"";position:absolute;inset:-5px;border:1px dashed color-mix(in srgb,var(--accent2) 14%,transparent);border-radius:50%;opacity:.65;}
 @keyframes outerRashiRing{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-.zodiac-wheel .track-two{animation:innerRashiRing 52s linear infinite reverse !important;opacity:.55!important;}
 @keyframes innerRashiRing{from{transform:rotate(360deg)}to{transform:rotate(0deg)}}
-.zodiac-wheel{animation:none!important;}
-.zodiac-wheel .z-sign,.zodiac-wheel .z-sign .z-glyph,.zodiac-wheel .wheel-core{animation:none!important;}
 /* Chart-focused interactive sign state */
 .z-sign{cursor:pointer!important;pointer-events:auto!important;}
 .z-sign.is-active{background:radial-gradient(circle,color-mix(in srgb,var(--accent) 18%,transparent),transparent 72%);border-color:color-mix(in srgb,var(--accent) 60%,transparent);box-shadow:0 0 0 5px color-mix(in srgb,var(--accent) 7%,transparent),0 0 28px var(--glow),inset 0 0 18px color-mix(in srgb,var(--accent) 9%,transparent);}
@@ -837,14 +837,20 @@ body{font-family:var(--ui-font),Manrope,Arial,sans-serif;padding-bottom:72px;}
 }
 
 .hero .zodiac-ring .hero-z-img{
-  width: 52px !important;
-  height: 52px !important;
+  width: 58px !important;
+  height: 58px !important;
   border-radius: 50% !important;
   object-fit: cover !important;
-  border: 2px solid #e0c674 !important;
-  box-shadow: 0 0 20px rgba(224, 198, 116, 0.85), 0 0 45px rgba(127, 197, 192, 0.45), inset 0 0 8px rgba(0, 0, 0, 0.85) !important;
+  border: 2px solid #fce7b0 !important;
+  outline: 1.5px solid rgba(252, 231, 176, 0.5) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 22px rgba(242, 215, 146, 0.95), 0 0 45px rgba(127, 197, 192, 0.55), inset 0 0 10px rgba(0, 0, 0, 0.9) !important;
+  filter: contrast(1.25) brightness(1.22) saturate(1.38) !important;
+  background: radial-gradient(circle, #251b32 0%, #0a0614 100%) !important;
+  image-rendering: -webkit-optimize-contrast !important;
+  image-rendering: crisp-edges !important;
   display: block !important;
-  transition: transform 0.3s ease !important;
+  transition: transform 0.3s ease, filter 0.3s ease !important;
 }
 
 .hero .zodiac-ring .hero-z-symbol{
@@ -1162,45 +1168,309 @@ body{font-family:var(--ui-font),Manrope,Arial,sans-serif;padding-bottom:72px;}
   text-align: center !important;
 }
 
-/* Rashi Mandala centered directly below the intro text */
+/* Rashi Mandala centered directly below the intro text — STATIC DISC & PRECISE RADIAL SIGNS TO PREVENT OVERLAPPING */
+.astrology-intro .intro-top-row {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  width: 100% !important;
+  max-width: 960px !important;
+  margin: 0 auto !important;
+  position: relative !important;
+  gap: 28px !important;
+}
+
+.astrology-intro .intro-copy {
+  max-width: 820px !important;
+  margin: 0 auto !important;
+  text-align: center !important;
+  position: relative !important;
+  z-index: 2 !important;
+  padding-right: 0 !important;
+}
+
+.astrology-intro .zodiac-side-col {
+  position: relative !important;
+  right: auto !important;
+  left: auto !important;
+  top: auto !important;
+  bottom: auto !important;
+  width: 100% !important;
+  max-width: 440px !important;
+  margin: 20px auto 10px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  float: none !important;
+  z-index: 5 !important;
+}
+
 .astrology-intro .zodiac-wheel {
   position: relative !important;
   right: auto !important;
-  top: auto !important;
   left: auto !important;
-  margin: 38px auto 20px !important;
-  transform: none !important;
-  width: 440px !important;
-  height: 440px !important;
+  top: auto !important;
+  bottom: auto !important;
+  margin: 0 auto !important;
+  width: 420px !important;
+  height: 420px !important;
+  max-width: 100% !important;
   display: block !important;
   z-index: 6 !important;
-  animation: introWheelRotate 100s linear infinite !important;
+  float: none !important;
+  animation: rashiWheel 95s linear infinite !important;
   transform-origin: 50% 50% !important;
   filter: drop-shadow(0 0 45px rgba(219, 169, 68, 0.28)) !important;
   background: radial-gradient(circle at 50% 50%, rgba(20, 32, 45, 0.4), rgba(4, 9, 14, 0.85) 70%) !important;
   border-radius: 50% !important;
 }
 
-@keyframes introWheelRotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.astrology-intro .zodiac-wheel:hover {
+  animation-play-state: paused !important;
 }
 
-/* Keep glyphs upright and counter-rotated on the disc */
+/* Signs revolve in orbit with the ring while remaining upright */
 .astrology-intro .z-sign {
-  transform: rotate(var(--a)) translateY(-182px) rotate(calc(var(--a) * -1)) !important;
+  position: absolute !important;
+  left: 50% !important;
+  top: 50% !important;
+  width: 58px !important;
+  height: 58px !important;
+  margin: -29px 0 0 -29px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transform: rotate(var(--a)) translateY(-155px) rotate(calc(var(--a) * -1)) !important;
+  animation: rashiCounterSign 95s linear infinite !important;
+  transform-origin: center center !important;
+  transition: transform 0.25s ease, filter 0.25s ease !important;
+  z-index: 10 !important;
+  cursor: pointer !important;
 }
 
-.astrology-intro .zodiac-wheel .z-sign {
-  animation: introGlyphCounter 100s linear infinite !important;
-}
-
-@keyframes introGlyphCounter {
+@keyframes rashiCounterSign {
   from {
-    transform: rotate(var(--a)) translateY(-182px) rotate(calc(var(--a) * -1));
+    transform: rotate(var(--a)) translateY(-155px) rotate(calc(var(--a) * -1));
   }
   to {
-    transform: rotate(calc(var(--a) + 360deg)) translateY(-182px) rotate(calc((var(--a) + 360deg) * -1));
+    transform: rotate(calc(var(--a) - 360deg)) translateY(-155px) rotate(calc((var(--a) - 360deg) * -1));
+  }
+}
+
+.astrology-intro .z-sign:hover {
+  transform: rotate(var(--a)) translateY(-155px) rotate(calc(var(--a) * -1)) scale(1.22) !important;
+  z-index: 30 !important;
+  filter: drop-shadow(0 0 16px var(--gold-soft)) !important;
+}
+
+/* Top Header Brand Bar */
+.top-header-brand {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 16px !important;
+  padding: 16px 24px !important;
+  margin: 10px auto 28px !important;
+  max-width: 100% !important;
+  border: 1px solid color-mix(in srgb, var(--accent) 32%, transparent) !important;
+  border-radius: 18px !important;
+  background: linear-gradient(135deg, rgba(12, 20, 29, 0.92), rgba(5, 10, 16, 0.96)) !important;
+  backdrop-filter: blur(16px) !important;
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+  position: relative !important;
+  z-index: 40 !important;
+}
+.header-brand-left {
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+}
+.brand-logo-crest {
+  flex-shrink: 0 !important;
+  filter: drop-shadow(0 0 16px rgba(216, 160, 76, 0.45)) !important;
+}
+.brand-text-group {
+  display: flex !important;
+  flex-direction: column !important;
+}
+.brand-title {
+  font-family: 'Bodoni Moda', 'Cinzel', serif !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  color: var(--heading-bright) !important;
+  letter-spacing: 0.08em !important;
+  line-height: 1.1 !important;
+  margin: 0 !important;
+}
+.brand-subtitle {
+  font-family: 'Manrope', sans-serif !important;
+  font-size: 11px !important;
+  color: var(--muted) !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+  margin-top: 3px !important;
+}
+.header-brand-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+.header-nav-btn {
+  width: auto !important;
+  padding: 10px 18px !important;
+  font-family: 'Manrope', sans-serif !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.03em !important;
+  border-radius: 10px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  cursor: pointer !important;
+  transition: all 0.25s ease !important;
+  white-space: nowrap !important;
+}
+.payment-nav-btn {
+  background: linear-gradient(180deg, var(--gold-soft), var(--marigold)) !important;
+  color: #241606 !important;
+  border: none !important;
+  box-shadow: 0 6px 18px rgba(216, 160, 76, 0.28) !important;
+}
+.payment-nav-btn:hover {
+  filter: brightness(1.12) !important;
+  transform: translateY(-1px) !important;
+}
+.admin-nav-btn {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent) !important;
+  color: var(--gold-soft) !important;
+}
+.admin-nav-btn:hover {
+  background: color-mix(in srgb, var(--accent) 18%, transparent) !important;
+  border-color: var(--accent) !important;
+}
+
+/* Payment Modal & Plan Cards */
+.payment-modal .modal-box {
+  max-width: 720px !important;
+  padding: 34px !important;
+}
+.payment-plans-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 14px !important;
+  margin-top: 20px !important;
+}
+.plan-card {
+  position: relative !important;
+  padding: 20px !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 14px !important;
+  background: rgba(255, 255, 255, 0.02) !important;
+  cursor: pointer !important;
+  transition: all 0.25s ease !important;
+  text-align: left !important;
+}
+.plan-card:hover, .plan-card.active {
+  border-color: var(--gold-soft) !important;
+  background: color-mix(in srgb, var(--accent) 12%, transparent) !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35) !important;
+}
+.plan-badge {
+  position: absolute !important;
+  top: 14px !important;
+  right: 14px !important;
+  background: var(--gold-soft) !important;
+  color: #241606 !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  padding: 3px 9px !important;
+  border-radius: 999px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+}
+.plan-card h3 {
+  margin: 0 0 6px !important;
+  font-family: 'Bodoni Moda', serif !important;
+  font-size: 19px !important;
+  color: var(--gold-soft) !important;
+  text-align: left !important;
+}
+.plan-price {
+  font-family: 'Manrope', sans-serif !important;
+  font-size: 26px !important;
+  font-weight: 700 !important;
+  color: var(--heading-bright) !important;
+  margin-bottom: 8px !important;
+}
+.plan-card p {
+  margin: 0 !important;
+  font-size: 13px !important;
+  color: var(--muted) !important;
+  line-height: 1.5 !important;
+  text-align: left !important;
+}
+.dakshina-preset-row {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+  margin-bottom: 16px !important;
+}
+.dakshina-chip {
+  padding: 8px 16px !important;
+  border-radius: 999px !important;
+  border: 1px solid var(--line) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  color: var(--text-color) !important;
+  font-size: 13px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+.dakshina-chip.active {
+  background: linear-gradient(180deg, var(--gold-soft), var(--marigold)) !important;
+  color: #241606 !important;
+  font-weight: 700 !important;
+  border-color: var(--gold) !important;
+}
+.primary-pay-btn {
+  width: 100% !important;
+  background: linear-gradient(180deg, var(--gold-soft), var(--marigold)) !important;
+  color: #241606 !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  padding: 16px !important;
+  border-radius: 12px !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: all 0.25s ease !important;
+  box-shadow: 0 8px 24px rgba(216, 160, 76, 0.3) !important;
+}
+.primary-pay-btn:hover {
+  filter: brightness(1.1) !important;
+  transform: translateY(-1px) !important;
+}
+
+@media (max-width: 680px) {
+  .top-header-brand {
+    flex-direction: column !important;
+    text-align: center !important;
+    padding: 16px !important;
+  }
+  .header-brand-left {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+  .header-brand-actions {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+  .payment-plans-grid {
+    grid-template-columns: 1fr !important;
   }
 }
 
@@ -1635,6 +1905,39 @@ body input, body select, body textarea {
   box-shadow: 0 16px 50px rgba(0, 0, 0, 0.45), inset 0 0 25px rgba(223, 186, 109, 0.04) !important;
   position: relative !important;
   overflow: visible !important;
+  cursor: pointer !important;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.25s ease !important;
+}
+
+.panchang-bar:hover {
+  border-color: rgba(223, 186, 109, 0.65) !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55), 0 0 30px rgba(223, 186, 109, 0.18), inset 0 0 35px rgba(223, 186, 109, 0.08) !important;
+  transform: translateY(-2px) !important;
+}
+
+.panchang-detail-trigger-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  background: linear-gradient(135deg, rgba(223, 186, 109, 0.25), rgba(160, 120, 50, 0.35)) !important;
+  border: 1px solid rgba(223, 186, 109, 0.65) !important;
+  color: #fff1c5 !important;
+  font-family: 'Marcellus', serif !important;
+  font-size: 11.5px !important;
+  letter-spacing: 0.12em !important;
+  padding: 6px 16px !important;
+  border-radius: 999px !important;
+  cursor: pointer !important;
+  transition: all 0.25s ease !important;
+  box-shadow: 0 4px 15px rgba(223, 186, 109, 0.2) !important;
+}
+
+.panchang-detail-trigger-btn:hover {
+  background: linear-gradient(135deg, rgba(223, 186, 109, 0.45), rgba(200, 150, 60, 0.55)) !important;
+  border-color: #ffe8b5 !important;
+  color: #ffffff !important;
+  box-shadow: 0 6px 22px rgba(223, 186, 109, 0.45) !important;
+  transform: scale(1.04) !important;
 }
 
 .panchang-header {
@@ -1827,6 +2130,134 @@ body input, body select, body textarea {
   color: #7fc5c0 !important;
   text-transform: uppercase !important;
   margin-top: 3px !important;
+}
+
+/* Dainik Panchang Detailed Full Screen / Large Modal Box */
+.panchang-modal-box {
+  width: 90vw !important;
+  max-width: 920px !important;
+  max-height: 88vh !important;
+  overflow-y: auto !important;
+  background: linear-gradient(150deg, rgba(12, 20, 29, 0.98), rgba(5, 10, 16, 0.99)) !important;
+  border: 1.5px solid rgba(223, 186, 109, 0.5) !important;
+  border-radius: 20px !important;
+  padding: 32px 36px !important;
+  box-shadow: 0 35px 100px rgba(0, 0, 0, 0.9), inset 0 0 40px rgba(223, 186, 109, 0.06) !important;
+  color: #f4efe4 !important;
+  position: relative !important;
+}
+
+.panchang-modal-top {
+  border-bottom: 1px dashed rgba(223, 186, 109, 0.3) !important;
+  padding-bottom: 18px !important;
+  margin-bottom: 22px !important;
+}
+
+.panchang-modal-kicker {
+  font-family: 'Marcellus', serif !important;
+  font-size: 11px !important;
+  letter-spacing: 0.22em !important;
+  color: #dfba6d !important;
+  margin-bottom: 6px !important;
+}
+
+.panchang-modal-heading {
+  font-family: 'Bodoni Moda', 'Cinzel', serif !important;
+  font-size: 28px !important;
+  color: #f7e4b8 !important;
+  margin: 0 0 6px 0 !important;
+  text-shadow: 0 0 16px rgba(223, 186, 109, 0.3) !important;
+}
+
+.panchang-modal-date {
+  font-family: 'Manrope', sans-serif !important;
+  font-size: 13.5px !important;
+  color: #7fc5c0 !important;
+}
+
+.pdt-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important;
+  gap: 16px !important;
+  margin-bottom: 24px !important;
+}
+
+.pdt-card {
+  background: rgba(255, 255, 255, 0.025) !important;
+  border: 1px solid rgba(223, 186, 109, 0.25) !important;
+  border-radius: 12px !important;
+  padding: 18px !important;
+  position: relative !important;
+  transition: border-color 0.25s ease !important;
+}
+
+.pdt-card:hover {
+  border-color: rgba(223, 186, 109, 0.5) !important;
+}
+
+.pdt-card-badge {
+  font-family: 'Marcellus', serif !important;
+  font-size: 10px !important;
+  letter-spacing: 0.14em !important;
+  color: #dfba6d !important;
+  text-transform: uppercase !important;
+  margin-bottom: 8px !important;
+  display: block !important;
+}
+
+.pdt-card-title {
+  font-family: 'Cinzel', 'Marcellus', serif !important;
+  font-size: 18px !important;
+  color: #ffffff !important;
+  margin-bottom: 6px !important;
+  display: block !important;
+}
+
+.pdt-card-desc {
+  font-family: 'Manrope', sans-serif !important;
+  font-size: 12.5px !important;
+  color: #c5d6dc !important;
+  line-height: 1.6 !important;
+}
+
+.choghadiya-table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  margin-top: 10px !important;
+  font-family: 'Manrope', sans-serif !important;
+  font-size: 12.5px !important;
+}
+
+.choghadiya-table th {
+  text-align: left !important;
+  padding: 8px 12px !important;
+  background: rgba(223, 186, 109, 0.12) !important;
+  color: #dfba6d !important;
+  font-family: 'Marcellus', serif !important;
+  font-size: 10.5px !important;
+  letter-spacing: 0.1em !important;
+  border-bottom: 1px solid rgba(223, 186, 109, 0.25) !important;
+}
+
+.choghadiya-table td {
+  padding: 8px 12px !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  color: #e2d3b5 !important;
+}
+
+.cho-good {
+  color: #6fd0a0 !important;
+  font-weight: 700 !important;
+}
+
+.cho-bad {
+  color: #fca8a8 !important;
+  font-weight: 700 !important;
+}
+
+.cho-neutral {
+  color: #f1d48a !important;
+  font-weight: 600 !important;
 }
 
 /* Om Chanting Controller Bar */
@@ -2037,6 +2468,36 @@ body input, body select, body textarea {
 <div class="shooting-star" style="top:15%; left:90%; animation-delay:5.8s;"></div>
 <div class="wrap">
 
+<header class="top-header-brand" id="topHeaderBrand">
+  <div class="header-brand-left">
+    <div class="brand-logo-crest" aria-hidden="true">
+      <svg viewBox="0 0 64 64" width="46" height="46" role="img">
+        <defs>
+          <radialGradient id="logoBg" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#22143b"/>
+            <stop offset="100%" stop-color="#080512"/>
+          </radialGradient>
+          <linearGradient id="logoGold" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#fde8b5"/>
+            <stop offset="50%" stop-color="#d8a04c"/>
+            <stop offset="100%" stop-color="#9a6e2e"/>
+          </linearGradient>
+        </defs>
+        <circle cx="32" cy="32" r="30" fill="url(#logoBg)" stroke="url(#logoGold)" stroke-width="1.8"/>
+        <circle cx="32" cy="32" r="25" fill="none" stroke="url(#logoGold)" stroke-width="0.8" stroke-dasharray="2 3"/>
+        <polygon points="32,9 50,32 32,55 14,32" fill="none" stroke="url(#logoGold)" stroke-width="1.2" opacity="0.85"/>
+        <polygon points="32,13 46,32 32,51 18,32" fill="none" stroke="#7fc5c0" stroke-width="1" opacity="0.6"/>
+        <text x="32" y="38" font-family="'Noto Serif Devanagari',serif" font-size="18" fill="url(#logoGold)" text-anchor="middle" font-weight="bold">ॐ</text>
+        <circle cx="32" cy="32" r="2.5" fill="#fff"/>
+      </svg>
+    </div>
+    <div class="brand-text-group">
+      <span class="brand-title">JYOTISH VIMARSHA</span>
+      <span class="brand-subtitle">Sacred Vedic Chart Reading &amp; Ephemeris</span>
+    </div>
+  </div>
+</header>
+
 <div class="observatory-telemetry-hud">
   <span>CELESTIAL OBSERVATORY · SIDEREAL LAHIRI AYANAMSHA 24°10'38"</span>
   <span>॥ यथा पिण्डे तथा ब्रह्माण्डे ॥</span>
@@ -2051,40 +2512,43 @@ body input, body select, body textarea {
 
 <div class="panchang-bar" id="dailyPanchangBar" aria-label="Daily Vedic Panchang and Rahu Kaal">
   <div class="panchang-header">
-    <span class="panchang-badge">✦ TODAY'S DAINIK PANCHANG & RAHU KAAL</span>
+    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+      <span class="panchang-badge">✦ TODAY'S DAINIK PANCHANG & RAHU KAAL</span>
+      <button type="button" class="panchang-detail-trigger-btn" onclick="openPanchangModal(); event.stopPropagation();" title="View complete Panchang, Choghadiya & Muhurta analysis">🔍 View Complete Panchang & All Muhurtas ✦</button>
+    </div>
     <span class="panchang-date" id="panchangDate">Loading Panchang…</span>
   </div>
   <div class="panchang-grid">
-    <div class="panchang-item highlight-shubh">
-      <small>📜 HINDU YEAR & MAAS</small>
+    <div class="panchang-item highlight-shubh" onclick="openSpecificPanchangDetail('hinduCal'); event.stopPropagation();" style="cursor:pointer;" title="Click for Hindu Calendar Year & Maas details">
+      <small>📜 HINDU YEAR & MAAS 🔍</small>
       <b id="panchangHinduCal">—</b>
     </div>
-    <div class="panchang-item">
-      <small>TITHI</small>
+    <div class="panchang-item" onclick="openSpecificPanchangDetail('tithi'); event.stopPropagation();" style="cursor:pointer;" title="Click for Tithi details & recommendations">
+      <small>TITHI 🔍</small>
       <b id="panchangTithi">—</b>
     </div>
-    <div class="panchang-item">
-      <small>NAKSHATRA</small>
+    <div class="panchang-item" onclick="openSpecificPanchangDetail('nakshatra'); event.stopPropagation();" style="cursor:pointer;" title="Click for Nakshatra details & star influence">
+      <small>NAKSHATRA 🔍</small>
       <b id="panchangNakshatra">—</b>
     </div>
-    <div class="panchang-item">
-      <small>YOGA</small>
+    <div class="panchang-item" onclick="openSpecificPanchangDetail('yoga'); event.stopPropagation();" style="cursor:pointer;" title="Click for Solar-Lunar Yoga details">
+      <small>YOGA 🔍</small>
       <b id="panchangYoga">—</b>
     </div>
-    <div class="panchang-item">
-      <small>KARANA</small>
+    <div class="panchang-item" onclick="openSpecificPanchangDetail('karana'); event.stopPropagation();" style="cursor:pointer;" title="Click for Half-Tithi Karana details">
+      <small>KARANA 🔍</small>
       <b id="panchangKarana">—</b>
     </div>
-    <div class="panchang-item highlight-rahu">
-      <small>⚠️ RAHU KAAL</small>
+    <div class="panchang-item highlight-rahu" onclick="openSpecificPanchangDetail('rahuKaal'); event.stopPropagation();" style="cursor:pointer;" title="Click for Rahu Kaal precautions & timings">
+      <small>⚠️ RAHU KAAL 🔍</small>
       <b id="panchangRahuKaal">—</b>
     </div>
-    <div class="panchang-item highlight-shubh">
-      <small>✨ ABHIJIT MUHURAT</small>
+    <div class="panchang-item highlight-shubh" onclick="openSpecificPanchangDetail('abhijit'); event.stopPropagation();" style="cursor:pointer;" title="Click for Abhijit Muhurat details">
+      <small>✨ ABHIJIT MUHURAT 🔍</small>
       <b id="panchangShubh">—</b>
     </div>
-    <div class="panchang-item">
-      <small>SUNRISE / SUNSET</small>
+    <div class="panchang-item" onclick="openSpecificPanchangDetail('sun'); event.stopPropagation();" style="cursor:pointer;" title="Click for Sun & Day length details">
+      <small>🌅 SUNRISE / SUNSET 🔍</small>
       <b id="panchangSun">—</b>
     </div>
   </div>
@@ -2219,7 +2683,7 @@ body input, body select, body textarea {
           </svg>
         </div>
         <div class="wheel-core"><div class="celestial-crest" aria-hidden="true"><svg viewBox="0 0 64 64" role="img"><circle cx="32" cy="32" r="26" fill="none" stroke="currentColor" stroke-width="1" opacity=".7"/><circle cx="32" cy="32" r="18" fill="none" stroke="currentColor" stroke-width="1" opacity=".45"/><path d="M32 7v50M7 32h50M14 14l36 36M50 14L14 50" stroke="currentColor" stroke-width=".8" opacity=".35"/><circle cx="32" cy="32" r="5" fill="currentColor" opacity=".9"/></svg></div><small>RASHI<br>MANDALA</small></div>
-        <span class="z-sign z1" title="Aries · Mesha (Fire)" aria-label="Aries · Mesha"><img src="/src/assets/images/zodiac_aries_gold_1786427406985.jpg" class="z-logo-img" alt="Aries" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/aries.jpg'" /><b>MESHA</b></span><span class="z-sign z2" title="Taurus · Vrishabha (Earth)" aria-label="Taurus · Vrishabha"><img src="/src/assets/images/zodiac_taurus_gold_1786427430892.jpg" class="z-logo-img" alt="Taurus" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/taurus.jpg'" /><b>VRISHABHA</b></span><span class="z-sign z3" title="Gemini · Mithuna (Air)" aria-label="Gemini · Mithuna"><img src="/src/assets/images/zodiac_gemini_gold_1786427447560.jpg" class="z-logo-img" alt="Gemini" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/gemini.jpg'" /><b>MITHUNA</b></span><span class="z-sign z4" title="Cancer · Karka (Water)" aria-label="Cancer · Karka"><img src="/src/assets/images/zodiac_cancer_gold_1786427465388.jpg" class="z-logo-img" alt="Cancer" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/cancer.jpg'" /><b>KARKA</b></span><span class="z-sign z5" title="Leo · Simha (Fire)" aria-label="Leo · Simha"><img src="/src/assets/images/zodiac_leo_gold_1786427482212.jpg" class="z-logo-img" alt="Leo" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/leo.jpg'" /><b>SIMHA</b></span><span class="z-sign z6" title="Virgo · Kanya (Earth)" aria-label="Virgo · Kanya"><img src="/src/assets/images/zodiac_virgo_gold_1786427501477.jpg" class="z-logo-img" alt="Virgo" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/virgo.jpg'" /><b>KANYA</b></span><span class="z-sign z7" title="Libra · Tula (Air)" aria-label="Libra · Tula"><img src="/src/assets/images/zodiac_libra_gold_1786427519372.jpg" class="z-logo-img" alt="Libra" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/libra.jpg'" /><b>TULA</b></span><span class="z-sign z8" title="Scorpio · Vrischika (Water)" aria-label="Scorpio · Vrischika"><img src="/src/assets/images/zodiac_scorpio_gold_1786427534881.jpg" class="z-logo-img" alt="Scorpio" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/scorpio.jpg'" /><b>VRISCHIKA</b></span><span class="z-sign z9" title="Sagittarius · Dhanu (Fire)" aria-label="Sagittarius · Dhanu"><img src="/src/assets/images/zodiac_sagittarius_gold_1786427554200.jpg" class="z-logo-img" alt="Sagittarius" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/sagittarius.jpg'" /><b>DHANU</b></span><span class="z-sign z10" title="Capricorn · Makara (Earth)" aria-label="Capricorn · Makara"><img src="/src/assets/images/zodiac_capricorn_gold_1786427572321.jpg" class="z-logo-img" alt="Capricorn" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/capricorn.jpg'" /><b>MAKARA</b></span><span class="z-sign z11" title="Aquarius · Kumbha (Air)" aria-label="Aquarius · Kumbha"><img src="/src/assets/images/zodiac_aquarius_gold_1786427591478.jpg" class="z-logo-img" alt="Aquarius" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/aquarius.jpg'" /><b>KUMBHA</b></span><span class="z-sign z12" title="Pisces · Meena (Water)" aria-label="Pisces · Meena"><img src="/src/assets/images/zodiac_pisces_gold_1786427610651.jpg" class="z-logo-img" alt="Pisces" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/pisces.jpg'" /><b>MEENA</b></span>
+        <span class="z-sign z1" onclick="openSpecificZodiacModal(0); event.stopPropagation();" title="Click for Aries / Mesha deep analysis" aria-label="Aries · Mesha"><img src="/images/zodiac_svg/aries.svg" class="z-logo-img" alt="Aries" /><b>MESHA</b></span><span class="z-sign z2" onclick="openSpecificZodiacModal(1); event.stopPropagation();" title="Click for Taurus / Vrishabha deep analysis" aria-label="Taurus · Vrishabha"><img src="/images/zodiac_svg/taurus.svg" class="z-logo-img" alt="Taurus" /><b>VRISHABHA</b></span><span class="z-sign z3" onclick="openSpecificZodiacModal(2); event.stopPropagation();" title="Click for Gemini / Mithuna deep analysis" aria-label="Gemini · Mithuna"><img src="/images/zodiac_svg/gemini.svg" class="z-logo-img" alt="Gemini" /><b>MITHUNA</b></span><span class="z-sign z4" onclick="openSpecificZodiacModal(3); event.stopPropagation();" title="Click for Cancer / Karka deep analysis" aria-label="Cancer · Karka"><img src="/images/zodiac_svg/cancer.svg" class="z-logo-img" alt="Cancer" /><b>KARKA</b></span><span class="z-sign z5" onclick="openSpecificZodiacModal(4); event.stopPropagation();" title="Click for Leo / Simha deep analysis" aria-label="Leo · Simha"><img src="/images/zodiac_svg/leo.svg" class="z-logo-img" alt="Leo" /><b>SIMHA</b></span><span class="z-sign z6" onclick="openSpecificZodiacModal(5); event.stopPropagation();" title="Click for Virgo / Kanya deep analysis" aria-label="Virgo · Kanya"><img src="/images/zodiac_svg/virgo.svg" class="z-logo-img" alt="Virgo" /><b>KANYA</b></span><span class="z-sign z7" onclick="openSpecificZodiacModal(6); event.stopPropagation();" title="Click for Libra / Tula deep analysis" aria-label="Libra · Tula"><img src="/images/zodiac_svg/libra.svg" class="z-logo-img" alt="Libra" /><b>TULA</b></span><span class="z-sign z8" onclick="openSpecificZodiacModal(7); event.stopPropagation();" title="Click for Scorpio / Vrischika deep analysis" aria-label="Scorpio · Vrischika"><img src="/images/zodiac_svg/scorpio.svg" class="z-logo-img" alt="Scorpio" /><b>VRISCHIKA</b></span><span class="z-sign z9" onclick="openSpecificZodiacModal(8); event.stopPropagation();" title="Click for Sagittarius / Dhanu deep analysis" aria-label="Sagittarius · Dhanu"><img src="/images/zodiac_svg/sagittarius.svg" class="z-logo-img" alt="Sagittarius" /><b>DHANU</b></span><span class="z-sign z10" onclick="openSpecificZodiacModal(9); event.stopPropagation();" title="Click for Capricorn / Makara deep analysis" aria-label="Capricorn · Makara"><img src="/images/zodiac_svg/capricorn.svg" class="z-logo-img" alt="Capricorn" /><b>MAKARA</b></span><span class="z-sign z11" onclick="openSpecificZodiacModal(10); event.stopPropagation();" title="Click for Aquarius / Kumbha deep analysis" aria-label="Aquarius · Kumbha"><img src="/images/zodiac_svg/aquarius.svg" class="z-logo-img" alt="Aquarius" /><b>KUMBHA</b></span><span class="z-sign z12" onclick="openSpecificZodiacModal(11); event.stopPropagation();" title="Click for Pisces / Meena deep analysis" aria-label="Pisces · Meena"><img src="/images/zodiac_svg/pisces.svg" class="z-logo-img" alt="Pisces" /><b>MEENA</b></span>
       </div>
       <div class="rashi-detail" id="rashiDetail" aria-live="polite"><b>Rashi</b><small>Click a sign to explore its element, quality, ruler and archetype.</small></div>
     </div>
@@ -2551,6 +3015,60 @@ body input, body select, body textarea {
 </div>
 
 
+<!-- Sacred Payment & Dakshina Modal -->
+<div class="payment-modal modal-overlay" id="paymentModal" aria-hidden="true">
+  <div class="modal-box payment-box">
+    <button class="modal-close" data-close-modal="paymentModal" aria-label="Close">&times;</button>
+    <div class="intro-eyebrow">Sacred Offerings &amp; Unlocks</div>
+    <h2>Choose Plan or Offer Dakshina</h2>
+    <p>Unlock comprehensive Parashari &amp; Jaimini readings, 36 Guna Milan Kundli matching, ask specific questions, or offer a voluntary Dakshina contribution.</p>
+    
+    <div class="payment-plans-grid" id="paymentPlansGrid">
+      <div class="plan-card active" data-plan="reveal" data-amount="59">
+        <div class="plan-badge">Popular</div>
+        <h3>Individual Chart</h3>
+        <div class="plan-price">₹59</div>
+        <p>Full chart reading, Yogas, Dashas, Panchang analysis &amp; 5 questions.</p>
+      </div>
+      <div class="plan-card" data-plan="match" data-amount="99">
+        <h3>Kundli Matching</h3>
+        <div class="plan-price">₹99</div>
+        <p>36 Guna Milan, Ashta Koota breakdown, Manglik Dosha &amp; Bhakoot check.</p>
+      </div>
+      <div class="plan-card" data-plan="question" data-amount="29">
+        <h3>Single Question</h3>
+        <div class="plan-price">₹29</div>
+        <p>Ask 1 specific chart-bound question to the AI Jyotish engine.</p>
+      </div>
+      <div class="plan-card" data-plan="dakshina" data-amount="251">
+        <h3>Voluntary Dakshina</h3>
+        <div class="plan-price">Custom</div>
+        <p>Offer a sacred contribution (₹51, ₹108, ₹251, ₹501, ₹1008) for astrology research.</p>
+      </div>
+    </div>
+
+    <div class="payment-form-wrap" style="margin-top:20px;">
+      <div class="dakshina-preset-row" id="dakshinaPresets" style="display:none;">
+        <button type="button" class="dakshina-chip" data-val="51">₹51</button>
+        <button type="button" class="dakshina-chip" data-val="108">₹108</button>
+        <button type="button" class="dakshina-chip active" data-val="251">₹251</button>
+        <button type="button" class="dakshina-chip" data-val="501">₹501</button>
+        <button type="button" class="dakshina-chip" data-val="1008">₹1008</button>
+      </div>
+      
+      <div class="grid" style="margin-bottom:14px;">
+        <div><label>Your Name</label><input id="payNameInput" placeholder="Enter your full name"></div>
+        <div><label>Email Address</label><input id="payEmailInput" type="email" placeholder="Enter your email"></div>
+      </div>
+      
+      <button type="button" id="payProceedBtn" class="primary-pay-btn">
+        Proceed to Secure Payment (₹59)
+      </button>
+      <div id="paymentModalStatus" class="coord-status" style="display:none;margin-top:10px;"></div>
+    </div>
+  </div>
+</div>
+
 <div class="feedback-modal modal-overlay" id="feedbackModal" aria-hidden="true">
   <div class="modal-box feedback-box">
     <button class="modal-close" data-close-modal="feedbackModal" aria-label="Close">&times;</button>
@@ -2584,8 +3102,8 @@ body input, body select, body textarea {
       </form>
       <form id="adminLoginForm" class="access-card">
         <h3>Administration</h3>
-        <p>Private administration portal. Enter your administrator password (default: <code>admin123</code>) to open the console.</p>
-        <input id="adminPasswordInput" type="password" autocomplete="current-password" placeholder="Admin password (default: admin123)">
+        <p>Private administration portal. Enter your administrator password to open the console.</p>
+        <input id="adminPasswordInput" type="password" autocomplete="current-password" placeholder="Enter admin password">
         <button type="submit">Open admin panel</button>
         <div id="adminLoginStatus" class="coord-status" style="display:none"></div>
       </form>
@@ -2595,6 +3113,7 @@ body input, body select, body textarea {
 
 <div class="admin-modal modal-overlay" id="adminModal" aria-hidden="true">
   <div class="admin-shell">
+    <button class="modal-close" data-close-modal="adminModal" aria-label="Close" style="position:absolute;top:18px;right:22px;z-index:20;">&times;</button>
     <div class="admin-topbar">
       <div><span class="admin-kicker">PRIVATE CONSOLE</span><h2>Jyotish Vimarsha Administration</h2></div>
       <div class="admin-top-actions"><button class="small" id="adminRefreshBtn">Refresh</button><button class="small secondary" id="adminLogoutBtn">Lock panel</button></div>
@@ -2628,12 +3147,14 @@ body input, body select, body textarea {
 
 <div class="fixed-utility-bar" aria-label="Share your experience">
   <button type="button" class="utility-btn mystic-sound-btn" id="mysticSoundBtn" title="Toggle ambient 432Hz Om meditation drone">✦ Mystic Atmosphere</button>
-  <button type="button" class="utility-btn feedback-always" id="feedbackBtnFixed">✦ Share your experience</button>
+  <button type="button" class="utility-btn feedback-always" id="feedbackBtnFixed">✦ Feedback</button>
 </div>
 <footer>
   ॐ शान्तिः शान्तिः शान्तिः
   <div class="legal-links"><button type="button" class="legal-feedback" id="feedbackBtnInline">✦ Share your experience</button>·<a href="#" class="legal-link" data-modal="termsModal">Terms &amp; Conditions</a>·<a href="#" class="legal-link" data-modal="privacyModal">Privacy Policy</a></div>
-  <div class="footer-actions"><button type="button" class="footer-link private-access" id="accessBtn" aria-label="Private access"><span>⌁</span> Private access</button></div>
+  <div class="footer-actions">
+    <button type="button" class="footer-link private-access" id="accessBtn" aria-label="Private access"><span>⌁</span> Private access</button>
+  </div>
   <div class="brand">A service by <b class="company-link" id="companyBriefBtn" onclick="openCompanyModal()" title="Click to view company profile &amp; features">Pathania Enterprise Private Limited</b></div>
 </footer>
 </div>
@@ -5131,14 +5652,15 @@ input::placeholder{color:#718086 !important;}
   width: 58px !important;
   height: 58px !important;
   border-radius: 50% !important;
-  object-fit: cover !important;
+  object-fit: contain !important;
   border: 2px solid #fce7b0 !important;
   outline: 1.5px solid rgba(252, 231, 176, 0.5) !important;
   outline-offset: 2px !important;
-  box-shadow: 0 0 20px rgba(252, 231, 176, 0.9), 0 0 35px rgba(127, 197, 192, 0.5), inset 0 0 10px rgba(0, 0, 0, 0.9) !important;
-  filter: contrast(1.22) brightness(1.22) saturate(1.35) !important;
+  box-shadow: 0 0 16px rgba(252, 231, 176, 0.6), 0 0 25px rgba(127, 197, 192, 0.35) !important;
+  filter: none !important;
+  image-rendering: -webkit-optimize-contrast !important;
   background: radial-gradient(circle, #251b32 0%, #0a0614 100%) !important;
-  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease !important;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.3s ease, box-shadow 0.3s ease !important;
   pointer-events: none !important;
   display: block !important;
   margin: 0 auto !important;
@@ -5147,11 +5669,11 @@ input::placeholder{color:#718086 !important;}
 }
 
 .z-sign:hover .z-logo-img, .z-sign.is-active .z-logo-img {
-  transform: scale(1.2) !important;
+  transform: scale(1.15) !important;
   border-color: #ffffff !important;
   outline-color: #ffe8b5 !important;
-  box-shadow: 0 0 32px rgba(255, 232, 181, 1), 0 0 55px rgba(127, 197, 192, 0.85), inset 0 0 14px rgba(0, 0, 0, 0.95) !important;
-  filter: contrast(1.32) brightness(1.3) saturate(1.45) !important;
+  box-shadow: 0 0 28px rgba(255, 232, 181, 0.95), 0 0 45px rgba(127, 197, 192, 0.75) !important;
+  filter: none !important;
 }
 
 .zodiac-wheel .z-sign b {
@@ -5282,22 +5804,30 @@ button:hover{transform:translateY(-1px);filter:brightness(1.035);}
 
 /* Rashi detail column & card positioning */
 .zodiac-side-col {
-  position: absolute !important;
-  right: 34px !important;
-  top: 34px !important;
-  width: 405px !important;
+  position: relative !important;
+  right: auto !important;
+  left: auto !important;
+  top: auto !important;
+  bottom: auto !important;
+  width: 100% !important;
+  max-width: 440px !important;
+  margin: 20px auto 10px !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
   gap: 16px !important;
   z-index: 10 !important;
+  float: none !important;
 }
 
 .zodiac-side-col .zodiac-wheel {
   position: relative !important;
   right: auto !important;
+  left: auto !important;
   top: auto !important;
-  margin: 0 !important;
+  margin: 0 auto !important;
   width: 405px !important;
   height: 405px !important;
 }
@@ -5760,153 +6290,128 @@ window.updateVipUi = updateVipUi;
   </div>
 </div>
 
+<!-- Dainik Panchang Full Details Modal -->
+<div class="modal-overlay" id="panchangDetailModal" onclick="if(event.target===this) closePanchangModal();">
+  <div class="modal-box panchang-modal-box">
+    <button type="button" class="modal-close" onclick="closePanchangModal()" aria-label="Close modal">×</button>
+    <div class="panchang-modal-top">
+      <div class="panchang-modal-kicker">✦ COMPLETE DAINIK PANCHANG & MUHURTA ALMANAC</div>
+      <h2 class="panchang-modal-heading" id="pdtModalHeaderTitle">Today's Detailed Panchang</h2>
+      <div class="panchang-modal-date" id="pdtModalHeaderDate">Loading date & location ephemeris...</div>
+    </div>
+    <div id="pdtModalContent">
+      <div style="text-align: center; padding: 30px; color: #dfba6d;">Loading full Panchang calculations...</div>
+    </div>
+  </div>
+</div>
+
+<!-- Item-Specific Panchang Focus Modal -->
+<div class="modal-overlay" id="panchangSingleModal" onclick="if(event.target===this) closeSpecificPanchangModal();">
+  <div class="modal-box panchang-modal-box" style="max-width: 650px;">
+    <button type="button" class="modal-close" onclick="closeSpecificPanchangModal()" aria-label="Close modal">×</button>
+    <div class="panchang-modal-top">
+      <div class="panchang-modal-kicker" id="psiModalKicker">✦ PANCHANG ELEMENT FOCUS</div>
+      <h2 class="panchang-modal-heading" id="psiModalTitle">Panchang Item</h2>
+    </div>
+    <div id="psiModalBody" style="font-family: 'Manrope', sans-serif; font-size: 14.5px; line-height: 1.7; color: #e2d3b5;">
+      Loading item details...
+    </div>
+  </div>
+</div>
+
+<!-- Zodiac Sign Deep Analysis Modal -->
+<div class="modal-overlay" id="zodiacDetailModal" onclick="if(event.target===this) closeZodiacModal();">
+  <div class="modal-box panchang-modal-box" style="max-width: 700px;">
+    <button type="button" class="modal-close" onclick="closeZodiacModal()" aria-label="Close modal">×</button>
+    <div class="panchang-modal-top" style="display: flex; align-items: center; gap: 18px;">
+      <div id="zdmBadge" style="width: 80px; height: 80px; flex-shrink: 0;"></div>
+      <div>
+        <div class="panchang-modal-kicker">✦ RASHI MANDALA DEEP ANALYSIS</div>
+        <h2 class="panchang-modal-heading" id="zdmTitle">Rashi Title</h2>
+        <div class="panchang-modal-date" id="zdmSubtitle" style="color: #e2ba6e; font-size: 14px; font-weight: 600;">Element & Ruler</div>
+      </div>
+    </div>
+    <div id="zdmBody" style="font-family: 'Manrope', sans-serif; font-size: 14px; line-height: 1.7; color: #e2d3b5; margin-top: 14px;">
+      Loading Zodiac sign profile...
+    </div>
+  </div>
+</div>
+
 <script>
 /* =========================================================
-   MYSTIC OM CHANTING AUDIO SYNTHESIZER (WEB AUDIO API)
+   AUTHENTIC SACRED OM CHANTING AUDIO PLAYER
    ========================================================= */
 const OmChantEngine = (function() {
-  let audioCtx = null;
+  let audioElem = null;
   let isPlaying = false;
-  let masterGain = null;
-  let mainOscillators = [];
-  let binauralOscillators = [];
-  let lfo = null;
-  let formantFilter = null;
-  let delayNode = null;
+  let fadeInterval = null;
 
-  function init() {
-    if (!audioCtx) {
-      const AudioContext = window.AudioContext || window.webkitAudioContext;
-      if (AudioContext) {
-        audioCtx = new AudioContext();
-      }
+  function initAudio() {
+    if (!audioElem) {
+      audioElem = new Audio('/audio/om_chant.mp3');
+      audioElem.loop = true;
+      audioElem.volume = 0.85;
+      audioElem.onerror = function() {
+        if (audioElem && audioElem.src.includes('om_chant.mp3')) {
+          audioElem.src = '/audio/om_chant2.mp3';
+          audioElem.load();
+        }
+      };
     }
   }
 
   function start() {
-    init();
-    if (!audioCtx) return;
-    if (audioCtx.state === 'suspended') {
-      audioCtx.resume();
+    initAudio();
+    if (fadeInterval) clearInterval(fadeInterval);
+    audioElem.volume = 0;
+    const playPromise = audioElem.play();
+    if (playPromise !== undefined) {
+      playPromise.then(() => {
+        isPlaying = true;
+        updateUI(true);
+        let vol = 0;
+        fadeInterval = setInterval(() => {
+          vol += 0.1;
+          if (vol >= 0.85) {
+            vol = 0.85;
+            clearInterval(fadeInterval);
+          }
+          if (audioElem) audioElem.volume = vol;
+        }, 80);
+      }).catch(err => {
+        console.warn("Autoplay prevented or audio load error:", err);
+        if (audioElem) {
+          audioElem.src = '/audio/om_chant2.mp3';
+          audioElem.play().then(() => {
+            isPlaying = true;
+            updateUI(true);
+            audioElem.volume = 0.85;
+          }).catch(e => console.error("Audio failure:", e));
+        }
+      });
     }
-
-    if (isPlaying) return;
-
-    // Master Gain for smooth organic fade-in/fade-out
-    masterGain = audioCtx.createGain();
-    masterGain.gain.setValueAtTime(0.001, audioCtx.currentTime);
-    masterGain.gain.exponentialRampToValueAtTime(0.32, audioCtx.currentTime + 3.5);
-
-    // Cavernous Acoustic Echo Delay Node
-    delayNode = audioCtx.createDelay();
-    delayNode.delayTime.setValueAtTime(0.38, audioCtx.currentTime);
-    const delayFeedback = audioCtx.createGain();
-    delayFeedback.gain.setValueAtTime(0.35, audioCtx.currentTime);
-    
-    // Vocal Formant Bandpass Filter (Simulates "AUM" vocal resonant cavity)
-    formantFilter = audioCtx.createBiquadFilter();
-    formantFilter.type = 'bandpass';
-    formantFilter.frequency.setValueAtTime(432, audioCtx.currentTime);
-    formantFilter.Q.setValueAtTime(3.8, audioCtx.currentTime);
-
-    // Warm Lowpass Filter
-    const lowpass = audioCtx.createBiquadFilter();
-    lowpass.type = 'lowpass';
-    lowpass.frequency.setValueAtTime(680, audioCtx.currentTime);
-
-    // Connect Delay feedback loop
-    formantFilter.connect(lowpass);
-    lowpass.connect(delayNode);
-    delayNode.connect(delayFeedback);
-    delayFeedback.connect(delayNode);
-    delayNode.connect(masterGain);
-    lowpass.connect(masterGain);
-
-    masterGain.connect(audioCtx.destination);
-
-    // Sacred Harmonics:
-    // 54Hz (Sub-bass Root), 108Hz (Vedic Om Fundamental), 136.1Hz (Earth C-sharp Om Frequency)
-    // 216Hz & 272.2Hz (Harmonic Overtones), 432Hz (Cosmic Resonance Tuning)
-    const tones = [
-      { f: 54, type: 'sine', gain: 0.38 },
-      { f: 108, type: 'sine', gain: 0.55 },
-      { f: 136.1, type: 'sine', gain: 0.45 },
-      { f: 216, type: 'triangle', gain: 0.28 },
-      { f: 272.2, type: 'sine', gain: 0.22 },
-      { f: 432, type: 'sine', gain: 0.15 }
-    ];
-
-    mainOscillators = [];
-
-    tones.forEach(item => {
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = item.type;
-      osc.frequency.setValueAtTime(item.f, audioCtx.currentTime);
-      gain.gain.setValueAtTime(item.gain, audioCtx.currentTime);
-
-      osc.connect(gain);
-      gain.connect(formantFilter);
-      osc.start();
-      mainOscillators.push(osc);
-    });
-
-    // Cosmic Schumann Resonance Binaural Offset (7.83 Hz Theta entrainment)
-    try {
-      const merger = audioCtx.createChannelMerger(2);
-      const oscL = audioCtx.createOscillator();
-      const oscR = audioCtx.createOscillator();
-      const gainL = audioCtx.createGain();
-      const gainR = audioCtx.createGain();
-
-      oscL.frequency.setValueAtTime(108, audioCtx.currentTime);
-      oscR.frequency.setValueAtTime(115.83, audioCtx.currentTime); // +7.83Hz Schumann
-
-      gainL.gain.setValueAtTime(0.22, audioCtx.currentTime);
-      gainR.gain.setValueAtTime(0.22, audioCtx.currentTime);
-
-      oscL.connect(gainL); gainL.connect(merger, 0, 0); // Left
-      oscR.connect(gainR); gainR.connect(merger, 0, 1); // Right
-
-      merger.connect(masterGain);
-      oscL.start(); oscR.start();
-      binauralOscillators = [oscL, oscR];
-    } catch(e) {}
-
-    // LFO for slow, deep 9.5-second "A-U-M" diaphragmatic vocal sweep
-    lfo = audioCtx.createOscillator();
-    lfo.frequency.setValueAtTime(0.105, audioCtx.currentTime); // ~9.5 sec cycle
-    const lfoGain = audioCtx.createGain();
-    lfoGain.gain.setValueAtTime(280, audioCtx.currentTime); // sweeps formant frequency
-
-    lfo.connect(formantFilter.frequency);
-    lfo.start();
-
-    isPlaying = true;
-    updateUI(true);
   }
 
   function stop() {
-    if (!isPlaying || !audioCtx || !masterGain) return;
-
-    // Smooth organic 2.5 second fade-out
-    masterGain.gain.setValueAtTime(masterGain.gain.value, audioCtx.currentTime);
-    masterGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 2.5);
-
-    setTimeout(() => {
-      mainOscillators.concat(binauralOscillators).forEach(osc => {
-        try { osc.stop(); osc.disconnect(); } catch(e){}
-      });
-      if (lfo) {
-        try { lfo.stop(); lfo.disconnect(); } catch(e){}
+    if (!audioElem) return;
+    if (fadeInterval) clearInterval(fadeInterval);
+    let vol = audioElem.volume;
+    fadeInterval = setInterval(() => {
+      vol -= 0.1;
+      if (vol <= 0.05) {
+        vol = 0;
+        audioElem.pause();
+        audioElem.currentTime = 0;
+        clearInterval(fadeInterval);
+        isPlaying = false;
+        updateUI(false);
+      } else {
+        if (audioElem) audioElem.volume = vol;
       }
-      mainOscillators = [];
-      binauralOscillators = [];
-      lfo = null;
-      isPlaying = false;
-      updateUI(false);
-    }, 2500);
+    }, 60);
   }
+
+
 
   function toggle() {
     if (isPlaying) stop();
@@ -6312,8 +6817,488 @@ function closeEventDetails() {
   if (modal) modal.classList.remove('open');
 }
 
+function openPanchangModal() {
+  const modal = document.getElementById('panchangDetailModal');
+  if (!modal) return;
+
+  const lat = parseFloat(document.getElementById('f_lat')?.value) || 28.6139;
+  const lon = parseFloat(document.getElementById('f_lon')?.value) || 77.2090;
+  const pData = getDailyPanchangData(new Date(), lat, lon);
+  if (!pData) return;
+
+  const titleEl = document.getElementById('pdtModalHeaderTitle');
+  const dateEl = document.getElementById('pdtModalHeaderDate');
+  const contentEl = document.getElementById('pdtModalContent');
+
+  if (titleEl) titleEl.textContent = `Today's Dainik Panchang — ${pData.dayOfWeek}`;
+  if (dateEl) dateEl.textContent = `${pData.dateStr} · ${pData.hinduCal.hinduDateFormatted} · ${pData.hinduCal.maas} · ${pData.hinduCal.vikramSamvat} · Observer (${lat.toFixed(2)}°N, ${lon.toFixed(2)}°E)`;
+
+  if (contentEl) {
+    contentEl.innerHTML = `
+      <div class="pdt-grid">
+        <div class="pdt-card">
+          <span class="pdt-card-badge">📜 1. TITHI (LUNAR DAY)</span>
+          <span class="pdt-card-title">${pData.tithi}</span>
+          <div class="pdt-card-desc">
+            The tithi governs emotional energy and spiritual vibrations. Ideal for devotional practices, fasting, and aligned activities.
+          </div>
+        </div>
+
+        <div class="pdt-card">
+          <span class="pdt-card-badge">⭐ 2. NAKSHATRA (LUNAR MANSION)</span>
+          <span class="pdt-card-title">${pData.nakshatra}</span>
+          <div class="pdt-card-desc">
+            The constellation where Moon resides today. Sets the psychic atmosphere, creative focus, and temperament of the day.
+          </div>
+        </div>
+
+        <div class="pdt-card">
+          <span class="pdt-card-badge">🌀 3. YOGA (SOLAR-LUNAR SUM)</span>
+          <span class="pdt-card-title">${pData.yoga}</span>
+          <div class="pdt-card-desc">
+            Calculated from the combined longitudes of Sun and Moon. Determines harmony, health, and spiritual alignment.
+          </div>
+        </div>
+
+        <div class="pdt-card">
+          <span class="pdt-card-badge">⚡ 4. KARANA (HALF TITHI)</span>
+          <span class="pdt-card-title">${pData.karana}</span>
+          <div class="pdt-card-desc">
+            Half of a lunar tithi. Governs practical execution, material pursuits, business transactions, and physical labor.
+          </div>
+        </div>
+
+        <div class="pdt-card">
+          <span class="pdt-card-badge">📅 5. VARA (SOLAR DAY)</span>
+          <span class="pdt-card-title">${pData.dayOfWeek}</span>
+          <div class="pdt-card-desc">
+            Ruled by the planetary lord of today. Influences core vitality, stamina, and day-to-day focus.
+          </div>
+        </div>
+
+        <div class="pdt-card" style="border-color: rgba(127, 197, 192, 0.45); background: rgba(127, 197, 192, 0.05);">
+          <span class="pdt-card-badge" style="color: #7fc5c0;">✨ ABHIJIT MUHURAT (SIDDHA WINDOW)</span>
+          <span class="pdt-card-title" style="color: #a3e8e2;">${pData.abhijit}</span>
+          <div class="pdt-card-desc" style="color: #c5e8e4;">
+            The 8th Muhurta of the day. Highly auspicious for starting major ventures, signing contracts, travel, and remedies. Destroys all negative influences.
+          </div>
+        </div>
+
+        <div class="pdt-card" style="border-color: rgba(220, 100, 100, 0.45); background: rgba(220, 100, 100, 0.05);">
+          <span class="pdt-card-badge" style="color: #fca8a8;">⚠️ RAHU KAAL (AVOIDANCE WINDOW)</span>
+          <span class="pdt-card-title" style="color: #fca8a8;">${pData.rahuKaal}</span>
+          <div class="pdt-card-desc" style="color: #fcd2d2;">
+            Period ruled by Rahu. Strictly avoid starting new business contracts, buying major assets, marriage negotiations, or auspicious journeys during this window.
+          </div>
+        </div>
+
+        <div class="pdt-card">
+          <span class="pdt-card-badge">🌅 SUN & CELESTIAL TIMINGS</span>
+          <span class="pdt-card-title" style="font-size: 15px;">Sunrise: ${pData.sun.sunrise} · Sunset: ${pData.sun.sunset}</span>
+          <div class="pdt-card-desc">
+            Total Day Duration: <b>${pData.sun.dayLength}</b><br>
+            Brahma Muhurta: <b>04:24 AM – 05:12 AM</b> (Ideal for Meditation & Japa)<br>
+            Amrit Kaal: <b>08:35 AM – 10:12 AM</b>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: 20px; padding: 20px; background: rgba(223, 186, 109, 0.06); border: 1px solid rgba(223, 186, 109, 0.3); border-radius: 14px;">
+        <h3 style="font-family: 'Cinzel', serif; font-size: 17px; color: #f7e4b8; margin: 0 0 12px 0;">📊 TODAY'S CHOGHADIYA TIMINGS</h3>
+        <p style="font-size: 12px; color: #a3b6be; margin-bottom: 12px;">Choghadiya divides day & night into 8 auspicious and inauspicious time slots for quick muhurta selection.</p>
+        
+        <table class="choghadiya-table">
+          <thead>
+            <tr>
+              <th>TIME SLOT</th>
+              <th>CHOGHADIYA</th>
+              <th>QUALITY & SUITABILITY</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>06:00 AM – 07:30 AM</td><td class="cho-good">Amrit (अमृत)</td><td>Most Auspicious for all work</td></tr>
+            <tr><td>07:30 AM – 09:00 AM</td><td class="cho-bad">Kaal (काल)</td><td>Inauspicious — Avoid new starts</td></tr>
+            <tr><td>09:00 AM – 10:30 AM</td><td class="cho-good">Shubh (शुभ)</td><td>Auspicious for religious & social work</td></tr>
+            <tr><td>10:30 AM – 12:00 PM</td><td class="cho-bad">Roga (रोग)</td><td>Inauspicious — Avoid medicine/deals</td></tr>
+            <tr><td>12:00 PM – 01:30 PM</td><td class="cho-bad">Udveg (उद्वेग)</td><td>Avoid stress or risky financial ventures</td></tr>
+            <tr><td>01:30 PM – 03:00 PM</td><td class="cho-neutral">Chara (चर)</td><td>Good for travel, movement & vehicles</td></tr>
+            <tr><td>03:00 PM – 04:30 PM</td><td class="cho-good">Labh (लाभ)</td><td>Highly Auspicious for business gain</td></tr>
+            <tr><td>04:30 PM – 06:00 PM</td><td class="cho-good">Amrit (अमृत)</td><td>Nectarous time for evening remedies</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      ${(pData.activeEvents.length > 0 || pData.upcomingEvents.length > 0) ? `
+        <div style="margin-top: 20px;">
+          <h3 style="font-family: 'Cinzel', serif; font-size: 17px; color: #7fc5c0; margin: 0 0 10px 0;">🌺 TODAY & UPCOMING FESTIVALS</h3>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+            ${pData.activeEvents.map(e => `<span class="event-pill active-event" onclick="openEventDetails('${encodeURIComponent(e.name)}')" title="Click for event brief"><span class="pulse-dot"></span> ${e.icon} <b>Active Today:</b> ${e.name}</span>`).join('')}
+            ${pData.upcomingEvents.map(e => `<span class="event-pill" onclick="openEventDetails('${encodeURIComponent(e.name)}')" title="Click for event brief">${e.icon} <b>${e.name}</b> (${e.daysAway === 1 ? 'Tomorrow' : 'in ' + e.daysAway + ' days'})</span>`).join('')}
+          </div>
+        </div>
+      ` : ''}
+    `;
+  }
+
+  modal.classList.add('open');
+}
+
+function closePanchangModal() {
+  const modal = document.getElementById('panchangDetailModal');
+  if (modal) modal.classList.remove('open');
+}
+
+/* Specific Single Panchang Item Modal */
+function openSpecificPanchangDetail(type) {
+  const modal = document.getElementById('panchangSingleModal');
+  const title = document.getElementById('psiModalTitle');
+  const kicker = document.getElementById('psiModalKicker');
+  const body = document.getElementById('psiModalBody');
+
+  if (!modal || !body) return;
+
+  const now = new Date();
+  const pData = calculateCurrentPanchangData(now);
+
+  const detailMap = {
+    tithi: {
+      kicker: "LUNAR DAY (तिथि)",
+      title: pData.tithi,
+      content: `
+        <div style="background: rgba(216, 160, 76, 0.1); border: 1px solid rgba(216, 160, 76, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+          <div style="font-size: 20px; font-weight: bold; color: #f1d48a; font-family: 'Cinzel', serif;">${pData.tithi}</div>
+          <div style="font-size: 13px; color: #a3b6be; margin-top: 4px;">Paksha: <b>${pData.paksha} Paksha</b> · Vikram Samvat 2081</div>
+        </div>
+        <p style="color: #d1dfd8; line-height: 1.6; font-size: 14px;">
+          <b>Spiritual Significance:</b> Tithi represents the distance between the Sun and Moon (each 12° phase). It governs emotional stability, relationship dynamics, and karmic timing for daily activities.
+        </p>
+        <div style="margin-top: 14px; padding: 12px; background: rgba(0,0,0,0.3); border-radius: 8px;">
+          <span style="color: #7fc5c0; font-size: 13px; font-weight: bold;">✦ Recommended Actions Today:</span>
+          <p style="margin: 6px 0 0 0; color: #b0c2cc; font-size: 13px;">Perform sacred rituals, spiritual practices, mantra chanting, and honor family traditions corresponding to ${pData.paksha} Paksha energy.</p>
+        </div>
+      `
+    },
+    nakshatra: {
+      kicker: "MOON CONSTELLATION (नक्षत्र)",
+      title: pData.nakshatra,
+      content: `
+        <div style="background: rgba(127, 197, 192, 0.1); border: 1px solid rgba(127, 197, 192, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+          <div style="font-size: 20px; font-weight: bold; color: #7fc5c0; font-family: 'Cinzel', serif;">${pData.nakshatra}</div>
+          <div style="font-size: 13px; color: #a3b6be; margin-top: 4px;">Current Zodiac Transit: Moon in Vedic Constellation</div>
+        </div>
+        <p style="color: #d1dfd8; line-height: 1.6; font-size: 14px;">
+          <b>Cosmic Influence:</b> Nakshatra is the stellar mansion where Chandra (Moon) resides today. It shapes subconscious moods, intuition, creative spark, and mental harmony.
+        </p>
+        <div style="margin-top: 14px; padding: 12px; background: rgba(0,0,0,0.3); border-radius: 8px;">
+          <span style="color: #f1d48a; font-size: 13px; font-weight: bold;">✦ Nakshatra Guidance:</span>
+          <p style="margin: 6px 0 0 0; color: #b0c2cc; font-size: 13px;">Favorable for focused creative work, meditation, internal reflection, and intellectual undertakings under ${pData.nakshatra}'s cosmic vibrations.</p>
+        </div>
+      `
+    },
+    yoga: {
+      kicker: "SOLAR-LUNAR SUM YOGA (योग)",
+      title: pData.yoga,
+      content: `
+        <div style="background: rgba(212, 175, 55, 0.1); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+          <div style="font-size: 20px; font-weight: bold; color: #f7e4b8; font-family: 'Cinzel', serif;">${pData.yoga}</div>
+          <div style="font-size: 13px; color: #a3b6be; margin-top: 4px;">Vedic Angular Combination of Sun & Moon</div>
+        </div>
+        <p style="color: #d1dfd8; line-height: 1.6; font-size: 14px;">
+          <b>Vedic Meaning:</b> Yoga measures the joint longitudes of Surya (Sun) and Chandra (Moon) divided into 27 unique cosmic combinations. It determines bodily health, vitality, and aura strength today.
+        </p>
+        <div style="margin-top: 14px; padding: 12px; background: rgba(0,0,0,0.3); border-radius: 8px;">
+          <span style="color: #7fc5c0; font-size: 13px; font-weight: bold;">✦ Health & Yoga Practice:</span>
+          <p style="margin: 6px 0 0 0; color: #b0c2cc; font-size: 13px;">${pData.yoga} Yoga supports balanced pranayama breathing, yogic postures, and physical wellness routines.</p>
+        </div>
+      `
+    },
+    karana: {
+      kicker: "HALF LUNAR TITHI (करण)",
+      title: pData.karana,
+      content: `
+        <div style="background: rgba(180, 140, 210, 0.1); border: 1px solid rgba(180, 140, 210, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+          <div style="font-size: 20px; font-weight: bold; color: #e2c6f7; font-family: 'Cinzel', serif;">${pData.karana}</div>
+          <div style="font-size: 13px; color: #a3b6be; margin-top: 4px;">Sub-division (1/2) of Active Tithi</div>
+        </div>
+        <p style="color: #d1dfd8; line-height: 1.6; font-size: 14px;">
+          <b>Action & Commerce:</b> Karana dictates the outcome of practical actions, commercial transactions, physical execution, and business dealings.
+        </p>
+        <div style="margin-top: 14px; padding: 12px; background: rgba(0,0,0,0.3); border-radius: 8px;">
+          <span style="color: #f1d48a; font-size: 13px; font-weight: bold;">✦ Practical Advice:</span>
+          <p style="margin: 6px 0 0 0; color: #b0c2cc; font-size: 13px;">Execute planned tasks with diligence. Good for commercial activities and resolving active pending work.</p>
+        </div>
+      `
+    },
+    abhijit: {
+      kicker: "SIDDHA WINDOW (अभिजीत मुहूर्त)",
+      title: pData.abhijit,
+      content: `
+        <div style="background: rgba(127, 197, 192, 0.15); border: 1px solid rgba(127, 197, 192, 0.4); border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+          <div style="font-size: 20px; font-weight: bold; color: #a3e8e2; font-family: 'Cinzel', serif;">✨ ${pData.abhijit}</div>
+          <div style="font-size: 13px; color: #7fc5c0; margin-top: 4px;">Midday Auspicious Muhurta Window</div>
+        </div>
+        <p style="color: #d1dfd8; line-height: 1.6; font-size: 14px;">
+          <b>The Victory Hour:</b> Abhijit is Lord Vishnu's blessed time slot (8th Muhurta of midday). It neutralizes all minor astrological doshas and brings success to newly initiated endeavors.
+        </p>
+        <div style="margin-top: 14px; padding: 12px; background: rgba(0,0,0,0.3); border-radius: 8px;">
+          <span style="color: #a3e8e2; font-size: 13px; font-weight: bold;">✦ Best Used For:</span>
+          <p style="margin: 6px 0 0 0; color: #b0c2cc; font-size: 13px;">Signing contracts, initiating travel, purchasing assets, launching projects, or conducting important discussions.</p>
+        </div>
+      `
+    },
+    rahu: {
+      kicker: "AVOIDANCE WINDOW (राहु काल)",
+      title: pData.rahuKaal,
+      content: `
+        <div style="background: rgba(220, 100, 100, 0.15); border: 1px solid rgba(220, 100, 100, 0.4); border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+          <div style="font-size: 20px; font-weight: bold; color: #fca8a8; font-family: 'Cinzel', serif;">⚠️ ${pData.rahuKaal}</div>
+          <div style="font-size: 13px; color: #fca8a8; margin-top: 4px;">Daily Inauspicious Rahu Period</div>
+        </div>
+        <p style="color: #d1dfd8; line-height: 1.6; font-size: 14px;">
+          <b>Shadow Planet Influence:</b> Rahu Kaal occurs every day for approx 90 minutes. It is governed by Rahu and is prone to illusions, misunderstandings, and unexpected obstacles.
+        </p>
+        <div style="margin-top: 14px; padding: 12px; background: rgba(0,0,0,0.3); border-radius: 8px;">
+          <span style="color: #fca8a8; font-size: 13px; font-weight: bold;">✦ Cautions During Rahu Kaal:</span>
+          <p style="margin: 6px 0 0 0; color: #fcd2d2; font-size: 13px;">Avoid starting new business deals, signing agreements, buying property/vehicles, or commencing important journeys during this timeframe.</p>
+        </div>
+      `
+    },
+    brahma: {
+      kicker: "MEDITATION MUHURTA (ब्रह्म मुहूर्त)",
+      title: "04:24 AM – 05:12 AM",
+      content: `
+        <div style="background: rgba(241, 212, 138, 0.15); border: 1px solid rgba(241, 212, 138, 0.4); border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+          <div style="font-size: 20px; font-weight: bold; color: #f1d48a; font-family: 'Cinzel', serif;">🧘 04:24 AM – 05:12 AM</div>
+          <div style="font-size: 13px; color: #d8a04c; margin-top: 4px;">Ambrosial Dawn Hour of Creation</div>
+        </div>
+        <p style="color: #d1dfd8; line-height: 1.6; font-size: 14px;">
+          <b>The Creator's Hour:</b> Occurring roughly 1 hour 36 minutes before sunrise, Brahma Muhurta is filled with pure Sattva (spiritual purity). The mind is naturally serene and receptive to higher wisdom.
+        </p>
+        <div style="margin-top: 14px; padding: 12px; background: rgba(0,0,0,0.3); border-radius: 8px;">
+          <span style="color: #f1d48a; font-size: 13px; font-weight: bold;">✦ Sacred Practices:</span>
+          <p style="margin: 6px 0 0 0; color: #b0c2cc; font-size: 13px;">Ideal time for Om chanting, dhyana (meditation), scripture study, and setting positive daily intentions.</p>
+        </div>
+      `
+    },
+    sun: {
+      kicker: "SURYA TIMINGS (सूर्योदय - सूर्यास्त)",
+      title: `Sunrise: ${pData.sun.sunrise} · Sunset: ${pData.sun.sunset}`,
+      content: `
+        <div style="background: rgba(216, 160, 76, 0.15); border: 1px solid rgba(216, 160, 76, 0.4); border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+          <div style="font-size: 18px; font-weight: bold; color: #f1d48a; font-family: 'Cinzel', serif;">🌅 Sunrise: ${pData.sun.sunrise}</div>
+          <div style="font-size: 18px; font-weight: bold; color: #f1d48a; font-family: 'Cinzel', serif; margin-top: 6px;">🌇 Sunset: ${pData.sun.sunset}</div>
+          <div style="font-size: 13px; color: #a3b6be; margin-top: 8px;">Total Day Duration (Dinamana): <b>${pData.sun.dayLength}</b></div>
+        </div>
+        <p style="color: #d1dfd8; line-height: 1.6; font-size: 14px;">
+          <b>Solar Energy Flow:</b> Surya (Sun) is the soul (Atmakaraka) of Vedic astrology. Sunrise marks the awakening of prana and vital fire in nature, while sunset transitions into receptive lunar energy.
+        </p>
+      `
+    }
+  };
+
+  const info = detailMap[type] || {
+    kicker: "DAINIK PANCHANG DETAIL",
+    title: "Vedic Calendar Element",
+    content: `<p style="color:#d1dfd8;">Current status: <b>${pData.tithi}</b> in ${pData.paksha} Paksha under ${pData.nakshatra} Nakshatra.</p>`
+  };
+
+  kicker.textContent = info.kicker;
+  title.textContent = info.title;
+  body.innerHTML = info.content;
+
+  modal.classList.add('open');
+}
+
+function closeSpecificPanchangDetail() {
+  const modal = document.getElementById('panchangSingleModal');
+  if (modal) modal.classList.remove('open');
+}
+
+/* Specific Zodiac Detail Modal */
+function openSpecificZodiacModal(zodiacKey) {
+  const modal = document.getElementById('zodiacDetailModal');
+  const title = document.getElementById('zdmModalTitle');
+  const kicker = document.getElementById('zdmModalKicker');
+  const body = document.getElementById('zdmModalBody');
+
+  if (!modal || !body) return;
+
+  const zodiacData = {
+    aries: {
+      name: "Aries (मेष - Mesh)",
+      lord: "Mars (मंगल)",
+      element: "Fire (अग्नि)",
+      color: "Bright Red / Crimson",
+      number: "9, 1",
+      icon: "/images/zodiac_svg/aries.svg",
+      prediction: "Today brings strong initiative, high energy, and courageous momentum. Mars inspires quick decision-making and leadership at work.",
+      guidance: "Channel passion productively without rushing into hasty verbal arguments."
+    },
+    taurus: {
+      name: "Taurus (वृषभ - Vrishabha)",
+      lord: "Venus (शुक्र)",
+      element: "Earth (पृथ्वी)",
+      color: "Emerald Green & White",
+      number: "6, 2",
+      icon: "/images/zodiac_svg/taurus.svg",
+      prediction: "Focus is on financial stability, luxury, artistic pursuits, and family comfort. Excellent day for long-term investments and creative harmony.",
+      guidance: "Enjoy earthly pleasures with mindfulness and stay open to positive financial suggestions."
+    },
+    gemini: {
+      name: "Gemini (मिथुन - Mithuna)",
+      lord: "Mercury (बुध)",
+      element: "Air (वायु)",
+      color: "Yellow & Sky Blue",
+      number: "5, 3",
+      icon: "/images/zodiac_svg/gemini.svg",
+      prediction: "Intellectual agility, lively communication, networking, and sharp business logic highlight your day.",
+      guidance: "Maintain focus on your primary objective rather than scattering energy across too many tasks."
+    },
+    cancer: {
+      name: "Cancer (कर्क - Karka)",
+      lord: "Moon (चन्द्र)",
+      element: "Water (जल)",
+      color: "Pearl White & Silver",
+      number: "2, 7",
+      icon: "/images/zodiac_svg/cancer.svg",
+      prediction: "Heightened intuition, deep emotional warmth, and strong protective instincts toward loved ones and home.",
+      guidance: "Trust your gut feelings in personal matters while keeping emotional boundaries clear."
+    },
+    leo: {
+      name: "Leo (सिंह - Simha)",
+      lord: "Sun (सूर्य)",
+      element: "Fire (अग्नि)",
+      color: "Gold & Saffron",
+      number: "1, 5",
+      icon: "/images/zodiac_svg/leo.svg",
+      prediction: "Radiant charisma, natural authority, and recognition from peers or superiors mark your transit today.",
+      guidance: "Lead with generosity and encourage your team or family members warmly."
+    },
+    virgo: {
+      name: "Virgo (कन्या - Kanya)",
+      lord: "Mercury (बुध)",
+      element: "Earth (पृथ्वी)",
+      color: "Olive Green & Cream",
+      number: "5, 8",
+      icon: "/images/zodiac_svg/virgo.svg",
+      prediction: "Precision, analytical problem solving, health organization, and structured execution bring solid accomplishments.",
+      guidance: "Avoid over-analyzing minor flaws; celebrate steady progress."
+    },
+    libra: {
+      name: "Libra (तुला - Tula)",
+      lord: "Venus (शुक्र)",
+      element: "Air (वायु)",
+      color: "Royal Blue & Pastel Pink",
+      number: "6, 7",
+      icon: "/images/zodiac_svg/libra.svg",
+      prediction: "Harmonious relationship developments, aesthetic refinement, and diplomatic balance grace your endeavors today.",
+      guidance: "Make firm decisions gracefully when faced with competing options."
+    },
+    scorpio: {
+      name: "Scorpio (वृश्चिक - Vrishchika)",
+      lord: "Mars / Ketu (मंगल/केतु)",
+      element: "Water (जल)",
+      color: "Maroon & Dark Violet",
+      number: "9, 4",
+      icon: "/images/zodiac_svg/scorpio.svg",
+      prediction: "Deep transformative insight, intense focus, strategic research, and spiritual willpower guide your path.",
+      guidance: "Channel deep emotions into constructive research and self-mastery."
+    },
+    sagittarius: {
+      name: "Sagittarius (धनु - Dhanu)",
+      lord: "Jupiter (गुरु/बृहस्पति)",
+      element: "Fire (अग्नि)",
+      color: "Bright Yellow & Orange",
+      number: "3, 9",
+      icon: "/images/zodiac_svg/sagittarius.svg",
+      prediction: "Optimism, higher philosophical learning, auspicious fortune, and wisdom illuminate your horoscope today.",
+      guidance: "Share your knowledge generously and remain receptive to spiritual guidance."
+    },
+    capricorn: {
+      name: "Capricorn (मकर - Makara)",
+      lord: "Saturn (शनि)",
+      element: "Earth (पृथ्वी)",
+      color: "Dark Blue & Charcoal Gray",
+      number: "8, 4",
+      icon: "/images/zodiac_svg/capricorn.svg",
+      prediction: "Disciplined perseverance, career milestone planning, and pragmatic execution yield solid long-term success.",
+      guidance: "Patience and structured consistency will unlock major rewards."
+    },
+    aquarius: {
+      name: "Aquarius (कुम्भ - Kumbha)",
+      lord: "Saturn / Rahu (शनि/राहु)",
+      element: "Air (वायु)",
+      color: "Electric Blue & Turquoise",
+      number: "8, 7",
+      icon: "/images/zodiac_svg/aquarius.svg",
+      prediction: "Innovative vision, community collaboration, humanitarian thinking, and fresh breakthroughs inspire your day.",
+      guidance: "Embrace unique ideas and share your vision with like-minded associates."
+    },
+    pisces: {
+      name: "Pisces (मीन - Meena)",
+      lord: "Jupiter (गुरु)",
+      element: "Water (जल)",
+      color: "Sea Green & Gold",
+      number: "3, 12",
+      icon: "/images/zodiac_svg/pisces.svg",
+      prediction: "Compassionate spiritual empathy, artistic imagination, and tranquil inner peace surround your horoscope.",
+      guidance: "Dedicate time to meditation, music, or spiritual contemplation."
+    }
+  };
+
+  const key = (zodiacKey || 'aries').toLowerCase();
+  const z = zodiacData[key] || zodiacData['aries'];
+
+  kicker.textContent = "JYOTISH RASHI MANDALA";
+  title.textContent = z.name;
+
+  body.innerHTML = `
+    <div style="display: flex; align-items: center; gap: 20px; background: rgba(216, 160, 76, 0.08); border: 1px solid rgba(216, 160, 76, 0.3); border-radius: 14px; padding: 18px; margin-bottom: 20px;">
+      <img src="${z.icon}" alt="${z.name}" style="width: 72px; height: 72px; object-fit: contain; filter: drop-shadow(0 0 10px rgba(241, 212, 138, 0.5)); flex-shrink: 0;" />
+      <div>
+        <div style="font-size: 22px; font-weight: bold; color: #f1d48a; font-family: 'Cinzel', serif;">${z.name}</div>
+        <div style="font-size: 13px; color: #7fc5c0; margin-top: 4px;">Ruler: <b>${z.lord}</b> · Element: <b>${z.element}</b></div>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+      <div style="background: rgba(0,0,0,0.25); padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08);">
+        <span style="font-size: 11px; color: #a3b6be; text-transform: uppercase;">Auspicious Color</span>
+        <div style="font-size: 14px; font-weight: bold; color: #f7e4b8; margin-top: 2px;">${z.color}</div>
+      </div>
+      <div style="background: rgba(0,0,0,0.25); padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08);">
+        <span style="font-size: 11px; color: #a3b6be; text-transform: uppercase;">Lucky Numbers</span>
+        <div style="font-size: 14px; font-weight: bold; color: #7fc5c0; margin-top: 2px;">${z.number}</div>
+      </div>
+    </div>
+
+    <div style="margin-bottom: 16px;">
+      <h4 style="font-size: 15px; color: #f1d48a; margin: 0 0 8px 0; font-family: 'Cinzel', serif;">✦ TODAY'S HOROSCOPE PREDICTION</h4>
+      <p style="font-size: 14px; color: #d1dfd8; line-height: 1.6; margin: 0;">${z.prediction}</p>
+    </div>
+
+    <div style="background: rgba(127, 197, 192, 0.08); border-left: 3px solid #7fc5c0; padding: 12px 16px; border-radius: 0 10px 10px 0;">
+      <span style="font-size: 12px; font-weight: bold; color: #7fc5c0; text-transform: uppercase;">Vedic Guidance</span>
+      <p style="font-size: 13px; color: #b0c2cc; margin: 4px 0 0 0;">${z.guidance}</p>
+    </div>
+  `;
+
+  modal.classList.add('open');
+}
+
+function closeSpecificZodiacModal() {
+  const modal = document.getElementById('zodiacDetailModal');
+  if (modal) modal.classList.remove('open');
+}
+
 window.openEventDetails = openEventDetails;
 window.closeEventDetails = closeEventDetails;
+window.openPanchangModal = openPanchangModal;
+window.closePanchangModal = closePanchangModal;
+window.openSpecificPanchangDetail = openSpecificPanchangDetail;
+window.closeSpecificPanchangDetail = closeSpecificPanchangDetail;
+window.openSpecificZodiacModal = openSpecificZodiacModal;
+window.closeSpecificZodiacModal = closeSpecificZodiacModal;
 </script>
 
 <script>
@@ -6328,4 +7313,109 @@ window.addEventListener('load',()=>{
   setInterval(loadCurrentSky,120000);
 });
 document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') loadCurrentSky(); });
+
+/* Admin Portal & Payment Modal Trigger Handlers */
+window.openAdminPortal = function() {
+  if (window.adminToken) {
+    open('adminModal');
+    if (typeof loadAdmin === 'function') loadAdmin();
+  } else {
+    open('accessModal');
+  }
+};
+
+window.openPaymentModal = function(defaultPlan = 'reveal') {
+  open('paymentModal');
+  window.selectPaymentPlan(defaultPlan);
+};
+
+window.activePaymentPlan = 'reveal';
+window.activePaymentAmount = 59;
+
+window.selectPaymentPlan = function(plan) {
+  const cards = document.querySelectorAll('#paymentPlansGrid .plan-card');
+  let amt = 59;
+  cards.forEach(card => {
+    if (card.dataset.plan === plan) {
+      card.classList.add('active');
+      amt = parseInt(card.dataset.amount, 10) || 59;
+    } else {
+      card.classList.remove('active');
+    }
+  });
+
+  const presets = document.getElementById('dakshinaPresets');
+  if (plan === 'dakshina') {
+    if (presets) presets.style.display = 'flex';
+    amt = 251;
+  } else {
+    if (presets) presets.style.display = 'none';
+  }
+
+  window.activePaymentPlan = plan;
+  window.activePaymentAmount = amt;
+
+  const btn = document.getElementById('payProceedBtn');
+  if (btn) btn.textContent = `Proceed to Secure Payment (₹${amt})`;
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Plan card clicks inside payment modal
+  document.querySelectorAll('#paymentPlansGrid .plan-card').forEach(card => {
+    card.addEventListener('click', () => {
+      window.selectPaymentPlan(card.dataset.plan);
+    });
+  });
+
+  // Dakshina preset chips
+  document.querySelectorAll('#dakshinaPresets .dakshina-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('#dakshinaPresets .dakshina-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      const val = parseInt(chip.dataset.val, 10) || 251;
+      window.activePaymentAmount = val;
+      const btn = document.getElementById('payProceedBtn');
+      if (btn) btn.textContent = `Proceed to Secure Payment (₹${val})`;
+    });
+  });
+
+  // Pay Proceed button
+  document.getElementById('payProceedBtn')?.addEventListener('click', async () => {
+    const status = document.getElementById('paymentModalStatus');
+    if (status) {
+      status.style.display = 'block';
+      status.className = 'coord-status';
+      status.textContent = 'Processing payment request…';
+    }
+    try {
+      const plan = window.activePaymentPlan || 'reveal';
+      const success = await window.requestPaidAccess(plan);
+      if (success) {
+        if (status) {
+          status.className = 'coord-status success';
+          status.textContent = '✨ Payment Verified & Unlocked!';
+        }
+        setTimeout(() => {
+          close('paymentModal');
+          if (status) status.style.display = 'none';
+        }, 1200);
+      } else {
+        if (status) {
+          status.className = 'coord-status error';
+          status.textContent = 'Payment was not completed.';
+        }
+      }
+    } catch (err) {
+      if (status) {
+        status.className = 'coord-status error';
+        status.textContent = err.message || 'Payment failed.';
+      }
+    }
+  });
+
+  // Premium unlock button trigger payment modal
+  document.getElementById('premiumUnlockBtn')?.addEventListener('click', () => {
+    window.openPaymentModal('reveal');
+  });
+});
 </script>
