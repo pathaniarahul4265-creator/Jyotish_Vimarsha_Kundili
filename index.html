@@ -3148,7 +3148,7 @@ body input, body select, body textarea {
 </div>
 
 <div class="fixed-utility-bar" aria-label="Share your experience">
-  <button type="button" class="utility-btn mystic-sound-btn" id="mysticSoundBtn" title="Toggle ambient 432Hz Om meditation drone">✦ Mystic Atmosphere</button>
+  <button type="button" class="utility-btn mystic-sound-btn" id="mysticSoundBtn" title="Toggle ambient 432Hz Om meditation drone">✦ Resonate with Universe </button>
   <button type="button" class="utility-btn feedback-always" id="feedbackBtnFixed">✦ Feedback</button>
 </div>
 <footer>
@@ -3478,7 +3478,7 @@ window.PAYWALL_CONFIG = {
         osc3.start();
         isPlaying = true;
         btn.classList.add('playing');
-        btn.innerHTML = '🔊 Mystic Atmosphere ON';
+        btn.innerHTML = '🔊 Resonate with Universe ON';
       } catch(e) { console.log('Audio init error:', e); }
     } else {
       if(gainNode && audioCtx) {
@@ -3487,12 +3487,12 @@ window.PAYWALL_CONFIG = {
           try { osc1?.stop(); osc2?.stop(); osc3?.stop(); } catch(e){}
           isPlaying = false;
           btn.classList.remove('playing');
-          btn.innerHTML = '✦ Mystic Atmosphere';
+          btn.innerHTML = '✦ Resonate with Universe';
         }, 1200);
       } else {
         isPlaying = false;
         btn.classList.remove('playing');
-        btn.innerHTML = '✦ Mystic Atmosphere';
+        btn.innerHTML = '✦ Rasonate with Universe';
       }
     }
   });
@@ -6576,7 +6576,7 @@ const OmChantEngine = (function() {
         btnUtil.innerHTML = `<span>⏹</span> Om Chanting Active`;
         btnUtil.classList.add('active-chanting');
       } else {
-        btnUtil.innerHTML = `✦ Mystic Atmosphere`;
+        btnUtil.innerHTML = `✦ Resonate with Universe`;
         btnUtil.classList.remove('active-chanting');
       }
     }
