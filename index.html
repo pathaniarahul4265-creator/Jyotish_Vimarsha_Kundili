@@ -248,30 +248,31 @@ footer{text-align:center;color:var(--muted);font-size:13px;margin-top:44px;lette
   .intro-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
   .intro-actions button{width:auto;padding:12px 22px;}
   .intro-note{color:#9183aa;font-size:12.5px;}
-  .astrology-intro{position:relative;overflow:hidden;margin-bottom:30px;padding:42px 42px 34px;border:1px solid rgba(232,194,116,.24);border-radius:22px;background:radial-gradient(circle at 78% 25%,rgba(95,75,190,.24),transparent 30%),radial-gradient(circle at 18% 70%,rgba(205,120,48,.12),transparent 32%),linear-gradient(145deg,rgba(18,14,38,.96),rgba(7,7,20,.92));box-shadow:0 28px 90px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.06);min-height:620px;}
+  .astrology-intro{position:relative;overflow:hidden;margin-bottom:30px;padding:42px 42px 34px;border:1px solid rgba(232,194,116,.24);border-radius:22px;background:radial-gradient(circle at 78% 25%,rgba(95,75,190,.24),transparent 30%),radial-gradient(circle at 18% 70%,rgba(205,120,48,.12),transparent 32%),linear-gradient(145deg,rgba(18,14,38,.96),rgba(7,7,20,.92));box-shadow:0 28px 90px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.06);min-height:auto;box-sizing:border-box;}
   .astrology-intro:after{content:"";position:absolute;inset:12px;border:1px solid rgba(232,194,116,.08);border-radius:17px;pointer-events:none;}
-  .intro-copy{position:relative;z-index:3;max-width:650px;padding-right:20px;}
+  .intro-top-row{display:grid!important;grid-template-columns:1fr 380px!important;gap:32px!important;align-items:center!important;position:relative!important;z-index:3!important;width:100%!important;box-sizing:border-box!important;}
+  .intro-copy{position:relative!important;z-index:3!important;max-width:100%!important;padding-right:0!important;}
   .intro-card h2,.astrology-intro h2{font-family:'Marcellus',serif;font-weight:600;font-size:34px;line-height:1.16;color:#f1d48b;margin:0 0 18px;letter-spacing:.01em;}
   .astrology-intro h2 em{font-family:'Cormorant Garamond',serif;font-weight:500;color:#fff2cf;}
   .secondary-lead{color:#c3b4d0!important;font-size:16px!important;}
   .intro-orbit{position:absolute;border:1px solid rgba(232,194,116,.12);border-radius:50%;pointer-events:none;animation:spin 70s linear infinite;}
   .orbit-a{width:720px;height:720px;right:-330px;top:-170px;}.orbit-b{width:520px;height:520px;right:-230px;top:-70px;animation-direction:reverse;}
-  .zodiac-side-col{position:relative;z-index:3;width:100%;max-width:440px;margin:20px auto 10px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;}
-  .zodiac-wheel{position:relative!important;right:auto!important;top:auto!important;left:auto!important;margin:0 auto!important;width:370px!important;height:370px!important;max-width:100%!important;border-radius:50%;z-index:2;filter:drop-shadow(0 0 25px rgba(219,169,68,.18));box-sizing:border-box;}
+  .zodiac-side-col{position:relative!important;z-index:3!important;width:100%!important;max-width:380px!important;margin:0 auto!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;text-align:center!important;box-sizing:border-box!important;}
+  .zodiac-wheel{position:relative!important;right:auto!important;top:auto!important;left:auto!important;margin:0 auto!important;width:330px!important;height:330px!important;max-width:100%!important;border-radius:50%;z-index:2;filter:drop-shadow(0 0 20px rgba(219,169,68,.18));box-sizing:border-box;}
   .zodiac-wheel:before,.zodiac-wheel:after{content:"";position:absolute;inset:25px;border:1px solid rgba(232,194,116,.34);border-radius:50%;box-shadow:0 0 0 18px rgba(232,194,116,.035),0 0 0 44px rgba(112,89,201,.035);}
   .zodiac-wheel:after{inset:75px;border-style:dashed;animation:spin 90s linear infinite;}
   .wheel-glow{position:absolute;inset:105px;border-radius:50%;background:radial-gradient(circle,rgba(229,178,75,.18),rgba(94,68,173,.08) 45%,transparent 70%);}
-  .wheel-core{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:105px;height:105px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid rgba(232,194,116,.38);background:rgba(10,8,23,.82);box-shadow:0 0 35px rgba(224,139,46,.16);color:#e8c274;z-index:3;text-align:center;}
-  .wheel-core span{font-size:29px;line-height:1;}.wheel-core small{font-family:'Marcellus',serif;font-size:8px;letter-spacing:.14em;line-height:1.4;color:#b8a5c8;margin-top:7px;}
-  .z-sign{position:absolute;left:50%;top:50%;width:68px;height:68px;margin:-34px;font-size:28px;color:#efd38a;text-align:center;text-shadow:0 0 15px rgba(232,194,116,.25);transform:rotate(var(--a)) translateY(-150px) rotate(calc(var(--a) * -1));}
-  .z-sign b{display:block;font-family:'Marcellus',serif;font-size:7px;letter-spacing:.08em;color:#9f91b5;text-transform:uppercase;margin-top:2px;}
+  .wheel-core{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:95px;height:95px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid rgba(232,194,116,.38);background:rgba(10,8,23,.82);box-shadow:0 0 35px rgba(224,139,46,.16);color:#e8c274;z-index:3;text-align:center;}
+  .wheel-core span{font-size:26px;line-height:1;}.wheel-core small{font-family:'Marcellus',serif;font-size:7.5px;letter-spacing:.14em;line-height:1.4;color:#b8a5c8;margin-top:5px;}
+  .z-sign{position:absolute;left:50%;top:50%;width:58px;height:58px;margin:-29px;font-size:24px;color:#efd38a;text-align:center;text-shadow:0 0 12px rgba(232,194,116,.25);transform:rotate(var(--a)) translateY(-138px) rotate(calc(var(--a) * -1));}
+  .z-sign b{display:block;font-family:'Marcellus',serif;font-size:6.5px;letter-spacing:.06em;color:#9f91b5;text-transform:uppercase;margin-top:1px;}
   .z1{--a:0deg}.z2{--a:30deg}.z3{--a:60deg}.z4{--a:90deg}.z5{--a:120deg}.z6{--a:150deg}.z7{--a:180deg}.z8{--a:210deg}.z9{--a:240deg}.z10{--a:270deg}.z11{--a:300deg}.z12{--a:330deg}
-  .astrology-pillars{position:relative;z-index:4;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:690px;margin:28px 0 26px;}
+  .astrology-pillars{position:relative;z-index:4;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:100%;margin:28px 0 26px;}
   .astrology-pillars>div{padding:13px 14px;border:1px solid rgba(216,165,61,.14);border-radius:12px;background:rgba(3,3,12,.28);}.astrology-pillars span{color:#e6bd69;font-size:17px;display:block;margin-bottom:4px}.astrology-pillars strong{display:block;font-family:'Marcellus',serif;font-size:11px;color:#ead18f;letter-spacing:.08em}.astrology-pillars small{display:block;color:#9586aa;font-size:11px;line-height:1.45;margin-top:4px}
   .how-it-works{position:relative;z-index:4;margin-top:24px;max-width:100%;}.how-title{display:flex;align-items:center;gap:12px;font-family:'Marcellus',serif;color:#cdb06c;font-size:10px;letter-spacing:.2em;margin-bottom:12px}.how-title i{height:1px;flex:1;background:linear-gradient(90deg,rgba(216,165,61,.35),transparent)}
   .how-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:0 0 20px;}.how-step{padding:16px;border:1px solid rgba(216,165,61,.14);border-radius:12px;background:rgba(5,4,15,.38);min-height:128px}.how-step .num{display:inline-flex;width:30px;height:24px;align-items:center;justify-content:center;border-radius:6px;background:rgba(232,194,116,.12);border:1px solid rgba(232,194,116,.18);color:#e8c274;font-family:'Marcellus',serif;font-size:10px;font-weight:700;margin-bottom:11px}.how-step b{display:block;color:#e8c274;font-family:'Marcellus',serif;font-size:11px;letter-spacing:.05em;margin-bottom:7px}.how-step span{color:#a99bb8;font-size:13px;line-height:1.55}
-  @media(max-width:1000px){.astrology-intro{min-height:auto}.zodiac-wheel{position:relative;right:auto;top:auto;margin:25px auto 0}.intro-copy{max-width:none;padding-right:0}.astrology-pillars{max-width:none}.how-grid{grid-template-columns:repeat(2,1fr)}}
-  @media(max-width:680px){.astrology-intro{padding:28px 20px 24px;border-radius:16px}.astrology-intro h2{font-size:27px}.zodiac-wheel{width:315px;height:315px}.z-sign{transform:rotate(var(--a)) translateY(-128px) rotate(calc(var(--a) * -1));font-size:22px;width:58px;height:58px;margin:-29px}.astrology-pillars{grid-template-columns:repeat(2,1fr)}.how-grid{grid-template-columns:1fr}.intro-actions button{width:100%}}
+  @media(max-width:1100px){.intro-top-row{grid-template-columns:1fr!important;gap:24px!important;}.zodiac-side-col{margin:10px auto 0!important;}.astrology-intro{min-height:auto}.zodiac-wheel{position:relative!important;right:auto!important;top:auto!important;margin:15px auto 0!important}.intro-copy{max-width:none!important;padding-right:0!important}.astrology-pillars{max-width:none!important}.how-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:680px){.astrology-intro{padding:28px 20px 24px;border-radius:16px}.astrology-intro h2{font-size:27px}.zodiac-wheel{width:280px!important;height:280px!important}.z-sign{transform:rotate(var(--a)) translateY(-112px) rotate(calc(var(--a) * -1))!important;font-size:20px;width:48px;height:48px;margin:-24px}.astrology-pillars{grid-template-columns:repeat(2,1fr)}.how-grid{grid-template-columns:1fr}.intro-actions button{width:100%}}
   /* --- Deep cosmic opening --- */
   .cosmic-bg{background:radial-gradient(ellipse at 50% 10%,rgba(83,70,177,.24),transparent 35%),radial-gradient(ellipse at 12% 78%,rgba(205,109,55,.13),transparent 32%),radial-gradient(ellipse at 88% 72%,rgba(82,108,208,.13),transparent 34%),linear-gradient(180deg,#090719 0%,#0b0820 48%,#05040e 100%);animation:hueDrift 65s linear infinite,bgBreathe 28s ease-in-out infinite;}
   .cosmic-bg:before{content:"";position:absolute;inset:-20%;background:conic-gradient(from 40deg at 50% 50%,transparent 0deg,rgba(107,77,205,.10) 70deg,transparent 125deg,rgba(224,139,46,.07) 210deg,transparent 290deg);filter:blur(28px);animation:cosmicSweep 55s linear infinite;}
@@ -304,16 +305,14 @@ footer{text-align:center;color:var(--muted);font-size:13px;margin-top:44px;lette
   .zodiac-wheel .wheel-core{animation:rashiCounter 95s linear infinite;}
   .zodiac-wheel .z-sign{animation:rashiCounter 95s linear infinite;}
   @keyframes rashiCounter{from{transform:translate(-50%,-50%) rotate(0deg)}to{transform:translate(-50%,-50%) rotate(-360deg)}}
-  .zodiac-wheel .z-sign{transform:rotate(var(--a)) translateY(-166px) rotate(calc(var(--a) * -1));animation-name:rashiCounterSign;}
-  @keyframes rashiCounterSign{from{transform:rotate(var(--a)) translateY(-166px) rotate(calc(var(--a) * -1))}to{transform:rotate(calc(var(--a) + 360deg)) translateY(-166px) rotate(calc((var(--a) + 360deg) * -1))}}
+  .zodiac-wheel .z-sign{transform:rotate(var(--a)) translateY(-138px) rotate(calc(var(--a) * -1));animation-name:rashiCounterSign;}
+  @keyframes rashiCounterSign{from{transform:rotate(var(--a)) translateY(-138px) rotate(calc(var(--a) * -1))}to{transform:rotate(calc(var(--a) + 360deg)) translateY(-138px) rotate(calc((var(--a) + 360deg) * -1))}}
   .wheel-aura{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,transparent 0 45%,rgba(232,194,116,.04) 46%,transparent 67%),conic-gradient(from 0deg,transparent,rgba(232,194,116,.12),transparent 28%,rgba(91,79,196,.12),transparent 62%);filter:blur(1px);animation:wheelAura 22s linear infinite reverse;}
   .wheel-track{position:absolute;border-radius:50%;inset:18px;border:1px solid rgba(232,194,116,.12);}.track-two{inset:58px;border-style:dotted;animation:spinReverse 32s linear infinite}.track-one{animation:spin 48s linear infinite;}
   .wheel-core em{font-style:normal;font-size:7px;color:#776a8c;letter-spacing:.04em;margin-top:5px;}
   @keyframes wheelAura{to{transform:rotate(360deg)}}
   .astrology-pillars{max-width:720px;margin-top:34px;}.astrology-pillars>div{background:linear-gradient(145deg,rgba(14,11,32,.62),rgba(4,4,14,.35));transition:transform .25s,border-color .25s,background .25s}.astrology-pillars>div:hover{transform:translateY(-4px);border-color:rgba(232,194,116,.28);background:rgba(232,194,116,.06)}
   .cosmic-facts{position:relative;z-index:4;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:720px;margin:18px 0 22px;padding-top:17px;border-top:1px solid rgba(216,165,61,.10)}.cosmic-facts>div{padding:10px 11px;border-left:1px solid rgba(216,165,61,.13)}.cosmic-facts span{display:block;color:#75668e;font-family:'Marcellus',serif;font-size:8px;letter-spacing:.12em}.cosmic-facts b{display:block;color:#d8bd78;font-family:'Marcellus',serif;font-size:10px;margin:4px 0}.cosmic-facts small{color:#827590;font-size:11px;line-height:1.4}.intro-bottom-note{position:relative;z-index:4;max-width:100%;margin-top:18px;padding:15px 0 0;border-top:1px solid rgba(216,165,61,.10)}.intro-bottom-note>div:first-child{display:flex;gap:10px;align-items:flex-start}.note-symbol{color:#e8c274;font-size:15px}.intro-bottom-note strong{font-family:'Marcellus',serif;font-size:10px;letter-spacing:.12em;color:#bfa36a}.intro-bottom-note p{margin:4px 0 0;color:#7f718f;font-size:11.5px;line-height:1.6}.intro-bottom-note .ask-index{margin-top:14px;}
-  @media(max-width:1000px){.astrology-intro{min-height:auto}.zodiac-wheel{position:relative;right:auto;top:auto;margin:30px auto 0}.intro-copy{max-width:none;padding-right:0}.astrology-pillars,.cosmic-facts{max-width:none}.how-grid{grid-template-columns:repeat(2,1fr)}}
-  @media(max-width:680px){.astrology-intro{padding:30px 20px 24px}.astrology-intro h2{font-size:31px}.mystery-quote{font-size:18px}.zodiac-wheel{width:315px;height:315px}.z-sign{transform:rotate(var(--a)) translateY(-128px) rotate(calc(var(--a) * -1));font-size:22px;width:58px;height:58px;margin:-29px}.zodiac-wheel .z-sign{animation-name:none}.astrology-pillars,.cosmic-facts{grid-template-columns:repeat(2,1fr)}.how-grid{grid-template-columns:1fr}.intro-actions button{width:100%}}
   .cosmic-nebula{transform:translate(calc(var(--mx,0) * 10px),calc(var(--my,0) * 8px));}
   @media(prefers-reduced-motion:reduce){.cosmic-bg,.cosmic-bg:before,.cosmic-bg:after,.cosmic-aurora,.cosmic-nebula,.zodiac-wheel,.zodiac-wheel .wheel-core,.zodiac-wheel .z-sign,.wheel-track,.wheel-aura{animation:none!important}.shooting-star{display:none!important}}
   .mode-tabs{display:flex;gap:10px;margin:0 0 26px;}
@@ -2166,62 +2165,64 @@ body input, body select, body textarea {
 
   <div class="intro-orbit orbit-a"></div><div class="intro-orbit orbit-b"></div>
   <div class="intro-mystery-stars"></div>
-  <div class="intro-copy">
-    <div class="intro-eyebrow">✦ A MAP OF TIME • A MIRROR OF PATTERNS • A LANGUAGE OF THE SKY</div>
-    <div class="mystery-quote">“Some questions are not answered by looking farther ahead —<br><em>they begin by learning how to read the sky.</em>”</div>
-    <div class="sanskrit-opening"><div>ॐ <span>ज्योतिषां ज्योतिः</span></div><small>Jyotiṣām Jyotiḥ — “the light among lights”</small></div>
-    <div class="intro-kicker">THE ANCIENT SKY, READ FOR THE PRESENT MOMENT</div>
-    <h2>What if the sky<br><em>has been keeping a pattern?</em></h2>
-    <p class="intro-lead">For thousands of years, people have watched the movement of the Sun, Moon and planets and searched for meaning in the rhythm of time. Astrology begins with that human curiosity: observing the heavens and using celestial cycles as a symbolic language for understanding life, temperament, relationships, choices and changing seasons.</p>
-    <p class="intro-lead secondary-lead"><strong>Jyotish</strong>, the Indian tradition of astrology, takes that idea further through a birth chart — a symbolic map calculated for a particular moment and place. The chart brings together <strong>Rashis</strong> (zodiac signs), <strong>Bhavas</strong> (houses), <strong>Grahas</strong> (planetary influences), <strong>Nakshatras</strong> (lunar mansions), <strong>Yogas</strong> and <strong>Dashas</strong> to explore both <em>what</em> a pattern may signify and <em>when</em> it may become more prominent.</p>
-    <div class="mystery-statement"><span>✧</span><div><b>Your chart is not a verdict.</b><small>It is a symbolic map of tendencies, cycles and possibilities — interpreted with context, not fear.</small></div></div>
-    <div class="intro-actions"><button class="secondary" id="beginReadingBtn" type="button">Open the birth chart <span>→</span></button><span class="intro-note">Your date • time • place become the key</span></div>
-  </div>
-  <div class="zodiac-side-col">
-    <div class="zodiac-wheel" aria-label="Twelve-sign Rashi wheel">
-      <div class="wheel-aura"></div><div class="wheel-glow"></div>
-      <div class="wheel-track track-one"></div><div class="wheel-track track-two"></div>
-      <div class="mandala-geometry" aria-hidden="true">
-        <svg viewBox="0 0 500 500" class="sacred-geom-svg">
-          <circle cx="250" cy="250" r="238" fill="none" stroke="rgba(242,215,146,0.38)" stroke-width="1.5" />
-          <circle cx="250" cy="250" r="218" fill="none" stroke="rgba(242,215,146,0.22)" stroke-width="1" stroke-dasharray="2,6" />
-          <circle cx="250" cy="250" r="185" fill="none" stroke="rgba(119,197,192,0.35)" stroke-width="1" />
-          <circle cx="250" cy="250" r="140" fill="none" stroke="rgba(242,215,146,0.28)" stroke-width="1.2" stroke-dasharray="4,8" />
-          <circle cx="250" cy="250" r="92" fill="none" stroke="rgba(214,155,69,0.38)" stroke-width="1" />
-          <g stroke="rgba(242,215,146,0.2)" stroke-width="0.85" fill="none">
-            <line x1="250" y1="12" x2="250" y2="488" />
-            <line x1="12" y1="250" x2="488" y2="250" />
-            <line x1="44" y1="131" x2="456" y2="369" />
-            <line x1="131" y1="44" x2="369" y2="456" />
-            <line x1="44" y1="369" x2="456" y2="131" />
-            <line x1="131" y1="456" x2="369" y2="44" />
-            <polygon points="250,32 468,250 250,468 32,250" stroke="rgba(242,215,146,0.25)" stroke-width="1" />
-            <polygon points="96,96 404,96 404,404 96,404" stroke="rgba(119,197,192,0.22)" stroke-width="0.9" />
-            <polygon points="250,85 393,332 107,332" stroke="rgba(242,215,146,0.32)" stroke-width="1.2" />
-            <polygon points="250,415 393,168 107,168" stroke="rgba(242,215,146,0.32)" stroke-width="1.2" />
-            <polygon points="250,120 363,315 137,315" stroke="rgba(214,155,69,0.28)" stroke-width="1" />
-            <polygon points="250,380 363,185 137,185" stroke="rgba(214,155,69,0.28)" stroke-width="1" />
-          </g>
-          <g fill="none" stroke="rgba(242,215,146,0.22)" stroke-width="0.8">
-            <circle cx="250" cy="110" r="30" opacity="0.35" />
-            <circle cx="320" cy="129" r="30" opacity="0.35" />
-            <circle cx="370" cy="180" r="30" opacity="0.35" />
-            <circle cx="390" cy="250" r="30" opacity="0.35" />
-            <circle cx="370" cy="320" r="30" opacity="0.35" />
-            <circle cx="320" cy="370" r="30" opacity="0.35" />
-            <circle cx="250" cy="390" r="30" opacity="0.35" />
-            <circle cx="180" cy="370" r="30" opacity="0.35" />
-            <circle cx="130" cy="320" r="30" opacity="0.35" />
-            <circle cx="110" cy="250" r="30" opacity="0.35" />
-            <circle cx="130" cy="180" r="30" opacity="0.35" />
-            <circle cx="180" cy="129" r="30" opacity="0.35" />
-          </g>
-        </svg>
-      </div>
-      <div class="wheel-core"><div class="celestial-crest" aria-hidden="true"><svg viewBox="0 0 64 64" role="img"><circle cx="32" cy="32" r="26" fill="none" stroke="currentColor" stroke-width="1" opacity=".7"/><circle cx="32" cy="32" r="18" fill="none" stroke="currentColor" stroke-width="1" opacity=".45"/><path d="M32 7v50M7 32h50M14 14l36 36M50 14L14 50" stroke="currentColor" stroke-width=".8" opacity=".35"/><circle cx="32" cy="32" r="5" fill="currentColor" opacity=".9"/></svg></div><small>RASHI<br>MANDALA</small></div>
-      <span class="z-sign z1" title="Aries · Mesha (Fire)" aria-label="Aries · Mesha"><img src="/src/assets/images/zodiac_aries_gold_1786427406985.jpg" class="z-logo-img" alt="Aries" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/aries.jpg'" /><b>MESHA</b></span><span class="z-sign z2" title="Taurus · Vrishabha (Earth)" aria-label="Taurus · Vrishabha"><img src="/src/assets/images/zodiac_taurus_gold_1786427430892.jpg" class="z-logo-img" alt="Taurus" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/taurus.jpg'" /><b>VRISHABHA</b></span><span class="z-sign z3" title="Gemini · Mithuna (Air)" aria-label="Gemini · Mithuna"><img src="/src/assets/images/zodiac_gemini_gold_1786427447560.jpg" class="z-logo-img" alt="Gemini" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/gemini.jpg'" /><b>MITHUNA</b></span><span class="z-sign z4" title="Cancer · Karka (Water)" aria-label="Cancer · Karka"><img src="/src/assets/images/zodiac_cancer_gold_1786427465388.jpg" class="z-logo-img" alt="Cancer" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/cancer.jpg'" /><b>KARKA</b></span><span class="z-sign z5" title="Leo · Simha (Fire)" aria-label="Leo · Simha"><img src="/src/assets/images/zodiac_leo_gold_1786427482212.jpg" class="z-logo-img" alt="Leo" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/leo.jpg'" /><b>SIMHA</b></span><span class="z-sign z6" title="Virgo · Kanya (Earth)" aria-label="Virgo · Kanya"><img src="/src/assets/images/zodiac_virgo_gold_1786427501477.jpg" class="z-logo-img" alt="Virgo" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/virgo.jpg'" /><b>KANYA</b></span><span class="z-sign z7" title="Libra · Tula (Air)" aria-label="Libra · Tula"><img src="/src/assets/images/zodiac_libra_gold_1786427519372.jpg" class="z-logo-img" alt="Libra" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/libra.jpg'" /><b>TULA</b></span><span class="z-sign z8" title="Scorpio · Vrischika (Water)" aria-label="Scorpio · Vrischika"><img src="/src/assets/images/zodiac_scorpio_gold_1786427534881.jpg" class="z-logo-img" alt="Scorpio" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/scorpio.jpg'" /><b>VRISCHIKA</b></span><span class="z-sign z9" title="Sagittarius · Dhanu (Fire)" aria-label="Sagittarius · Dhanu"><img src="/src/assets/images/zodiac_sagittarius_gold_1786427554200.jpg" class="z-logo-img" alt="Sagittarius" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/sagittarius.jpg'" /><b>DHANU</b></span><span class="z-sign z10" title="Capricorn · Makara (Earth)" aria-label="Capricorn · Makara"><img src="/src/assets/images/zodiac_capricorn_gold_1786427572321.jpg" class="z-logo-img" alt="Capricorn" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/capricorn.jpg'" /><b>MAKARA</b></span><span class="z-sign z11" title="Aquarius · Kumbha (Air)" aria-label="Aquarius · Kumbha"><img src="/src/assets/images/zodiac_aquarius_gold_1786427591478.jpg" class="z-logo-img" alt="Aquarius" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/aquarius.jpg'" /><b>KUMBHA</b></span><span class="z-sign z12" title="Pisces · Meena (Water)" aria-label="Pisces · Meena"><img src="/src/assets/images/zodiac_pisces_gold_1786427610651.jpg" class="z-logo-img" alt="Pisces" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/pisces.jpg'" /><b>MEENA</b></span>
+  <div class="intro-top-row">
+    <div class="intro-copy">
+      <div class="intro-eyebrow">✦ A MAP OF TIME • A MIRROR OF PATTERNS • A LANGUAGE OF THE SKY</div>
+      <div class="mystery-quote">“Some questions are not answered by looking farther ahead —<br><em>they begin by learning how to read the sky.</em>”</div>
+      <div class="sanskrit-opening"><div>ॐ <span>ज्योतिषां ज्योतिः</span></div><small>Jyotiṣām Jyotiḥ — “the light among lights”</small></div>
+      <div class="intro-kicker">THE ANCIENT SKY, READ FOR THE PRESENT MOMENT</div>
+      <h2>What if the sky<br><em>has been keeping a pattern?</em></h2>
+      <p class="intro-lead">For thousands of years, people have watched the movement of the Sun, Moon and planets and searched for meaning in the rhythm of time. Astrology begins with that human curiosity: observing the heavens and using celestial cycles as a symbolic language for understanding life, temperament, relationships, choices and changing seasons.</p>
+      <p class="intro-lead secondary-lead"><strong>Jyotish</strong>, the Indian tradition of astrology, takes that idea further through a birth chart — a symbolic map calculated for a particular moment and place. The chart brings together <strong>Rashis</strong> (zodiac signs), <strong>Bhavas</strong> (houses), <strong>Grahas</strong> (planetary influences), <strong>Nakshatras</strong> (lunar mansions), <strong>Yogas</strong> and <strong>Dashas</strong> to explore both <em>what</em> a pattern may signify and <em>when</em> it may become more prominent.</p>
+      <div class="mystery-statement"><span>✧</span><div><b>Your chart is not a verdict.</b><small>It is a symbolic map of tendencies, cycles and possibilities — interpreted with context, not fear.</small></div></div>
+      <div class="intro-actions"><button class="secondary" id="beginReadingBtn" type="button">Open the birth chart <span>→</span></button><span class="intro-note">Your date • time • place become the key</span></div>
     </div>
-    <div class="rashi-detail" id="rashiDetail" aria-live="polite"><b>Rashi</b><small>Click a sign to explore its element, quality, ruler and archetype.</small></div>
+    <div class="zodiac-side-col">
+      <div class="zodiac-wheel" aria-label="Twelve-sign Rashi wheel">
+        <div class="wheel-aura"></div><div class="wheel-glow"></div>
+        <div class="wheel-track track-one"></div><div class="wheel-track track-two"></div>
+        <div class="mandala-geometry" aria-hidden="true">
+          <svg viewBox="0 0 500 500" class="sacred-geom-svg">
+            <circle cx="250" cy="250" r="238" fill="none" stroke="rgba(242,215,146,0.38)" stroke-width="1.5" />
+            <circle cx="250" cy="250" r="218" fill="none" stroke="rgba(242,215,146,0.22)" stroke-width="1" stroke-dasharray="2,6" />
+            <circle cx="250" cy="250" r="185" fill="none" stroke="rgba(119,197,192,0.35)" stroke-width="1" />
+            <circle cx="250" cy="250" r="140" fill="none" stroke="rgba(242,215,146,0.28)" stroke-width="1.2" stroke-dasharray="4,8" />
+            <circle cx="250" cy="250" r="92" fill="none" stroke="rgba(214,155,69,0.38)" stroke-width="1" />
+            <g stroke="rgba(242,215,146,0.2)" stroke-width="0.85" fill="none">
+              <line x1="250" y1="12" x2="250" y2="488" />
+              <line x1="12" y1="250" x2="488" y2="250" />
+              <line x1="44" y1="131" x2="456" y2="369" />
+              <line x1="131" y1="44" x2="369" y2="456" />
+              <line x1="44" y1="369" x2="456" y2="131" />
+              <line x1="131" y1="456" x2="369" y2="44" />
+              <polygon points="250,32 468,250 250,468 32,250" stroke="rgba(242,215,146,0.25)" stroke-width="1" />
+              <polygon points="96,96 404,96 404,404 96,404" stroke="rgba(119,197,192,0.22)" stroke-width="0.9" />
+              <polygon points="250,85 393,332 107,332" stroke="rgba(242,215,146,0.32)" stroke-width="1.2" />
+              <polygon points="250,415 393,168 107,168" stroke="rgba(242,215,146,0.32)" stroke-width="1.2" />
+              <polygon points="250,120 363,315 137,315" stroke="rgba(214,155,69,0.28)" stroke-width="1" />
+              <polygon points="250,380 363,185 137,185" stroke="rgba(214,155,69,0.28)" stroke-width="1" />
+            </g>
+            <g fill="none" stroke="rgba(242,215,146,0.22)" stroke-width="0.8">
+              <circle cx="250" cy="110" r="30" opacity="0.35" />
+              <circle cx="320" cy="129" r="30" opacity="0.35" />
+              <circle cx="370" cy="180" r="30" opacity="0.35" />
+              <circle cx="390" cy="250" r="30" opacity="0.35" />
+              <circle cx="370" cy="320" r="30" opacity="0.35" />
+              <circle cx="320" cy="370" r="30" opacity="0.35" />
+              <circle cx="250" cy="390" r="30" opacity="0.35" />
+              <circle cx="180" cy="370" r="30" opacity="0.35" />
+              <circle cx="130" cy="320" r="30" opacity="0.35" />
+              <circle cx="110" cy="250" r="30" opacity="0.35" />
+              <circle cx="130" cy="180" r="30" opacity="0.35" />
+              <circle cx="180" cy="129" r="30" opacity="0.35" />
+            </g>
+          </svg>
+        </div>
+        <div class="wheel-core"><div class="celestial-crest" aria-hidden="true"><svg viewBox="0 0 64 64" role="img"><circle cx="32" cy="32" r="26" fill="none" stroke="currentColor" stroke-width="1" opacity=".7"/><circle cx="32" cy="32" r="18" fill="none" stroke="currentColor" stroke-width="1" opacity=".45"/><path d="M32 7v50M7 32h50M14 14l36 36M50 14L14 50" stroke="currentColor" stroke-width=".8" opacity=".35"/><circle cx="32" cy="32" r="5" fill="currentColor" opacity=".9"/></svg></div><small>RASHI<br>MANDALA</small></div>
+        <span class="z-sign z1" title="Aries · Mesha (Fire)" aria-label="Aries · Mesha"><img src="/src/assets/images/zodiac_aries_gold_1786427406985.jpg" class="z-logo-img" alt="Aries" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/aries.jpg'" /><b>MESHA</b></span><span class="z-sign z2" title="Taurus · Vrishabha (Earth)" aria-label="Taurus · Vrishabha"><img src="/src/assets/images/zodiac_taurus_gold_1786427430892.jpg" class="z-logo-img" alt="Taurus" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/taurus.jpg'" /><b>VRISHABHA</b></span><span class="z-sign z3" title="Gemini · Mithuna (Air)" aria-label="Gemini · Mithuna"><img src="/src/assets/images/zodiac_gemini_gold_1786427447560.jpg" class="z-logo-img" alt="Gemini" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/gemini.jpg'" /><b>MITHUNA</b></span><span class="z-sign z4" title="Cancer · Karka (Water)" aria-label="Cancer · Karka"><img src="/src/assets/images/zodiac_cancer_gold_1786427465388.jpg" class="z-logo-img" alt="Cancer" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/cancer.jpg'" /><b>KARKA</b></span><span class="z-sign z5" title="Leo · Simha (Fire)" aria-label="Leo · Simha"><img src="/src/assets/images/zodiac_leo_gold_1786427482212.jpg" class="z-logo-img" alt="Leo" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/leo.jpg'" /><b>SIMHA</b></span><span class="z-sign z6" title="Virgo · Kanya (Earth)" aria-label="Virgo · Kanya"><img src="/src/assets/images/zodiac_virgo_gold_1786427501477.jpg" class="z-logo-img" alt="Virgo" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/virgo.jpg'" /><b>KANYA</b></span><span class="z-sign z7" title="Libra · Tula (Air)" aria-label="Libra · Tula"><img src="/src/assets/images/zodiac_libra_gold_1786427519372.jpg" class="z-logo-img" alt="Libra" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/libra.jpg'" /><b>TULA</b></span><span class="z-sign z8" title="Scorpio · Vrischika (Water)" aria-label="Scorpio · Vrischika"><img src="/src/assets/images/zodiac_scorpio_gold_1786427534881.jpg" class="z-logo-img" alt="Scorpio" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/scorpio.jpg'" /><b>VRISCHIKA</b></span><span class="z-sign z9" title="Sagittarius · Dhanu (Fire)" aria-label="Sagittarius · Dhanu"><img src="/src/assets/images/zodiac_sagittarius_gold_1786427554200.jpg" class="z-logo-img" alt="Sagittarius" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/sagittarius.jpg'" /><b>DHANU</b></span><span class="z-sign z10" title="Capricorn · Makara (Earth)" aria-label="Capricorn · Makara"><img src="/src/assets/images/zodiac_capricorn_gold_1786427572321.jpg" class="z-logo-img" alt="Capricorn" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/capricorn.jpg'" /><b>MAKARA</b></span><span class="z-sign z11" title="Aquarius · Kumbha (Air)" aria-label="Aquarius · Kumbha"><img src="/src/assets/images/zodiac_aquarius_gold_1786427591478.jpg" class="z-logo-img" alt="Aquarius" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/aquarius.jpg'" /><b>KUMBHA</b></span><span class="z-sign z12" title="Pisces · Meena (Water)" aria-label="Pisces · Meena"><img src="/src/assets/images/zodiac_pisces_gold_1786427610651.jpg" class="z-logo-img" alt="Pisces" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/pisces.jpg'" /><b>MEENA</b></span>
+      </div>
+      <div class="rashi-detail" id="rashiDetail" aria-live="polite"><b>Rashi</b><small>Click a sign to explore its element, quality, ruler and archetype.</small></div>
+    </div>
   </div>
   <div class="astrology-pillars">
     <div><span>♈</span><strong>Rashis</strong><small>The twelve signs describe the field and style in which planetary themes unfold.</small></div>
