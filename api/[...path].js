@@ -23,12 +23,44 @@ function hashCode(code){ return crypto.createHash('sha256').update(String(code).
 function b64(v){ return Buffer.from(v).toString('base64url'); }
 function signSession(payload){ return crypto.createHmac('sha256', process.env.ADMIN_SESSION_SECRET || 'jyotish-vimarsha-secret-key-2026').update(payload).digest('base64url'); }
 function makeAdminToken(){ const payload=b64(JSON.stringify({exp:Date.now()+4*60*60*1000,iat:Date.now()})); return `${payload}.${signSession(payload)}`; }
+
+function getClientIp(req) {
+  const xf = req.headers['x-forwarded-for'];
+  if (xf) return xf.split(',')[0].trim();
+  return req.socket?.remoteAddress || '127.0.0.1';
+}
+
+// In-memory rate limiting store for admin logins
+const loginAttempts = new Map(); // ip -> { count: number, resetAt: number }
+
+// In-memory security audit logs
+const auditLogs = [
+  { id: 'aud_init', timestamp: new Date().toISOString(), ip: '127.0.0.1', action: 'SYSTEM_BOOT', details: 'Admin Security System, Rate Limiter & Audit Logger active', status: 'SUCCESS' }
+];
+
+function logAudit(ip, action, details, status = 'SUCCESS') {
+  const item = { id: 'aud_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4), timestamp: new Date().toISOString(), ip, action, details, status };
+  auditLogs.unshift(item);
+  if (auditLogs.length > 500) auditLogs.pop();
+  return item;
+}
+
 function adminOk(req){
-  const token=(req.headers.authorization||'').replace(/^Bearer\s+/i,'');
-  const [payload,sig]=token.split('.');
-  if(!payload||!sig)return false;
-  const expected=signSession(payload); if(expected.length!==sig.length || !crypto.timingSafeEqual(Buffer.from(expected),Buffer.from(sig)))return false;
-  try{return JSON.parse(Buffer.from(payload,'base64url').toString()).exp>Date.now();}catch{return false;}
+  let token = (req.headers.authorization || '').replace(/^Bearer\s+/i, '').trim();
+  if (!token && req.headers.cookie) {
+    const cookies = req.headers.cookie.split(';').reduce((acc, c) => {
+      const idx = c.indexOf('=');
+      if (idx > 0) acc[c.substring(0, idx).trim()] = c.substring(idx + 1).trim();
+      return acc;
+    }, {});
+    token = cookies['admin_session'] || '';
+  }
+  if (!token) return false;
+  const [payload, sig] = token.split('.');
+  if (!payload || !sig) return false;
+  const expected = signSession(payload);
+  if (expected.length !== sig.length || !crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(sig))) return false;
+  try { return JSON.parse(Buffer.from(payload, 'base64url').toString()).exp > Date.now(); } catch { return false; }
 }
 
 // In-memory fallbacks for when Supabase DB is unconfigured or unavailable
@@ -373,14 +405,58 @@ export default async function handler(req,res){
     }
 
     if(req.method==='POST'&&path==='/admin/login'){
-      const b=await readBody(req);
+      const clientIp = getClientIp(req);
+      const now = Date.now();
+      const attemptData = loginAttempts.get(clientIp) || { count: 0, resetAt: now + 15 * 60 * 1000 };
+      
+      if (now > attemptData.resetAt) {
+        attemptData.count = 0;
+        attemptData.resetAt = now + 15 * 60 * 1000;
+      }
+
+      if (attemptData.count >= 5) {
+        const waitMins = Math.ceil((attemptData.resetAt - now) / 60000);
+        logAudit(clientIp, 'LOGIN_BLOCKED', `Rate limit exceeded (5 failed attempts). Blocked for ${waitMins} min.`, 'BLOCKED');
+        return json(res, 429, { error: `Too many failed login attempts. Security lock active. Please try again in ${waitMins} minute(s).` });
+      }
+
+      const b = await readBody(req);
       const expectedPass = process.env.ADMIN_PASSWORD || 'admin123';
-      if(String(b.password||'')!==expectedPass) return json(res,401,{error:'Invalid admin password.'});
-      return json(res,200,{token:makeAdminToken(),expiresIn:14400});
+      
+      if (String(b.password || '') !== expectedPass) {
+        attemptData.count += 1;
+        loginAttempts.set(clientIp, attemptData);
+        logAudit(clientIp, 'LOGIN_FAILED', `Invalid password attempt (${attemptData.count}/5)`, 'FAILED');
+        return json(res, 401, { error: `Invalid admin password. ${5 - attemptData.count} attempt(s) remaining before lock.` });
+      }
+
+      loginAttempts.delete(clientIp);
+      const token = makeAdminToken();
+      logAudit(clientIp, 'LOGIN_SUCCESS', 'Admin authenticated successfully', 'SUCCESS');
+      
+      res.setHeader('Set-Cookie', `admin_session=${token}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=14400`);
+      return json(res, 200, { token, expiresIn: 14400 });
     }
     if(path.startsWith('/admin/')){
-      if(!adminOk(req))return json(res,401,{error:'Unauthorized'});
-      if(req.method==='POST'&&path==='/admin/logout')return json(res,200,{ok:true});
+      if(!adminOk(req)) return json(res, 401, { error: 'Unauthorized session' });
+      const clientIp = getClientIp(req);
+
+      if (req.method === 'POST' && path === '/admin/logout') {
+        logAudit(clientIp, 'LOGOUT', 'Admin session ended', 'SUCCESS');
+        res.setHeader('Set-Cookie', 'admin_session=; Path=/; HttpOnly; Secure; SameSite=Strict; Expires=Thu, 01 Jan 1970 00:00:00 GMT');
+        return json(res, 200, { ok: true });
+      }
+
+      if (req.method === 'GET' && path === '/admin/audit-logs') {
+        return json(res, 200, { logs: auditLogs });
+      }
+
+      if (req.method === 'DELETE' && path === '/admin/audit-logs') {
+        auditLogs.length = 0;
+        logAudit(clientIp, 'AUDIT_CLEAR', 'Admin cleared security audit history', 'SUCCESS');
+        return json(res, 200, { ok: true });
+      }
+
       if(req.method==='GET'&&path==='/admin/reports'){
         try {
           const data=await db.select('reports','select=*&order=created_at.desc&limit=500');
@@ -422,6 +498,7 @@ export default async function handler(req,res){
           try { await db.insert('vip_codes',{code_hash:item.code_hash,display_code:plain,max_uses:maxUses}); } catch {}
           codes.push(plain);
         }
+        logAudit(clientIp, 'VIP_GENERATE', `Generated ${count} VIP code(s) with max uses ${maxUses}`, 'SUCCESS');
         return json(res,200,{codes,maxUses});
       }
       const vm=path.match(/^\/admin\/vip\/([^/]+)\/toggle$/);
@@ -434,6 +511,7 @@ export default async function handler(req,res){
           const data=rows?.[0];
           if(data) await db.update('vip_codes',{active:!data.active},`id=eq.${encodeURIComponent(targetId)}`);
         } catch {}
+        logAudit(clientIp, 'VIP_TOGGLE', `Toggled active state for VIP code ID ${targetId}`, 'SUCCESS');
         return json(res,200,{ok:true});
       }
       if(req.method==='GET'&&path==='/admin/settings'){
@@ -455,6 +533,7 @@ export default async function handler(req,res){
           patch.updated_at=new Date().toISOString();
           await db.update('settings',patch,'id=eq.1');
         } catch {}
+        logAudit(clientIp, 'SETTINGS_UPDATE', 'Updated administrative pricing or feature flag settings', 'SUCCESS');
         return json(res,200,{ok:true});
       }
       return json(res,404,{error:'Admin route not found'});
