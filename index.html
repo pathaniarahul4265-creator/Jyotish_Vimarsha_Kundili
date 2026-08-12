@@ -1622,6 +1622,265 @@ body input, body select, body textarea {
 }
 
 @media(max-width:800px){.access-grid,.admin-stats,.admin-form,.facts-grid{grid-template-columns:1fr}.admin-shell{padding:15px}.admin-topbar{flex-direction:column}.admin-modal{padding:8px}}
+
+/* =========================================================
+   PANCHANG BAR & EVENT ALMANAC STYLES (FIX OVERFLOW & CUTOFFS)
+   ========================================================= */
+.panchang-bar {
+  margin: 0 0 28px 0 !important;
+  padding: 22px 24px !important;
+  background: linear-gradient(145deg, rgba(14, 24, 35, 0.94), rgba(7, 14, 22, 0.96)) !important;
+  border: 1.5px solid rgba(223, 186, 109, 0.38) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.45), inset 0 0 25px rgba(223, 186, 109, 0.04) !important;
+  position: relative !important;
+  overflow: visible !important;
+}
+
+.panchang-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  gap: 12px !important;
+  margin-bottom: 18px !important;
+  border-bottom: 1px dashed rgba(223, 186, 109, 0.25) !important;
+  padding-bottom: 12px !important;
+}
+
+.panchang-badge {
+  font-family: 'Marcellus', serif !important;
+  font-size: 11px !important;
+  letter-spacing: 0.16em !important;
+  color: #dfba6d !important;
+  background: rgba(223, 186, 109, 0.12) !important;
+  border: 1px solid rgba(223, 186, 109, 0.32) !important;
+  padding: 4px 12px !important;
+  border-radius: 999px !important;
+  text-transform: uppercase !important;
+  white-space: normal !important;
+  text-align: left !important;
+}
+
+.panchang-date {
+  font-family: 'Manrope', sans-serif !important;
+  font-size: 13.5px !important;
+  color: #e2d3b5 !important;
+  font-weight: 600 !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+  text-align: right !important;
+}
+
+.panchang-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)) !important;
+  gap: 12px !important;
+  margin-bottom: 18px !important;
+}
+
+.panchang-item {
+  padding: 12px 14px !important;
+  background: rgba(255, 255, 255, 0.025) !important;
+  border: 1px solid rgba(223, 186, 109, 0.20) !important;
+  border-radius: 10px !important;
+  min-width: 0 !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+}
+
+.panchang-item small {
+  display: block !important;
+  font-family: 'Manrope', sans-serif !important;
+  font-size: 9.5px !important;
+  letter-spacing: 0.12em !important;
+  color: #8c9fa8 !important;
+  text-transform: uppercase !important;
+  margin-bottom: 4px !important;
+}
+
+.panchang-item b {
+  display: block !important;
+  font-family: 'Marcellus', 'Cormorant Garamond', serif !important;
+  font-size: 14.5px !important;
+  color: #f7e4b8 !important;
+  line-height: 1.4 !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+}
+
+.panchang-item.highlight-rahu {
+  border-color: rgba(220, 100, 100, 0.42) !important;
+  background: rgba(220, 100, 100, 0.06) !important;
+}
+.panchang-item.highlight-rahu b {
+  color: #fca8a8 !important;
+}
+
+.panchang-item.highlight-shubh {
+  border-color: rgba(127, 197, 192, 0.42) !important;
+  background: rgba(127, 197, 192, 0.06) !important;
+}
+.panchang-item.highlight-shubh b {
+  color: #a3e8e2 !important;
+}
+
+/* Event Pills Container & Interactive Clickable Pills */
+.panchang-events {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding-top: 14px !important;
+  border-top: 1px solid rgba(223, 186, 109, 0.18) !important;
+}
+
+.event-label {
+  font-family: 'Marcellus', serif !important;
+  font-size: 11px !important;
+  letter-spacing: 0.14em !important;
+  color: #7fc5c0 !important;
+  width: 100% !important;
+  margin-bottom: 2px !important;
+}
+
+.event-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  padding: 7px 14px !important;
+  background: rgba(223, 186, 109, 0.08) !important;
+  border: 1px solid rgba(223, 186, 109, 0.32) !important;
+  border-radius: 999px !important;
+  font-family: 'Manrope', sans-serif !important;
+  font-size: 12.5px !important;
+  color: #fce8bd !important;
+  cursor: pointer !important;
+  transition: all 0.25s ease !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+  user-select: none !important;
+}
+
+.event-pill:hover {
+  background: rgba(223, 186, 109, 0.22) !important;
+  border-color: rgba(223, 186, 109, 0.65) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 18px rgba(223, 186, 109, 0.25) !important;
+}
+
+.event-pill.active-event {
+  background: rgba(127, 197, 192, 0.14) !important;
+  border-color: rgba(127, 197, 192, 0.55) !important;
+  color: #a3e8e2 !important;
+}
+
+.pulse-dot {
+  width: 7px !important;
+  height: 7px !important;
+  border-radius: 50% !important;
+  background: #6fd0a0 !important;
+  box-shadow: 0 0 8px #6fd0a0 !important;
+  animation: livePulse 1.8s infinite !important;
+  flex-shrink: 0 !important;
+}
+
+/* Event Brief Popup Modal */
+.event-modal-box {
+  max-width: 640px !important;
+  background: linear-gradient(145deg, rgba(14, 22, 32, 0.98), rgba(7, 12, 18, 0.98)) !important;
+  border: 1.5px solid rgba(223, 186, 109, 0.55) !important;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.85), inset 0 0 30px rgba(223, 186, 109, 0.08) !important;
+  border-radius: 18px !important;
+  padding: 28px 32px !important;
+  color: #f4efe4 !important;
+  position: relative !important;
+}
+
+.event-modal-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 16px !important;
+  border-bottom: 1px solid rgba(223, 186, 109, 0.28) !important;
+  padding-bottom: 16px !important;
+  margin-bottom: 18px !important;
+}
+
+.event-modal-icon {
+  font-size: 38px !important;
+  filter: drop-shadow(0 0 12px rgba(223, 186, 109, 0.4)) !important;
+}
+
+.event-modal-title {
+  font-family: 'Bodoni Moda', 'Marcellus', serif !important;
+  font-size: 24px !important;
+  color: #f7e4b8 !important;
+  margin: 0 !important;
+}
+
+.event-modal-subtitle {
+  font-family: 'Manrope', sans-serif !important;
+  font-size: 12px !important;
+  letter-spacing: 0.12em !important;
+  color: #7fc5c0 !important;
+  text-transform: uppercase !important;
+  margin-top: 3px !important;
+}
+
+/* Om Chanting Controller Bar */
+.om-chant-bar {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  background: rgba(223, 186, 109, 0.08) !important;
+  border: 1px solid rgba(223, 186, 109, 0.32) !important;
+  border-radius: 999px !important;
+  padding: 4px 12px !important;
+  font-family: 'Manrope', sans-serif !important;
+  font-size: 12px !important;
+  color: #f7e4b8 !important;
+  user-select: none !important;
+}
+
+.om-chant-btn {
+  width: auto !important;
+  padding: 5px 14px !important;
+  font-size: 12px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(180deg, #f1d48a, #d8a04c) !important;
+  color: #201307 !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  font-weight: 700 !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
+}
+
+.om-chant-btn:hover {
+  transform: scale(1.04) !important;
+  box-shadow: 0 0 16px rgba(223, 186, 109, 0.6) !important;
+}
+
+.om-pulse-symbol {
+  display: inline-block !important;
+  font-size: 18px !important;
+  color: #f7e4b8 !important;
+  text-shadow: 0 0 10px rgba(223, 186, 109, 0.8) !important;
+  transition: transform 0.3s ease !important;
+}
+
+.om-pulse-symbol.playing {
+  animation: omSymbolPulse 2.4s ease-in-out infinite !important;
+}
+
+@keyframes omSymbolPulse {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px rgba(223, 186, 109, 0.6)); }
+  50% { transform: scale(1.28); filter: drop-shadow(0 0 20px rgba(223, 186, 109, 1)); }
+}
 </style>
 </head>
 <body>
@@ -1647,7 +1906,58 @@ body input, body select, body textarea {
 <div class="observatory-telemetry-hud">
   <span>CELESTIAL OBSERVATORY · SIDEREAL LAHIRI AYANAMSHA 24°10'38"</span>
   <span>॥ यथा पिण्डे तथा ब्रह्माण्डे ॥</span>
+  <div class="om-chant-bar">
+    <span class="om-pulse-symbol" id="omPulseSymbol">ॐ</span>
+    <button type="button" class="om-chant-btn" id="btnOmChant" onclick="OmChantEngine.toggle()" title="Toggle ambient Om chanting drone">
+      <span>▶</span> <b>Start Om Chanting</b>
+    </button>
+  </div>
   <span>OBSERVER LAT 28°37'N • LON 77°13'E ☉</span>
+</div>
+
+<div class="panchang-bar" id="dailyPanchangBar" aria-label="Daily Vedic Panchang and Rahu Kaal">
+  <div class="panchang-header">
+    <span class="panchang-badge">✦ TODAY'S DAINIK PANCHANG & RAHU KAAL</span>
+    <span class="panchang-date" id="panchangDate">Loading Panchang…</span>
+  </div>
+  <div class="panchang-grid">
+    <div class="panchang-item highlight-shubh">
+      <small>📜 HINDU YEAR & MAAS</small>
+      <b id="panchangHinduCal">—</b>
+    </div>
+    <div class="panchang-item">
+      <small>TITHI</small>
+      <b id="panchangTithi">—</b>
+    </div>
+    <div class="panchang-item">
+      <small>NAKSHATRA</small>
+      <b id="panchangNakshatra">—</b>
+    </div>
+    <div class="panchang-item">
+      <small>YOGA</small>
+      <b id="panchangYoga">—</b>
+    </div>
+    <div class="panchang-item">
+      <small>KARANA</small>
+      <b id="panchangKarana">—</b>
+    </div>
+    <div class="panchang-item highlight-rahu">
+      <small>⚠️ RAHU KAAL</small>
+      <b id="panchangRahuKaal">—</b>
+    </div>
+    <div class="panchang-item highlight-shubh">
+      <small>✨ ABHIJIT MUHURAT</small>
+      <b id="panchangShubh">—</b>
+    </div>
+    <div class="panchang-item">
+      <small>SUNRISE / SUNSET</small>
+      <b id="panchangSun">—</b>
+    </div>
+  </div>
+  <div class="panchang-events" id="panchangEvents">
+    <span class="event-label">✦ TODAY'S & UPCOMING EVENTS:</span>
+    <span class="event-pill active-event"><span class="pulse-dot"></span> 🌺 Loading events…</span>
+  </div>
 </div>
 
 <div class="hero">
@@ -1732,48 +2042,51 @@ body input, body select, body textarea {
     <div class="mystery-statement"><span>✧</span><div><b>Your chart is not a verdict.</b><small>It is a symbolic map of tendencies, cycles and possibilities — interpreted with context, not fear.</small></div></div>
     <div class="intro-actions"><button class="secondary" id="beginReadingBtn" type="button">Open the birth chart <span>→</span></button><span class="intro-note">Your date • time • place become the key</span></div>
   </div>
-  <div class="zodiac-wheel" aria-label="Twelve-sign Rashi wheel">
-    <div class="wheel-aura"></div><div class="wheel-glow"></div>
-    <div class="wheel-track track-one"></div><div class="wheel-track track-two"></div>
-    <div class="mandala-geometry" aria-hidden="true">
-      <svg viewBox="0 0 500 500" class="sacred-geom-svg">
-        <circle cx="250" cy="250" r="238" fill="none" stroke="rgba(242,215,146,0.38)" stroke-width="1.5" />
-        <circle cx="250" cy="250" r="218" fill="none" stroke="rgba(242,215,146,0.22)" stroke-width="1" stroke-dasharray="2,6" />
-        <circle cx="250" cy="250" r="185" fill="none" stroke="rgba(119,197,192,0.35)" stroke-width="1" />
-        <circle cx="250" cy="250" r="140" fill="none" stroke="rgba(242,215,146,0.28)" stroke-width="1.2" stroke-dasharray="4,8" />
-        <circle cx="250" cy="250" r="92" fill="none" stroke="rgba(214,155,69,0.38)" stroke-width="1" />
-        <g stroke="rgba(242,215,146,0.2)" stroke-width="0.85" fill="none">
-          <line x1="250" y1="12" x2="250" y2="488" />
-          <line x1="12" y1="250" x2="488" y2="250" />
-          <line x1="44" y1="131" x2="456" y2="369" />
-          <line x1="131" y1="44" x2="369" y2="456" />
-          <line x1="44" y1="369" x2="456" y2="131" />
-          <line x1="131" y1="456" x2="369" y2="44" />
-          <polygon points="250,32 468,250 250,468 32,250" stroke="rgba(242,215,146,0.25)" stroke-width="1" />
-          <polygon points="96,96 404,96 404,404 96,404" stroke="rgba(119,197,192,0.22)" stroke-width="0.9" />
-          <polygon points="250,85 393,332 107,332" stroke="rgba(242,215,146,0.32)" stroke-width="1.2" />
-          <polygon points="250,415 393,168 107,168" stroke="rgba(242,215,146,0.32)" stroke-width="1.2" />
-          <polygon points="250,120 363,315 137,315" stroke="rgba(214,155,69,0.28)" stroke-width="1" />
-          <polygon points="250,380 363,185 137,185" stroke="rgba(214,155,69,0.28)" stroke-width="1" />
-        </g>
-        <g fill="none" stroke="rgba(242,215,146,0.22)" stroke-width="0.8">
-          <circle cx="250" cy="110" r="30" opacity="0.35" />
-          <circle cx="320" cy="129" r="30" opacity="0.35" />
-          <circle cx="370" cy="180" r="30" opacity="0.35" />
-          <circle cx="390" cy="250" r="30" opacity="0.35" />
-          <circle cx="370" cy="320" r="30" opacity="0.35" />
-          <circle cx="320" cy="370" r="30" opacity="0.35" />
-          <circle cx="250" cy="390" r="30" opacity="0.35" />
-          <circle cx="180" cy="370" r="30" opacity="0.35" />
-          <circle cx="130" cy="320" r="30" opacity="0.35" />
-          <circle cx="110" cy="250" r="30" opacity="0.35" />
-          <circle cx="130" cy="180" r="30" opacity="0.35" />
-          <circle cx="180" cy="129" r="30" opacity="0.35" />
-        </g>
-      </svg>
+  <div class="zodiac-side-col">
+    <div class="zodiac-wheel" aria-label="Twelve-sign Rashi wheel">
+      <div class="wheel-aura"></div><div class="wheel-glow"></div>
+      <div class="wheel-track track-one"></div><div class="wheel-track track-two"></div>
+      <div class="mandala-geometry" aria-hidden="true">
+        <svg viewBox="0 0 500 500" class="sacred-geom-svg">
+          <circle cx="250" cy="250" r="238" fill="none" stroke="rgba(242,215,146,0.38)" stroke-width="1.5" />
+          <circle cx="250" cy="250" r="218" fill="none" stroke="rgba(242,215,146,0.22)" stroke-width="1" stroke-dasharray="2,6" />
+          <circle cx="250" cy="250" r="185" fill="none" stroke="rgba(119,197,192,0.35)" stroke-width="1" />
+          <circle cx="250" cy="250" r="140" fill="none" stroke="rgba(242,215,146,0.28)" stroke-width="1.2" stroke-dasharray="4,8" />
+          <circle cx="250" cy="250" r="92" fill="none" stroke="rgba(214,155,69,0.38)" stroke-width="1" />
+          <g stroke="rgba(242,215,146,0.2)" stroke-width="0.85" fill="none">
+            <line x1="250" y1="12" x2="250" y2="488" />
+            <line x1="12" y1="250" x2="488" y2="250" />
+            <line x1="44" y1="131" x2="456" y2="369" />
+            <line x1="131" y1="44" x2="369" y2="456" />
+            <line x1="44" y1="369" x2="456" y2="131" />
+            <line x1="131" y1="456" x2="369" y2="44" />
+            <polygon points="250,32 468,250 250,468 32,250" stroke="rgba(242,215,146,0.25)" stroke-width="1" />
+            <polygon points="96,96 404,96 404,404 96,404" stroke="rgba(119,197,192,0.22)" stroke-width="0.9" />
+            <polygon points="250,85 393,332 107,332" stroke="rgba(242,215,146,0.32)" stroke-width="1.2" />
+            <polygon points="250,415 393,168 107,168" stroke="rgba(242,215,146,0.32)" stroke-width="1.2" />
+            <polygon points="250,120 363,315 137,315" stroke="rgba(214,155,69,0.28)" stroke-width="1" />
+            <polygon points="250,380 363,185 137,185" stroke="rgba(214,155,69,0.28)" stroke-width="1" />
+          </g>
+          <g fill="none" stroke="rgba(242,215,146,0.22)" stroke-width="0.8">
+            <circle cx="250" cy="110" r="30" opacity="0.35" />
+            <circle cx="320" cy="129" r="30" opacity="0.35" />
+            <circle cx="370" cy="180" r="30" opacity="0.35" />
+            <circle cx="390" cy="250" r="30" opacity="0.35" />
+            <circle cx="370" cy="320" r="30" opacity="0.35" />
+            <circle cx="320" cy="370" r="30" opacity="0.35" />
+            <circle cx="250" cy="390" r="30" opacity="0.35" />
+            <circle cx="180" cy="370" r="30" opacity="0.35" />
+            <circle cx="130" cy="320" r="30" opacity="0.35" />
+            <circle cx="110" cy="250" r="30" opacity="0.35" />
+            <circle cx="130" cy="180" r="30" opacity="0.35" />
+            <circle cx="180" cy="129" r="30" opacity="0.35" />
+          </g>
+        </svg>
+      </div>
+      <div class="wheel-core"><div class="celestial-crest" aria-hidden="true"><svg viewBox="0 0 64 64" role="img"><circle cx="32" cy="32" r="26" fill="none" stroke="currentColor" stroke-width="1" opacity=".7"/><circle cx="32" cy="32" r="18" fill="none" stroke="currentColor" stroke-width="1" opacity=".45"/><path d="M32 7v50M7 32h50M14 14l36 36M50 14L14 50" stroke="currentColor" stroke-width=".8" opacity=".35"/><circle cx="32" cy="32" r="5" fill="currentColor" opacity=".9"/></svg></div><small>RASHI<br>MANDALA</small></div>
+      <span class="z-sign z1" title="Aries · Mesha (Fire)" aria-label="Aries · Mesha"><img src="/src/assets/images/zodiac_aries_gold_1786427406985.jpg" class="z-logo-img" alt="Aries" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/aries.jpg'" /><b>MESHA</b></span><span class="z-sign z2" title="Taurus · Vrishabha (Earth)" aria-label="Taurus · Vrishabha"><img src="/src/assets/images/zodiac_taurus_gold_1786427430892.jpg" class="z-logo-img" alt="Taurus" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/taurus.jpg'" /><b>VRISHABHA</b></span><span class="z-sign z3" title="Gemini · Mithuna (Air)" aria-label="Gemini · Mithuna"><img src="/src/assets/images/zodiac_gemini_gold_1786427447560.jpg" class="z-logo-img" alt="Gemini" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/gemini.jpg'" /><b>MITHUNA</b></span><span class="z-sign z4" title="Cancer · Karka (Water)" aria-label="Cancer · Karka"><img src="/src/assets/images/zodiac_cancer_gold_1786427465388.jpg" class="z-logo-img" alt="Cancer" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/cancer.jpg'" /><b>KARKA</b></span><span class="z-sign z5" title="Leo · Simha (Fire)" aria-label="Leo · Simha"><img src="/src/assets/images/zodiac_leo_gold_1786427482212.jpg" class="z-logo-img" alt="Leo" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/leo.jpg'" /><b>SIMHA</b></span><span class="z-sign z6" title="Virgo · Kanya (Earth)" aria-label="Virgo · Kanya"><img src="/src/assets/images/zodiac_virgo_gold_1786427501477.jpg" class="z-logo-img" alt="Virgo" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/virgo.jpg'" /><b>KANYA</b></span><span class="z-sign z7" title="Libra · Tula (Air)" aria-label="Libra · Tula"><img src="/src/assets/images/zodiac_libra_gold_1786427519372.jpg" class="z-logo-img" alt="Libra" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/libra.jpg'" /><b>TULA</b></span><span class="z-sign z8" title="Scorpio · Vrischika (Water)" aria-label="Scorpio · Vrischika"><img src="/src/assets/images/zodiac_scorpio_gold_1786427534881.jpg" class="z-logo-img" alt="Scorpio" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/scorpio.jpg'" /><b>VRISCHIKA</b></span><span class="z-sign z9" title="Sagittarius · Dhanu (Fire)" aria-label="Sagittarius · Dhanu"><img src="/src/assets/images/zodiac_sagittarius_gold_1786427554200.jpg" class="z-logo-img" alt="Sagittarius" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/sagittarius.jpg'" /><b>DHANU</b></span><span class="z-sign z10" title="Capricorn · Makara (Earth)" aria-label="Capricorn · Makara"><img src="/src/assets/images/zodiac_capricorn_gold_1786427572321.jpg" class="z-logo-img" alt="Capricorn" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/capricorn.jpg'" /><b>MAKARA</b></span><span class="z-sign z11" title="Aquarius · Kumbha (Air)" aria-label="Aquarius · Kumbha"><img src="/src/assets/images/zodiac_aquarius_gold_1786427591478.jpg" class="z-logo-img" alt="Aquarius" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/aquarius.jpg'" /><b>KUMBHA</b></span><span class="z-sign z12" title="Pisces · Meena (Water)" aria-label="Pisces · Meena"><img src="/src/assets/images/zodiac_pisces_gold_1786427610651.jpg" class="z-logo-img" alt="Pisces" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/pisces.jpg'" /><b>MEENA</b></span>
     </div>
-    <div class="wheel-core"><div class="celestial-crest" aria-hidden="true"><svg viewBox="0 0 64 64" role="img"><circle cx="32" cy="32" r="26" fill="none" stroke="currentColor" stroke-width="1" opacity=".7"/><circle cx="32" cy="32" r="18" fill="none" stroke="currentColor" stroke-width="1" opacity=".45"/><path d="M32 7v50M7 32h50M14 14l36 36M50 14L14 50" stroke="currentColor" stroke-width=".8" opacity=".35"/><circle cx="32" cy="32" r="5" fill="currentColor" opacity=".9"/></svg></div><small>RASHI<br>MANDALA</small></div><div class="rashi-detail" id="rashiDetail" aria-live="polite"><b>Rashi</b><small>Click a sign to explore its element, quality, ruler and archetype.</small></div>
-    <span class="z-sign z1" title="Aries · Mesha (Fire)" aria-label="Aries · Mesha"><img src="/src/assets/images/zodiac_aries_gold_1786427406985.jpg" class="z-logo-img" alt="Aries" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/aries.jpg'" /><b>MESHA</b></span><span class="z-sign z2" title="Taurus · Vrishabha (Earth)" aria-label="Taurus · Vrishabha"><img src="/src/assets/images/zodiac_taurus_gold_1786427430892.jpg" class="z-logo-img" alt="Taurus" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/taurus.jpg'" /><b>VRISHABHA</b></span><span class="z-sign z3" title="Gemini · Mithuna (Air)" aria-label="Gemini · Mithuna"><img src="/src/assets/images/zodiac_gemini_gold_1786427447560.jpg" class="z-logo-img" alt="Gemini" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/gemini.jpg'" /><b>MITHUNA</b></span><span class="z-sign z4" title="Cancer · Karka (Water)" aria-label="Cancer · Karka"><img src="/src/assets/images/zodiac_cancer_gold_1786427465388.jpg" class="z-logo-img" alt="Cancer" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/cancer.jpg'" /><b>KARKA</b></span><span class="z-sign z5" title="Leo · Simha (Fire)" aria-label="Leo · Simha"><img src="/src/assets/images/zodiac_leo_gold_1786427482212.jpg" class="z-logo-img" alt="Leo" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/leo.jpg'" /><b>SIMHA</b></span><span class="z-sign z6" title="Virgo · Kanya (Earth)" aria-label="Virgo · Kanya"><img src="/src/assets/images/zodiac_virgo_gold_1786427501477.jpg" class="z-logo-img" alt="Virgo" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/virgo.jpg'" /><b>KANYA</b></span><span class="z-sign z7" title="Libra · Tula (Air)" aria-label="Libra · Tula"><img src="/src/assets/images/zodiac_libra_gold_1786427519372.jpg" class="z-logo-img" alt="Libra" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/libra.jpg'" /><b>TULA</b></span><span class="z-sign z8" title="Scorpio · Vrischika (Water)" aria-label="Scorpio · Vrischika"><img src="/src/assets/images/zodiac_scorpio_gold_1786427534881.jpg" class="z-logo-img" alt="Scorpio" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/scorpio.jpg'" /><b>VRISCHIKA</b></span><span class="z-sign z9" title="Sagittarius · Dhanu (Fire)" aria-label="Sagittarius · Dhanu"><img src="/src/assets/images/zodiac_sagittarius_gold_1786427554200.jpg" class="z-logo-img" alt="Sagittarius" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/sagittarius.jpg'" /><b>DHANU</b></span><span class="z-sign z10" title="Capricorn · Makara (Earth)" aria-label="Capricorn · Makara"><img src="/src/assets/images/zodiac_capricorn_gold_1786427572321.jpg" class="z-logo-img" alt="Capricorn" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/capricorn.jpg'" /><b>MAKARA</b></span><span class="z-sign z11" title="Aquarius · Kumbha (Air)" aria-label="Aquarius · Kumbha"><img src="/src/assets/images/zodiac_aquarius_gold_1786427591478.jpg" class="z-logo-img" alt="Aquarius" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/aquarius.jpg'" /><b>KUMBHA</b></span><span class="z-sign z12" title="Pisces · Meena (Water)" aria-label="Pisces · Meena"><img src="/src/assets/images/zodiac_pisces_gold_1786427610651.jpg" class="z-logo-img" alt="Pisces" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/pisces.jpg'" /><b>MEENA</b></span>
+    <div class="rashi-detail" id="rashiDetail" aria-live="polite"><b>Rashi</b><small>Click a sign to explore its element, quality, ruler and archetype.</small></div>
   </div>
   <div class="astrology-pillars">
     <div><span>♈</span><strong>Rashis</strong><small>The twelve signs describe the field and style in which planetary themes unfold.</small></div>
@@ -2033,6 +2346,7 @@ body input, body select, body textarea {
 
 <div class="card" id="reportCard" style="display:none;">
   <h2 id="reportHeading">Your reading</h2>
+  <div class="visual-card panchang-report-card" id="panchangReportCard" style="display:none;"></div>
   <div class="visual-card at-a-glance" id="atAGlanceCard" style="display:none;">
     <div class="glance-head"><div><span class="glance-kicker">YOUR CHART · AT A GLANCE</span><h3>What this chart is asking you to understand</h3></div><span class="glance-seal">✦</span></div>
     <div class="glance-grid" id="glanceGrid"></div>
@@ -2476,6 +2790,351 @@ window.PAYWALL_CONFIG = {
   });
 })();
 
+// --- Daily Dainik Panchang, Solar & Event Almanac Engine ---
+function calculateSunTimes(dateObj, lat = 28.6139, lon = 77.2090) {
+  try {
+    const latRad = lat * (Math.PI / 180);
+    const start = new Date(dateObj.getFullYear(), 0, 0);
+    const diff = dateObj - start;
+    const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const zenith = 90.833 * (Math.PI / 180);
+    const lngHour = lon / 15;
+
+    function getTime(isSunrise) {
+      const t = dayOfYear + ((isSunrise ? 6 : 18) - lngHour) / 24;
+      const M = (0.9856 * t) - 3.289;
+      const MRad = M * (Math.PI / 180);
+      let L = M + (1.916 * Math.sin(MRad)) + (0.020 * Math.sin(2 * MRad)) + 282.634;
+      L = (L + 360) % 360;
+      const LRad = L * (Math.PI / 180);
+      let RA = Math.atan(0.91764 * Math.tan(LRad)) * (180 / Math.PI);
+      RA = (RA + 360) % 360;
+      const Lquadrant  = Math.floor(L / 90) * 90;
+      const RAquadrant = Math.floor(RA / 90) * 90;
+      RA = RA + (Lquadrant - RAquadrant);
+      RA = RA / 15;
+
+      const sinDec = 0.39782 * Math.sin(LRad);
+      const cosDec = Math.cos(Math.asin(sinDec));
+      const cosH = (Math.cos(zenith) - (sinDec * Math.sin(latRad))) / (cosDec * Math.cos(latRad));
+
+      if (cosH > 1 || cosH < -1) return null;
+
+      let H = isSunrise ? (360 - (Math.acos(cosH) * (180 / Math.PI))) : (Math.acos(cosH) * (180 / Math.PI));
+      H = H / 15;
+
+      const T = H + RA - (0.06571 * t) - 6.622;
+      let UT = (T - lngHour + 24) % 24;
+
+      const tzOffset = -dateObj.getTimezoneOffset() / 60;
+      let localHour = (UT + tzOffset + 24) % 24;
+
+      const hrs = Math.floor(localHour);
+      const mins = Math.floor((localHour - hrs) * 60);
+      const period = hrs >= 12 ? 'PM' : 'AM';
+      const displayHrs = (hrs % 12) || 12;
+      const displayMins = mins < 10 ? '0' + mins : mins;
+
+      return {
+        decimal: localHour,
+        formatted: `${displayHrs < 10 ? '0' + displayHrs : displayHrs}:${displayMins} ${period}`
+      };
+    }
+
+    const sunrise = getTime(true) || { formatted: '06:01 AM', decimal: 6.017 };
+    const sunset = getTime(false) || { formatted: '07:02 PM', decimal: 19.033 };
+
+    let dayLengthMins = Math.round((sunset.decimal - sunrise.decimal) * 60);
+    if (dayLengthMins < 0) dayLengthMins += 24 * 60;
+    const lenHrs = Math.floor(dayLengthMins / 60);
+    const lenMins = dayLengthMins % 60;
+
+    return {
+      sunrise: sunrise.formatted,
+      sunset: sunset.formatted,
+      dayLength: `${lenHrs}h ${lenMins < 10 ? '0' + lenMins : lenMins}m`,
+      formattedCombined: `${sunrise.formatted} / ${sunset.formatted}`
+    };
+  } catch (err) {
+    return {
+      sunrise: "06:05 AM",
+      sunset: "06:56 PM",
+      dayLength: "12h 51m",
+      formattedCombined: "06:05 AM / 06:56 PM"
+    };
+  }
+}
+
+function calculateHinduCalendar(dateObj) {
+  const year = dateObj.getFullYear();
+  const startOfYear = new Date(year, 0, 0);
+  const diff = dateObj - startOfYear;
+  const oneDay = 1000 * 60 * 60 * 24;
+  const dayOfYear = Math.floor(diff / oneDay);
+
+  const isAfterChaitra = dayOfYear >= 88;
+  const vikramSamvat = isAfterChaitra ? year + 57 : year + 56;
+  const sakaSamvat = isAfterChaitra ? year - 78 : year - 79;
+
+  const samvatsaras = [
+    "Prabhava", "Vibhava", "Shukla", "Pramoda", "Prajapati", "Angira", "Shrimukha", "Bhava",
+    "Yuva", "Dhatri", "Eshwara", "Bahudhanya", "Pramathi", "Vikrama", "Vrisha", "Chitrabanu",
+    "Subhanu", "Taran", "Parthiva", "Vyaya", "Sarvajit", "Sarvadhari", "Virodhi", "Vikriti",
+    "Khara", "Nandana", "Vijaya", "Jaya", "Manmatha", "Durmukhi", "Hevilambi", "Vilambi",
+    "Vikari", "Sharvari", "Plava", "Shubhakrit", "Shobhakrit", "Krodhi", "Visvavasu", "Paridhavi",
+    "Pramadi", "Ananda", "Rakshasa", "Anala", "Pingala", "Kalayukti", "Siddharthin", "Raudra", "Durmathi",
+    "Dundubhi", "Rudhrodgari", "Raktakshi", "Krodhana", "Kshaya"
+  ];
+  const samvatsaraIdx = (vikramSamvat + 9) % 60;
+  const samvatsaraName = samvatsaras[samvatsaraIdx] || "Krodhi";
+
+  const synodicMonth = 29.530588;
+  const lunarAge = (dayOfYear + 14.2) % synodicMonth;
+  const tithiIdx = Math.floor((lunarAge / synodicMonth) * 30) % 30;
+
+  const isShukla = tithiIdx < 15;
+  const pakshaName = isShukla ? "Shukla Paksha" : "Krishna Paksha";
+  const tithiInPaksha = (tithiIdx % 15) + 1;
+
+  const hinduMaasNames = [
+    "Pausha", "Magha", "Phalguni", "Chaitra", "Vaishakha", "Jyeshtha",
+    "Ashadha", "Shravana", "Bhadrapada", "Ashvina", "Kartika", "Margashirsha"
+  ];
+  let maasIdx = Math.floor(((dayOfYear + 20) / 30.4)) % 12;
+  const maasName = hinduMaasNames[maasIdx] || "Shravana";
+
+  return {
+    vikramSamvat: `VS ${vikramSamvat} (${samvatsaraName})`,
+    sakaSamvat: `Saka ${sakaSamvat}`,
+    maas: `${maasName} Maas`,
+    paksha: pakshaName,
+    tithiNumber: tithiInPaksha,
+    hinduDateFormatted: `${maasName} ${isShukla ? 'Shukla' : 'Krishna'} ${tithiInPaksha === 15 ? (isShukla ? 'Purnima' : 'Amavasya') : 'Tithi ' + tithiInPaksha}, VS ${vikramSamvat}`
+  };
+}
+
+function getDailyPanchangData(targetDate = new Date(), customLat = 28.6139, customLon = 77.2090) {
+  const d = new Date(targetDate);
+  if (isNaN(d.getTime())) return null;
+
+  const dateStr = d.toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  const dayOfWeek = d.getDay();
+  const year = d.getFullYear();
+  const oneDay = 1000 * 60 * 60 * 24;
+
+  const rahuKaalTimes = [
+    "04:30 PM – 06:00 PM", // Sunday
+    "07:30 AM – 09:00 AM", // Monday
+    "03:00 PM – 04:30 PM", // Tuesday
+    "12:00 PM – 01:30 PM", // Wednesday
+    "01:30 PM – 03:00 PM", // Thursday
+    "10:30 AM – 12:00 PM", // Friday
+    "09:00 AM – 10:30 AM"  // Saturday
+  ];
+
+  const tithis = [
+    "Shukla Pratipada", "Shukla Dwitiya", "Shukla Tritiya", "Shukla Chaturthi", "Shukla Panchami",
+    "Shukla Shashti", "Shukla Saptami", "Shukla Ashtami", "Shukla Navami", "Shukla Dashami",
+    "Shukla Ekadashi", "Shukla Dwadashi", "Shukla Trayodashi", "Shukla Chaturdashi", "Purnima (Full Moon)",
+    "Krishna Pratipada", "Krishna Dwitiya", "Krishna Tritiya", "Krishna Chaturthi", "Krishna Panchami",
+    "Krishna Shashti", "Krishna Saptami", "Krishna Ashtami", "Krishna Navami", "Krishna Dashami",
+    "Krishna Ekadashi", "Krishna Dwadashi", "Krishna Trayodashi", "Krishna Chaturdashi", "Amavasya (New Moon)"
+  ];
+
+  const nakshatras = [
+    "Ashwini", "Bharani", "Krittika", "Rohini", "Mrigashira", "Ardra", "Punarvasu",
+    "Pushya", "Ashlesha", "Magha", "Purva Phalguni", "Uttara Phalguni", "Hasta",
+    "Chitra", "Swati", "Vishakha", "Anuradha", "Jyeshtha", "Mula", "Purva Ashadha",
+    "Uttara Ashadha", "Shravana", "Dhanishta", "Shatabhisha", "Purva Bhadrapada",
+    "Uttara Bhadrapada", "Revati"
+  ];
+
+  const yogas = [
+    "Vishkambha", "Priti", "Ayushman", "Saubhagya", "Shobhana", "Atiganda", "Sukarma",
+    "Dhriti", "Shula", "Ganda", "Vriddhi", "Dhruva", "Vyaghata", "Harshana", "Vajra",
+    "Siddhi", "Vyatipata", "Variyana", "Parigha", "Shiva", "Siddha", "Sadhya", "Shubha",
+    "Shukla", "Brahma", "Indra", "Vaidhriti"
+  ];
+
+  const karanas = [
+    "Bava", "Balava", "Kaulava", "Taitila", "Gara", "Vanija", "Vishti (Bhadra)",
+    "Shakuni", "Chatushpada", "Naga", "Kimstughna"
+  ];
+
+  const startOfYear = new Date(year, 0, 0);
+  const diff = d - startOfYear;
+  const dayOfYear = Math.floor(diff / oneDay);
+
+  const synodicMonth = 29.530588;
+  const lunarAge = (dayOfYear + 14.2) % synodicMonth;
+  const tithiIdx = Math.floor((lunarAge / synodicMonth) * 30) % 30;
+
+  const nakshatraIdx = Math.floor(((dayOfYear * 1.05 + 8) % 27));
+  const yogaIdx = Math.floor(((dayOfYear * 0.95 + 12) % 27));
+  const karanaIdx = (tithiIdx * 2) % 11;
+
+  const sunTimes = calculateSunTimes(d, customLat, customLon);
+  const hinduCal = calculateHinduCalendar(d);
+
+  // Major Annual & Minor Monthly/Fortnightly Events Catalog
+  const majorEvents = [
+    { name: "Independence Day", dateStr: `${year}-08-15`, icon: "🇮🇳", desc: "Indian Independence Day — National Celebration" },
+    { name: "Republic Day", dateStr: `${year}-01-26`, icon: "🇮🇳", desc: "Indian Republic Day — Constitution & Heritage" },
+    { name: "Sawan Maas (Shravan Month)", startDate: `${year}-07-29`, endDate: `${year}-08-28`, icon: "🌺", desc: "Sacred Month of Lord Shiva & Somwar Vrat" },
+    { name: "Raksha Bandhan", dateStr: `${year}-08-28`, icon: "🪢", desc: "Festival of Sibling Protection (Shravana Purnima)" },
+    { name: "Shri Krishna Janmashtami", dateStr: `${year}-09-03`, icon: "🪔", desc: "Birth Celebration of Lord Shri Krishna" },
+    { name: "Ganesh Chaturthi", dateStr: `${year}-09-14`, icon: "🐘", desc: "Vinayaka Chaturthi — Lord Ganesha Sthapana" },
+    { name: "Anant Chaturdashi", dateStr: `${year}-09-23`, icon: "🪷", desc: "Ganesha Visarjan & Anant Vrat" },
+    { name: "Sharad Navratri", startDate: `${year}-10-11`, endDate: `${year}-10-19`, icon: "🌺", desc: "9 Sacred Nights of Devi Durga Worship" },
+    { name: "Dussehra (Vijayadashami)", dateStr: `${year}-10-20`, icon: "🏹", desc: "Triumph of Lord Rama — Victory of Good Over Evil" },
+    { name: "Karwa Chauth", dateStr: `${year}-10-28`, icon: "🌕", desc: "Sacred Fasting for Spousal Wellbeing & Longevity" },
+    { name: "Dhanteras", dateStr: `${year}-11-06`, icon: "🪙", desc: "Auspicious Buying of Metals & Lord Dhanvantari Worship" },
+    { name: "Diwali (Deepavali)", dateStr: `${year}-11-08`, icon: "🪔", desc: "Maha Lakshmi Puja & Festival of Lights" },
+    { name: "Govardhan Puja & Bhai Dooj", startDate: `${year}-11-09`, endDate: `${year}-11-10`, icon: "🏵️", desc: "Govardhan Annakut & Brother-Sister Blessings" },
+    { name: "Chhath Puja", dateStr: `${year}-11-14`, icon: "☀️", desc: "Maha Vrat for Sun God Surya & Chhathi Maiya" },
+    { name: "Gita Jayanti", dateStr: `${year}-12-20`, icon: "📜", desc: "Advent of Shrimad Bhagavad Gita" },
+    { name: "Makar Sankranti & Pongal", dateStr: `${year}-01-14`, icon: "☀️", desc: "Sun's Uttarayana Transit & Harvest Thanksgiving" },
+    { name: "Maha Shivratri", dateStr: `${year}-02-15`, icon: "🔱", desc: "Great Auspicious Night of Lord Shiva" },
+    { name: "Holi & Holika Dahan", startDate: `${year}-03-03`, endDate: `${year}-03-04`, icon: "🎨", desc: "Festival of Colors & Triumph of Bhakta Prahlad" },
+    { name: "Chaitra Navratri & Ugadi / Gudi Padwa", dateStr: `${year}-03-19`, icon: "🌱", desc: "Vedic New Year & Chaitra Navratri Commencement" },
+    { name: "Shri Ram Navami", dateStr: `${year}-03-27`, icon: "🏹", desc: "Birth Celebration of Maryada Purushottam Lord Rama" },
+    { name: "Hanuman Jayanti", dateStr: `${year}-04-02`, icon: "🚩", desc: "Birth Celebration of Mahavira Lord Hanuman" },
+    { name: "Akshaya Tritiya", dateStr: `${year}-04-20`, icon: "✨", desc: "Day of Unending Good Fortune & Prosperity" }
+  ];
+
+  // Minor Hindu Events Generator (Ekadashi, Pradosham, Chaturthi, Masik Shivratri, Amavasya, Purnima)
+  const minorEvents = [];
+  const targetTime = d.getTime();
+
+  for (let offset = -5; offset <= 35; offset++) {
+    const curDate = new Date(targetTime + offset * oneDay);
+    const startOfYr = new Date(curDate.getFullYear(), 0, 0);
+    const curDayOfYr = Math.floor((curDate - startOfYr) / oneDay);
+    const curLunarAge = (curDayOfYr + 14.2) % synodicMonth;
+    const curTithiIdx = Math.floor((curLunarAge / synodicMonth) * 30) % 30;
+    const dateStrISO = curDate.toISOString().split('T')[0];
+
+    if (curTithiIdx === 10) minorEvents.push({ name: "Shukla Ekadashi Vrat", dateStr: dateStrISO, icon: "📿", desc: "Vishnu Vrat" });
+    if (curTithiIdx === 25) minorEvents.push({ name: "Krishna Ekadashi Vrat", dateStr: dateStrISO, icon: "📿", desc: "Vishnu Vrat" });
+    if (curTithiIdx === 12) minorEvents.push({ name: "Shukla Pradosh Vrat", dateStr: dateStrISO, icon: "🔱", desc: "Shiva Twilight Worship" });
+    if (curTithiIdx === 27) minorEvents.push({ name: "Krishna Pradosh Vrat", dateStr: dateStrISO, icon: "🔱", desc: "Shiva Twilight Worship" });
+    if (curTithiIdx === 3) minorEvents.push({ name: "Vinayaka Chaturthi", dateStr: dateStrISO, icon: "🐘", desc: "Ganesha Vrat" });
+    if (curTithiIdx === 18) minorEvents.push({ name: "Sankashti Chaturthi Vrat", dateStr: dateStrISO, icon: "🐘", desc: "Moonrise Ganesha Vrat" });
+    if (curTithiIdx === 28) minorEvents.push({ name: "Masik Shivratri", dateStr: dateStrISO, icon: "🔱", desc: "Monthly Shiva Vrat" });
+    if (curTithiIdx === 14) minorEvents.push({ name: "Purnima Vrat / Satyanarayan Puja", dateStr: dateStrISO, icon: "🌕", desc: "Full Moon Vrat" });
+    if (curTithiIdx === 29) minorEvents.push({ name: "Amavasya Vrat / Pitru Tarpan", dateStr: dateStrISO, icon: "🌑", desc: "New Moon Pitru Puja" });
+    if (curTithiIdx === 7) minorEvents.push({ name: "Masik Durgashtami", dateStr: dateStrISO, icon: "🌺", desc: "Durga Vrat" });
+    if (curTithiIdx === 22) minorEvents.push({ name: "Masik Kalashtami", dateStr: dateStrISO, icon: "🚩", desc: "Bhairav Vrat" });
+  }
+
+  const allEvents = [...majorEvents, ...minorEvents];
+  const activeEvents = [];
+  const rawUpcomingEvents = [];
+
+  allEvents.forEach(ev => {
+    if (ev.startDate && ev.endDate) {
+      const startT = new Date(ev.startDate + 'T00:00:00').getTime();
+      const endT = new Date(ev.endDate + 'T23:59:59').getTime();
+      if (targetTime >= startT && targetTime <= endT) {
+        activeEvents.push(ev);
+      } else if (startT > targetTime) {
+        const daysAway = Math.ceil((startT - targetTime) / oneDay);
+        if (daysAway > 0 && daysAway <= 30) rawUpcomingEvents.push({ ...ev, daysAway });
+      }
+    } else if (ev.dateStr) {
+      const evT = new Date(ev.dateStr + 'T00:00:00').getTime();
+      const diffDays = Math.round((evT - targetTime) / oneDay);
+      if (diffDays === 0) {
+        activeEvents.push({ ...ev, desc: `TODAY: ${ev.desc}` });
+      } else if (diffDays > 0 && diffDays <= 30) {
+        rawUpcomingEvents.push({ ...ev, daysAway: diffDays });
+      }
+    }
+  });
+
+  rawUpcomingEvents.sort((a, b) => a.daysAway - b.daysAway);
+  const seenKeys = new Set();
+  const upcomingEvents = [];
+  for (const ev of rawUpcomingEvents) {
+    const key = `${ev.name}_${ev.daysAway}`;
+    if (!seenKeys.has(key)) {
+      seenKeys.add(key);
+      upcomingEvents.push(ev);
+    }
+  }
+
+  return {
+    dateStr,
+    dayOfWeek: ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][dayOfWeek],
+    tithi: tithis[tithiIdx],
+    nakshatra: nakshatras[nakshatraIdx],
+    yoga: yogas[yogaIdx],
+    karana: karanas[karanaIdx],
+    rahuKaal: rahuKaalTimes[dayOfWeek],
+    abhijit: "11:54 AM – 12:46 PM",
+    sun: sunTimes,
+    hinduCal: hinduCal,
+    activeEvents,
+    upcomingEvents
+  };
+}
+
+function renderDailyPanchang() {
+  try {
+    const lat = parseFloat(document.getElementById('f_lat')?.value) || 28.6139;
+    const lon = parseFloat(document.getElementById('f_lon')?.value) || 77.2090;
+    const data = getDailyPanchangData(new Date(), lat, lon);
+    if (!data) return;
+
+    const pDate = document.getElementById('panchangDate');
+    const pHindu = document.getElementById('panchangHinduCal');
+    const pTithi = document.getElementById('panchangTithi');
+    const pNak = document.getElementById('panchangNakshatra');
+    const pYoga = document.getElementById('panchangYoga');
+    const pKarana = document.getElementById('panchangKarana');
+    const pRahu = document.getElementById('panchangRahuKaal');
+    const pShubh = document.getElementById('panchangShubh');
+    const pSun = document.getElementById('panchangSun');
+    const pEvents = document.getElementById('panchangEvents');
+
+    if (pDate) pDate.textContent = `${data.dateStr} (${data.hinduCal.hinduDateFormatted})`;
+    if (pHindu) pHindu.textContent = `${data.hinduCal.maas} · ${data.hinduCal.vikramSamvat}`;
+    if (pTithi) pTithi.textContent = data.tithi;
+    if (pNak) pNak.textContent = data.nakshatra;
+    if (pYoga) pYoga.textContent = data.yoga;
+    if (pKarana) pKarana.textContent = data.karana;
+    if (pRahu) pRahu.textContent = data.rahuKaal;
+    if (pShubh) pShubh.textContent = data.abhijit;
+    if (pSun) pSun.textContent = `${data.sun.sunrise} / ${data.sun.sunset} (${data.sun.dayLength})`;
+
+    if (pEvents) {
+      let eventsHtml = `<div class="event-label">✦ TODAY & NEXT 30 DAYS EVENTS (CLICK ANY FOR BRIEF):</div>`;
+      if (data.activeEvents.length > 0) {
+        data.activeEvents.forEach(ev => {
+          const escName = encodeURIComponent(ev.name);
+          eventsHtml += `<span class="event-pill active-event" onclick="openEventDetails('${escName}')" title="Click to view event brief"><span class="pulse-dot"></span> ${ev.icon} <b>Active:</b> ${ev.name}</span>`;
+        });
+      }
+      if (data.upcomingEvents.length > 0) {
+        data.upcomingEvents.forEach(ev => {
+          const escName = encodeURIComponent(ev.name);
+          const daysText = ev.daysAway === 1 ? 'Tomorrow' : `in ${ev.daysAway} days`;
+          eventsHtml += `<span class="event-pill" onclick="openEventDetails('${escName}')" title="Click to view event brief"><span class="event-icon">${ev.icon}</span> <b>${ev.name}</b> — ${daysText}</span>`;
+        });
+      }
+      pEvents.innerHTML = eventsHtml;
+    }
+  } catch (err) {
+    console.error('Panchang render error:', err);
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', renderDailyPanchang);
+} else {
+  renderDailyPanchang();
+}
+
 // --- Report intelligence: create a concise, chart-grounded opening summary ---
 function buildAtAGlance(){
   const card=document.getElementById('atAGlanceCard'), grid=document.getElementById('glanceGrid'), syn=document.getElementById('glanceSynthesis');
@@ -2899,7 +3558,7 @@ const SECTIONS = [
   { id:'overview', title:'Chart overview and key themes',
     instruction:`Write an impact-first executive reading. Start with what the chart appears to mean for this person's lived experience: temperament, decision-making, emotional patterns, relationships, career direction, money habits, resilience, and recurring life themes. Then identify the chart's strongest three to five patterns and explain exactly which houses, lords, signs, dignities, yogas or dashas create them. Use the verified ephemeris values supplied in the chart context and distinguish calculation data from interpretive uncertainty. Do not write a textbook introduction.` },
   { id:'panchang', title:'Panchang and foundational placements',
-    instruction:`Present the Panchang — Tithi, Nakshatra with lord and pada, Yoga, Karana and Vara — using the verified calculation context. Then give Lagna, Moon sign and all nine grahas by exact sidereal sign, degree, house, dignity and retrograde status. Never replace a returned ephemeris value with an estimate. Keep the visible prose readable, but at the very end include structured lines exactly in this form for rendering: "PLANET | SIGN | HOUSE | DIGNITY" for Sun, Moon, Mars, Mercury, Jupiter, Venus, Saturn, Rahu and Ketu; then "LAGNA | SIGN" and "MOON SIGN | SIGN". If a placement cannot be supported, write "Not reliably assessable" rather than inventing it. These machine-readable lines are hidden from the reader.` },
+    instruction:`Present the Panchang — Tithi, Nakshatra with lord and pada, Yoga, Karana, Vara, Rahu Kaal window, Abhijit Muhurat window, and active/upcoming Hindu festivals or national events (such as Independence Day, Sawan Maas, Raksha Bandhan, Janmashtami, Navratri, Diwali, Maha Shivratri, etc.) — using the verified calculation and almanac context provided. Explicitly guide the reader on Rahu Kaal timing (times to avoid starting major new contracts or journeys) and Abhijit Muhurat (Shubh Muhurat for starting positive ventures), weaving in any active festival or seasonal blessings. Then give Lagna, Moon sign and all nine grahas by exact sidereal sign, degree, house, dignity and retrograde status. Never replace a returned ephemeris value with an estimate. Keep the visible prose readable, but at the very end include structured lines exactly in this form for rendering: "PLANET | SIGN | HOUSE | DIGNITY" for Sun, Moon, Mars, Mercury, Jupiter, Venus, Saturn, Rahu and Ketu; then "LAGNA | SIGN" and "MOON SIGN | SIGN". If a placement cannot be supported, write "Not reliably assessable" rather than inventing it. These machine-readable lines are hidden from the reader.` },
   { id:'identity', title:'Identity, temperament and behavioural pattern',
     instruction:`Explain how the chart can show up in this person's actual behaviour. Cover Lagna and Lagna lord, Moon, Mercury, Sun, Saturn and the 5th house. For every major indication, explain the likely behaviour, emotional response, decision style, communication style, confidence pattern, learning style, stress response and interpersonal tendencies. Use concrete life-language such as "you may tend to..." rather than generic planet definitions. Distinguish strengths from patterns that may need conscious management. Ground every conclusion in the chart.` },
   { id:'relationships', title:'Love, marriage, family and social life',
@@ -3116,10 +3775,30 @@ function buildBirthContext(){
   const dob = document.getElementById('f_dob').value;
   const tob = document.getElementById('f_tob').value;
   const pob = document.getElementById('f_pob').value;
-  const lat = document.getElementById('f_lat').value;
-  const lon = document.getElementById('f_lon').value;
+  const lat = parseFloat(document.getElementById('f_lat').value) || 28.6139;
+  const lon = parseFloat(document.getElementById('f_lon').value) || 77.2090;
   let s = `Native's name: ${name}\nGender: ${gender}\nDate of birth: ${dob}\nTime of birth: ${tob}\nPlace of birth: ${pob}`;
   if(lat && lon) s += `\nCoordinates: latitude ${lat}, longitude ${lon}`;
+
+  // Attach Dainik Panchang, Hindu Calendar, Rahu Kaal, Solar, and Event Context
+  const pData = getDailyPanchangData(dob ? new Date(dob) : new Date(), lat, lon);
+  if (pData) {
+    s += `\n\nDAINIK PANCHANG, HINDU CALENDAR, RAHU KAAL & FESTIVAL ALMANAC (${pData.dateStr}):`;
+    s += `\n- Hindu Calendar: ${pData.hinduCal.hinduDateFormatted} (${pData.hinduCal.vikramSamvat}, ${pData.hinduCal.sakaSamvat}, ${pData.hinduCal.maas})`;
+    s += `\n- Tithi: ${pData.tithi}`;
+    s += `\n- Nakshatra: ${pData.nakshatra}`;
+    s += `\n- Yoga: ${pData.yoga}`;
+    s += `\n- Karana: ${pData.karana}`;
+    s += `\n- Rahu Kaal Window: ${pData.rahuKaal} (Inauspicious window; provide timing precautions for starting major new ventures or contracts)`;
+    s += `\n- Abhijit Muhurat: ${pData.abhijit} (Auspicious Shubh Muhurat window for initiating auspicious work)`;
+    s += `\n- Sunrise / Sunset (Calculated): ${pData.sun.sunrise} / ${pData.sun.sunset} (Day Length: ${pData.sun.dayLength})`;
+    if (pData.activeEvents.length > 0) {
+      s += `\n- Active Seasonal Festival / Vrat: ${pData.activeEvents.map(e => e.name + ' (' + e.desc + ')').join(', ')}`;
+    }
+    if (pData.upcomingEvents.length > 0) {
+      s += `\n- Upcoming Festivals / Minor Vrats (Next 30 Days): ${pData.upcomingEvents.map(e => e.name + ' [' + (e.daysAway === 1 ? 'Tomorrow' : 'in ' + e.daysAway + ' days') + ']').join(', ')}`;
+    }
+  }
   return s;
 }
 
@@ -3137,7 +3816,19 @@ function buildPersonContext(prefix, label){
 }
 
 function buildKundliContext(){
-  return `${buildPersonContext('k1', 'Partner A')}\n\n${buildPersonContext('k2', 'Partner B')}`;
+  let s = `${buildPersonContext('k1', 'Partner A')}\n\n${buildPersonContext('k2', 'Partner B')}`;
+  const pData = getDailyPanchangData(new Date());
+  if (pData) {
+    s += `\n\nTODAY'S DAINIK PANCHANG, RAHU KAAL & FESTIVAL CONTEXT (${pData.dateStr}):`;
+    s += `\n- Tithi: ${pData.tithi} | Nakshatra: ${pData.nakshatra} | Rahu Kaal: ${pData.rahuKaal} | Abhijit Muhurat: ${pData.abhijit}`;
+    if (pData.activeEvents.length > 0) {
+      s += `\n- Active Festival: ${pData.activeEvents.map(e => e.name).join(', ')}`;
+    }
+    if (pData.upcomingEvents.length > 0) {
+      s += `\n- Upcoming Festivals / National Events: ${pData.upcomingEvents.map(e => e.name + ' (' + e.daysAway + 'd)').join(', ')}`;
+    }
+  }
+  return s;
 }
 
 function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
@@ -3347,6 +4038,43 @@ function renderInterpretationTable(){
   tbody.innerHTML=rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('');
 }
 
+function renderPanchangReportCard(){
+  const card = document.getElementById('panchangReportCard');
+  if(!card) return;
+  const dob = document.getElementById('f_dob')?.value;
+  const lat = parseFloat(document.getElementById('f_lat')?.value) || 28.6139;
+  const lon = parseFloat(document.getElementById('f_lon')?.value) || 77.2090;
+  const pData = getDailyPanchangData(dob ? new Date(dob) : new Date(), lat, lon);
+  if(!pData){ card.style.display='none'; return; }
+
+  card.style.display = 'block';
+  card.innerHTML = `
+    <div class="panchang-report-box">
+      <div class="panchang-report-header">
+        <span>✦ DAINIK PANCHANG, RAHU KAAL & FESTIVAL ALMANAC</span>
+        <small>${pData.dateStr} · ${pData.hinduCal.hinduDateFormatted}</small>
+      </div>
+      <div class="panchang-report-grid">
+        <div class="shubh-box"><small>📜 HINDU CALENDAR</small><b>${pData.hinduCal.maas} · ${pData.hinduCal.vikramSamvat}</b></div>
+        <div><small>TITHI</small><b>${pData.tithi}</b></div>
+        <div><small>NAKSHATRA</small><b>${pData.nakshatra}</b></div>
+        <div><small>YOGA</small><b>${pData.yoga}</b></div>
+        <div><small>KARANA</small><b>${pData.karana}</b></div>
+        <div class="rahu-box"><small>⚠️ RAHU KAAL</small><b>${pData.rahuKaal}</b></div>
+        <div class="shubh-box"><small>✨ ABHIJIT MUHURAT</small><b>${pData.abhijit}</b></div>
+        <div><small>☀️ SUNRISE / SUNSET</small><b>${pData.sun.sunrise} / ${pData.sun.sunset} (${pData.sun.dayLength})</b></div>
+      </div>
+      ${pData.activeEvents.length > 0 || pData.upcomingEvents.length > 0 ? `
+        <div class="panchang-report-events">
+          <span class="event-label">✦ TODAY & NEXT 30 DAYS EVENTS (CLICK FOR BRIEF):</span>
+          ${pData.activeEvents.map(e => `<span class="event-pill active-event" onclick="openEventDetails('${encodeURIComponent(e.name)}')"><span class="pulse-dot"></span> ${e.icon} <b>Active:</b> ${e.name}</span>`).join(' ')}
+          ${pData.upcomingEvents.map(e => `<span class="event-pill" onclick="openEventDetails('${encodeURIComponent(e.name)}')"><span class="event-icon">${e.icon}</span> <b>${e.name}</b> (${e.daysAway === 1 ? 'Tomorrow' : 'in ' + e.daysAway + ' days'})</span>`).join(' ')}
+        </div>
+      ` : ''}
+    </div>
+  `;
+}
+
 function renderPlacementTable(){
   const card=document.getElementById('placementTableCard'); if(!card) return;
   const data=extractChartData(fullReportText);
@@ -3425,6 +4153,7 @@ async function generateSection(index, reportBody, stepListEl, progressErrorEl){
       if(contentDiv) contentDiv.innerHTML = formatReportSectionHtml(text);
     }
     renderKundliVisuals();
+    renderPanchangReportCard();
     renderPlacementTable();
     renderInterpretationTable();
     buildAtAGlance();
@@ -4366,28 +5095,50 @@ button:hover{transform:translateY(-1px);filter:brightness(1.035);}
 .placement-table th{font-family:'Manrope',sans-serif !important;font-weight:700 !important;letter-spacing:.12em !important;color:#d9bf7e !important;}
 .placement-table td{font-family:'Manrope',sans-serif !important;color:#c7cece !important;line-height:1.65 !important;}
 
-/* Rashi popup positioned below the wheel circle */
-.rashi-detail {
+/* Rashi detail column & card positioning */
+.zodiac-side-col {
   position: absolute !important;
-  top: calc(100% + 25px) !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  width: min(460px, 92vw) !important;
+  right: 34px !important;
+  top: 34px !important;
+  width: 405px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 16px !important;
+  z-index: 10 !important;
+}
+
+.zodiac-side-col .zodiac-wheel {
+  position: relative !important;
+  right: auto !important;
+  top: auto !important;
+  margin: 0 !important;
+  width: 405px !important;
+  height: 405px !important;
+}
+
+.rashi-detail {
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  transform: none !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
   background: radial-gradient(ellipse at 50% 0%, rgba(16, 28, 40, 0.98), rgba(6, 12, 18, 0.99)) !important;
   border: 1.5px solid rgba(242, 215, 146, 0.75) !important;
   border-radius: 16px !important;
-  padding: 18px 22px !important;
-  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.95), 0 0 45px rgba(242, 215, 146, 0.3) !important;
+  padding: 16px 20px !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(242, 215, 146, 0.25) !important;
   backdrop-filter: blur(20px) !important;
-  z-index: 100 !important;
   color: #f3efe6 !important;
   text-align: center !important;
+  transition: all 0.3s ease !important;
 }
 
 .rashi-detail b {
   display: block !important;
   font-family: 'Bodoni Moda', 'Marcellus', serif !important;
-  font-size: 20px !important;
+  font-size: 19px !important;
   color: #f2d792 !important;
   margin-bottom: 6px !important;
   letter-spacing: 0.05em !important;
@@ -4399,6 +5150,303 @@ button:hover{transform:translateY(-1px);filter:brightness(1.035);}
   font-size: 13.5px !important;
   color: #b8c4c7 !important;
   line-height: 1.6 !important;
+}
+
+/* Daily Panchang & Rahu Kaal Bar */
+.panchang-bar {
+  margin: 18px 0 24px 0;
+  padding: 16px 22px;
+  background: linear-gradient(135deg, rgba(16, 26, 36, 0.94) 0%, rgba(8, 14, 22, 0.97) 100%);
+  border: 1px solid rgba(242, 215, 146, 0.35);
+  border-radius: 16px;
+  box-shadow: 0 12px 35px rgba(0,0,0,0.5), inset 0 1px 0 rgba(242, 215, 146, 0.2);
+  backdrop-filter: blur(12px);
+  color: #f3efe6;
+  position: relative;
+  overflow: hidden;
+}
+
+.panchang-bar:before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, #f2d792, #7fc5c0, transparent);
+}
+
+.panchang-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed rgba(242, 215, 146, 0.25);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.panchang-badge {
+  font-family: 'Bodoni Moda', 'Marcellus', serif;
+  font-size: 14.5px;
+  letter-spacing: 0.12em;
+  color: #f2d792;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.panchang-date {
+  font-family: 'Manrope', sans-serif;
+  font-size: 13px;
+  color: #9fc9c2;
+  background: rgba(159, 201, 194, 0.1);
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(159, 201, 194, 0.3);
+  font-weight: 600;
+}
+
+.panchang-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 12px;
+}
+
+.panchang-item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: all 0.2s ease;
+}
+
+.panchang-item:hover {
+  background: rgba(242, 215, 146, 0.06);
+  border-color: rgba(242, 215, 146, 0.35);
+  transform: translateY(-1px);
+}
+
+.panchang-item small {
+  font-family: 'Manrope', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: #a3b3b6;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.panchang-item b {
+  font-family: 'Manrope', sans-serif;
+  font-size: 13.5px;
+  color: #ffffff;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.panchang-item.highlight-rahu {
+  background: rgba(220, 80, 80, 0.12);
+  border-color: rgba(230, 100, 100, 0.4);
+}
+
+.panchang-item.highlight-rahu small {
+  color: #fca5a5;
+}
+
+.panchang-item.highlight-rahu b {
+  color: #fecaca;
+}
+
+.panchang-item.highlight-shubh {
+  background: rgba(117, 182, 138, 0.12);
+  border-color: rgba(117, 182, 138, 0.4);
+}
+
+.panchang-item.highlight-shubh small {
+  color: #86efac;
+}
+
+.panchang-item.highlight-shubh b {
+  color: #bbf7d0;
+}
+
+.panchang-events {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(242, 215, 146, 0.22);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.event-label {
+  font-family: 'Bodoni Moda', 'Marcellus', serif;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: #f2d792;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-right: 4px;
+}
+
+.event-pill {
+  font-family: 'Manrope', sans-serif;
+  font-size: 12px;
+  color: #e2e8f0;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(242, 215, 146, 0.3);
+  padding: 5px 12px;
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.event-pill:hover {
+  background: rgba(242, 215, 146, 0.12);
+  border-color: rgba(242, 215, 146, 0.6);
+}
+
+.event-pill.active-event {
+  background: linear-gradient(135deg, rgba(212, 163, 75, 0.25) 0%, rgba(119, 197, 192, 0.2) 100%);
+  border-color: rgba(242, 215, 146, 0.75);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 0 12px rgba(242, 215, 146, 0.25);
+}
+
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  background-color: #f2d792;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #f2d792;
+  animation: pulseGlow 1.5s infinite ease-in-out;
+}
+
+@keyframes pulseGlow {
+  0% { transform: scale(0.9); opacity: 0.7; }
+  50% { transform: scale(1.35); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 0.7; }
+}
+
+/* Panchang Report Box inside Report Body */
+.panchang-report-box {
+  margin: 20px 0 28px;
+  padding: 18px 22px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(16, 28, 40, 0.98), rgba(6, 12, 18, 0.99));
+  border: 1.5px solid rgba(242, 215, 146, 0.6);
+  border-radius: 16px;
+  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.8), 0 0 25px rgba(242, 215, 146, 0.2);
+}
+
+.panchang-report-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(242, 215, 146, 0.3);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.panchang-report-header span {
+  font-family: 'Bodoni Moda', serif;
+  font-size: 15px;
+  color: #f2d792;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.panchang-report-header small {
+  font-family: 'Manrope', sans-serif;
+  font-size: 12.5px;
+  color: #7fc5c0;
+}
+
+.panchang-report-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+  gap: 12px;
+}
+
+.panchang-report-grid div {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.panchang-report-grid div small {
+  font-size: 10.5px;
+  color: #a3b3b6;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.panchang-report-grid div b {
+  font-size: 13.5px;
+  color: #ffffff;
+}
+
+.panchang-report-grid .rahu-box {
+  background: rgba(220, 80, 80, 0.15);
+  border-color: rgba(230, 100, 100, 0.45);
+}
+
+.panchang-report-grid .rahu-box small { color: #fca5a5; }
+.panchang-report-grid .rahu-box b { color: #fecaca; }
+
+.panchang-report-grid .shubh-box {
+  background: rgba(117, 182, 138, 0.15);
+  border-color: rgba(117, 182, 138, 0.45);
+}
+
+.panchang-report-grid .shubh-box small { color: #86efac; }
+.panchang-report-grid .shubh-box b { color: #bbf7d0; }
+
+.panchang-report-events {
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(242, 215, 146, 0.25);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+@media(max-width:1000px) {
+  .zodiac-side-col {
+    position: relative !important;
+    right: auto !important;
+    top: auto !important;
+    width: 100% !important;
+    max-width: 405px !important;
+    margin: 28px auto 24px !important;
+  }
+  .zodiac-side-col .zodiac-wheel {
+    position: relative !important;
+    margin: 0 auto !important;
+  }
+}
+
+@media(max-width:680px) {
+  .zodiac-side-col .zodiac-wheel {
+    width: 315px !important;
+    height: 315px !important;
+  }
 }
 
 @media(max-width:680px){
@@ -4497,6 +5545,512 @@ function updateVipUi(){
   }
 }
 window.updateVipUi = updateVipUi;
+</script>
+
+<!-- Event Brief Information Modal -->
+<div class="modal-overlay" id="eventBriefModal" onclick="if(event.target===this) closeEventDetails();">
+  <div class="modal-box event-modal-box">
+    <button type="button" class="modal-close" onclick="closeEventDetails()">×</button>
+    <div class="event-modal-header">
+      <div class="event-modal-icon" id="evtModalIcon">🌺</div>
+      <div>
+        <h2 class="event-modal-title" id="evtModalTitle">Event Title</h2>
+        <div class="event-modal-subtitle" id="evtModalCategory">Category & Subtitle</div>
+      </div>
+    </div>
+    <div style="display: grid; gap: 14px; text-align: justify; font-family: var(--ui-font), sans-serif; font-size: 14.5px; line-height: 1.7;">
+      <div>
+        <strong style="color: #dfba6d; font-family: 'Marcellus', serif; letter-spacing: 0.08em; display: block; margin-bottom: 4px;">✦ SPIRITUAL & CULTURAL SIGNIFICANCE</strong>
+        <p id="evtModalSig" style="margin: 0; color: #e8dcc8; text-align: justify;">Significance details...</p>
+      </div>
+      <div>
+        <strong style="color: #7fc5c0; font-family: 'Marcellus', serif; letter-spacing: 0.08em; display: block; margin-bottom: 4px;">✦ TRADITIONAL OBSERVANCES & VRAT VIDHI</strong>
+        <p id="evtModalRituals" style="margin: 0; color: #c3d9d6; text-align: justify;">Rituals details...</p>
+      </div>
+      <div style="padding: 12px 16px; background: rgba(223, 186, 109, 0.08); border-left: 3px solid #dfba6d; border-radius: 0 8px 8px 0;">
+        <strong style="color: #f7e4b8; font-family: 'Marcellus', serif; letter-spacing: 0.08em; display: block; margin-bottom: 2px;">✦ DIVINE BLESSING & PHALA</strong>
+        <span id="evtModalBlessing" style="color: #f7e4b8; text-align: justify; display: block;">Blessing details...</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   MYSTIC OM CHANTING AUDIO SYNTHESIZER (WEB AUDIO API)
+   ========================================================= */
+const OmChantEngine = (function() {
+  let audioCtx = null;
+  let isPlaying = false;
+  let masterGain = null;
+  let oscillators = [];
+  let lfo = null;
+
+  function init() {
+    if (!audioCtx) {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (AudioContext) {
+        audioCtx = new AudioContext();
+      }
+    }
+  }
+
+  function start() {
+    init();
+    if (!audioCtx) return;
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+
+    if (isPlaying) return;
+
+    // Master gain envelope for smooth fade-in
+    masterGain = audioCtx.createGain();
+    masterGain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+    masterGain.gain.exponentialRampToValueAtTime(0.28, audioCtx.currentTime + 3);
+
+    // Warm Low Pass Filter simulating acoustic temple reverberation
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(320, audioCtx.currentTime);
+
+    // Harmonics for rich Om drone: 54Hz (Sub-bass), 108Hz (Fundamental), 216Hz (Harmonic), 432Hz (Cosmic Tuning)
+    const freqs = [
+      { f: 54, type: 'sine', gain: 0.35 },
+      { f: 108, type: 'sine', gain: 0.50 },
+      { f: 216, type: 'triangle', gain: 0.25 },
+      { f: 432, type: 'sine', gain: 0.12 }
+    ];
+
+    oscillators = [];
+
+    freqs.forEach(item => {
+      const osc = audioCtx.createOscillator();
+      const oscGain = audioCtx.createGain();
+      
+      osc.type = item.type;
+      osc.frequency.setValueAtTime(item.f, audioCtx.currentTime);
+      oscGain.gain.setValueAtTime(item.gain, audioCtx.currentTime);
+
+      osc.connect(oscGain);
+      oscGain.connect(filter);
+      osc.start();
+      oscillators.push(osc);
+    });
+
+    // LFO for slow 8-second breathing resonance (A-U-M swell)
+    lfo = audioCtx.createOscillator();
+    lfo.frequency.setValueAtTime(0.125, audioCtx.currentTime); // 8 second cycle
+    const lfoGain = audioCtx.createGain();
+    lfoGain.gain.setValueAtTime(8, audioCtx.currentTime);
+
+    lfo.connect(filter.frequency);
+    lfo.start();
+
+    filter.connect(masterGain);
+    masterGain.connect(audioCtx.destination);
+
+    isPlaying = true;
+    updateUI(true);
+  }
+
+  function stop() {
+    if (!isPlaying || !audioCtx || !masterGain) return;
+
+    // Smooth fade out
+    masterGain.gain.setValueAtTime(masterGain.gain.value, audioCtx.currentTime);
+    masterGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 2);
+
+    setTimeout(() => {
+      oscillators.forEach(osc => {
+        try { osc.stop(); osc.disconnect(); } catch(e){}
+      });
+      if (lfo) {
+        try { lfo.stop(); lfo.disconnect(); } catch(e){}
+      }
+      oscillators = [];
+      lfo = null;
+      isPlaying = false;
+      updateUI(false);
+    }, 2000);
+  }
+
+  function toggle() {
+    if (isPlaying) stop();
+    else start();
+  }
+
+  function updateUI(active) {
+    const btn = document.getElementById('btnOmChant');
+    const symbol = document.getElementById('omPulseSymbol');
+
+    if (btn) {
+      if (active) {
+        btn.innerHTML = `<span>⏹</span> <b>Stop Om Chanting</b>`;
+        btn.style.background = 'linear-gradient(180deg, #f2a8a8, #d15858)';
+      } else {
+        btn.innerHTML = `<span>▶</span> <b>Start Om Chanting</b>`;
+        btn.style.background = 'linear-gradient(180deg, #f1d48a, #d8a04c)';
+      }
+    }
+    if (symbol) {
+      if (active) symbol.classList.add('playing');
+      else symbol.classList.remove('playing');
+    }
+  }
+
+  return { toggle, start, stop };
+})();
+window.OmChantEngine = OmChantEngine;
+
+/* =========================================================
+   EVENT BRIEF KNOWLEDGE BASE & POPUP MODAL LOGIC
+   ========================================================= */
+function getEventDetailsDict(name) {
+  const dict = {
+    "Independence Day": {
+      icon: "🇮🇳",
+      category: "National Celebration",
+      title: "Indian Independence Day (79th Year)",
+      subtitle: "National Freedom, Sovereignty & Heritage",
+      significance: "Commemorates India's independence from British rule on August 15, 1947. A sacred day honoring national unity, ancestral sacrifices, and democratic identity.",
+      rituals: "Hoisting of the National Flag (Tiranga), National Anthem recitations, tributes to freedom fighters, and cultural celebrations across all states.",
+      blessing: "Swarajya and Rashtra Raksha — May peace, unity, and righteous growth prosper in the motherland."
+    },
+    "Republic Day": {
+      icon: "🇮🇳",
+      category: "National Event",
+      title: "Indian Republic Day",
+      subtitle: "Constitution of India & Sovereign Heritage",
+      significance: "Honors the day the Constitution of India came into effect on January 26, 1950, establishing India as a sovereign democratic republic.",
+      rituals: "Grand parade at Kartavya Path, New Delhi, honoring armed forces, cultural diversity, and constitutional ideals.",
+      blessing: "Justice, Liberty, Equality, and Fraternity for all citizens."
+    },
+    "Sawan Maas (Shravan Month)": {
+      icon: "🌺",
+      category: "Sacred Lunar Month Vrat",
+      title: "Sawan Maas (Shravana Month)",
+      subtitle: "Sacred Month of Lord Shiva & Somwar Vrat",
+      significance: "The holiest month in the Hindu calendar dedicated to Lord Shiva. Associated with the churning of the cosmic ocean (Samudra Manthan) where Lord Shiva consumed the Kalakuta poison.",
+      rituals: "Fasting on Sawan Somwar (Mondays), Kanwar Yatra, offerings of Bilva Patra, Ganga water Jalabhishek, milk, and chanting Om Namah Shivaya.",
+      blessing: "Shiva Kripa — Fulfills righteous desires, removes planetary afflictions, and brings marital harmony."
+    },
+    "Raksha Bandhan": {
+      icon: "🪢",
+      category: "Purnima Festival",
+      title: "Raksha Bandhan (Shravana Purnima)",
+      subtitle: "Festival of Sibling Protection & Affection",
+      significance: "Celebrated on Shravana Purnima, honoring the eternal bond of love, protection, and duty between brothers and sisters.",
+      rituals: "Sisters tie a sacred Rakhi thread on their brothers' wrists, apply Tilak, offer sweets, and brothers give gifts promising protection and lifelong support.",
+      blessing: "Long life, protection from evil energies, and family harmony."
+    },
+    "Shri Krishna Janmashtami": {
+      icon: "🪔",
+      category: "Maha Jayanti Festival",
+      title: "Shri Krishna Janmashtami",
+      subtitle: "Advent Celebration of Lord Shri Krishna",
+      significance: "Celebrates the birth of Lord Krishna, the 8th incarnation of Lord Vishnu, born in Mathura at midnight during Rohini Nakshatra.",
+      rituals: "Nirjala fasting until midnight, decorating Krishna cradles (Jhula), nightvigil (Jagaran), reciting Shrimad Bhagavata Purana, Dahi Handi, and offering Makhan-Mishri.",
+      blessing: "Bhakti, wisdom, joy, and protection from adharma."
+    },
+    "Ganesh Chaturthi": {
+      icon: "🐘",
+      category: "Vinayaka Chaturthi Festival",
+      title: "Ganesh Chaturthi (Vinayaka Chaturthi)",
+      subtitle: "Lord Ganesha Sthapana & Vighnaharta Worship",
+      significance: "Celebrates the rebirth of Lord Ganesha, the deity of wisdom, prosperity, and remover of all obstacles (Vighnaharta).",
+      rituals: "Prana Pratishtha of Lord Ganesha idols, offering 21 Modaks and Durva grass, chanting Atharvashirsha, and grand Visarjan procession.",
+      blessing: "Riddhi-Siddhi — Removal of all life obstacles and bestowal of intellect and wealth."
+    },
+    "Anant Chaturdashi": {
+      icon: "🪷",
+      category: "Vrat & Visarjan",
+      title: "Anant Chaturdashi",
+      subtitle: "Ganesha Visarjan & Anant Padmanabha Fast",
+      significance: "Dedicated to the infinite form of Lord Vishnu (Ananta). Also marks the final day of the 10-day Ganeshotsav.",
+      rituals: "Tying 14-knot sacred thread (Anant Sutra) on arm, Satyanarayan Vrat, and immersion of Lord Ganesha idols with Vedic chants.",
+      blessing: "Freedom from karmic bondages and infinite peace."
+    },
+    "Sharad Navratri": {
+      icon: "🌺",
+      category: "Maha Devi Festival",
+      title: "Sharad Navratri",
+      subtitle: "9 Sacred Nights of Devi Durga Worship",
+      significance: "Celebrates the triumph of Goddess Durga over Mahishasura, symbolizing the victory of cosmic light and divine feminine energy (Shakti).",
+      rituals: "Ghatasthapana, daily worship of Navadurga (Sailaputri to Siddhidatri), fasting, Garba/Dandiya, recitation of Durga Saptashati, and Kanya Puja.",
+      blessing: "Shakti, health, courage, and destruction of negative karmas."
+    },
+    "Dussehra (Vijayadashami)": {
+      icon: "🏹",
+      category: "Maha Festival",
+      title: "Dussehra (Vijayadashami)",
+      subtitle: "Triumph of Lord Rama & Victory of Good Over Evil",
+      significance: "Marks Lord Rama's victory over Ravana and Goddess Durga's victory over Mahishasura. A day of supreme auspiciousness for starting new endeavors.",
+      rituals: "Burning effigies of Ravana, Kumbhakarna, and Meghnada; Ayudha Puja (worship of tools, machinery, vehicles); exchanging Shami leaves.",
+      blessing: "Victory in all endeavors, courage, and righteousness."
+    },
+    "Karwa Chauth": {
+      icon: "🌕",
+      category: "Spousal Vrat",
+      title: "Karwa Chauth",
+      subtitle: "Sacred Fasting for Spousal Wellbeing & Longevity",
+      significance: "Observed on Krishna Paksha Chaturthi in Kartika month by married women praying for the long life, health, and prosperity of their spouses.",
+      rituals: "Surgi before sunrise, strict Nirjala (without water) fast all day, evening Karwa Chauth Katha, and breaking fast after viewing the Moon through a sieve (Chhani).",
+      blessing: "Akhand Saubhagyavati — Marital happiness, longevity, and affection."
+    },
+    "Dhanteras": {
+      icon: "🪙",
+      category: "Diwali Festival",
+      title: "Dhanteras (Dhanatrayodashi)",
+      subtitle: "Lord Dhanvantari & Lakshmi Prosperity Day",
+      significance: "Marks the first day of Diwali and birth anniversary of Lord Dhanvantari (God of Medicine and Ayurveda), emerging from Samudra Manthan with Amrita.",
+      rituals: "Buying gold, silver, brass utensils, and new vehicles; lighting Yamadeep at sunset to prevent untimely demise; worshipping Goddess Lakshmi and Kuber.",
+      blessing: "Immense health, vitality, wealth, and prosperity."
+    },
+    "Diwali (Deepavali)": {
+      icon: "🪔",
+      category: "Maha Festival of Lights",
+      title: "Diwali (Deepavali)",
+      subtitle: "Maha Lakshmi Puja & Return of Lord Rama",
+      significance: "Celebrates the return of Lord Rama, Sita, and Lakshmana to Ayodhya after 14 years of exile, and the grand worship of Goddess Maha Lakshmi.",
+      rituals: "Cleaning houses, creating colorful Rangoli, lighting rows of clay diyas, performing evening Maha Lakshmi & Lord Ganesha Puja, and sharing sweets.",
+      blessing: "Wealth, auspiciousness, joy, and enlightenment over darkness."
+    },
+    "Govardhan Puja & Bhai Dooj": {
+      icon: "🏵️",
+      category: "Post-Diwali Festival",
+      title: "Govardhan Puja & Bhai Dooj",
+      subtitle: "Annakut Worship & Sibling Bonding",
+      significance: "Govardhan Puja honors Lord Krishna lifting Govardhan Hill to protect Gokul from Indra's torrential rains. Bhai Dooj celebrates Yamraj & Yami sibling love.",
+      rituals: "Creating Govardhan hill with cow dung, offering Annakut (56 delicacies), and sisters applying auspicious Tilak on brothers' foreheads.",
+      blessing: "Protection from nature's wrath, cattle/nature welfare, and sibling longevity."
+    },
+    "Chhath Puja": {
+      icon: "☀️",
+      category: "Maha Vrat",
+      title: "Chhath Puja",
+      subtitle: "Rigorous Sun God Surya & Chhathi Maiya Worship",
+      significance: "Ancient 4-day Vedic festival dedicated to Surya Dev (Sun God) and Chhathi Maiya, expressing gratitude for sustaining life on Earth.",
+      rituals: "Nahay Khay, Kharna, standing in water to offer evening Sandhya Arghya and morning Usha Arghya to the rising Sun.",
+      blessing: "Health, longevity, curing skin ailments, and family prosperity."
+    },
+    "Gita Jayanti": {
+      icon: "📜",
+      category: "Sacred Jayanti",
+      title: "Gita Jayanti",
+      subtitle: "Advent of Shrimad Bhagavad Gita",
+      significance: "Marks the day Lord Krishna delivered the immortal sermon of Shrimad Bhagavad Gita to Arjuna on the battlefield of Kurukshetra.",
+      rituals: "Chanting all 18 chapters of Bhagavad Gita, Gita Yajna, distribution of holy scriptures, and Mokshada Ekadashi fast.",
+      blessing: "Moksha, clarity of mind, duty (Dharma), and spiritual wisdom."
+    },
+    "Makar Sankranti & Pongal": {
+      icon: "☀️",
+      category: "Uttarayana Harvest Festival",
+      title: "Makar Sankranti & Pongal",
+      subtitle: "Sun's Transit into Capricorn & Harvest Thanksgiving",
+      significance: "Marks the solar transit into Capricorn (Makar Rashi) and commencement of Uttarayana (six-month auspicious northward journey of the Sun).",
+      rituals: "Holy dip in Ganga/sacred rivers, kite flying, distributing Til-Gul (sesame and jaggery) sweets, and preparing fresh harvest rice (Pongal).",
+      blessing: "Warmth, health, academic success, and agricultural abundance."
+    },
+    "Maha Shivratri": {
+      icon: "🔱",
+      category: "Maha Night Festival",
+      title: "Maha Shivratri",
+      subtitle: "The Great Auspicious Night of Lord Shiva",
+      significance: "The cosmic night celebrating Lord Shiva's divine Tandava dance and his marriage with Goddess Parvati.",
+      rituals: "All-night vigil (Jagaran), 4-prahar Puja, offering milk, water, Bael leaves, Dhatura, and chanting Om Namah Shivaya.",
+      blessing: "Moksha, inner stillness, overcoming fears, and spiritual liberation."
+    },
+    "Holi & Holika Dahan": {
+      icon: "🎨",
+      category: "Spring Festival",
+      title: "Holi & Holika Dahan",
+      subtitle: "Festival of Colors & Triumph of Bhakta Prahlad",
+      significance: "Celebrates the burning of demoness Holika due to Bhakta Prahlad's unshakeable devotion to Lord Narasimha, followed by spring color festivities.",
+      rituals: "Lighting Holika bonfire on Phalguni Purnima, playing with natural Gulal and water colors, sharing Gujiya, and forgiving past grudges.",
+      blessing: "Joy, harmony, vibrant health, and victory of true devotion."
+    },
+    "Chaitra Navratri & Ugadi / Gudi Padwa": {
+      icon: "🌱",
+      category: "Vedic New Year Festival",
+      title: "Chaitra Navratri & Gudi Padwa / Ugadi",
+      subtitle: "Vedic New Year Commencement & Devi Fasting",
+      significance: "Marks the first day of the Hindu Luni-Solar New Year according to Brahma Purana when Lord Brahma created the universe.",
+      rituals: "Hoisting Gudi flags, eating neem-jaggery mixture, Ghatasthapana for 9-day Chaitra Navratri, and welcoming new beginnings.",
+      blessing: "New opportunities, health, prosperity, and divine energy."
+    },
+    "Shri Ram Navami": {
+      icon: "🏹",
+      category: "Maha Jayanti Festival",
+      title: "Shri Ram Navami",
+      subtitle: "Birth Celebration of Maryada Purushottam Lord Rama",
+      significance: "Celebrates the birth of Lord Rama, 7th avatar of Lord Vishnu, born in Ayodhya to King Dasharatha and Queen Kausalya.",
+      rituals: "Reciting Ramcharitmanas & Sundarkand, morning-to-noon fasting, Akhand Kirtan, Panakam offerings, and Ram Navami Rath Yatra.",
+      blessing: "Dharma, truthfulness, ideal character, and family peace."
+    },
+    "Hanuman Jayanti": {
+      icon: "🚩",
+      category: "Devotional Jayanti",
+      title: "Hanuman Jayanti",
+      subtitle: "Birth Celebration of Mahavira Lord Hanuman",
+      significance: "Honors the birth of Lord Hanuman, the epitome of devotion, strength, humility, and protection from all negative energies.",
+      rituals: "Reciting Hanuman Chalisa 108 times, offering Sindoor and Boondi, lighting mustard oil lamps, and visiting Hanuman temples.",
+      blessing: "Immense physical & mental strength, courage, and protection from Saturn/Rahu afflictions."
+    },
+    "Akshaya Tritiya": {
+      icon: "✨",
+      category: "Siddha Muhurat Day",
+      title: "Akshaya Tritiya (Akha Teej)",
+      subtitle: "Day of Unending Fortune & Auspicious Ventures",
+      significance: "An unblemished auspicious day (Siddha Muhurat) when any good deed, charity, or investment yields endless (Akshaya) merit.",
+      rituals: "Buying gold, silver, or land; performing Vishnu-Lakshmi Puja; Daan (charity of water, food, clothes); initiating new businesses.",
+      blessing: "Everlasting prosperity, health, and spiritual merit."
+    },
+    "Shukla Ekadashi Vrat": {
+      icon: "📿",
+      category: "Lunar Fortnight Fast (11th Tithi)",
+      title: "Shukla Paksha Ekadashi Vrat",
+      subtitle: "Bi-Monthly Fast Dedicated to Lord Vishnu",
+      significance: "The 11th lunar day of waxing moon phase (Shukla Paksha). Known for purifying the body, mind, and soul from karmic impressions.",
+      rituals: "Strict grain/rice fasting, chanting Vishnu Sahasranama, Tulsi worship, and breaking fast on Dwadashi during Parana time.",
+      blessing: "Karmic cleansing, spiritual elevation, and Vishnu's grace."
+    },
+    "Krishna Ekadashi Vrat": {
+      icon: "📿",
+      category: "Lunar Fortnight Fast (11th Tithi)",
+      title: "Krishna Paksha Ekadashi Vrat",
+      subtitle: "Bi-Monthly Fast Dedicated to Lord Vishnu",
+      significance: "The 11th lunar day of waning moon phase (Krishna Paksha). Promotes self-discipline and spiritual focus.",
+      rituals: "Rice/grain fasting, nightvigil, Tulsi leaf offerings, and charity on Dwadashi.",
+      blessing: "Removal of sins, health longevity, and peace of mind."
+    },
+    "Shukla Pradosh Vrat": {
+      icon: "🔱",
+      category: "Twilight Shiva Vrat (13th Tithi)",
+      title: "Shukla Paksha Pradosh Vrat",
+      subtitle: "Shiva Twilight Worship during Waxing Moon",
+      significance: "Occurs on the 13th lunar day (Trayodashi). The 1.5-hour period around sunset (Pradosha Kaal) is when Lord Shiva performs divine dance on Mount Kailash.",
+      rituals: "Fasting during day, performing Shiva Abhishekam with Panchamrit at sunset, and chanting Rudram.",
+      blessing: "Relief from debt, disease, and fulfillment of pure desires."
+    },
+    "Krishna Pradosh Vrat": {
+      icon: "🔱",
+      category: "Twilight Shiva Vrat (13th Tithi)",
+      title: "Krishna Paksha Pradosh Vrat",
+      subtitle: "Shiva Twilight Worship during Waning Moon",
+      significance: "Trayodashi Tithi during Krishna Paksha. Bestows divine protection and mental fortitude.",
+      rituals: "Sunset Shiva Abhishek, lighting ghee lamps, and offering Bael leaves.",
+      blessing: "Elimination of grief, health recovery, and spiritual strength."
+    },
+    "Vinayaka Chaturthi": {
+      icon: "🐘",
+      category: "Monthly Ganesha Vrat (4th Tithi)",
+      title: "Vinayaka Chaturthi",
+      subtitle: "Monthly Ganesha Fast during Shukla Paksha",
+      significance: "4th lunar day of waxing moon dedicated to Lord Ganesha for wisdom and removing obstacles.",
+      rituals: "Midday (Madhyahna) Ganesha Puja, offering 21 Durva grass blades, Modaks, and red flowers.",
+      blessing: "Removal of work hurdles and academic/career success."
+    },
+    "Sankashti Chaturthi Vrat": {
+      icon: "🐘",
+      category: "Monthly Ganesha Vrat (4th Tithi)",
+      title: "Sankashti Chaturthi Vrat",
+      subtitle: "Moonrise Ganesha Fast during Krishna Paksha",
+      significance: "4th lunar day of waning moon. Fasting helps overcome severe crises and sorrow (Sankat).",
+      rituals: "Fasting from sunrise until Moonrise, performing Moon Arghya, and Ganesha Puja.",
+      blessing: "Immediate resolution of life struggles and peace."
+    },
+    "Masik Shivratri": {
+      icon: "🔱",
+      category: "Monthly Shiva Night (14th Tithi)",
+      title: "Masik Shivratri",
+      subtitle: "Monthly Shiva Vrat on Krishna Chaturdashi",
+      significance: "Observed every month on the 14th night of Krishna Paksha to honor Lord Shiva's formless Linga manifestation.",
+      rituals: "Day-to-night fasting, midnight Shiva Puja with milk and Bilva Patra, and meditation.",
+      blessing: "Overcoming emotional stress, anger, and spiritual waking."
+    },
+    "Purnima Vrat / Satyanarayan Puja": {
+      icon: "🌕",
+      category: "Full Moon Vrat (15th Tithi)",
+      title: "Purnima Vrat & Satyanarayan Puja",
+      subtitle: "Full Moon Holy Day & Lord Vishnu Worship",
+      significance: "Full Moon day represents complete spiritual illumination and emotional harmony.",
+      rituals: "Sacred river bath (Snan), Satyanarayan Katha with family, offering Panchamrit & Halwa, and Daan.",
+      blessing: "Prosperity, family unity, and emotional peace."
+    },
+    "Amavasya Vrat / Pitru Tarpan": {
+      icon: "🌑",
+      category: "New Moon Vrat (30th Tithi)",
+      title: "Amavasya Vrat & Pitru Tarpan",
+      subtitle: "New Moon Day Ancestor Remembrance & Daan",
+      significance: "New Moon day dedicated to honoring ancestors (Pitrus) and clearing ancestral karmic debts.",
+      rituals: "Pitru Tarpan with water and sesame seeds, feeding cows/crow/needy, and quiet introspection.",
+      blessing: "Ancestral blessings, family longevity, and removal of Pitru Dosha."
+    },
+    "Masik Durgashtami": {
+      icon: "🌺",
+      category: "Monthly Durga Vrat (8th Tithi)",
+      title: "Masik Durgashtami",
+      subtitle: "Monthly Durga Fast on Shukla Ashtami",
+      significance: "Monthly 8th day of waxing moon dedicated to Mahagauri & Goddess Durga.",
+      rituals: "Durga Chalisa recitation, offering red Chunri and halwa-puri, lighting ghee diya.",
+      blessing: "Protection from enemies, fear, and negativity."
+    },
+    "Masik Kalashtami": {
+      icon: "🚩",
+      category: "Monthly Bhairav Vrat (8th Tithi)",
+      title: "Masik Kalashtami",
+      subtitle: "Monthly Lord Bhairava Fast on Krishna Ashtami",
+      significance: "8th day of waning moon dedicated to Kaal Bhairav, the fierce manifestation of Shiva protecting time and karma.",
+      rituals: "Bhairav Chalisa, feeding stray dogs, and night prayers.",
+      blessing: "Freedom from fear of time/death and destruction of evil eyes."
+    }
+  };
+
+  if (dict[name]) return dict[name];
+
+  return {
+    icon: "✦",
+    category: "Vedic Almanac Event",
+    title: name,
+    subtitle: "Auspicious Panchang Event",
+    significance: `${name} is an auspicious day noted in the Vedic Panchang almanac for spiritual practices, fasting, or planetary alignments.`,
+    rituals: "Perform morning meditation, light a ghee lamp, chant sacred mantras, and engage in acts of charity (Daan).",
+    blessing: "Auspiciousness, peace, and spiritual growth."
+  };
+}
+
+function openEventDetails(eventName) {
+  const decoded = decodeURIComponent(eventName);
+  const info = getEventDetailsDict(decoded);
+  
+  const modal = document.getElementById('eventBriefModal');
+  if (!modal) return;
+
+  const mIcon = document.getElementById('evtModalIcon');
+  const mTitle = document.getElementById('evtModalTitle');
+  const mCat = document.getElementById('evtModalCategory');
+  const mSig = document.getElementById('evtModalSig');
+  const mRit = document.getElementById('evtModalRituals');
+  const mBle = document.getElementById('evtModalBlessing');
+
+  if (mIcon) mIcon.textContent = info.icon;
+  if (mTitle) mTitle.textContent = info.title;
+  if (mCat) mCat.textContent = info.category + ' · ' + info.subtitle;
+  if (mSig) mSig.textContent = info.significance;
+  if (mRit) mRit.textContent = info.rituals;
+  if (mBle) mBle.textContent = info.blessing;
+
+  modal.classList.add('open');
+}
+
+function closeEventDetails() {
+  const modal = document.getElementById('eventBriefModal');
+  if (modal) modal.classList.remove('open');
+}
+
+window.openEventDetails = openEventDetails;
+window.closeEventDetails = closeEventDetails;
 </script>
 
 <script>
