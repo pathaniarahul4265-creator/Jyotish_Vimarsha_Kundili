@@ -1,15 +1,52 @@
 
 import crypto from 'node:crypto';
+import fs from 'node:fs';
+import path from 'node:path';
 import Razorpay from 'razorpay';
 import { db, getSettings, pricing } from './_lib/supabase.js';
 
+const DATA_DIR = path.join(process.cwd(), 'data');
+function ensureDataDir() {
+  try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
+  } catch (e) {}
+}
+ensureDataDir();
+
+function loadJsonFile(filename, defaultValue) {
+  try {
+    ensureDataDir();
+    const filePath = path.join(DATA_DIR, filename);
+    if (fs.existsSync(filePath)) {
+      const content = fs.readFileSync(filePath, 'utf8');
+      return JSON.parse(content);
+    }
+  } catch (e) {}
+  return defaultValue;
+}
+
+function saveJsonFile(filename, data) {
+  try {
+    ensureDataDir();
+    const filePath = path.join(DATA_DIR, filename);
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
+  } catch (e) {
+    console.error(`[Data Storage] Failed to write ${filename}:`, e);
+  }
+}
+
+const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID || 'rzp_test_TPZiHx64oNNQzA';
+const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || '4fm5V6mqZr2XORsOag4swdLf';
+
 let razorpayInstance = null;
 function getRazorpay() {
-  if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) return null;
+  if (!RAZORPAY_KEY_ID || !RAZORPAY_KEY_SECRET) return null;
   if (!razorpayInstance) {
     razorpayInstance = new Razorpay({
-      key_id: process.env.RAZORPAY_KEY_ID,
-      key_secret: process.env.RAZORPAY_KEY_SECRET
+      key_id: RAZORPAY_KEY_ID,
+      key_secret: RAZORPAY_KEY_SECRET
     });
   }
   return razorpayInstance;
@@ -77,14 +114,14 @@ function adminOk(req){
   try { return JSON.parse(Buffer.from(payload, 'base64url').toString()).exp > Date.now(); } catch { return false; }
 }
 
-// In-memory fallbacks for when Supabase DB is unconfigured or unavailable
-const inMemoryReports = [];
-const inMemoryFeedback = [];
-const inMemoryPayments = [];
-const inMemoryVipCodes = [
+// Durable local storage fallbacks for when Supabase DB is unconfigured or unavailable
+const inMemoryReports = loadJsonFile('reports.json', []);
+const inMemoryFeedback = loadJsonFile('feedback.json', []);
+const inMemoryPayments = loadJsonFile('payments.json', []);
+const inMemoryVipCodes = loadJsonFile('vip_codes.json', [
   { id: 'vip_default_1', code_hash: hashCode('VIP2026'), display_code: 'VIP2026', active: true, uses: 0, max_uses: 100, created_at: new Date().toISOString() }
-];
-const inMemorySettings = {
+]);
+const inMemorySettings = loadJsonFile('settings.json', {
   reveal_price: '59',
   match_price: '99',
   question_price: '29',
@@ -94,7 +131,7 @@ const inMemorySettings = {
   offer_enabled: '0',
   offer_percent: '0',
   offer_label: ''
-};
+});
 function clean(s,n=200){return String(s||'').slice(0,n);}
 async function createOrder(amount, plan, receiptCustom){
   if (isNaN(amount) || amount < 100) {
@@ -381,6 +418,7 @@ export default async function handler(req,res){
           status: 'created'
         };
         inMemoryPayments.unshift(payRecord);
+        saveJsonFile('payments.json', inMemoryPayments);
         try { await db.insert('payments', payRecord); } catch {}
 
         return json(res, 200, {
@@ -390,8 +428,8 @@ export default async function handler(req,res){
           amount: order.amount || amount,
           currency: order.currency || 'INR',
           receipt: order.receipt || receipt,
-          key_id: process.env.RAZORPAY_KEY_ID || '',
-          keyId: process.env.RAZORPAY_KEY_ID || '',
+          key_id: RAZORPAY_KEY_ID,
+          keyId: RAZORPAY_KEY_ID,
           sessionToken,
           isDemo: Boolean(order.isDemo)
         });
@@ -424,7 +462,7 @@ export default async function handler(req,res){
       } catch {}
 
       // If demo order or no secret configured
-      if (razorpay_order_id.startsWith('order_demo_') || !process.env.RAZORPAY_KEY_SECRET) {
+      if (razorpay_order_id.startsWith('order_demo_') || !RAZORPAY_KEY_SECRET) {
         if (row) {
           row.status = 'verified';
           row.payment_id = razorpay_payment_id;
@@ -458,7 +496,7 @@ export default async function handler(req,res){
 
       // Algorithm: HMAC-SHA256(order_id + "|" + payment_id, KEY_SECRET)
       const expectedSignature = crypto
-        .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+        .createHmac('sha256', RAZORPAY_KEY_SECRET)
         .update(`${razorpay_order_id}|${razorpay_payment_id}`)
         .digest('hex');
 
@@ -478,6 +516,8 @@ export default async function handler(req,res){
         row.status = 'verified';
         row.payment_id = razorpay_payment_id;
         row.signature = razorpay_signature;
+        row.verified_at = new Date().toISOString();
+        saveJsonFile('payments.json', inMemoryPayments);
       }
       try {
         await db.update('payments', {
@@ -525,15 +565,18 @@ export default async function handler(req,res){
       const b=await readBody(req);if(!b.name||!b.report)return json(res,400,{error:'Report data incomplete.'});
       const rep = { id: 'rep_' + Date.now(), name: clean(b.name), mode: clean(b.mode, 40), email: clean(b.email), birth_summary: clean(b.birthSummary, 2000), report: String(b.report).slice(0, 250000), payment_ref: clean(b.paymentRef), vip: !!b.vip, created_at: new Date().toISOString() };
       inMemoryReports.unshift(rep);
+      saveJsonFile('reports.json', inMemoryReports);
       try { await db.insert('reports',{name:rep.name,mode:rep.mode,email:rep.email,birth_summary:rep.birth_summary,report:rep.report,payment_ref:rep.payment_ref,vip:rep.vip}); } catch {}
       return json(res,200,{saved:true});
     }
     if(req.method==='POST'&&path==='/feedback'){
-      const b=await readBody(req);if(!b.name||!b.email||!b.message)return json(res,400,{error:'Name, email and message are required.'});
-      const fb = { id: 'fb_' + Date.now(), name: clean(b.name), email: clean(b.email), phone: clean(b.phone, 60), message: clean(b.message, 5000), created_at: new Date().toISOString() };
+      const b=await readBody(req);
+      if(!b.name||!b.email||!b.message)return json(res,400,{error:'Name, email and message are required.'});
+      const fb = { id: 'fb_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4), name: clean(b.name), email: clean(b.email), phone: clean(b.phone, 60), message: clean(b.message, 5000), created_at: new Date().toISOString() };
       inMemoryFeedback.unshift(fb);
+      saveJsonFile('feedback.json', inMemoryFeedback);
       try { await db.insert('feedback',{name:fb.name,email:fb.email,phone:fb.phone,message:fb.message}); } catch {}
-      return json(res,200,{ok:true});
+      return json(res,200,{ok:true,id:fb.id});
     }
 
     if(req.method==='POST'&&path==='/admin/login'){
@@ -605,6 +648,26 @@ export default async function handler(req,res){
           return json(res,200,{feedback:inMemoryFeedback});
         }
       }
+      const fdm = path.match(/^\/admin\/feedback\/([^/]+)$/);
+      if (req.method === 'DELETE' && fdm) {
+        const targetId = fdm[1];
+        const idx = inMemoryFeedback.findIndex(x => x.id === targetId || x.id == targetId);
+        if (idx >= 0) {
+          inMemoryFeedback.splice(idx, 1);
+          saveJsonFile('feedback.json', inMemoryFeedback);
+        }
+        try {
+          await db.update('feedback', { deleted: true }, `id=eq.${encodeURIComponent(targetId)}`);
+        } catch {}
+        logAudit(clientIp, 'FEEDBACK_DELETE', `Deleted feedback item ${targetId}`, 'SUCCESS');
+        return json(res, 200, { ok: true });
+      }
+      if (req.method === 'DELETE' && path === '/admin/feedback') {
+        inMemoryFeedback.length = 0;
+        saveJsonFile('feedback.json', inMemoryFeedback);
+        logAudit(clientIp, 'FEEDBACK_CLEAR', 'Cleared all feedback entries', 'SUCCESS');
+        return json(res, 200, { ok: true });
+      }
       if(req.method==='GET'&&path==='/admin/payments'){
         try {
           const data=await db.select('payments','select=*&order=created_at.desc&limit=500');
@@ -630,6 +693,7 @@ export default async function handler(req,res){
           try { await db.insert('vip_codes',{code_hash:item.code_hash,display_code:plain,max_uses:maxUses}); } catch {}
           codes.push(plain);
         }
+        saveJsonFile('vip_codes.json', inMemoryVipCodes);
         logAudit(clientIp, 'VIP_GENERATE', `Generated ${count} VIP code(s) with max uses ${maxUses}`, 'SUCCESS');
         return json(res,200,{codes,maxUses});
       }
@@ -637,7 +701,10 @@ export default async function handler(req,res){
       if(req.method==='POST'&&vm){
         const targetId = vm[1];
         const memCode = inMemoryVipCodes.find(x => x.id == targetId || x.display_code == targetId);
-        if (memCode) memCode.active = !memCode.active;
+        if (memCode) {
+          memCode.active = !memCode.active;
+          saveJsonFile('vip_codes.json', inMemoryVipCodes);
+        }
         try {
           const rows=await db.select('vip_codes',`select=active&id=eq.${encodeURIComponent(targetId)}&limit=1`);
           const data=rows?.[0];
@@ -658,6 +725,7 @@ export default async function handler(req,res){
         const b=await readBody(req);
         for(const k of ['reveal_price','match_price','question_price','offer_percent','offer_label']) if(k in b) inMemorySettings[k] = String(b[k]);
         for(const k of ['reveal_enabled','match_enabled','chat_enabled','offer_enabled']) if(k in b) inMemorySettings[k] = b[k] === '1' ? '1' : '0';
+        saveJsonFile('settings.json', inMemorySettings);
         try {
           const patch={};
           for(const k of ['reveal_price','match_price','question_price','offer_percent','offer_label'])if(k in b)patch[k]=k==='offer_label'?clean(b[k],200):Number(b[k]);

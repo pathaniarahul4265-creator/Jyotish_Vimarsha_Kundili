@@ -1,5 +1,6 @@
 import express from 'express';
 import path from 'node:path';
+import fs from 'node:fs';
 import handler from './api/[...path].js';
 
 const app = express();
@@ -15,27 +16,19 @@ app.use('/public', express.static(path.join(process.cwd(), 'public')));
 app.use(express.static(path.join(process.cwd(), 'public')));
 app.use(express.static(process.cwd()));
 
-// Static alias route for zodiac images
-const ZODIAC_IMAGE_MAP = {
-  aries: 'zodiac_aries_gold_1786427406985.jpg',
-  taurus: 'zodiac_taurus_gold_1786427430892.jpg',
-  gemini: 'zodiac_gemini_gold_1786427447560.jpg',
-  cancer: 'zodiac_cancer_gold_1786427465388.jpg',
-  leo: 'zodiac_leo_gold_1786427482212.jpg',
-  virgo: 'zodiac_virgo_gold_1786427501477.jpg',
-  libra: 'zodiac_libra_gold_1786427519372.jpg',
-  scorpio: 'zodiac_scorpio_gold_1786427534881.jpg',
-  sagittarius: 'zodiac_sagittarius_gold_1786427554200.jpg',
-  capricorn: 'zodiac_capricorn_gold_1786427572321.jpg',
-  aquarius: 'zodiac_aquarius_gold_1786427591478.jpg',
-  pisces: 'zodiac_pisces_gold_1786427610651.jpg'
-};
-
+// Direct handler for zodiac images - serve golden SVGs
 app.get('/images/zodiac/:sign.jpg', (req, res, next) => {
-  const sign = req.params.sign.toLowerCase();
-  const file = ZODIAC_IMAGE_MAP[sign];
-  if (file) {
-    return res.sendFile(path.join(process.cwd(), 'src', 'assets', 'images', file));
+  const sign = req.params.sign.toLowerCase().replace(/[^a-z]/g, '');
+  const svgFile = path.join(process.cwd(), 'public', 'images', 'zodiac_svg', `${sign}.svg`);
+  const rootSvg = path.join(process.cwd(), 'images', 'zodiac_svg', `${sign}.svg`);
+
+  if (fs.existsSync(svgFile)) {
+    res.setHeader('Content-Type', 'image/svg+xml');
+    return res.sendFile(svgFile);
+  }
+  if (fs.existsSync(rootSvg)) {
+    res.setHeader('Content-Type', 'image/svg+xml');
+    return res.sendFile(rootSvg);
   }
   next();
 });
