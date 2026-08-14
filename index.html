@@ -3838,7 +3838,7 @@ body input, body select, body textarea {
 </div>
 
 <div class="fixed-utility-bar" aria-label="Quick Actions">
-  <button type="button" class="utility-btn mystic-sound-btn" id="mysticSoundBtn" title="Toggle ambient 432Hz cosmic resonance">✦ Resonate with Universe (OFF)</button>
+  <button type="button" class="utility-btn mystic-sound-btn" id="mysticSoundBtn" onclick="OmChantEngine.toggle()" title="Toggle ambient 432Hz cosmic resonance">✦ Resonate with Universe (OFF)</button>
   <button type="button" class="utility-btn payment-always" id="paymentBtnFixed" title="Sacred Plans & Dakshina">✦ Sacred Plans / Pay</button>
   <button type="button" class="utility-btn feedback-always" id="feedbackBtnFixed">✦ Feedback</button>
 </div>
@@ -8188,21 +8188,21 @@ window.updateVipUi = updateVipUi;
    AUTHENTIC SACRED OM CHANTING & HARMONIC RESONANCE SYNTHESIZER
    ========================================================= */
 const OmChantEngine = (function() {
-  let audioElem = null;
   let isPlaying = false;
-  let fadeInterval = null;
   let activePreset = 'om_432';
   let masterVol = 0.85;
 
   // Web Audio Context for Pure Harmonic Drone Synthesizer
   let audioCtx = null;
-  let synthNodes = [];
-  let synthGain = null;
+  let liveOscillators = [];
+  let masterGainNode = null;
 
   function getAudioContext() {
-    if (!audioCtx) {
+    if (!audioCtx || audioCtx.state === 'closed') {
       const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-      if (AudioContextClass) audioCtx = new AudioContextClass();
+      if (AudioContextClass) {
+        audioCtx = new AudioContextClass();
+      }
     }
     if (audioCtx && audioCtx.state === 'suspended') {
       audioCtx.resume();
@@ -8210,72 +8210,98 @@ const OmChantEngine = (function() {
     return audioCtx;
   }
 
-  function initAudio() {
-    if (!audioElem) {
-      audioElem = new Audio('/audio/om_chant.mp3');
-      audioElem.loop = true;
-      audioElem.volume = masterVol;
-      audioElem.onerror = function() {
-        if (audioElem && audioElem.src.includes('om_chant.mp3')) {
-          audioElem.src = '/audio/om_chant2.mp3';
-          audioElem.load();
-        }
-      };
+  function stopSynthDrone() {
+    // 1. Immediately cancel & stop all active oscillator and modulation nodes
+    if (liveOscillators.length > 0) {
+      liveOscillators.forEach(item => {
+        try {
+          if (item && item.osc) {
+            item.osc.stop(0);
+            item.osc.disconnect();
+          }
+        } catch (e) {}
+        try {
+          if (item && item.gain) {
+            item.gain.disconnect();
+          }
+        } catch (e) {}
+        try {
+          if (item && item.lfo) {
+            item.lfo.stop(0);
+            item.lfo.disconnect();
+          }
+        } catch (e) {}
+      });
+      liveOscillators = [];
+    }
+
+    // 2. Disconnect and reset master gain node
+    if (masterGainNode && audioCtx) {
+      try {
+        masterGainNode.gain.cancelScheduledValues(audioCtx.currentTime);
+        masterGainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+        masterGainNode.disconnect();
+      } catch (e) {}
+      masterGainNode = null;
     }
   }
 
   function startSynthDrone(presetKey) {
+    // Always stop and cleanly flush existing oscillators first
     stopSynthDrone();
+
     const ctx = getAudioContext();
     if (!ctx) return;
 
-    synthGain = ctx.createGain();
-    synthGain.gain.setValueAtTime(0.001, ctx.currentTime);
-    synthGain.gain.exponentialRampToValueAtTime(Math.max(0.01, masterVol * 0.45), ctx.currentTime + 1.8);
-    synthGain.connect(ctx.destination);
+    const now = ctx.currentTime;
 
-    let freqs = [432, 216, 108, 648]; // Default 432Hz Om
+    // Create Master Gain with smooth attack
+    masterGainNode = ctx.createGain();
+    masterGainNode.gain.setValueAtTime(0.0001, now);
+    const targetGain = Math.max(0.01, masterVol * 0.42);
+    masterGainNode.gain.linearRampToValueAtTime(targetGain, now + 1.2);
+    masterGainNode.connect(ctx.destination);
+
+    // Harmonic frequencies based on sacred Indian and Solfeggio acoustic tunings
+    let freqs = [108, 216, 432, 648]; // Default Sacred 432Hz Om
     if (presetKey === 'solar_528') {
-      freqs = [528, 264, 132, 792]; // Solfeggio 528Hz Transformation
+      freqs = [132, 264, 528, 792]; // Solfeggio 528Hz Miracle Harmony
     } else if (presetKey === 'singing_bowl') {
-      freqs = [288, 576, 864, 1152]; // Tibetan Bowl Harmonic Series
+      freqs = [144, 288, 576, 864, 1152]; // Tibetan Singing Bowl overtone spectrum
     } else if (presetKey === 'temple_bells') {
-      freqs = [639, 1278, 1917, 2556]; // Pure Bell Ringing Chimes
+      freqs = [319.5, 639, 1278, 1917, 2556]; // Temple Sanctum chime harmonics
     }
 
-    synthNodes = freqs.map((freq, idx) => {
+    liveOscillators = freqs.map((freq, idx) => {
       const osc = ctx.createOscillator();
       const nodeGain = ctx.createGain();
-      osc.type = idx % 2 === 0 ? 'sine' : 'triangle';
-      osc.frequency.setValueAtTime(freq, ctx.currentTime);
 
-      // Add gentle cosmic chorus detune/vibrato
-      const detuneAmount = (idx - 1.5) * 2.2;
-      osc.detune.setValueAtTime(detuneAmount, ctx.currentTime);
+      osc.type = idx === 0 ? 'sine' : idx % 2 === 0 ? 'sine' : 'triangle';
+      osc.frequency.setValueAtTime(freq, now);
 
-      nodeGain.gain.setValueAtTime((1 / (idx + 1.4)) * 0.7, ctx.currentTime);
+      // Celestial chorus detune
+      const detuneAmount = (idx - (freqs.length / 2)) * 2.5;
+      osc.detune.setValueAtTime(detuneAmount, now);
+
+      // Subtle slow breath LFO modulation (0.12 Hz)
+      const lfo = ctx.createOscillator();
+      const lfoGain = ctx.createGain();
+      lfo.frequency.setValueAtTime(0.12 + (idx * 0.03), now);
+      lfoGain.gain.setValueAtTime(1.5, now);
+      lfo.connect(lfoGain);
+      lfoGain.connect(osc.detune);
+
+      const baseLevel = (1 / (idx + 1.3)) * 0.65;
+      nodeGain.gain.setValueAtTime(baseLevel, now);
+
       osc.connect(nodeGain);
-      nodeGain.connect(synthGain);
-      osc.start();
-      return { osc, gain: nodeGain };
-    });
-  }
+      nodeGain.connect(masterGainNode);
 
-  function stopSynthDrone() {
-    if (synthGain && audioCtx) {
-      try {
-        synthGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
-        setTimeout(() => {
-          synthNodes.forEach(n => { try { n.osc.stop(); n.osc.disconnect(); } catch(e){} });
-          synthNodes = [];
-          if (synthGain) synthGain.disconnect();
-          synthGain = null;
-        }, 550);
-      } catch (e) {
-        synthNodes.forEach(n => { try { n.osc.stop(); } catch(err){} });
-        synthNodes = [];
-      }
-    }
+      osc.start(now);
+      lfo.start(now);
+
+      return { osc, gain: nodeGain, lfo, lfoGain };
+    });
   }
 
   function strikeTestSound() {
@@ -8291,23 +8317,28 @@ const OmChantEngine = (function() {
       const gain = ctx.createGain();
       osc.type = 'sine';
       osc.frequency.setValueAtTime(f, now);
-      
-      const startLevel = (masterVol * 0.5) / (i + 1);
-      gain.gain.setValueAtTime(startLevel, now);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 3.2);
+
+      const startLevel = (masterVol * 0.45) / (i + 1);
+      gain.gain.setValueAtTime(Math.max(0.0001, startLevel), now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 3.0);
 
       osc.connect(gain);
       gain.connect(ctx.destination);
       osc.start(now);
-      osc.stop(now + 3.3);
+      osc.stop(now + 3.1);
+      setTimeout(() => {
+        try { osc.disconnect(); gain.disconnect(); } catch(e){}
+      }, 3200);
     });
   }
 
   function setVolume(vol) {
     masterVol = Math.max(0, Math.min(1, vol));
-    if (audioElem) audioElem.volume = masterVol;
-    if (synthGain && audioCtx) {
-      try { synthGain.gain.setValueAtTime(masterVol * 0.45, audioCtx.currentTime); } catch(e){}
+    if (masterGainNode && audioCtx) {
+      try {
+        masterGainNode.gain.cancelScheduledValues(audioCtx.currentTime);
+        masterGainNode.gain.setValueAtTime(masterVol * 0.42, audioCtx.currentTime);
+      } catch (e) {}
     }
     const lbl = document.getElementById('soundVolLabel');
     if (lbl) lbl.textContent = `${Math.round(masterVol * 100)}%`;
@@ -8320,74 +8351,28 @@ const OmChantEngine = (function() {
       else c.classList.remove('active');
     });
     if (isPlaying) {
-      if (key === 'om_432') {
-        stopSynthDrone();
-        startAudioTrack();
-      } else {
-        if (audioElem) audioElem.pause();
-        startSynthDrone(key);
-      }
-    }
-  }
-
-  function startAudioTrack() {
-    initAudio();
-    if (fadeInterval) clearInterval(fadeInterval);
-    audioElem.volume = 0;
-    const playPromise = audioElem.play();
-    if (playPromise !== undefined) {
-      playPromise.then(() => {
-        let vol = 0;
-        fadeInterval = setInterval(() => {
-          vol += 0.08;
-          if (vol >= masterVol) {
-            vol = masterVol;
-            clearInterval(fadeInterval);
-          }
-          if (audioElem) audioElem.volume = vol;
-        }, 60);
-      }).catch(err => {
-        console.warn("Audio element playback failed, falling back to Web Audio Drone:", err);
-        startSynthDrone(activePreset);
-      });
+      startSynthDrone(key);
     }
   }
 
   function start() {
     isPlaying = true;
     updateUI(true);
-    if (activePreset === 'om_432') {
-      startAudioTrack();
-      startSynthDrone('om_432');
-    } else {
-      startSynthDrone(activePreset);
-    }
+    startSynthDrone(activePreset);
   }
 
   function stop() {
     isPlaying = false;
     updateUI(false);
-    if (fadeInterval) clearInterval(fadeInterval);
-    if (audioElem) {
-      let vol = audioElem.volume;
-      fadeInterval = setInterval(() => {
-        vol -= 0.1;
-        if (vol <= 0.05) {
-          vol = 0;
-          audioElem.pause();
-          audioElem.currentTime = 0;
-          clearInterval(fadeInterval);
-        } else {
-          if (audioElem) audioElem.volume = vol;
-        }
-      }, 50);
-    }
     stopSynthDrone();
   }
 
   function toggle() {
-    if (isPlaying) stop();
-    else start();
+    if (isPlaying) {
+      stop();
+    } else {
+      start();
+    }
   }
 
   function updateUI(active) {
@@ -8439,16 +8424,7 @@ function openSoundCustomizerModal() {
   const modal = document.getElementById('soundCustomizerModal');
   if (modal) {
     modal.classList.add('open');
-    const modalBtn = document.getElementById('modalSoundToggleBtn');
-    if (modalBtn) {
-      if (OmChantEngine.getIsPlaying()) {
-        modalBtn.innerHTML = `⏹ Stop Playing Resonance`;
-        modalBtn.style.background = 'linear-gradient(180deg, #f2a8a8, #d15858)';
-      } else {
-        modalBtn.innerHTML = `▶ Start Playing Resonance`;
-        modalBtn.style.background = 'linear-gradient(180deg, #f1d48a, #d8a04c)';
-      }
-    }
+    syncModalSoundButton();
   }
 }
 
@@ -8474,13 +8450,25 @@ window.openSoundCustomizerModal = openSoundCustomizerModal;
 window.closeSoundCustomizerModal = closeSoundCustomizerModal;
 window.syncModalSoundButton = syncModalSoundButton;
 
-// Attach mystic sound button listener
-document.addEventListener('DOMContentLoaded', () => {
+// Bind mystic sound button safely in all document ready states
+function bindSoundButtons() {
   const mysticBtn = document.getElementById('mysticSoundBtn');
-  if (mysticBtn) {
-    mysticBtn.addEventListener('click', () => OmChantEngine.toggle());
+  if (mysticBtn && !mysticBtn._boundOm) {
+    mysticBtn._boundOm = true;
+    mysticBtn.onclick = () => OmChantEngine.toggle();
   }
-});
+  const topBtn = document.getElementById('btnOmChant');
+  if (topBtn && !topBtn._boundOm) {
+    topBtn._boundOm = true;
+    topBtn.onclick = () => OmChantEngine.toggle();
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', bindSoundButtons);
+} else {
+  bindSoundButtons();
+}
 
 /* Company Brief Modal Helpers */
 function openCompanyModal() {
