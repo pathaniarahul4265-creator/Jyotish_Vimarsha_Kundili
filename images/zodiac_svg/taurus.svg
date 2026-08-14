@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#2a1a3a"/><stop offset="75%" stop-color="#120924"/><stop offset="100%" stop-color="#070312"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fff5cc"/><stop offset="45%" stop-color="#e2ba6e"/><stop offset="100%" stop-color="#a67a28"/>
+    </linearGradient>
+  </defs>
+  <circle cx="60" cy="60" r="56" fill="url(#bg)" stroke="url(#gold)" stroke-width="3"/>
+  <circle cx="60" cy="60" r="49" fill="none" stroke="url(#gold)" stroke-width="1" stroke-dasharray="3 2" opacity="0.85"/>
+  <text x="60" y="58" font-family="'Cinzel', 'Noto Sans', sans-serif" font-size="46" font-weight="900" fill="url(#gold)" text-anchor="middle" dominant-baseline="central">♉</text>
+  <text x="60" y="91" font-family="'Marcellus', 'Noto Serif Devanagari', serif" font-size="12" font-weight="700" fill="#fce7b0" letter-spacing="1.2" text-anchor="middle">वृषभ</text>
+  <text x="60" y="105" font-family="'Marcellus', sans-serif" font-size="9" font-weight="700" fill="#dfba6d" letter-spacing="2" text-anchor="middle">TAURUS</text>
+</svg>

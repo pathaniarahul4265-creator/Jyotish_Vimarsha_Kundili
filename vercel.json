@@ -4,5 +4,12 @@
     "api/[...path].js": {
       "maxDuration": 60
     }
-  }
+  },
+  "routes": [
+    { "src": "/images/(.*)", "dest": "/public/images/$1" },
+    { "src": "/favicon.svg", "dest": "/public/favicon.svg" },
+    { "src": "/api/(.*)", "dest": "/api/[...path].js" },
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
 }

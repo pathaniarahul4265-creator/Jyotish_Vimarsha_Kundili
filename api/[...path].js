@@ -1,6 +1,19 @@
 
 import crypto from 'node:crypto';
+import Razorpay from 'razorpay';
 import { db, getSettings, pricing } from './_lib/supabase.js';
+
+let razorpayInstance = null;
+function getRazorpay() {
+  if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) return null;
+  if (!razorpayInstance) {
+    razorpayInstance = new Razorpay({
+      key_id: process.env.RAZORPAY_KEY_ID,
+      key_secret: process.env.RAZORPAY_KEY_SECRET
+    });
+  }
+  return razorpayInstance;
+}
 
 function json(res, status, body) {
   res.status(status);
@@ -9,6 +22,7 @@ function json(res, status, body) {
 }
 function readBody(req) {
   if (req.body && typeof req.body === 'object' && Object.keys(req.body).length > 0) return Promise.resolve(req.body);
+  if (typeof req.on !== 'function') return Promise.resolve(req.body || {});
   return new Promise((resolve, reject) => {
     let raw='';
     req.on('data', c => { raw += c; if (raw.length > 8e6) reject(new Error('payload too large')); });
@@ -82,22 +96,34 @@ const inMemorySettings = {
   offer_label: ''
 };
 function clean(s,n=200){return String(s||'').slice(0,n);}
-async function createOrder(amount, plan){
-  if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
-    return { id: `order_demo_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`, amount, currency: 'INR', isDemo: true };
+async function createOrder(amount, plan, receiptCustom){
+  if (isNaN(amount) || amount < 100) {
+    const err = new Error('Amount must be at least 100 paise (₹1).');
+    err.statusCode = 400;
+    throw err;
+  }
+  const rzp = getRazorpay();
+  const receipt = receiptCustom || `jv_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`;
+  if (!rzp) {
+    return { id: `order_demo_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`, order_id: `order_demo_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`, amount, currency: 'INR', receipt, isDemo: true };
   }
   try {
-    const auth=Buffer.from(`${process.env.RAZORPAY_KEY_ID}:${process.env.RAZORPAY_KEY_SECRET}`).toString('base64');
-    const r=await fetch('https://api.razorpay.com/v1/orders',{method:'POST',headers:{Authorization:`Basic ${auth}`,'Content-Type':'application/json'},body:JSON.stringify({amount,currency:'INR',receipt:`jv_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,notes:{plan}})});
-    const j=await r.json().catch(()=>({}));
-    if(!r.ok){
-      console.warn('[Razorpay API Warning]', j?.error?.description || 'Order creation failed');
-      return { id: `order_demo_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`, amount, currency: 'INR', isDemo: true };
-    }
-    return j;
+    const order = await rzp.orders.create({
+      amount: Math.round(amount),
+      currency: 'INR',
+      receipt: String(receipt).slice(0, 40),
+      notes: { plan: plan || 'standard' }
+    });
+    return {
+      ...order,
+      order_id: order.id
+    };
   } catch (err) {
-    console.warn('[Razorpay Fetch Error]', err.message);
-    return { id: `order_demo_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`, amount, currency: 'INR', isDemo: true };
+    console.error('[Razorpay Order Creation Error]', err);
+    const status = err.statusCode || (err.error?.code === 'BAD_REQUEST_ERROR' ? 400 : 500);
+    const errorObj = new Error(err.error?.description || err.message || 'Failed to create Razorpay order.');
+    errorObj.statusCode = status;
+    throw errorObj;
   }
 }
 async function aiCall({model,systemText,userText,maxTokens}){
@@ -112,7 +138,8 @@ async function aiCall({model,systemText,userText,maxTokens}){
 }
 
 export default async function handler(req,res){
-  const rawPath = req.path ? req.path.replace(/^\/api\/?/, '') : '';
+  let rawPath = req.path || (req.url ? req.url.split('?')[0] : '');
+  rawPath = rawPath.replace(/^\/api\/?/, '').replace(/^\/+/, '');
   const pathParts = Array.isArray(req.query?.path) ? req.query.path : (rawPath ? rawPath.split('/').filter(Boolean) : []);
   const path = '/' + pathParts.join('/');
   try{
@@ -325,44 +352,149 @@ export default async function handler(req,res){
     }
 
     if(req.method==='POST'&&path==='/create-order'){
-      const b=await readBody(req), plan=clean(b.plan,20), map={reveal:['reveal_price','reveal_enabled'],match:['match_price','match_enabled'],question:['question_price','chat_enabled']};
-      if(!map[plan])return json(res,400,{error:'Invalid plan'});
-      const s=await getSettings(); if(!s[map[plan][1]])return json(res,403,{error:'This feature is currently unavailable.'});
-      const cfg=pricing(s), amount=Math.max(100,Math.round(cfg.prices[plan]*100));
-      const order=await createOrder(amount,plan), sessionToken=crypto.randomBytes(32).toString('hex');
-      const payRecord = {session_token:sessionToken,order_id:order.id,plan,amount,status:'created'};
-      inMemoryPayments.unshift(payRecord);
-      try { await db.insert('payments',payRecord); } catch {}
-      return json(res,200,{orderId:order.id,amount,currency:'INR',keyId:process.env.RAZORPAY_KEY_ID,sessionToken});
+      try {
+        const b = await readBody(req);
+        let plan = b.plan ? clean(b.plan, 20) : 'reveal';
+        let amount = b.amount ? Number(b.amount) : 0;
+        const receipt = b.receipt ? clean(b.receipt, 40) : '';
+
+        if (!amount) {
+          const map = { reveal: ['reveal_price', 'reveal_enabled'], match: ['match_price', 'match_enabled'], question: ['question_price', 'chat_enabled'], dakshina: ['reveal_price', 'reveal_enabled'] };
+          if (!map[plan]) return json(res, 400, { error: 'Invalid plan specified.' });
+          const s = await getSettings();
+          if (map[plan] && !s[map[plan][1]]) return json(res, 403, { error: 'This feature is currently unavailable.' });
+          const cfg = pricing(s);
+          amount = Math.max(100, Math.round((cfg.prices[plan] || 59) * 100));
+        }
+
+        if (isNaN(amount) || amount < 100) {
+          return json(res, 400, { error: 'Amount must be at least 100 paise (₹1).' });
+        }
+
+        const order = await createOrder(amount, plan, receipt);
+        const sessionToken = crypto.randomBytes(32).toString('hex');
+        const payRecord = {
+          session_token: sessionToken,
+          order_id: order.order_id || order.id,
+          plan,
+          amount: order.amount || amount,
+          status: 'created'
+        };
+        inMemoryPayments.unshift(payRecord);
+        try { await db.insert('payments', payRecord); } catch {}
+
+        return json(res, 200, {
+          order_id: order.order_id || order.id,
+          orderId: order.order_id || order.id,
+          id: order.order_id || order.id,
+          amount: order.amount || amount,
+          currency: order.currency || 'INR',
+          receipt: order.receipt || receipt,
+          key_id: process.env.RAZORPAY_KEY_ID || '',
+          keyId: process.env.RAZORPAY_KEY_ID || '',
+          sessionToken,
+          isDemo: Boolean(order.isDemo)
+        });
+      } catch (err) {
+        const status = err.statusCode || 500;
+        return json(res, status, { error: err.message || 'Could not create payment order.' });
+      }
     }
 
     if(req.method==='POST'&&path==='/verify-payment'){
-      const b=await readBody(req), {razorpay_order_id,razorpay_payment_id,razorpay_signature,plan,sessionToken}=b;
-      if(!razorpay_order_id||!razorpay_payment_id||!plan||!sessionToken)return json(res,400,{verified:false,error:'Missing payment verification fields.'});
-      let row = inMemoryPayments.find(p => p.session_token === sessionToken);
-      try {
-        const rows=await db.select('payments',`select=*&session_token=eq.${encodeURIComponent(sessionToken)}&limit=1`);
-        if (rows?.[0]) row = rows[0];
-      } catch {}
-      if(!row||row.plan!==plan||row.order_id!==razorpay_order_id)return json(res,400,{verified:false,error:'Order does not match the server payment session.'});
-      
-      // If it's a demo order or secrets are missing, verify immediately
-      if (row.order_id.startsWith('order_demo_') || !process.env.RAZORPAY_KEY_SECRET) {
-        row.status = 'verified';
-        row.payment_id = razorpay_payment_id;
-        row.signature = razorpay_signature || 'demo_signature';
-        try { await db.update('payments',{payment_id:razorpay_payment_id,signature:razorpay_signature||'demo_signature',status:'verified',verified_at:new Date().toISOString()},`id=eq.${encodeURIComponent(row.id)}`); } catch {}
-        return json(res,200,{verified:true,plan,isDemo:true});
+      const b = await readBody(req);
+      const razorpay_order_id = b.razorpay_order_id || b.order_id;
+      const razorpay_payment_id = b.razorpay_payment_id || b.payment_id;
+      const razorpay_signature = b.razorpay_signature || b.signature;
+      const plan = b.plan || 'reveal';
+      const sessionToken = b.sessionToken;
+
+      if (!razorpay_order_id || !razorpay_payment_id) {
+        return json(res, 400, {
+          success: false,
+          verified: false,
+          error: 'Missing required payment verification fields (razorpay_order_id, razorpay_payment_id).'
+        });
       }
 
-      if (!razorpay_signature) return json(res,400,{verified:false,error:'Missing payment signature.'});
-      const expected=crypto.createHmac('sha256',process.env.RAZORPAY_KEY_SECRET).update(`${row.order_id}|${razorpay_payment_id}`).digest('hex'); const a=Buffer.from(expected,'hex'),bb=Buffer.from(String(razorpay_signature),'hex');
-      if(a.length!==bb.length||!crypto.timingSafeEqual(a,bb))return json(res,400,{verified:false,error:'Payment signature mismatch.'});
-      row.status = 'verified';
-      row.payment_id = razorpay_payment_id;
-      row.signature = razorpay_signature;
-      try { await db.update('payments',{payment_id:razorpay_payment_id,signature:razorpay_signature,status:'verified',verified_at:new Date().toISOString()},`id=eq.${encodeURIComponent(row.id)}`); } catch {}
-      return json(res,200,{verified:true,plan});
+      let row = inMemoryPayments.find(p => p.order_id === razorpay_order_id || (sessionToken && p.session_token === sessionToken));
+      try {
+        const rows = await db.select('payments', `select=*&order_id=eq.${encodeURIComponent(razorpay_order_id)}&limit=1`);
+        if (rows?.[0]) row = rows[0];
+      } catch {}
+
+      // If demo order or no secret configured
+      if (razorpay_order_id.startsWith('order_demo_') || !process.env.RAZORPAY_KEY_SECRET) {
+        if (row) {
+          row.status = 'verified';
+          row.payment_id = razorpay_payment_id;
+          row.signature = razorpay_signature || 'demo_signature';
+          try {
+            await db.update('payments', {
+              payment_id: razorpay_payment_id,
+              signature: razorpay_signature || 'demo_signature',
+              status: 'verified',
+              verified_at: new Date().toISOString()
+            }, `order_id=eq.${encodeURIComponent(razorpay_order_id)}`);
+          } catch {}
+        }
+        return json(res, 200, {
+          success: true,
+          verified: true,
+          plan,
+          order_id: razorpay_order_id,
+          payment_id: razorpay_payment_id,
+          isDemo: true
+        });
+      }
+
+      if (!razorpay_signature) {
+        return json(res, 400, {
+          success: false,
+          verified: false,
+          error: 'Missing razorpay_signature field.'
+        });
+      }
+
+      // Algorithm: HMAC-SHA256(order_id + "|" + payment_id, KEY_SECRET)
+      const expectedSignature = crypto
+        .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+        .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+        .digest('hex');
+
+      const expectedBuf = Buffer.from(expectedSignature, 'utf8');
+      const receivedBuf = Buffer.from(String(razorpay_signature), 'utf8');
+
+      if (expectedBuf.length !== receivedBuf.length || !crypto.timingSafeEqual(expectedBuf, receivedBuf)) {
+        return json(res, 400, {
+          success: false,
+          verified: false,
+          error: 'Payment verification failed: Signature mismatch.'
+        });
+      }
+
+      // Valid signature: mark payment as verified
+      if (row) {
+        row.status = 'verified';
+        row.payment_id = razorpay_payment_id;
+        row.signature = razorpay_signature;
+      }
+      try {
+        await db.update('payments', {
+          payment_id: razorpay_payment_id,
+          signature: razorpay_signature,
+          status: 'verified',
+          verified_at: new Date().toISOString()
+        }, `order_id=eq.${encodeURIComponent(razorpay_order_id)}`);
+      } catch {}
+
+      return json(res, 200, {
+        success: true,
+        verified: true,
+        plan,
+        order_id: razorpay_order_id,
+        payment_id: razorpay_payment_id
+      });
     }
 
     if(req.method==='POST'&&path==='/razorpay/webhook'){

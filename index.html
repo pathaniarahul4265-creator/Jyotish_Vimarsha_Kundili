@@ -2260,22 +2260,22 @@ body input, body select, body textarea {
   font-weight: 600 !important;
 }
 
-/* Om Chanting Controller Bar */
-.om-chant-bar {
+/* Resonate with Universe Sound Bar & Controller */
+.om-chant-bar, .resonance-bar {
   display: flex !important;
   align-items: center !important;
-  gap: 10px !important;
+  gap: 8px !important;
   background: rgba(223, 186, 109, 0.08) !important;
   border: 1px solid rgba(223, 186, 109, 0.32) !important;
   border-radius: 999px !important;
-  padding: 4px 12px !important;
+  padding: 4px 10px !important;
   font-family: 'Manrope', sans-serif !important;
   font-size: 12px !important;
   color: #f7e4b8 !important;
   user-select: none !important;
 }
 
-.om-chant-btn {
+.om-chant-btn, .resonance-btn {
   width: auto !important;
   padding: 5px 14px !important;
   font-size: 12px !important;
@@ -2291,9 +2291,29 @@ body input, body select, body textarea {
   box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
 }
 
-.om-chant-btn:hover {
+.om-chant-btn:hover, .resonance-btn:hover {
   transform: scale(1.04) !important;
   box-shadow: 0 0 16px rgba(223, 186, 109, 0.6) !important;
+}
+
+.om-sound-config-btn {
+  background: rgba(242, 215, 146, 0.15) !important;
+  border: 1px solid rgba(242, 215, 146, 0.35) !important;
+  color: #fce7b0 !important;
+  border-radius: 50% !important;
+  width: 26px !important;
+  height: 26px !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  font-size: 12px !important;
+  transition: all 0.2s ease !important;
+}
+.om-sound-config-btn:hover {
+  background: rgba(242, 215, 146, 0.3) !important;
+  transform: rotate(45deg) !important;
 }
 
 .om-pulse-symbol {
@@ -2311,6 +2331,621 @@ body input, body select, body textarea {
 @keyframes omSymbolPulse {
   0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px rgba(223, 186, 109, 0.6)); }
   50% { transform: scale(1.28); filter: drop-shadow(0 0 20px rgba(223, 186, 109, 1)); }
+}
+
+/* Planetary Hora Indicator in Header */
+.hora-indicator-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  background: linear-gradient(135deg, rgba(24, 16, 42, 0.92), rgba(8, 14, 24, 0.95)) !important;
+  border: 1px solid rgba(242, 215, 146, 0.45) !important;
+  border-radius: 999px !important;
+  padding: 4px 12px 4px 10px !important;
+  cursor: pointer !important;
+  box-shadow: 0 0 14px rgba(242, 215, 146, 0.18) !important;
+  transition: all 0.25s ease !important;
+  font-size: 11.5px !important;
+  letter-spacing: 0.04em !important;
+  color: #fce7b0 !important;
+}
+.hora-indicator-badge:hover {
+  border-color: #fce7b0 !important;
+  box-shadow: 0 0 22px rgba(242, 215, 146, 0.45) !important;
+  transform: translateY(-1px) scale(1.02) !important;
+}
+.hora-live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #7fc5c0;
+  box-shadow: 0 0 10px #7fc5c0;
+  animation: horaLivePulse 1.8s infinite;
+}
+@keyframes horaLivePulse {
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50% { transform: scale(1.5); opacity: 1; box-shadow: 0 0 16px #fce7b0; }
+}
+
+/* Active Planetary Transit Badges on Rashi Mandala & Hero Orbit */
+.z-sign.has-transit {
+  box-shadow: 0 0 25px rgba(242, 215, 146, 0.65), inset 0 0 16px rgba(242, 215, 146, 0.25) !important;
+}
+.z-sign.has-transit .z-logo-img {
+  border-color: #fce7b0 !important;
+  box-shadow: 0 0 22px rgba(242, 215, 146, 0.95), 0 0 38px rgba(127, 197, 192, 0.6) !important;
+}
+.transit-badge {
+  position: absolute !important;
+  top: -6px !important;
+  right: -6px !important;
+  background: linear-gradient(135deg, #241407, #482a08) !important;
+  border: 1.2px solid #fce7b0 !important;
+  border-radius: 999px !important;
+  padding: 1px 5px !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  color: #fff1c5 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 2px !important;
+  box-shadow: 0 0 12px rgba(242, 215, 146, 0.8), 0 2px 6px rgba(0,0,0,0.7) !important;
+  z-index: 12 !important;
+  letter-spacing: 0.5px !important;
+  pointer-events: none !important;
+  animation: transitGlow 3s ease-in-out infinite !important;
+}
+@keyframes transitGlow {
+  0%, 100% { box-shadow: 0 0 8px rgba(242, 215, 146, 0.6); }
+  50% { box-shadow: 0 0 18px rgba(242, 215, 146, 1), 0 0 25px rgba(127, 197, 192, 0.8); transform: scale(1.08); }
+}
+
+.hero-z-node.has-transit .hero-z-img {
+  box-shadow: 0 0 20px rgba(242, 215, 146, 0.9), 0 0 35px rgba(127, 197, 192, 0.5) !important;
+  border-color: #fce7b0 !important;
+}
+.hero-transit-tag {
+  position: absolute !important;
+  bottom: -4px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  background: rgba(16, 10, 4, 0.95) !important;
+  border: 1px solid rgba(242, 215, 146, 0.7) !important;
+  border-radius: 999px !important;
+  padding: 0 4px !important;
+  font-size: 9px !important;
+  color: #ffd88a !important;
+  font-weight: bold !important;
+  letter-spacing: 0.5px !important;
+  pointer-events: none !important;
+  white-space: nowrap !important;
+}
+
+/* East Indian Kundli Chart SVG Styles */
+.east-cell {
+  fill: rgba(216, 165, 61, 0.025);
+  stroke: rgba(232, 194, 116, 0.55);
+  stroke-width: 1.4;
+  transition: fill 0.2s ease;
+}
+.east-cell:hover {
+  fill: rgba(216, 165, 61, 0.08);
+}
+.east-line {
+  stroke: rgba(232, 194, 116, 0.62);
+  stroke-width: 1.5;
+  fill: none;
+}
+.east-lagna-mark {
+  stroke: #dfba6d;
+  stroke-width: 2.2;
+}
+
+/* Sound Customizer & Hora Schedule Modal styling */
+.sound-customizer-box, .hora-modal-box {
+  max-width: 680px !important;
+  width: 95% !important;
+  background: radial-gradient(circle at 50% 0%, #172433 0%, #080f18 100%) !important;
+  border: 1.5px solid rgba(242, 215, 146, 0.45) !important;
+  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.8), 0 0 35px rgba(242, 215, 146, 0.15) !important;
+}
+
+.sound-presets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+  gap: 10px;
+  margin: 18px 0;
+}
+.sound-preset-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(242, 215, 146, 0.25);
+  border-radius: 10px;
+  padding: 12px 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.sound-preset-card:hover, .sound-preset-card.active {
+  background: linear-gradient(145deg, rgba(242, 215, 146, 0.2), rgba(127, 197, 192, 0.15));
+  border-color: #fce7b0;
+  box-shadow: 0 0 16px rgba(242, 215, 146, 0.3);
+}
+.sound-preset-icon {
+  font-size: 22px;
+  margin-bottom: 4px;
+}
+.sound-preset-title {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fce7b0;
+}
+.sound-preset-freq {
+  font-size: 11px;
+  color: #7fc5c0;
+  margin-top: 2px;
+}
+
+.sound-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(242, 215, 146, 0.2);
+  margin-top: 14px;
+}
+.sound-slider {
+  flex: 1;
+  accent-color: #f1d48a;
+  cursor: pointer;
+}
+
+.hora-table-wrap {
+  max-height: 420px;
+  overflow-y: auto;
+  margin-top: 16px;
+  border: 1px solid rgba(242, 215, 146, 0.2);
+  border-radius: 10px;
+}
+.hora-row {
+  display: grid;
+  grid-template-columns: 80px 140px 1fr 90px;
+  align-items: center;
+  padding: 9px 14px;
+  border-bottom: 1px solid rgba(242, 215, 146, 0.1);
+  font-size: 12.5px;
+  color: #d6be8c;
+  transition: background 0.15s ease;
+}
+.hora-row:last-child {
+  border-bottom: none;
+}
+.hora-row.is-current {
+  background: linear-gradient(90deg, rgba(242, 215, 146, 0.25), rgba(127, 197, 192, 0.15));
+  color: #fff1c5;
+  font-weight: 700;
+  border-left: 3px solid #fce7b0;
+}
+.hora-planet-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  color: #fce7b0;
+}
+.hora-nature-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-align: center;
+}
+.hora-nature-good {
+  background: rgba(127, 197, 192, 0.2);
+  color: #7fc5c0;
+  border: 1px solid rgba(127, 197, 192, 0.4);
+}
+.hora-nature-excellent {
+  background: rgba(242, 215, 146, 0.25);
+  color: #ffd88a;
+  border: 1px solid rgba(242, 215, 146, 0.5);
+}
+.hora-nature-mixed {
+  background: rgba(220, 160, 120, 0.2);
+  color: #f4c29e;
+  border: 1px solid rgba(220, 160, 120, 0.4);
+}
+.hora-nature-intense {
+  background: rgba(230, 120, 120, 0.2);
+  color: #fca8a8;
+  border: 1px solid rgba(230, 120, 120, 0.4);
+}
+
+/* Daily Horoscope & Rashifal Component Styles - Attached Directly Below Ring */
+.daily-rashifal-section {
+  margin: 24px 0 20px 0 !important;
+  background: radial-gradient(circle at 50% 0%, rgba(20, 34, 48, 0.95), rgba(7, 13, 20, 0.98)) !important;
+  border: 1.5px solid rgba(242, 215, 146, 0.45) !important;
+  border-radius: 18px !important;
+  padding: 24px 26px !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.65), 0 0 35px rgba(242, 215, 146, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.daily-rashifal-section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, transparent, #fce7b0, #7fc5c0, #dfba6d, transparent);
+}
+
+.rashifal-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: wrap !important;
+  gap: 14px !important;
+  padding-bottom: 16px !important;
+  border-bottom: 1px solid rgba(242, 215, 146, 0.25) !important;
+  margin-bottom: 18px !important;
+}
+
+.rashifal-title-wrap h2 {
+  font-family: 'Bodoni Moda', 'Cinzel', serif !important;
+  font-size: 21px !important;
+  color: #fce7b0 !important;
+  margin: 0 !important;
+  letter-spacing: 0.04em !important;
+  text-shadow: 0 0 12px rgba(242, 215, 146, 0.4) !important;
+}
+
+.rashifal-title-wrap p {
+  font-family: 'Manrope', sans-serif !important;
+  font-size: 13px !important;
+  color: #9fc9c2 !important;
+  margin: 4px 0 0 0 !important;
+}
+
+.rashifal-date-controls {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+}
+
+.rashifal-date-input {
+  background: rgba(8, 16, 24, 0.85) !important;
+  border: 1px solid rgba(242, 215, 146, 0.4) !important;
+  border-radius: 8px !important;
+  padding: 6px 10px !important;
+  color: #fce7b0 !important;
+  font-family: 'Manrope', sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  outline: none !important;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.4) !important;
+  cursor: pointer !important;
+}
+
+.rashifal-date-input:focus {
+  border-color: #ffffff !important;
+  box-shadow: 0 0 10px rgba(242, 215, 146, 0.5) !important;
+}
+
+.rashifal-quick-btn {
+  background: rgba(242, 215, 146, 0.12) !important;
+  border: 1px solid rgba(242, 215, 146, 0.3) !important;
+  border-radius: 8px !important;
+  padding: 6px 12px !important;
+  color: #fce7b0 !important;
+  font-family: 'Manrope', sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.rashifal-quick-btn:hover {
+  background: rgba(242, 215, 146, 0.25) !important;
+  border-color: #fce7b0 !important;
+  color: #ffffff !important;
+}
+
+.rashifal-ribbon-container {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  margin-bottom: 18px !important;
+}
+
+.rashifal-nav-arrow {
+  flex-shrink: 0 !important;
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 50% !important;
+  background: rgba(14, 26, 38, 0.95) !important;
+  border: 1.5px solid rgba(242, 215, 146, 0.45) !important;
+  color: #fce7b0 !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6) !important;
+  z-index: 5 !important;
+}
+
+.rashifal-nav-arrow:hover {
+  background: rgba(242, 215, 146, 0.25) !important;
+  border-color: #fce7b0 !important;
+  color: #ffffff !important;
+  transform: scale(1.1) !important;
+  box-shadow: 0 0 15px rgba(242, 215, 146, 0.5) !important;
+}
+
+.rashifal-ribbon {
+  display: flex !important;
+  gap: 8px !important;
+  overflow-x: auto !important;
+  padding: 4px 2px 10px 2px !important;
+  margin: 0 !important;
+  scrollbar-width: thin !important;
+  scroll-behavior: smooth !important;
+  flex-grow: 1 !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+.rashifal-ribbon::-webkit-scrollbar {
+  height: 5px !important;
+}
+
+.rashifal-ribbon::-webkit-scrollbar-thumb {
+  background: rgba(242, 215, 146, 0.35) !important;
+  border-radius: 4px !important;
+}
+
+.rashifal-pill {
+  flex-shrink: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 8px 14px !important;
+  border-radius: 30px !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(242, 215, 146, 0.22) !important;
+  color: #d1dfd8 !important;
+  font-family: 'Manrope', sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.25s ease !important;
+  user-select: none !important;
+  white-space: nowrap !important;
+}
+
+.rashifal-pill:hover {
+  background: rgba(242, 215, 146, 0.15) !important;
+  border-color: rgba(242, 215, 146, 0.6) !important;
+  color: #ffffff !important;
+  transform: translateY(-2px) !important;
+}
+
+.rashifal-pill.active {
+  background: linear-gradient(135deg, rgba(242, 215, 146, 0.32), rgba(200, 150, 60, 0.24)) !important;
+  border-color: #fce7b0 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 18px rgba(242, 215, 146, 0.45), inset 0 0 10px rgba(242, 215, 146, 0.25) !important;
+}
+
+.rashifal-pill-icon {
+  font-size: 16px !important;
+}
+
+.rashifal-showcase {
+  display: grid !important;
+  grid-template-columns: 280px 1fr !important;
+  gap: 22px !important;
+  background: rgba(0, 0, 0, 0.32) !important;
+  border: 1px solid rgba(242, 215, 146, 0.3) !important;
+  border-radius: 16px !important;
+  padding: 22px !important;
+  box-shadow: inset 0 0 25px rgba(0,0,0,0.5) !important;
+}
+
+@media (max-width: 900px) {
+  .rashifal-showcase {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.rashifal-art-box {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
+  background: radial-gradient(circle at 50% 30%, rgba(242, 215, 146, 0.16) 0%, rgba(6, 12, 18, 0.85) 80%) !important;
+  border: 1.5px solid rgba(242, 215, 146, 0.35) !important;
+  border-radius: 14px !important;
+  padding: 22px 18px !important;
+  position: relative !important;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
+}
+
+.rashifal-gold-logo {
+  width: 120px !important;
+  height: 120px !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  border: 3px solid #fce7b0 !important;
+  outline: 2px solid rgba(252, 231, 176, 0.6) !important;
+  outline-offset: 4px !important;
+  box-shadow: 0 0 28px rgba(252, 231, 176, 0.8), 0 0 45px rgba(127, 197, 192, 0.45) !important;
+  margin-bottom: 14px !important;
+  background: radial-gradient(circle, #251b32 0%, #0a0614 100%) !important;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+  image-rendering: -webkit-optimize-contrast !important;
+}
+
+.rashifal-gold-logo:hover {
+  transform: scale(1.08) rotate(3deg) !important;
+}
+
+.rashifal-date-banner {
+  background: rgba(242, 215, 146, 0.12) !important;
+  border: 1px solid rgba(242, 215, 146, 0.3) !important;
+  border-radius: 20px !important;
+  padding: 4px 14px !important;
+  font-size: 12px !important;
+  color: #fce7b0 !important;
+  font-family: 'Manrope', sans-serif !important;
+  font-weight: 700 !important;
+  margin-bottom: 12px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+.rashifal-symbol-watermark {
+  position: absolute !important;
+  top: 10px !important;
+  right: 14px !important;
+  font-size: 28px !important;
+  color: rgba(242, 215, 146, 0.22) !important;
+  font-family: 'Cinzel', serif !important;
+  pointer-events: none !important;
+}
+
+.rashifal-sign-title {
+  font-family: 'Bodoni Moda', 'Cinzel', serif !important;
+  font-size: 20px !important;
+  color: #fce7b0 !important;
+  margin: 0 !important;
+  letter-spacing: 0.03em !important;
+  text-shadow: 0 0 10px rgba(242, 215, 146, 0.5) !important;
+}
+
+.rashifal-sign-sub {
+  font-size: 12.5px !important;
+  color: #7fc5c0 !important;
+  margin-top: 6px !important;
+  line-height: 1.45 !important;
+}
+
+.rashifal-meta-tags {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  width: 100% !important;
+  margin-top: 14px !important;
+}
+
+.rashifal-tag {
+  background: rgba(0, 0, 0, 0.45) !important;
+  border: 1px solid rgba(242, 215, 146, 0.2) !important;
+  border-radius: 8px !important;
+  padding: 6px 10px !important;
+  font-size: 11.5px !important;
+  color: #f0e6d2 !important;
+  text-align: left !important;
+}
+
+.rashifal-content-box {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+}
+
+.rashifal-section-card {
+  background: rgba(255, 255, 255, 0.025) !important;
+  border: 1px solid rgba(242, 215, 146, 0.2) !important;
+  border-left: 3.5px solid #fce7b0 !important;
+  border-radius: 10px !important;
+  padding: 14px 18px !important;
+}
+
+.rashifal-section-card h4 {
+  font-family: 'Bodoni Moda', 'Cinzel', serif !important;
+  font-size: 13.5px !important;
+  color: #fce7b0 !important;
+  margin: 0 0 6px 0 !important;
+  letter-spacing: 0.06em !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+.rashifal-section-card p {
+  font-size: 13.5px !important;
+  line-height: 1.65 !important;
+  color: #e5edea !important;
+  margin: 0 !important;
+}
+
+.rashifal-grid-2 {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 12px !important;
+}
+
+@media (max-width: 680px) {
+  .rashifal-grid-2 {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.rashifal-mini-card {
+  background: rgba(255, 255, 255, 0.025) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 10px !important;
+  padding: 12px 14px !important;
+}
+
+.rashifal-mini-card h5 {
+  font-family: 'Manrope', sans-serif !important;
+  font-size: 12.5px !important;
+  color: #f2d792 !important;
+  font-weight: 700 !important;
+  margin: 0 0 6px 0 !important;
+}
+
+.rashifal-mini-card p {
+  font-size: 12.5px !important;
+  line-height: 1.55 !important;
+  color: #c9d8d6 !important;
+  margin: 0 !important;
+}
+
+.rashifal-token-chip {
+  background: rgba(0, 0, 0, 0.4) !important;
+  border: 1px solid rgba(242, 215, 146, 0.25) !important;
+  border-radius: 8px !important;
+  padding: 8px 10px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+}
+
+.rashifal-token-chip small {
+  font-size: 10px !important;
+  color: #8fa6af !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+}
+
+.rashifal-token-chip b {
+  font-size: 12.5px !important;
+  color: #fce7b0 !important;
 }
 
 /* Company Link & Brief Modal Styling */
@@ -2446,6 +3081,42 @@ body input, body select, body textarea {
   font-size: 13px !important;
   color: #a3e8e2 !important;
 }
+
+/* Zodiac Focus Modal Styles */
+.zodiac-focus-modal-box {
+  max-width: 760px !important;
+  background: radial-gradient(circle at 50% 10%, rgba(24, 38, 54, 0.98), rgba(6, 12, 18, 0.99)) !important;
+  border: 1.5px solid rgba(242, 215, 146, 0.55) !important;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.9), 0 0 45px rgba(242, 215, 146, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  border-radius: 20px !important;
+  padding: 28px 32px !important;
+  color: #f4efe4 !important;
+  position: relative !important;
+  max-height: 90vh !important;
+  overflow-y: auto !important;
+}
+
+.zodiac-modal-top-grid {
+  display: grid !important;
+  grid-template-columns: 180px 1fr !important;
+  gap: 20px !important;
+  align-items: center !important;
+  margin-bottom: 16px !important;
+}
+
+@media (max-width: 650px) {
+  .zodiac-modal-top-grid {
+    grid-template-columns: 1fr !important;
+    text-align: center !important;
+  }
+}
+
+.zodiac-modal-art {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
+}
 </style>
 </head>
 <body>
@@ -2496,25 +3167,39 @@ body input, body select, body textarea {
       <span class="brand-subtitle">Sacred Vedic Chart Reading &amp; Ephemeris</span>
     </div>
   </div>
+  <div class="header-brand-right">
+    <button type="button" class="header-payment-btn" id="paymentBtnHeader" style="background:linear-gradient(135deg,rgba(216,160,76,0.2),rgba(159,77,62,0.25));border:1px solid rgba(216,160,76,0.55);color:#fce7b0;font-family:'Cinzel',serif;font-size:12px;font-weight:600;letter-spacing:0.06em;padding:6px 14px;border-radius:20px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;" title="Open Sacred Offerings, Reading Plans & Dakshina">
+      <span>✦</span> Sacred Plans &amp; Dakshina
+    </button>
+  </div>
 </header>
 
 <div class="observatory-telemetry-hud">
   <span>CELESTIAL OBSERVATORY · SIDEREAL LAHIRI AYANAMSHA 24°10'38"</span>
-  <span>॥ यथा पिण्डे तथा ब्रह्माण्डे ॥</span>
+  <div class="hora-indicator-badge" id="horaHeaderBadge" onclick="openHoraModal()" title="Click to view full 24-hour Planetary Hora timetable & astrological guidance">
+    <span class="hora-live-dot"></span>
+    <span id="horaHeaderTitle">⏰ Hora: Calculating…</span>
+  </div>
   <div class="om-chant-bar">
     <span class="om-pulse-symbol" id="omPulseSymbol">ॐ</span>
-    <button type="button" class="om-chant-btn" id="btnOmChant" onclick="OmChantEngine.toggle()" title="Toggle ambient Om chanting drone">
-      <span>▶</span> <b>Resonate with Universe</b>
+    <button type="button" class="om-chant-btn" id="btnOmChant" onclick="OmChantEngine.toggle()" title="Toggle ambient cosmic resonance">
+      <span>▶</span> <b>Resonate with Universe (OFF)</b>
     </button>
+    <button type="button" class="om-sound-config-btn" onclick="openSoundCustomizerModal(); event.stopPropagation();" title="Audio resonance & frequency settings (432Hz, 528Hz, Tibetan Bowl, Temple Bells)">⚙</button>
   </div>
   <span>OBSERVER LAT 28°37'N • LON 77°13'E ☉</span>
 </div>
 
 <div class="panchang-bar" id="dailyPanchangBar" aria-label="Daily Vedic Panchang and Rahu Kaal">
   <div class="panchang-header">
-    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-      <span class="panchang-badge">✦ TODAY'S DAINIK PANCHANG & RAHU KAAL</span>
-      <button type="button" class="panchang-detail-trigger-btn" onclick="openPanchangModal(); event.stopPropagation();" title="View complete Panchang, Choghadiya & Muhurta analysis">🔍 View Complete Panchang & All Muhurtas ✦</button>
+    <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+      <span class="panchang-badge">✦ TODAY'S DAINIK PANCHANG &amp; RAHU KAAL</span>
+      <button type="button" class="panchang-detail-trigger-btn" onclick="openPanchangModal(); event.stopPropagation();" title="View complete Panchang, Choghadiya &amp; Muhurta analysis">🔍 View Complete Panchang &amp; All Muhurtas ✦</button>
+      <div class="panchang-date-picker-wrap" style="display:inline-flex; align-items:center; gap:6px; background:rgba(0,0,0,0.38); border:1px solid rgba(242,215,146,0.38); border-radius:8px; padding:3px 10px;">
+        <span style="font-size:11px; color:#d9b568; font-weight:700; text-transform:uppercase; letter-spacing:0.04em;">📅 Date Checker:</span>
+        <input type="date" id="panchangDateCheckerInput" onchange="onPanchangDateCheckerChange(this.value)" style="background:transparent; border:none; color:#fce7b0; font-size:12.5px; font-weight:600; padding:2px 4px; cursor:pointer; outline:none;" title="Select any calendar date to analyze its Vedic Panchang &amp; Tithi" />
+        <button type="button" onclick="resetPanchangDateToToday()" style="background:rgba(217,181,104,0.22); border:1px solid rgba(217,181,104,0.45); color:#fce7b0; font-size:10.5px; font-weight:700; border-radius:4px; padding:2px 8px; cursor:pointer;" title="Reset to today's live date and time">Live Today</button>
+      </div>
     </div>
     <span class="panchang-date" id="panchangDate">Loading Panchang…</span>
   </div>
@@ -2683,11 +3368,12 @@ body input, body select, body textarea {
           </svg>
         </div>
         <div class="wheel-core"><div class="celestial-crest" aria-hidden="true"><svg viewBox="0 0 64 64" role="img"><circle cx="32" cy="32" r="26" fill="none" stroke="currentColor" stroke-width="1" opacity=".7"/><circle cx="32" cy="32" r="18" fill="none" stroke="currentColor" stroke-width="1" opacity=".45"/><path d="M32 7v50M7 32h50M14 14l36 36M50 14L14 50" stroke="currentColor" stroke-width=".8" opacity=".35"/><circle cx="32" cy="32" r="5" fill="currentColor" opacity=".9"/></svg></div><small>RASHI<br>MANDALA</small></div>
-        <span class="z-sign z1" onclick="openSpecificZodiacModal('aries'); event.stopPropagation();" title="Click for Aries / Mesha deep analysis" aria-label="Aries · Mesha"><img src="/images/zodiac/aries.jpg" onError="this.onerror=null; this.src='/images/zodiac_svg/aries.svg';" class="z-logo-img" alt="Aries" /><b>MESHA</b></span><span class="z-sign z2" onclick="openSpecificZodiacModal('taurus'); event.stopPropagation();" title="Click for Taurus / Vrishabha deep analysis" aria-label="Taurus · Vrishabha"><img src="/images/zodiac/taurus.jpg" onError="this.onerror=null; this.src='/images/zodiac_svg/taurus.svg';" class="z-logo-img" alt="Taurus" /><b>VRISHABHA</b></span><span class="z-sign z3" onclick="openSpecificZodiacModal('gemini'); event.stopPropagation();" title="Click for Gemini / Mithuna deep analysis" aria-label="Gemini · Mithuna"><img src="/images/zodiac/gemini.jpg" onError="this.onerror=null; this.src='/images/zodiac_svg/gemini.svg';" class="z-logo-img" alt="Gemini" /><b>MITHUNA</b></span><span class="z-sign z4" onclick="openSpecificZodiacModal('cancer'); event.stopPropagation();" title="Click for Cancer / Karka deep analysis" aria-label="Cancer · Karka"><img src="/images/zodiac/cancer.jpg" onError="this.onerror=null; this.src='/images/zodiac_svg/cancer.svg';" class="z-logo-img" alt="Cancer" /><b>KARKA</b></span><span class="z-sign z5" onclick="openSpecificZodiacModal('leo'); event.stopPropagation();" title="Click for Leo / Simha deep analysis" aria-label="Leo · Simha"><img src="/images/zodiac/leo.jpg" onError="this.onerror=null; this.src='/images/zodiac_svg/leo.svg';" class="z-logo-img" alt="Leo" /><b>SIMHA</b></span><span class="z-sign z6" onclick="openSpecificZodiacModal('virgo'); event.stopPropagation();" title="Click for Virgo / Kanya deep analysis" aria-label="Virgo · Kanya"><img src="/images/zodiac/virgo.jpg" onError="this.onerror=null; this.src='/images/zodiac_svg/virgo.svg';" class="z-logo-img" alt="Virgo" /><b>KANYA</b></span><span class="z-sign z7" onclick="openSpecificZodiacModal('libra'); event.stopPropagation();" title="Click for Libra / Tula deep analysis" aria-label="Libra · Tula"><img src="/images/zodiac/libra.jpg" onError="this.onerror=null; this.src='/images/zodiac_svg/libra.svg';" class="z-logo-img" alt="Libra" /><b>TULA</b></span><span class="z-sign z8" onclick="openSpecificZodiacModal('scorpio'); event.stopPropagation();" title="Click for Scorpio / Vrischika deep analysis" aria-label="Scorpio · Vrischika"><img src="/images/zodiac/scorpio.jpg" onError="this.onerror=null; this.src='/images/zodiac_svg/scorpio.svg';" class="z-logo-img" alt="Scorpio" /><b>VRISCHIKA</b></span><span class="z-sign z9" onclick="openSpecificZodiacModal('sagittarius'); event.stopPropagation();" title="Click for Sagittarius / Dhanu deep analysis" aria-label="Sagittarius · Dhanu"><img src="/images/zodiac/sagittarius.jpg" onError="this.onerror=null; this.src='/images/zodiac_svg/sagittarius.svg';" class="z-logo-img" alt="Sagittarius" /><b>DHANU</b></span><span class="z-sign z10" onclick="openSpecificZodiacModal('capricorn'); event.stopPropagation();" title="Click for Capricorn / Makara deep analysis" aria-label="Capricorn · Makara"><img src="/images/zodiac/capricorn.jpg" onError="this.onerror=null; this.src='/images/zodiac_svg/capricorn.svg';" class="z-logo-img" alt="Capricorn" /><b>MAKARA</b></span><span class="z-sign z11" onclick="openSpecificZodiacModal('aquarius'); event.stopPropagation();" title="Click for Aquarius / Kumbha deep analysis" aria-label="Aquarius · Kumbha"><img src="/images/zodiac/aquarius.jpg" onError="this.onerror=null; this.src='/images/zodiac_svg/aquarius.svg';" class="z-logo-img" alt="Aquarius" /><b>KUMBHA</b></span><span class="z-sign z12" onclick="openSpecificZodiacModal('pisces'); event.stopPropagation();" title="Click for Pisces / Meena deep analysis" aria-label="Pisces · Meena"><img src="/images/zodiac/pisces.jpg" onError="this.onerror=null; this.src='/images/zodiac_svg/pisces.svg';" class="z-logo-img" alt="Pisces" /><b>MEENA</b></span>
+        <span class="z-sign z1" onclick="openSpecificZodiacModal('aries'); selectRashifalSign('aries'); event.stopPropagation();" title="Click for Aries / Mesha Daily Horoscope & Analysis" aria-label="Aries · Mesha"><img src="/images/zodiac/aries.jpg" onerror="if(this.src!=='/images/zodiac_svg/aries.svg'){this.onerror=null; this.src='/images/zodiac_svg/aries.svg';}" class="z-logo-img" alt="Aries" width="58" height="58" loading="eager" /><b>MESHA</b></span><span class="z-sign z2" onclick="openSpecificZodiacModal('taurus'); selectRashifalSign('taurus'); event.stopPropagation();" title="Click for Taurus / Vrishabha Daily Horoscope & Analysis" aria-label="Taurus · Vrishabha"><img src="/images/zodiac/taurus.jpg" onerror="if(this.src!=='/images/zodiac_svg/taurus.svg'){this.onerror=null; this.src='/images/zodiac_svg/taurus.svg';}" class="z-logo-img" alt="Taurus" width="58" height="58" loading="eager" /><b>VRISHABHA</b></span><span class="z-sign z3" onclick="openSpecificZodiacModal('gemini'); selectRashifalSign('gemini'); event.stopPropagation();" title="Click for Gemini / Mithuna Daily Horoscope & Analysis" aria-label="Gemini · Mithuna"><img src="/images/zodiac/gemini.jpg" onerror="if(this.src!=='/images/zodiac_svg/gemini.svg'){this.onerror=null; this.src='/images/zodiac_svg/gemini.svg';}" class="z-logo-img" alt="Gemini" width="58" height="58" loading="eager" /><b>MITHUNA</b></span><span class="z-sign z4" onclick="openSpecificZodiacModal('cancer'); selectRashifalSign('cancer'); event.stopPropagation();" title="Click for Cancer / Karka Daily Horoscope & Analysis" aria-label="Cancer · Karka"><img src="/images/zodiac/cancer.jpg" onerror="if(this.src!=='/images/zodiac_svg/cancer.svg'){this.onerror=null; this.src='/images/zodiac_svg/cancer.svg';}" class="z-logo-img" alt="Cancer" width="58" height="58" loading="eager" /><b>KARKA</b></span><span class="z-sign z5" onclick="openSpecificZodiacModal('leo'); selectRashifalSign('leo'); event.stopPropagation();" title="Click for Leo / Simha Daily Horoscope & Analysis" aria-label="Leo · Simha"><img src="/images/zodiac/leo.jpg" onerror="if(this.src!=='/images/zodiac_svg/leo.svg'){this.onerror=null; this.src='/images/zodiac_svg/leo.svg';}" class="z-logo-img" alt="Leo" width="58" height="58" loading="eager" /><b>SIMHA</b></span><span class="z-sign z6" onclick="openSpecificZodiacModal('virgo'); selectRashifalSign('virgo'); event.stopPropagation();" title="Click for Virgo / Kanya Daily Horoscope & Analysis" aria-label="Virgo · Kanya"><img src="/images/zodiac/virgo.jpg" onerror="if(this.src!=='/images/zodiac_svg/virgo.svg'){this.onerror=null; this.src='/images/zodiac_svg/virgo.svg';}" class="z-logo-img" alt="Virgo" width="58" height="58" loading="eager" /><b>KANYA</b></span><span class="z-sign z7" onclick="openSpecificZodiacModal('libra'); selectRashifalSign('libra'); event.stopPropagation();" title="Click for Libra / Tula Daily Horoscope & Analysis" aria-label="Libra · Tula"><img src="/images/zodiac/libra.jpg" onerror="if(this.src!=='/images/zodiac_svg/libra.svg'){this.onerror=null; this.src='/images/zodiac_svg/libra.svg';}" class="z-logo-img" alt="Libra" width="58" height="58" loading="eager" /><b>TULA</b></span><span class="z-sign z8" onclick="openSpecificZodiacModal('scorpio'); selectRashifalSign('scorpio'); event.stopPropagation();" title="Click for Scorpio / Vrischika Daily Horoscope & Analysis" aria-label="Scorpio · Vrischika"><img src="/images/zodiac/scorpio.jpg" onerror="if(this.src!=='/images/zodiac_svg/scorpio.svg'){this.onerror=null; this.src='/images/zodiac_svg/scorpio.svg';}" class="z-logo-img" alt="Scorpio" width="58" height="58" loading="eager" /><b>VRISCHIKA</b></span><span class="z-sign z9" onclick="openSpecificZodiacModal('sagittarius'); selectRashifalSign('sagittarius'); event.stopPropagation();" title="Click for Sagittarius / Dhanu Daily Horoscope & Analysis" aria-label="Sagittarius · Dhanu"><img src="/images/zodiac/sagittarius.jpg" onerror="this.onerror=null; this.src='/images/zodiac_svg/sagittarius.svg';}" class="z-logo-img" alt="Sagittarius" width="58" height="58" loading="eager" /><b>DHANU</b></span><span class="z-sign z10" onclick="openSpecificZodiacModal('capricorn'); selectRashifalSign('capricorn'); event.stopPropagation();" title="Click for Capricorn / Makara Daily Horoscope & Analysis" aria-label="Capricorn · Makara"><img src="/images/zodiac/capricorn.jpg" onerror="if(this.src!=='/images/zodiac_svg/capricorn.svg'){this.onerror=null; this.src='/images/zodiac_svg/capricorn.svg';}" class="z-logo-img" alt="Capricorn" width="58" height="58" loading="eager" /><b>MAKARA</b></span><span class="z-sign z11" onclick="openSpecificZodiacModal('aquarius'); selectRashifalSign('aquarius'); event.stopPropagation();" title="Click for Aquarius / Kumbha Daily Horoscope & Analysis" aria-label="Aquarius · Kumbha"><img src="/images/zodiac/aquarius.jpg" onerror="if(this.src!=='/images/zodiac_svg/aquarius.svg'){this.onerror=null; this.src='/images/zodiac_svg/aquarius.svg';}" class="z-logo-img" alt="Aquarius" width="58" height="58" loading="eager" /><b>KUMBHA</b></span><span class="z-sign z12" onclick="openSpecificZodiacModal('pisces'); selectRashifalSign('pisces'); event.stopPropagation();" title="Click for Pisces / Meena Daily Horoscope & Analysis" aria-label="Pisces · Meena"><img src="/images/zodiac/pisces.jpg" onerror="if(this.src!=='/images/zodiac_svg/pisces.svg'){this.onerror=null; this.src='/images/zodiac_svg/pisces.svg';}" class="z-logo-img" alt="Pisces" width="58" height="58" loading="eager" /><b>MEENA</b></span>
       </div>
       <div class="rashi-detail" id="rashiDetail" aria-live="polite"><b>Rashi</b><small>Click a sign to explore its element, quality, ruler and archetype.</small></div>
     </div>
   </div>
+
   <div class="astrology-pillars">
     <div><span>♈</span><strong>Rashis</strong><small>The twelve signs describe the field and style in which planetary themes unfold.</small></div>
     <div><span>☉</span><strong>Grahas</strong><small>The Sun, Moon and planets represent different functions, drives and experiences.</small></div>
@@ -2955,7 +3641,11 @@ body input, body select, body textarea {
   <div class="visual-grid">
     <div class="visual-card" id="chartVisualCard">
       <h3>Visual Kundli Chart</h3>
-      <div class="chart-tabs"><button class="chart-tab active" data-chart="north" type="button">North Indian</button><button class="chart-tab" data-chart="south" type="button">South Indian</button></div>
+      <div class="chart-tabs">
+        <button class="chart-tab active" data-chart="north" type="button">North Indian</button>
+        <button class="chart-tab" data-chart="south" type="button">South Indian</button>
+        <button class="chart-tab" data-chart="east" type="button">East Indian (Bengali/Odia)</button>
+      </div>
       <div class="chart-wrap" id="kundliChartWrap"></div>
       <div class="chart-caption">The chart above is generated directly from the structured planetary placements used in this reading. Interpretive meaning is explained in the written sections below. Planetary positions displayed here come from the connected Lahiri sidereal ephemeris calculation; the AI layer is not allowed to invent or alter degrees.</div>
     </div>
@@ -3147,8 +3837,9 @@ body input, body select, body textarea {
   </div>
 </div>
 
-<div class="fixed-utility-bar" aria-label="Share your experience">
-  <button type="button" class="utility-btn mystic-sound-btn" id="mysticSoundBtn" title="Toggle ambient 432Hz Om meditation drone">✦ Resonate with Universe </button>
+<div class="fixed-utility-bar" aria-label="Quick Actions">
+  <button type="button" class="utility-btn mystic-sound-btn" id="mysticSoundBtn" title="Toggle ambient 432Hz cosmic resonance">✦ Resonate with Universe (OFF)</button>
+  <button type="button" class="utility-btn payment-always" id="paymentBtnFixed" title="Sacred Plans & Dakshina">✦ Sacred Plans / Pay</button>
   <button type="button" class="utility-btn feedback-always" id="feedbackBtnFixed">✦ Feedback</button>
 </div>
 <footer>
@@ -3206,6 +3897,23 @@ body input, body select, body textarea {
       <div class="company-footer-note">
         <b>Pathania Enterprise Private Limited</b> — Designing and building software products with quality, craftsmanship, and performance.
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Rashi Cosmic Focus & Daily Horoscope Modal -->
+<div class="modal-overlay" id="zodiacFocusModal" onclick="if(event.target===this) closeZodiacModal();">
+  <div class="modal-box zodiac-focus-modal-box">
+    <button type="button" class="modal-close" onclick="closeZodiacModal()" aria-label="Close">&times;</button>
+    <div style="display:flex;align-items:center;gap:14px;border-bottom:1px solid rgba(242,215,146,0.25);padding-bottom:14px;margin-bottom:18px;">
+      <img id="zodiacModalImg" src="/images/zodiac/aries.jpg" class="rashifal-gold-logo" style="width:58px;height:58px;margin-bottom:0;" alt="Zodiac" />
+      <div>
+        <h2 id="zodiacModalTitle" style="font-family:'Bodoni Moda','Cinzel',serif;font-size:22px;color:#fce7b0;margin:0;">Mesha · Aries</h2>
+        <div id="zodiacModalSubtitle" style="font-size:13px;color:#7fc5c0;margin-top:2px;">Daily Planetary Transit &amp; Horoscope</div>
+      </div>
+    </div>
+    <div id="zodiacModalBody">
+      <!-- Injected via JavaScript -->
     </div>
   </div>
 </div>
@@ -3400,7 +4108,7 @@ window.PAYWALL_CONFIG = {
       const img = imgNames[i];
       const imgSrc = ZODIAC_IMAGE_MAP[img] || `/images/zodiac/${img}.jpg`;
       const name = zNames[i];
-      return `<div class="hero-z-node" style="transform:rotate(${angle}deg) translate(var(--ring-r, 252px)) rotate(${-angle}deg);" title="${name}">
+      return `<div class="hero-z-node" style="transform:rotate(${angle}deg) translate(var(--ring-r, 252px)) rotate(${-angle}deg);" title="${name} · Click to view Daily Horoscope & Astrological Analysis" onclick="openSpecificZodiacModal('${img}'); selectRashifalSign('${img}'); event.stopPropagation();" role="button" tabindex="0">
         <img src="${imgSrc}" class="hero-z-img" alt="${name}" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/${img}.jpg'" />
         <span class="hero-z-symbol">${glyph}</span>
       </div>`;
@@ -3438,64 +4146,6 @@ window.PAYWALL_CONFIG = {
     detail.innerHTML=`<div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:8px;"><img src="${imgSrc}" style="width:52px;height:52px;border-radius:50%;border:2px solid #f2d792;box-shadow:0 0 18px rgba(242,215,146,0.7), 0 0 35px rgba(127,197,192,0.45);filter:saturate(1.25) contrast(1.1) brightness(1.08);" alt="${d[1]}" referrerPolicy="no-referrer" onError="this.onerror=null;this.src='/images/zodiac/${img}.jpg'" /><div><b style="font-size:16px;margin:0;color:#fce7b0;text-shadow:0 0 8px rgba(224,198,116,0.6);">${d[0]} · ${d[1]}</b><small style="color:#e0c674;font-weight:600;margin-top:2px;display:block;">${d[2]} Element • ${d[3]}</small></div></div><small style="text-align:center !important;display:block;color:#d6c3a0;">Ruler: <strong style="color:#f2d792">${d[4]}</strong> — ${d[5]}</small>`; detail.classList.add('open');
   }));
   document.addEventListener('click',e=>{if(!e.target.closest('.z-sign')&&!e.target.closest('.rashi-detail')){detail.classList.remove('open');signs.forEach(s=>s.classList.remove('is-active'));}});
-})();
-
-// --- Ambient 432Hz Mystic Drone Audio Synthesizer ---
-(function(){
-  let audioCtx=null, osc1=null, osc2=null, osc3=null, gainNode=null, isPlaying=false;
-  const btn=document.getElementById('mysticSoundBtn');
-  if(!btn) return;
-  btn.addEventListener('click', ()=>{
-    if(!isPlaying){
-      try {
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        if(!audioCtx) audioCtx = new AudioCtx();
-        if(audioCtx.state === 'suspended') audioCtx.resume();
-        osc1 = audioCtx.createOscillator();
-        osc2 = audioCtx.createOscillator();
-        osc3 = audioCtx.createOscillator();
-        gainNode = audioCtx.createGain();
-        
-        osc1.type = 'sine';
-        osc1.frequency.setValueAtTime(108, audioCtx.currentTime); // 108Hz Sacred fundamental
-        
-        osc2.type = 'sine';
-        osc2.frequency.setValueAtTime(216, audioCtx.currentTime); // 216Hz Harmonic
-        
-        osc3.type = 'triangle';
-        osc3.frequency.setValueAtTime(432, audioCtx.currentTime); // 432Hz Cosmic resonance
-        
-        gainNode.gain.setValueAtTime(0.001, audioCtx.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.06, audioCtx.currentTime + 3);
-        
-        osc1.connect(gainNode);
-        osc2.connect(gainNode);
-        osc3.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-        
-        osc1.start();
-        osc2.start();
-        osc3.start();
-        isPlaying = true;
-        btn.classList.add('playing');
-        btn.innerHTML = '🔊 Resonate with Universe ON';
-      } catch(e) { console.log('Audio init error:', e); }
-    } else {
-      if(gainNode && audioCtx) {
-        gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.2);
-        setTimeout(()=>{
-          try { osc1?.stop(); osc2?.stop(); osc3?.stop(); } catch(e){}
-          isPlaying = false;
-          btn.classList.remove('playing');
-          btn.innerHTML = '✦ Resonate with Universe';
-        }, 1200);
-      } else {
-        isPlaying = false;
-        btn.classList.remove('playing');
-        btn.innerHTML = '✦ Rasonate with Universe';
-      }
-    }
-  });
 })();
 
 // --- Daily Dainik Panchang, Solar & Event Almanac Engine ---
@@ -3787,11 +4437,553 @@ function getDailyPanchangData(targetDate = new Date(), customLat = 28.6139, cust
   };
 }
 
-function renderDailyPanchang() {
+let currentPanchangDate = new Date();
+let activeRashifalSign = 'aries';
+
+const ZODIAC_METADATA = {
+  aries: {
+    key: "aries",
+    symbol: "♈",
+    nameHindi: "मेष",
+    nameEnglish: "Aries",
+    nameFull: "Mesha (मेष) · Aries",
+    lord: "Mars (मंगल)",
+    element: "Fire (अग्नि)",
+    nature: "Char (चर / Cardinal)",
+    color: "Bright Red, Crimson & Saffron",
+    number: "9, 1, 18",
+    direction: "East (पूर्व)",
+    bestTime: "06:30 AM – 08:30 AM & 04:00 PM – 05:30 PM",
+    overview: "Mars energizes your ascendant with dynamic initiative and leadership drive. Courage and decisiveness will help you resolve lingering tasks swiftly today.",
+    career: "New project proposals receive positive recognition from superiors. Business partnerships gain momentum; avoid hasty contractual commitments.",
+    finance: "Favorable planetary transits favor disciplined investments. Avoid speculative impulse purchases during afternoon hours.",
+    love: "Warm and encouraging communication with your spouse or partner brings emotional reassurance. Singles may encounter an inspiring new connection.",
+    health: "High stamina and vitality. Stay well hydrated and practice light evening walks or pranayama to channel internal heat (Pitta)."
+  },
+  taurus: {
+    key: "taurus",
+    symbol: "♉",
+    nameHindi: "वृषभ",
+    nameEnglish: "Taurus",
+    nameFull: "Vrishabha (वृषभ) · Taurus",
+    lord: "Venus (शुक्र)",
+    element: "Earth (पृथ्वी)",
+    nature: "Sthira (स्थिर / Fixed)",
+    color: "Emerald Green, Pearl White & Cream",
+    number: "6, 2, 15",
+    direction: "South-East (दक्षिण-पूर्व)",
+    bestTime: "09:00 AM – 11:00 AM & 05:00 PM – 07:00 PM",
+    overview: "Venus brings grace, aesthetic refinement, and domestic harmony. Focus shifts to building tangible security, luxurious comfort, and family bonds.",
+    career: "Creative solutions and diplomatic negotiations yield productive outcomes. High praise for attention to artistic detail and financial prudence.",
+    finance: "Stable financial gains. A favorable time for savings, property matters, or purchasing artistic decorative items.",
+    love: "Deep mutual understanding with family and romantic partner. A peaceful and heartwarming home atmosphere prevails.",
+    health: "Good physical resilience. Take care of throat and neck comfort; enjoy nutritious, Sattvic home-cooked meals."
+  },
+  gemini: {
+    key: "gemini",
+    symbol: "♊",
+    nameHindi: "मिथुन",
+    nameEnglish: "Gemini",
+    nameFull: "Mithuna (मिथुन) · Gemini",
+    lord: "Mercury (बुध)",
+    element: "Air (वायु)",
+    nature: "Dvisvabhava (द्विस्वभाव / Dual)",
+    color: "Canary Yellow, Light Green & Sky Blue",
+    number: "5, 3, 14",
+    direction: "West (पश्चिम)",
+    bestTime: "10:30 AM – 12:30 PM & 06:00 PM – 07:30 PM",
+    overview: "Mercury stimulates sharp intellectual agility, lively communication, and networking opportunities. You will articulate ideas with unmatched charm.",
+    career: "Excellent day for sales, media, tech development, journalism, and presentations. Multi-tasking will yield swift breakthroughs.",
+    finance: "Profits through trade, communication, or online channels. Maintain organized accounts and verify all transaction details.",
+    love: "Playful banter and engaging intellectual discussions delight your partner. Sibling relations are warm and supportive.",
+    health: "Keep your nervous system relaxed. Avoid excessive screen fatigue by taking short meditative visual breaks."
+  },
+  cancer: {
+    key: "cancer",
+    symbol: "♋",
+    nameHindi: "कर्क",
+    nameEnglish: "Cancer",
+    nameFull: "Karka (कर्क) · Cancer",
+    lord: "Moon (चन्द्र)",
+    element: "Water (जल)",
+    nature: "Char (चर / Cardinal)",
+    color: "Pearl White, Silver & Ocean Blue",
+    number: "2, 7, 20",
+    direction: "North (उत्तर)",
+    bestTime: "07:00 AM – 09:00 AM & 07:30 PM – 09:30 PM",
+    overview: "The Moon enhances your intuitive empathy, emotional wisdom, and caretaking abilities. Trust your inner gut feeling in all personal decisions.",
+    career: "You foster teamwork and empathetic collaboration at work. Workplaces involving public dealing and care services thrive.",
+    finance: "Expenditures on family comfort and wellness. Wise long-term investments in liquid funds or precious metals are favored.",
+    love: "Warm emotional intimacy and nurturing care strengthen close bonds. An auspicious time for family celebrations or heartfelt talks.",
+    health: "Protect emotional tranquility. Drink clean freshwater stored in silver vessels and practice deep abdominal breathing."
+  },
+  leo: {
+    key: "leo",
+    symbol: "♌",
+    nameHindi: "सिंह",
+    nameEnglish: "Leo",
+    nameFull: "Simha (सिंह) · Leo",
+    lord: "Sun (सूर्य)",
+    element: "Fire (अग्नि)",
+    nature: "Sthira (स्थिर / Fixed)",
+    color: "Golden Yellow, Saffron & Royal Ruby",
+    number: "1, 5, 10",
+    direction: "East (पूर्व)",
+    bestTime: "06:00 AM – 08:00 AM & 12:00 PM – 02:00 PM",
+    overview: "Sun bestows authoritative presence, radiant confidence, and charismatic appeal. You are poised to take center stage and inspire others naturally.",
+    career: "Recognition from senior executives or government officials. Leadership initiatives taken today will yield lasting reputation and honor.",
+    finance: "Strong financial positioning. Avoid extravagant displays and channel resources into appreciating capital assets.",
+    love: "Generous and noble expressions of love bring happiness to your partner. Share your joy openly with family.",
+    health: "High vitality and stamina. Maintain good posture, nourish heart health, and soak in morning solar prana."
+  },
+  virgo: {
+    key: "virgo",
+    symbol: "♍",
+    nameHindi: "कन्या",
+    nameEnglish: "Virgo",
+    nameFull: "Kanya (कन्या) · Virgo",
+    lord: "Mercury (बुध)",
+    element: "Earth (पृथ्वी)",
+    nature: "Dvisvabhava (द्विस्वभाव / Dual)",
+    color: "Olive Green, Dark Emerald & Pearl Beige",
+    number: "5, 8, 23",
+    direction: "South (दक्षिण)",
+    bestTime: "08:30 AM – 10:30 AM & 03:30 PM – 05:00 PM",
+    overview: "Analytical clarity and systematic methodology allow you to solve intricate problems with flawless precision today.",
+    career: "Detailed audit work, software coding, calculations, and research bring notable praise. Organization of workflow is effortless.",
+    finance: "Smart budgeting and cost-cutting improve financial health. A pending reimbursement or debt recovery may materialize.",
+    love: "Thoughtful acts of practical service will touch your partner's heart. Keep communications constructive without hyper-critical scrutiny.",
+    health: "Nourish digestive health with light, fibrous whole grains. Avoid skipping meals due to heavy focus on work."
+  },
+  libra: {
+    key: "libra",
+    symbol: "♎",
+    nameHindi: "तुला",
+    nameEnglish: "Libra",
+    nameFull: "Tula (तुला) · Libra",
+    lord: "Venus (शुक्र)",
+    element: "Air (वायु)",
+    nature: "Char (चर / Cardinal)",
+    color: "Royal Blue, Pastel Pink & Turquoise",
+    number: "6, 7, 24",
+    direction: "West (पश्चिम)",
+    bestTime: "11:00 AM – 01:00 PM & 06:30 PM – 08:30 PM",
+    overview: "Venus grants diplomacy, graceful balance, and aesthetic harmony. Ideal for resolving negotiations, striking agreements, and socializing.",
+    career: "Commercial partnerships and client interactions flow smoothly. Your balanced perspective diffuses team disagreements effortlessly.",
+    finance: "Pleasant financial gains through collaborative ventures and design/consultancy work. Good time for balancing the ledger.",
+    love: "Romance and mutual affection blossom. A lovely evening outing or shared cultural experience brings unforgettable closeness.",
+    health: "Maintain kidney and hydration balance. Balance work demands with restful music or artistic relaxation."
+  },
+  scorpio: {
+    key: "scorpio",
+    symbol: "♏",
+    nameHindi: "वृश्चिक",
+    nameEnglish: "Scorpio",
+    nameFull: "Vrischika (वृश्चिक) · Scorpio",
+    lord: "Mars & Ketu (मंगल / केतु)",
+    element: "Water (जल)",
+    nature: "Sthira (स्थिर / Fixed)",
+    color: "Deep Maroon, Dark Crimson & Copper",
+    number: "9, 4, 18",
+    direction: "North (उत्तर)",
+    bestTime: "08:00 AM – 10:00 AM & 08:00 PM – 10:00 PM",
+    overview: "Deep occult perception, transformative willpower, and investigative acumen guide your decisions. Hidden truths come to light constructively.",
+    career: "Strategic planning, research, confidential business execution, and crisis management meet with total success.",
+    finance: "Favorable indications for settling insurance, legacy, or tax matters. Avoid hasty speculative bets.",
+    love: "Intense, deep loyalty and emotional honesty define your relationship. Meaningful heart-to-heart connections deepen trust.",
+    health: "Channel intense mental energy through vigorous physical exercise or deep meditation. Watch sleep rhythm."
+  },
+  sagittarius: {
+    key: "sagittarius",
+    symbol: "♐",
+    nameHindi: "धनु",
+    nameEnglish: "Sagittarius",
+    nameFull: "Dhanu (धनु) · Sagittarius",
+    lord: "Jupiter (गुरु / बृहस्पति)",
+    element: "Fire (अग्नि)",
+    nature: "Dvisvabhava (द्विस्वभाव / Dual)",
+    color: "Saffron, Golden Yellow & Amber",
+    number: "3, 9, 21",
+    direction: "North-East (ईशान / उत्तर-पूर्व)",
+    bestTime: "06:00 AM – 08:00 AM & 04:30 PM – 06:30 PM",
+    overview: "Jupiter expands your horizon with philosophical optimism, auspicious fortune, and thirst for higher learning. Guidance from mentors proves golden.",
+    career: "Academics, legal matters, publication, consulting, and spiritual pursuits prosper. Long-distance communications yield rewarding leads.",
+    finance: "Auspicious monetary inflow through ethical endeavors. Favorable day for charitable contributions and educational investments.",
+    love: "Joyful and uplifting time with spouse and family. Planning an auspicious pilgrimage or vacation brings boundless enthusiasm.",
+    health: "Sound vitality and cheerful spirit. Keep liver and hip joints flexible with mindful stretching or yoga (Surya Namaskar)."
+  },
+  capricorn: {
+    key: "capricorn",
+    symbol: "♑",
+    nameHindi: "मकर",
+    nameEnglish: "Capricorn",
+    nameFull: "Makara (मकर) · Capricorn",
+    lord: "Saturn (शनि)",
+    element: "Earth (पृथ्वी)",
+    nature: "Char (चर / Cardinal)",
+    color: "Charcoal Blue, Steel Grey & Dark Indigo",
+    number: "8, 4, 17",
+    direction: "South (दक्षिण)",
+    bestTime: "07:30 AM – 09:30 AM & 05:30 PM – 07:30 PM",
+    overview: "Saturn rewards your patient perseverance, pragmatic duty, and organizational mastery. Solid foundations built today stand the test of time.",
+    career: "Management, engineering, real estate, and long-range administrative projects advance with steadfast momentum. Respect from subordinates grows.",
+    finance: "Stable financial discipline. Focus on building long-term fixed assets and debt reduction.",
+    love: "Mature and dependable support for your loved ones. Practical demonstrations of commitment speak louder than words.",
+    health: "Protect knees, bones, and lower back. Incorporate warm sesame oil massage (Abhyanga) and warm herbal tea."
+  },
+  aquarius: {
+    key: "aquarius",
+    symbol: "♒",
+    nameHindi: "कुंभ",
+    nameEnglish: "Aquarius",
+    nameFull: "Kumbha (कुंभ) · Aquarius",
+    lord: "Saturn & Rahu (शनि / राहु)",
+    element: "Air (वायु)",
+    nature: "Sthira (स्थिर / Fixed)",
+    color: "Electric Blue, Cyan & Violet",
+    number: "8, 7, 26",
+    direction: "West (पश्चिम)",
+    bestTime: "09:30 AM – 11:30 AM & 07:00 PM – 09:00 PM",
+    overview: "Visionary thinking, social altruism, and sudden innovative breakthroughs define your planetary transit. Group initiatives flourish.",
+    career: "Technology, scientific research, team management, and humanitarian projects receive widespread support. Fresh ideas break conventional bottlenecks.",
+    finance: "Gains through network circles and unconventional technological ventures. Keep your financial strategy forward-looking.",
+    love: "Warm intellectual camaraderie and open-minded acceptance strengthen relationships. Meaningful friendships thrive.",
+    health: "Maintain blood circulation and ankle flexibility. Practice tranquil meditation to unwind active mental waves."
+  },
+  pisces: {
+    key: "pisces",
+    symbol: "♓",
+    nameHindi: "मीन",
+    nameEnglish: "Pisces",
+    nameFull: "Meena (मीन) · Pisces",
+    lord: "Jupiter (गुरु / बृहस्पति)",
+    element: "Water (जल)",
+    nature: "Dvisvabhava (द्विस्वभाव / Dual)",
+    color: "Sea Green, Bright Gold & Coral",
+    number: "3, 12, 30",
+    direction: "North-East (उत्तर-पूर्व)",
+    bestTime: "06:30 AM – 08:30 AM & 06:00 PM – 08:00 PM",
+    overview: "Jupiter bestows spiritual tranquility, deep artistic inspiration, and compassionate empathy. Divine blessings protect and uplift your endeavors.",
+    career: "Creative writing, fine arts, wellness therapy, coaching, and international trade thrive. Your intuitive insights solve complex interpersonal puzzles.",
+    finance: "Auspicious expenditures on sacred rituals, travel, or family well-being. Monetary returns from past spiritual merit (Purva Punya).",
+    love: "Soulful emotional harmony and unconditional compassion. Deep spiritual resonance with your life partner.",
+    health: "Excellent inner peace. Keep feet warm and well-cared for, and practice soothing nightly meditation."
+  }
+};
+
+function renderDailyRashifal(targetDate = currentPanchangDate) {
+  const container = document.getElementById('rashifalShowcase');
+  const subtitle = document.getElementById('rashifalDateSubtitle');
+  if (!container) return;
+
+  const d = targetDate instanceof Date ? targetDate : new Date(targetDate);
+  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  const formattedDate = d.toLocaleDateString('en-IN', options);
+
+  // Sync date inputs
+  const rDateInput = document.getElementById('rashifalDateInput');
+  if (rDateInput) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    rDateInput.value = `${y}-${m}-${day}`;
+  }
+  const pDateInput = document.getElementById('panchangDateCheckerInput');
+  if (pDateInput && !pDateInput.value) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    pDateInput.value = `${y}-${m}-${day}`;
+  }
+
+  if (subtitle) {
+    subtitle.innerHTML = `Daily planetary transit insights, career momentum, emotional harmony &amp; auspicious timings for <b>${formattedDate}</b>`;
+  }
+
+  const sign = ZODIAC_METADATA[activeRashifalSign] || ZODIAC_METADATA['aries'];
+  const imgSrc = `/images/zodiac/${sign.key}.jpg`;
+  const fallbackSrc = `/images/zodiac_svg/${sign.key}.svg`;
+
+  container.innerHTML = `
+    <div class="rashifal-art-box">
+      <div class="rashifal-date-banner"><span style="font-size:14px;">🗓️</span> <b>${formattedDate}</b></div>
+      <img src="${imgSrc}" onerror="if(this.src!=='${fallbackSrc}'){this.onerror=null; this.src='${fallbackSrc}';}" alt="${sign.nameFull}" class="rashifal-gold-logo" width="120" height="120" loading="eager" />
+      <span class="rashifal-symbol-watermark">${sign.symbol}</span>
+      <div class="rashifal-sign-title">${sign.nameFull}</div>
+      <div class="rashifal-sign-sub">Ruler: <b>${sign.lord}</b> · Element: <b>${sign.element}</b> (${sign.nature})</div>
+      
+      <div class="rashifal-meta-tags">
+        <span class="rashifal-tag">🎨 Auspicious Color: <b>${sign.color}</b></span>
+        <span class="rashifal-tag">🔢 Lucky Numbers: <b>${sign.number}</b></span>
+        <span class="rashifal-tag">🧭 Favored Direction: <b>${sign.direction}</b></span>
+        <span class="rashifal-tag">⏰ Shubh Muhurta: <b>${sign.bestTime}</b></span>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:14px;width:100%;">
+        <button type="button" class="rashifal-quick-btn" style="flex:1;" onclick="navigateRashifalSign(-1)" title="Click to view previous sign">◀ Prev Sign</button>
+        <button type="button" class="rashifal-quick-btn" style="flex:1;" onclick="navigateRashifalSign(1)" title="Click to view next sign">Next Sign ▶</button>
+      </div>
+    </div>
+
+    <div class="rashifal-content-box">
+      <div class="rashifal-section-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:8px;">
+          <h4 style="margin:0;"><span>✦</span> DAINIK RASHIFAL OVERVIEW (दैनिक भविष्यफल · ${formattedDate})</h4>
+          <div style="display:flex;gap:6px;">
+            <button type="button" class="rashifal-quick-btn" onclick="navigateRashifalSign(-1)" style="padding:4px 8px;font-size:11px;">‹ Prev</button>
+            <button type="button" class="rashifal-quick-btn" onclick="navigateRashifalSign(1)" style="padding:4px 8px;font-size:11px;">Next ›</button>
+          </div>
+        </div>
+        <p>${sign.overview}</p>
+      </div>
+
+      <div class="rashifal-grid-2">
+        <div class="rashifal-mini-card">
+          <h5>💼 Career &amp; Professional Growth (करियर एवं व्यवसाय)</h5>
+          <p>${sign.career}</p>
+        </div>
+        <div class="rashifal-mini-card">
+          <h5>💰 Finance &amp; Wealth (धन एवं आर्थिक लाभ)</h5>
+          <p>${sign.finance}</p>
+        </div>
+      </div>
+
+      <div class="rashifal-grid-2">
+        <div class="rashifal-mini-card">
+          <h5>💖 Love &amp; Family Harmony (प्रेम व पारिवारिक जीवन)</h5>
+          <p>${sign.love}</p>
+        </div>
+        <div class="rashifal-mini-card">
+          <h5>🌿 Health &amp; Vitality (स्वास्थ्य व ऊर्जा)</h5>
+          <p>${sign.health}</p>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Update active pill in ribbon and scroll it smoothly into view
+  const pills = document.querySelectorAll('#rashifalSignRibbon .rashifal-pill');
+  pills.forEach(pill => {
+    if (pill.dataset.sign === activeRashifalSign) {
+      pill.classList.add('active');
+      pill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    } else {
+      pill.classList.remove('active');
+    }
+  });
+
+  // Sync wheel active sign if visible
+  const wheelSigns = document.querySelectorAll('.zodiac-wheel .z-sign');
+  const imgNames = ['aries','taurus','gemini','cancer','leo','virgo','libra','scorpio','sagittarius','capricorn','aquarius','pisces'];
+  const activeIdx = imgNames.indexOf(activeRashifalSign);
+  if (wheelSigns.length && activeIdx !== -1) {
+    wheelSigns.forEach((ws, i) => {
+      if (i === activeIdx) ws.classList.add('is-active');
+      else ws.classList.remove('is-active');
+    });
+  }
+}
+
+function scrollRashifalRibbon(offset) {
+  const ribbon = document.getElementById('rashifalSignRibbon');
+  if (ribbon) {
+    ribbon.scrollBy({ left: offset, behavior: 'smooth' });
+  }
+}
+
+function navigateRashifalSign(step) {
+  const signKeys = ['aries','taurus','gemini','cancer','leo','virgo','libra','scorpio','sagittarius','capricorn','aquarius','pisces'];
+  const currentIndex = signKeys.indexOf(activeRashifalSign);
+  const nextIndex = (currentIndex + step + signKeys.length) % signKeys.length;
+  selectRashifalSign(signKeys[nextIndex], true);
+}
+
+function selectRashifalSign(signKey, shouldScrollToShowcase = false) {
+  if (!signKey) return;
+  activeRashifalSign = String(signKey).toLowerCase();
+  renderDailyRashifal(currentPanchangDate);
+
+  if (shouldScrollToShowcase) {
+    const showcase = document.getElementById('dailyRashifalSection');
+    if (showcase) {
+      showcase.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
+}
+
+function openActiveZodiacInModal() {
+  openSpecificZodiacModal(activeRashifalSign);
+}
+
+function openSpecificZodiacModal(signKey) {
+  if (!signKey) signKey = activeRashifalSign;
+  activeRashifalSign = String(signKey).toLowerCase();
+  renderDailyRashifal(currentPanchangDate);
+
+  const modal = document.getElementById('zodiacFocusModal');
+  if (!modal) return;
+
+  const sign = ZODIAC_METADATA[activeRashifalSign] || ZODIAC_METADATA['aries'];
+  const d = currentPanchangDate instanceof Date ? currentPanchangDate : new Date(currentPanchangDate);
+  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  const formattedDate = d.toLocaleDateString('en-IN', options);
+  const yStr = d.getFullYear();
+  const mStr = String(d.getMonth() + 1).padStart(2, '0');
+  const dStr = String(d.getDate()).padStart(2, '0');
+  const dateIso = `${yStr}-${mStr}-${dStr}`;
+  const imgSrc = `/images/zodiac/${sign.key}.jpg`;
+  const fallbackSrc = `/images/zodiac_svg/${sign.key}.svg`;
+
+  const titleEl = document.getElementById('zodiacModalTitle');
+  const subEl = document.getElementById('zodiacModalSubtitle');
+  const imgEl = document.getElementById('zodiacModalImg');
+  const bodyEl = document.getElementById('zodiacModalBody');
+
+  if (titleEl) titleEl.textContent = sign.nameFull;
+  if (subEl) subEl.innerHTML = `Daily Planetary Transit &amp; Cosmic Analysis for <b>${formattedDate}</b>`;
+  if (imgEl) {
+    imgEl.src = imgSrc;
+    imgEl.onerror = function() {
+      if (this.src !== fallbackSrc) {
+        this.onerror = null;
+        this.src = fallbackSrc;
+      }
+    };
+  }
+
+  if (bodyEl) {
+    bodyEl.innerHTML = `
+      <div class="zodiac-modal-top-grid">
+        <div class="zodiac-modal-art">
+          <img src="${imgSrc}" onerror="if(this.src!=='${fallbackSrc}'){this.onerror=null;this.src='${fallbackSrc}';}" alt="${sign.nameFull}" class="rashifal-gold-logo" width="130" height="130" />
+          <div style="margin-top:10px;font-family:'Bodoni Moda','Cinzel',serif;font-size:17px;color:#fce7b0;font-weight:700;">${sign.symbol} ${sign.nameFull}</div>
+          <div style="font-size:12.5px;color:#9fc9c2;margin-top:4px;">Ruler: <b>${sign.lord}</b> · Element: <b>${sign.element}</b> (${sign.nature})</div>
+        </div>
+        <div class="zodiac-modal-details">
+          <div class="rashifal-date-banner" style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+            <div><span style="font-size:14px;">🗓️</span> Date: <b>${formattedDate}</b></div>
+            <div style="display:flex;gap:6px;align-items:center;">
+              <input type="date" value="${dateIso}" onchange="changeZodiacModalDate(this.value)" class="rashifal-date-input" style="padding:3px 8px;font-size:12px;background:rgba(8,16,24,0.85);color:#fce7b0;border:1px solid rgba(242,215,146,0.35);border-radius:4px;" />
+              <button type="button" class="rashifal-quick-btn" style="padding:3px 8px;font-size:11px;" onclick="resetPanchangDateToToday(); openSpecificZodiacModal(activeRashifalSign);">Today</button>
+            </div>
+          </div>
+          <div class="rashifal-section-card" style="margin-top:8px;">
+            <h4>✦ DAINIK RASHIFAL OVERVIEW (दैनिक भविष्यफल)</h4>
+            <p>${sign.overview}</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="rashifal-grid-2" style="margin-top:14px;">
+        <div class="rashifal-mini-card">
+          <h5>💼 Career &amp; Professional Growth (करियर एवं व्यवसाय)</h5>
+          <p>${sign.career}</p>
+        </div>
+        <div class="rashifal-mini-card">
+          <h5>💰 Finance &amp; Investments (धन एवं आर्थिक लाभ)</h5>
+          <p>${sign.finance}</p>
+        </div>
+      </div>
+
+      <div class="rashifal-grid-2" style="margin-top:12px;">
+        <div class="rashifal-mini-card">
+          <h5>💖 Love &amp; Family Harmony (प्रेम व पारिवारिक जीवन)</h5>
+          <p>${sign.love}</p>
+        </div>
+        <div class="rashifal-mini-card">
+          <h5>🌿 Health &amp; Well-being (स्वास्थ्य व ऊर्जा)</h5>
+          <p>${sign.health}</p>
+        </div>
+      </div>
+
+      <div class="rashifal-tokens-row" style="margin-top:14px;">
+        <div class="rashifal-token-chip"><small>Lucky Color</small><b>${sign.color}</b></div>
+        <div class="rashifal-token-chip"><small>Lucky Number</small><b>${sign.number}</b></div>
+        <div class="rashifal-token-chip"><small>Auspicious Direction</small><b>${sign.direction}</b></div>
+        <div class="rashifal-token-chip"><small>Shubh Muhurta</small><b>${sign.bestTime}</b></div>
+      </div>
+    `;
+  }
+
+  modal.classList.add('open');
+}
+
+function changeZodiacModalDate(dateVal) {
+  if (!dateVal) return;
   try {
+    const parts = dateVal.split('-');
+    if (parts.length === 3) {
+      const y = parseInt(parts[0], 10);
+      const m = parseInt(parts[1], 10) - 1;
+      const d = parseInt(parts[2], 10);
+      currentPanchangDate = new Date(y, m, d, 12, 0, 0);
+      openSpecificZodiacModal(activeRashifalSign);
+      if (typeof renderDailyPanchang === 'function') {
+        renderDailyPanchang(currentPanchangDate);
+      }
+    }
+  } catch (err) {
+    console.error('Modal date change error:', err);
+  }
+}
+
+function closeZodiacModal() {
+  const modal = document.getElementById('zodiacFocusModal');
+  if (modal) modal.classList.remove('open');
+}
+
+window.renderDailyRashifal = renderDailyRashifal;
+window.selectRashifalSign = selectRashifalSign;
+window.scrollRashifalRibbon = scrollRashifalRibbon;
+window.navigateRashifalSign = navigateRashifalSign;
+window.openActiveZodiacInModal = openActiveZodiacInModal;
+window.openSpecificZodiacModal = openSpecificZodiacModal;
+window.changeZodiacModalDate = changeZodiacModalDate;
+window.closeZodiacModal = closeZodiacModal;
+
+function onPanchangDateCheckerChange(dateVal) {
+  if (!dateVal) return;
+  try {
+    const parts = dateVal.split('-');
+    if (parts.length === 3) {
+      const y = parseInt(parts[0], 10);
+      const m = parseInt(parts[1], 10) - 1;
+      const d = parseInt(parts[2], 10);
+      currentPanchangDate = new Date(y, m, d, 12, 0, 0);
+      renderDailyPanchang(currentPanchangDate);
+      renderDailyRashifal(currentPanchangDate);
+    }
+  } catch (err) {
+    console.error('Date checker change error:', err);
+  }
+}
+
+function resetPanchangDateToToday() {
+  currentPanchangDate = new Date();
+  const input = document.getElementById('panchangDateCheckerInput');
+  if (input) {
+    const y = currentPanchangDate.getFullYear();
+    const m = String(currentPanchangDate.getMonth() + 1).padStart(2, '0');
+    const d = String(currentPanchangDate.getDate()).padStart(2, '0');
+    input.value = `${y}-${m}-${d}`;
+  }
+  const rInput = document.getElementById('rashifalDateInput');
+  if (rInput) {
+    const y = currentPanchangDate.getFullYear();
+    const m = String(currentPanchangDate.getMonth() + 1).padStart(2, '0');
+    const d = String(currentPanchangDate.getDate()).padStart(2, '0');
+    rInput.value = `${y}-${m}-${d}`;
+  }
+  renderDailyPanchang(currentPanchangDate);
+  renderDailyRashifal(currentPanchangDate);
+}
+
+function renderDailyPanchang(targetDate = currentPanchangDate) {
+  try {
+    const d = targetDate instanceof Date ? targetDate : new Date(targetDate);
     const lat = parseFloat(document.getElementById('f_lat')?.value) || 28.6139;
     const lon = parseFloat(document.getElementById('f_lon')?.value) || 77.2090;
-    const data = getDailyPanchangData(new Date(), lat, lon);
+    const data = getDailyPanchangData(d, lat, lon);
     if (!data) return;
 
     const pDate = document.getElementById('panchangDate');
@@ -3804,6 +4996,14 @@ function renderDailyPanchang() {
     const pShubh = document.getElementById('panchangShubh');
     const pSun = document.getElementById('panchangSun');
     const pEvents = document.getElementById('panchangEvents');
+    const dateInput = document.getElementById('panchangDateCheckerInput');
+
+    if (dateInput && !dateInput.value) {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      dateInput.value = `${y}-${m}-${day}`;
+    }
 
     if (pDate) pDate.textContent = `${data.dateStr} (${data.hinduCal.hinduDateFormatted})`;
     if (pHindu) pHindu.textContent = `${data.hinduCal.maas} · ${data.hinduCal.vikramSamvat}`;
@@ -3832,15 +5032,322 @@ function renderDailyPanchang() {
       }
       pEvents.innerHTML = eventsHtml;
     }
+
+    // Refresh active planetary transits on the Mandala wheel & hero orbit
+    renderTransitHighlightsOnMandala(d);
+    // Refresh live planetary hora indicator
+    updateHoraHeaderBadge(d, lat, lon);
   } catch (err) {
     console.error('Panchang render error:', err);
   }
 }
 
+/* =========================================================
+   ACTIVE PLANETARY TRANSITS HIGHLIGHT ON MANDALA & HERO ORBIT
+   ========================================================= */
+const PLANET_SYMBOLS = {
+  Sun: '☉',
+  Moon: '☽',
+  Mars: '♂',
+  Mercury: '☿',
+  Jupiter: '♃',
+  Venus: '♀',
+  Saturn: '♄',
+  Rahu: '☊',
+  Ketu: '☋'
+};
+
+const ZODIAC_SIGN_NAMES = [
+  'aries', 'taurus', 'gemini', 'cancer',
+  'leo', 'virgo', 'libra', 'scorpio',
+  'sagittarius', 'capricorn', 'aquarius', 'pisces'
+];
+
+function getPlanetaryTransitsForDate(targetDate = new Date()) {
+  const d = targetDate instanceof Date ? targetDate : new Date(targetDate);
+  const transitsBySign = {};
+  ZODIAC_SIGN_NAMES.forEach(sign => { transitsBySign[sign] = []; });
+
+  // 1. If verified currentSkyData is available and date matches approximately today
+  if (currentSkyData && Array.isArray(currentSkyData.planets) && currentSkyData.planets.length) {
+    const rows = apiPlanetRows(currentSkyData);
+    rows.forEach(p => {
+      const signKey = String(p.sign || '').toLowerCase().trim();
+      const matchedKey = ZODIAC_SIGN_NAMES.find(k => signKey.includes(k) || k.includes(signKey));
+      if (matchedKey && transitsBySign[matchedKey]) {
+        transitsBySign[matchedKey].push({
+          name: p.name,
+          symbol: PLANET_SYMBOLS[p.name] || '✦',
+          degree: p.degree,
+          retrograde: p.retrograde,
+          nakshatra: p.nakshatra
+        });
+      }
+    });
+    return transitsBySign;
+  }
+
+  // 2. High-precision Sidereal Astronomical Fallback
+  const jd = (d.getTime() / 86400000) + 2440587.5;
+  const T = (jd - 2451545.0) / 36525;
+  const ayanamsha = 23.85 + (T * 1.396); // Lahiri ayanamsha approximation
+
+  const meanLongitudes = {
+    Sun: ((280.46646 + 36000.76983 * T) - ayanamsha) % 360,
+    Moon: ((218.3165 + 481267.8813 * T) - ayanamsha) % 360,
+    Mars: ((355.433 + 19140.299 * T) - ayanamsha) % 360,
+    Mercury: ((252.251 + 149472.674 * T) - ayanamsha) % 360,
+    Jupiter: ((34.351 + 3034.9056 * T) - ayanamsha) % 360,
+    Venus: ((181.979 + 58517.815 * T) - ayanamsha) % 360,
+    Saturn: ((50.077 + 1222.1137 * T) - ayanamsha) % 360,
+    Rahu: ((259.183 - 1934.136 * T) - ayanamsha) % 360
+  };
+
+  Object.entries(meanLongitudes).forEach(([planet, lon]) => {
+    let normLon = (lon % 360 + 360) % 360;
+    const signIdx = Math.floor(normLon / 30);
+    const degreeInSign = normLon % 30;
+    const signKey = ZODIAC_SIGN_NAMES[signIdx];
+    if (signKey && transitsBySign[signKey]) {
+      transitsBySign[signKey].push({
+        name: planet,
+        symbol: PLANET_SYMBOLS[planet] || '✦',
+        degree: degreeInSign,
+        retrograde: false
+      });
+    }
+    // Ketu is always exactly 180 degrees opposite Rahu
+    if (planet === 'Rahu') {
+      const ketuLon = (normLon + 180) % 360;
+      const ketuSignIdx = Math.floor(ketuLon / 30);
+      const ketuSignKey = ZODIAC_SIGN_NAMES[ketuSignIdx];
+      if (ketuSignKey && transitsBySign[ketuSignKey]) {
+        transitsBySign[ketuSignKey].push({
+          name: 'Ketu',
+          symbol: PLANET_SYMBOLS['Ketu'] || '☋',
+          degree: ketuLon % 30,
+          retrograde: true
+        });
+      }
+    }
+  });
+
+  return transitsBySign;
+}
+
+function renderTransitHighlightsOnMandala(targetDate = new Date()) {
+  try {
+    const transits = getPlanetaryTransitsForDate(targetDate);
+    const wheelSigns = document.querySelectorAll('.zodiac-wheel .z-sign');
+    const heroNodes = document.querySelectorAll('#zodiacRing .hero-z-node');
+
+    ZODIAC_SIGN_NAMES.forEach((signKey, i) => {
+      const activePlanets = transits[signKey] || [];
+      const hasPlanets = activePlanets.length > 0;
+      const symbolsStr = activePlanets.map(p => p.symbol).join(' ');
+      const descStr = activePlanets.map(p => `${p.name} (${p.symbol}${p.degree != null ? ' ' + Math.floor(p.degree) + '°' : ''})`).join(', ');
+
+      // 1. Update Rashi Mandala Wheel Nodes
+      if (wheelSigns[i]) {
+        const signEl = wheelSigns[i];
+        // Remove existing badge
+        const oldBadge = signEl.querySelector('.transit-badge');
+        if (oldBadge) oldBadge.remove();
+
+        if (hasPlanets) {
+          signEl.classList.add('has-transit');
+          const badge = document.createElement('span');
+          badge.className = 'transit-badge';
+          badge.innerHTML = symbolsStr;
+          badge.title = `Transiting Planets: ${descStr}`;
+          signEl.appendChild(badge);
+        } else {
+          signEl.classList.remove('has-transit');
+        }
+      }
+
+      // 2. Update Hero Orbit Ring Nodes
+      if (heroNodes[i]) {
+        const nodeEl = heroNodes[i];
+        const oldTag = nodeEl.querySelector('.hero-transit-tag');
+        if (oldTag) oldTag.remove();
+
+        if (hasPlanets) {
+          nodeEl.classList.add('has-transit');
+          const tag = document.createElement('span');
+          tag.className = 'hero-transit-tag';
+          tag.innerHTML = symbolsStr;
+          tag.title = `Active Transit: ${descStr}`;
+          nodeEl.appendChild(tag);
+        } else {
+          nodeEl.classList.remove('has-transit');
+        }
+      }
+    });
+  } catch (e) {
+    console.warn('Transit highlight update:', e);
+  }
+}
+
+/* =========================================================
+   PLANETARY HORA (TIME OF DAY) ENGINE & 24-HOUR TIMETABLE
+   ========================================================= */
+const HORA_LORDS_CHALDEAN = [
+  { name: 'Sun', sanskrit: 'Surya', symbol: '☉', deity: 'Agni / Shiva', nature: 'Vigyan / Tejas', quality: 'good', desc: 'Auspicious for leadership, administration, executive decisions, government paperwork & vitality.' },
+  { name: 'Venus', sanskrit: 'Shukra', symbol: '♀', deity: 'Lakshmi', nature: 'Shubh / Saundarya', quality: 'excellent', desc: 'Auspicious for arts, romance, luxury purchases, ceremonies, harmony, travel & music.' },
+  { name: 'Mercury', sanskrit: 'Budha', symbol: '☿', deity: 'Vishnu', nature: 'Labh / Buddhi', quality: 'excellent', desc: 'Auspicious for intellect, trading, accounting, contracts, coding, education & communication.' },
+  { name: 'Moon', sanskrit: 'Chandra', symbol: '☽', deity: 'Parvati', nature: 'Amrit / Shanti', quality: 'excellent', desc: 'Auspicious for travel, public relations, healing, nourishment, domestic matters & mental peace.' },
+  { name: 'Saturn', sanskrit: 'Shani', symbol: '♄', deity: 'Yama / Brahma', nature: 'Dharana / Vairagya', quality: 'mixed', desc: 'Auspicious for discipline, foundations, heavy labour, long-term planning & asceticism; avoid haste.' },
+  { name: 'Jupiter', sanskrit: 'Guru', symbol: '♃', deity: 'Brihaspati / Indra', nature: 'Maha Shubh / Gyan', quality: 'excellent', desc: 'Supreme auspicious hora for spiritual deeds, financial investments, higher learning, counseling & dharma.' },
+  { name: 'Mars', sanskrit: 'Mangal', symbol: '♂', deity: 'Kartikeya', nature: 'Krodha / Shakti', quality: 'intense', desc: 'Auspicious for sports, surgery, construction, competitive ventures & courage; avoid delicate talks.' }
+];
+
+const DAY_HORA_START_ORDER = {
+  0: 'Sun',     // Sunday (Ravivar)
+  1: 'Moon',    // Monday (Somvar)
+  2: 'Mars',    // Tuesday (Mangalvar)
+  3: 'Mercury', // Wednesday (Budhvar)
+  4: 'Jupiter', // Thursday (Guruvar)
+  5: 'Venus',   // Friday (Shukravar)
+  6: 'Saturn'   // Saturday (Shanivar)
+};
+
+function calculateCurrentHora(dateObj = new Date(), lat = 28.6139, lon = 77.2090) {
+  const sunTimes = calculateSunTimes(dateObj, lat, lon);
+  const now = dateObj;
+
+  const sunriseDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), sunTimes.sunriseHour, sunTimes.sunriseMin);
+  const sunsetDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), sunTimes.sunsetHour, sunTimes.sunsetMin);
+  const nextSunriseDate = new Date(sunriseDate.getTime() + 24 * 60 * 60 * 1000);
+
+  const isDaytime = now >= sunriseDate && now < sunsetDate;
+  const dayStartPlanet = DAY_HORA_START_ORDER[now.getDay()];
+  const startIndex = HORA_LORDS_CHALDEAN.findIndex(p => p.name === dayStartPlanet);
+
+  const dayDurationMs = sunsetDate.getTime() - sunriseDate.getTime();
+  const dayHoraDurationMs = dayDurationMs / 12;
+
+  const nightDurationMs = nextSunriseDate.getTime() - sunsetDate.getTime();
+  const nightHoraDurationMs = nightDurationMs / 12;
+
+  const allHoras = [];
+
+  // 12 Day Horas
+  for (let i = 0; i < 12; i++) {
+    const hStart = new Date(sunriseDate.getTime() + i * dayHoraDurationMs);
+    const hEnd = new Date(sunriseDate.getTime() + (i + 1) * dayHoraDurationMs);
+    const lord = HORA_LORDS_CHALDEAN[(startIndex + i) % 7];
+    allHoras.push({
+      index: i + 1,
+      isDay: true,
+      start: hStart,
+      end: hEnd,
+      timeStr: `${pad2(hStart.getHours())}:${pad2(hStart.getMinutes())} – ${pad2(hEnd.getHours())}:${pad2(hEnd.getMinutes())}`,
+      lord
+    });
+  }
+
+  // 12 Night Horas
+  for (let i = 0; i < 12; i++) {
+    const hStart = new Date(sunsetDate.getTime() + i * nightHoraDurationMs);
+    const hEnd = new Date(sunsetDate.getTime() + (i + 1) * nightHoraDurationMs);
+    const lord = HORA_LORDS_CHALDEAN[(startIndex + 12 + i) % 7];
+    allHoras.push({
+      index: i + 13,
+      isDay: false,
+      start: hStart,
+      end: hEnd,
+      timeStr: `${pad2(hStart.getHours())}:${pad2(hStart.getMinutes())} – ${pad2(hEnd.getHours())}:${pad2(hEnd.getMinutes())}`,
+      lord
+    });
+  }
+
+  // Find currently active Hora
+  let currentHora = allHoras.find(h => now >= h.start && now < h.end) || allHoras[0];
+  const remainingMins = Math.max(0, Math.round((currentHora.end.getTime() - now.getTime()) / 60000));
+
+  return {
+    currentHora,
+    remainingMins,
+    allHoras,
+    sunTimes
+  };
+}
+
+function updateHoraHeaderBadge(dateObj = new Date(), lat = 28.6139, lon = 77.2090) {
+  try {
+    const { currentHora, remainingMins } = calculateCurrentHora(dateObj, lat, lon);
+    const titleEl = document.getElementById('horaHeaderTitle');
+    if (titleEl && currentHora) {
+      titleEl.innerHTML = `⏰ Current Hora: <b>${currentHora.lord.symbol} ${currentHora.lord.sanskrit} (${currentHora.lord.name})</b> · <small style="color:#7fc5c0;">${remainingMins}m left</small>`;
+    }
+  } catch (e) {
+    console.warn('Hora badge update error:', e);
+  }
+}
+
+function openHoraModal() {
+  const modal = document.getElementById('horaScheduleModal');
+  if (!modal) return;
+
+  const lat = parseFloat(document.getElementById('f_lat')?.value) || 28.6139;
+  const lon = parseFloat(document.getElementById('f_lon')?.value) || 77.2090;
+  const { currentHora, remainingMins, allHoras } = calculateCurrentHora(new Date(), lat, lon);
+
+  const headingEl = document.getElementById('horaModalHeading');
+  const summaryEl = document.getElementById('horaCurrentSummary');
+  const container = document.getElementById('horaRowsContainer');
+
+  if (headingEl) headingEl.textContent = `Today's 24-Hour Planetary Horas (${new Date().toLocaleDateString('en-IN', { weekday: 'long', month: 'short', day: 'numeric' })})`;
+  if (summaryEl && currentHora) {
+    summaryEl.innerHTML = `✨ <b>Active Hora: ${currentHora.lord.symbol} ${currentHora.lord.sanskrit} (${currentHora.lord.name})</b> — ${currentHora.timeStr} (${remainingMins} mins remaining)<br><small style="color:#e8dcc8;">${currentHora.lord.desc}</small>`;
+  }
+
+  if (container) {
+    container.innerHTML = allHoras.map(h => {
+      const isNow = h === currentHora;
+      const tagClass = h.lord.quality === 'excellent' ? 'hora-nature-excellent' : h.lord.quality === 'good' ? 'hora-nature-good' : h.lord.quality === 'mixed' ? 'hora-nature-mixed' : 'hora-nature-intense';
+      return `
+        <div class="hora-row ${isNow ? 'is-current' : ''}">
+          <span>${h.timeStr} ${isNow ? '🔥' : ''}</span>
+          <div class="hora-planet-cell">
+            <span style="font-size: 14px;">${h.lord.symbol}</span>
+            <span>${h.lord.sanskrit} <small style="color:#d6c3a0;">(${h.lord.name})</small></span>
+          </div>
+          <span style="color: #e2d3b5;">${h.lord.desc}</span>
+          <div>
+            <span class="hora-nature-tag ${tagClass}">${h.lord.nature}</span>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  modal.classList.add('open');
+}
+
+function closeHoraModal() {
+  const modal = document.getElementById('horaScheduleModal');
+  if (modal) modal.classList.remove('open');
+}
+
+window.openHoraModal = openHoraModal;
+window.closeHoraModal = closeHoraModal;
+window.renderTransitHighlightsOnMandala = renderTransitHighlightsOnMandala;
+window.updateHoraHeaderBadge = updateHoraHeaderBadge;
+
+window.renderDailyRashifal = renderDailyRashifal;
+window.selectRashifalSign = selectRashifalSign;
+window.openActiveZodiacInModal = openActiveZodiacInModal;
+window.onPanchangDateCheckerChange = onPanchangDateCheckerChange;
+window.resetPanchangDateToToday = resetPanchangDateToToday;
+
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', renderDailyPanchang);
+  document.addEventListener('DOMContentLoaded', () => {
+    resetPanchangDateToToday();
+  });
 } else {
-  renderDailyPanchang();
+  resetPanchangDateToToday();
 }
 
 // --- Report intelligence: create a concise, chart-grounded opening summary ---
@@ -4744,11 +6251,49 @@ function southChartSvg(placements){
   return `<svg class="kundli-svg" viewBox="0 0 500 500" role="img" aria-label="South Indian style Kundli chart">${cells.join('')}<rect x="137.5" y="137.5" width="225" height="225" class="south-center"/><text x="250" y="252" text-anchor="middle" class="center-label">KUNDLI</text></svg>`;
 }
 
+function eastChartSvg(placements){
+  const houseCoords = [
+    {h:1, hx:250, hy:120, px:250, py:148},   // Top Diamond (House 1 / Lagna)
+    {h:2, hx:350, hy:95,  px:360, py:120},   // Top Right Upper
+    {h:3, hx:415, hy:170, px:400, py:195},   // Right Upper
+    {h:4, hx:415, hy:330, px:400, py:305},   // Right Lower
+    {h:5, hx:350, hy:405, px:360, py:380},   // Bottom Right
+    {h:6, hx:285, hy:430, px:285, py:395},   // Bottom Center-Right
+    {h:7, hx:215, hy:430, px:215, py:395},   // Bottom Center-Left
+    {h:8, hx:150, hy:405, px:140, py:380},   // Bottom Left
+    {h:9, hx:85,  hy:330, px:100, py:305},   // Left Lower
+    {h:10,hx:85,  hy:170, px:100, py:195},   // Left Upper
+    {h:11,hx:150, hy:95,  px:140, py:120},   // Top Left
+    {h:12,hx:215, hy:70,  px:215, py:105}    // Top Center-Left
+  ];
+  const groups = {};
+  Object.entries(placements).forEach(([p,h]) => (groups[h] ||= []).push(p));
+  let texts = '';
+  houseCoords.forEach(pos => {
+    const label = groups[pos.h] && groups[pos.h].length ? groups[pos.h].join(' · ') : '—';
+    const lagnaTag = pos.h === 1 ? ' (Lagna)' : '';
+    texts += `<text x="${pos.hx}" y="${pos.hy}" text-anchor="middle" class="house-label">${pos.h}${lagnaTag}</text><text x="${pos.px}" y="${pos.py}" text-anchor="middle" class="planet-label">${label}</text>`;
+  });
+  return `<svg class="kundli-svg" viewBox="0 0 500 500" role="img" aria-label="East Indian Bengali style Kundli chart">
+    <rect x="35" y="35" width="430" height="430" rx="8" class="chart-frame" />
+    <path d="M35 35L465 465 M465 35L35 465 M250 35L465 250L250 465L35 250Z M142.5 35L35 142.5 M357.5 35L465 142.5 M35 357.5L142.5 465 M465 357.5L357.5 465" class="chart-lines" />
+    <polygon points="250,90 310,150 250,210 190,150" fill="rgba(216,165,61,0.08)" stroke="rgba(232,194,116,0.3)" />
+    ${texts}
+    <text x="250" y="255" text-anchor="middle" class="center-label" style="font-size:13px;letter-spacing:1.5px;">EAST KUNDLI</text>
+  </svg>`;
+}
+
 function renderKundliVisuals(){
   const wrap=document.getElementById('kundliChartWrap'); if(!wrap) return;
   const placements=extractPlacements(fullReportText);
   const mode=wrap.dataset.chartMode || 'north';
-  wrap.innerHTML=(mode==='south'?southChartSvg(placements):northChartSvg(placements));
+  if(mode === 'south') {
+    wrap.innerHTML = southChartSvg(placements);
+  } else if(mode === 'east') {
+    wrap.innerHTML = eastChartSvg(placements);
+  } else {
+    wrap.innerHTML = northChartSvg(placements);
+  }
   if(!Object.keys(placements).length){
     wrap.insertAdjacentHTML('beforeend','<div class="chart-caption">The structured planetary placement block is still being prepared. The chart will populate automatically when the Panchang section finishes.</div>');
   }
@@ -5129,6 +6674,76 @@ document.addEventListener('dragstart', e => { if(e.target.closest('.report,.visu
   $('feedbackBtnFixed')?.addEventListener('click',()=>open('feedbackModal'));
   $('accessBtn')?.addEventListener('click',()=>open('accessModal'));
   $('accessBtnFixed')?.addEventListener('click',()=>open('accessModal'));
+  $('paymentBtn')?.addEventListener('click',()=>open('paymentModal'));
+  $('paymentBtnFixed')?.addEventListener('click',()=>open('paymentModal'));
+  $('paymentBtnHeader')?.addEventListener('click',()=>open('paymentModal'));
+
+  let selectedPlan = 'reveal';
+  let selectedAmount = 59;
+
+  document.querySelectorAll('#paymentPlansGrid .plan-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('#paymentPlansGrid .plan-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      selectedPlan = card.dataset.plan || 'reveal';
+      const presetRow = $('dakshinaPresets');
+      if (selectedPlan === 'dakshina') {
+        if (presetRow) presetRow.style.display = 'flex';
+        const activeChip = presetRow?.querySelector('.dakshina-chip.active');
+        selectedAmount = activeChip ? Number(activeChip.dataset.val) : 251;
+      } else {
+        if (presetRow) presetRow.style.display = 'none';
+        selectedAmount = Number(card.dataset.amount || 59);
+      }
+      const payBtn = $('payProceedBtn');
+      if (payBtn) {
+        payBtn.textContent = `Proceed to Secure Payment (₹${selectedAmount})`;
+      }
+    });
+  });
+
+  document.querySelectorAll('.dakshina-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.dakshina-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      selectedAmount = Number(chip.dataset.val || 251);
+      const payBtn = $('payProceedBtn');
+      if (payBtn) {
+        payBtn.textContent = `Proceed to Secure Payment (₹${selectedAmount})`;
+      }
+    });
+  });
+
+  $('payProceedBtn')?.addEventListener('click', async () => {
+    const st = $('paymentModalStatus');
+    const name = $('payNameInput')?.value || '';
+    const email = $('payEmailInput')?.value || '';
+    if (st) {
+      st.style.display = 'block';
+      st.className = 'coord-status';
+      st.textContent = 'Initiating secure Razorpay checkout…';
+    }
+    try {
+      const ok = await window.requestPaidAccess(selectedPlan, selectedAmount, { name, email });
+      if (ok) {
+        if (st) {
+          st.className = 'coord-status ok';
+          st.textContent = 'Payment successful! Access granted.';
+        }
+        setTimeout(() => close('paymentModal'), 1200);
+      } else {
+        if (st) {
+          st.className = 'coord-status error';
+          st.textContent = 'Payment was cancelled or could not be completed.';
+        }
+      }
+    } catch (err) {
+      if (st) {
+        st.className = 'coord-status error';
+        st.textContent = err.message || 'Payment initiation failed.';
+      }
+    }
+  });
   document.querySelectorAll('[data-close-modal]').forEach(b=>b.addEventListener('click',()=>close(b.getAttribute('data-close-modal'))));
   document.getElementById('feedbackBtnInline')?.addEventListener('click',()=>document.getElementById('feedbackBtn')?.click());
   $('feedbackForm')?.addEventListener('submit',async e=>{e.preventDefault();const st=$('feedbackStatus');st.style.display='block';st.textContent='Sending…';try{const r=await fetch('/api/feedback',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:$('feedbackName').value,email:$('feedbackEmail').value,phone:$('feedbackPhone').value,message:$('feedbackMessage').value})});const j=await r.json();if(!r.ok)throw new Error(j.error||'Could not send feedback.');st.className='coord-status ok';st.textContent='Thank you. Your feedback has been received.';e.target.reset();}catch(err){st.className='coord-status error';st.textContent=err.message;}});
@@ -6320,56 +7935,93 @@ button:hover{transform:translateY(-1px);filter:brightness(1.035);}
 (function(){
   const cfg=window.PAYWALL_CONFIG; const entitlements={reveal:false,match:false}; let questionCredit=false; let vipAccess=false;
   function enabled(plan){const f=window.SERVER_CONFIG?.features||{};return plan==='reveal'?f.reveal!==false:plan==='match'?f.match!==false:f.chat!==false;}
-  async function pay(plan){
-    if(vipAccess)return true; if(!enabled(plan)){alert('This feature is temporarily unavailable.');return false;} if(plan==='reveal'&&entitlements.reveal)return true; if(plan==='match'&&entitlements.match)return true; if(plan==='question'&&questionCredit)return true;
-    const p=cfg.plans[plan];
+  async function pay(plan, customAmount, customPrefill){
+    if(vipAccess && plan !== 'dakshina') return true;
+    if(!enabled(plan) && plan !== 'dakshina'){ alert('This feature is temporarily unavailable.'); return false; }
+    if(plan==='reveal'&&entitlements.reveal) return true;
+    if(plan==='match'&&entitlements.match) return true;
+    if(plan==='question'&&questionCredit) return true;
+    const p = cfg.plans[plan] || { title: 'Voluntary Sacred Dakshina', amountINR: customAmount || 251 };
     try{
-      const r=await fetch(cfg.createOrderEndpoint||'/api/create-order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan})});
-      const order=await r.json();
-      if(!r.ok)throw new Error(order.error||'Could not create the Razorpay order.');
-      const sessionToken=order.sessionToken;
+      const payload = { plan };
+      if (customAmount) payload.amount = Math.round(customAmount * 100);
+      const r = await fetch(cfg.createOrderEndpoint||'/api/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const order = await r.json();
+      if(!r.ok) throw new Error(order.error || 'Could not create the Razorpay payment order.');
+      const sessionToken = order.sessionToken;
+      const key = order.key_id || order.keyId;
+      const orderId = order.order_id || order.orderId || order.id;
+      const amount = order.amount;
 
-      // Handle demo mode or if Razorpay is not loaded / demo order returned
-      if(order.isDemo || order.orderId?.startsWith('order_demo_') || !order.keyId || !window.Razorpay){
-        const simPayId = `pay_sim_${Date.now()}`;
-        const v=await fetch(cfg.verifyPaymentEndpoint||'/api/verify-payment',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({razorpay_order_id:order.orderId,razorpay_payment_id:simPayId,plan,sessionToken})});
-        const result=await v.json();
-        if(!v.ok||!result.verified)throw new Error(result.error||'Payment verification failed.');
-        if(plan==='question')questionCredit=true;else entitlements[plan]=true;
-        window.lastPaymentRef=simPayId;
-        window.dispatchEvent(new CustomEvent('premium-unlocked',{detail:{plan}}));
-        return true;
+      // If Razorpay SDK is not loaded on the window yet
+      if (!window.Razorpay) {
+        throw new Error('Razorpay Checkout SDK is still loading. Please check your internet connection and retry.');
+      }
+      if (!key) {
+        throw new Error('Razorpay Public Key was not provided by the server.');
       }
 
-      return await new Promise(resolve=>{
-        let settled=false; const finish=ok=>{if(!settled){settled=true;resolve(ok);}};
-        const options={
-          key:order.keyId,
-          amount:order.amount,
-          currency:order.currency||'INR',
-          name:'Jyotish Vimarsha',
-          description:p.title,
-          order_id:order.orderId,
-          theme:{color:'#b99355'},
-          modal:{confirm_close:true,animation:true,ondismiss:()=>finish(false)},
-          prefill:{name:document.getElementById('f_name')?.value||document.getElementById('k1_name')?.value||''},
-          handler:async resp=>{
-            try{
-              const v=await fetch(cfg.verifyPaymentEndpoint||'/api/verify-payment',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...resp,plan,sessionToken})});
-              const result=await v.json();
-              if(!v.ok||!result.verified)throw new Error(result.error||'Payment verification failed.');
-              if(plan==='question')questionCredit=true;else entitlements[plan]=true;
-              window.lastPaymentRef=resp.razorpay_payment_id;
-              window.dispatchEvent(new CustomEvent('premium-unlocked',{detail:{plan}}));
+      return await new Promise(resolve => {
+        let settled = false;
+        const finish = ok => { if(!settled){ settled = true; resolve(ok); } };
+        const prefillName = customPrefill?.name || document.getElementById('f_name')?.value || document.getElementById('k1_name')?.value || '';
+        const prefillEmail = customPrefill?.email || document.getElementById('f_email')?.value || '';
+        const options = {
+          key: key,
+          amount: amount,
+          currency: order.currency || 'INR',
+          name: 'Jyotish Vimarsha',
+          description: p.title || 'Sacred Astrological Service',
+          order_id: orderId,
+          theme: { color: '#b99355' },
+          modal: {
+            confirm_close: true,
+            animation: true,
+            ondismiss: () => {
+              console.log('Payment modal dismissed by user');
+              finish(false);
+            }
+          },
+          prefill: {
+            name: prefillName,
+            email: prefillEmail
+          },
+          handler: async resp => {
+            try {
+              const v = await fetch(cfg.verifyPaymentEndpoint||'/api/verify-payment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  razorpay_order_id: resp.razorpay_order_id,
+                  razorpay_payment_id: resp.razorpay_payment_id,
+                  razorpay_signature: resp.razorpay_signature,
+                  plan,
+                  sessionToken
+                })
+              });
+              const result = await v.json();
+              if(!v.ok || !result.verified) throw new Error(result.error || 'Payment signature verification failed.');
+              if(plan === 'question') questionCredit = true;
+              else if(plan !== 'dakshina') entitlements[plan] = true;
+              window.lastPaymentRef = resp.razorpay_payment_id;
+              window.dispatchEvent(new CustomEvent('premium-unlocked', { detail: { plan } }));
               finish(true);
-            }catch(err){
-              alert(err.message||'Payment verification failed.');
+            } catch(err) {
+              alert(err.message || 'Payment signature verification failed.');
               finish(false);
             }
           }
         };
-        const checkout=new Razorpay(options);
-        checkout.on('payment.failed',()=>{alert('Payment failed. No access was granted.');finish(false);});
+        const checkout = new Razorpay(options);
+        checkout.on('payment.failed', function (response){
+          const reason = response?.error?.description || response?.error?.reason || 'Payment could not be completed.';
+          alert('Payment Failed: ' + reason);
+          finish(false);
+        });
         checkout.open();
       });
     }catch(err){alert(err.message+' Please try again.');return false;}
@@ -6458,38 +8110,111 @@ window.updateVipUi = updateVipUi;
   </div>
 </div>
 
-<!-- Zodiac Sign Deep Analysis Modal -->
-<div class="modal-overlay" id="zodiacDetailModal" onclick="if(event.target===this) closeZodiacModal();">
-  <div class="modal-box panchang-modal-box" style="max-width: 700px;">
-    <button type="button" class="modal-close" onclick="closeZodiacModal()" aria-label="Close modal">×</button>
-    <div class="panchang-modal-top" style="display: flex; align-items: center; gap: 18px;">
-      <div id="zdmBadge" style="width: 80px; height: 80px; flex-shrink: 0;"></div>
-      <div>
-        <div class="panchang-modal-kicker">✦ RASHI MANDALA DEEP ANALYSIS</div>
-        <h2 class="panchang-modal-heading" id="zdmTitle">Rashi Title</h2>
-        <div class="panchang-modal-date" id="zdmSubtitle" style="color: #e2ba6e; font-size: 14px; font-weight: 600;">Element & Ruler</div>
+<!-- Planetary Hora 24-Hour Timetable & Guidance Modal -->
+<div class="modal-overlay" id="horaScheduleModal" onclick="if(event.target===this) closeHoraModal();">
+  <div class="modal-box hora-modal-box">
+    <button type="button" class="modal-close" onclick="closeHoraModal()" aria-label="Close modal">×</button>
+    <div class="panchang-modal-top">
+      <div class="panchang-modal-kicker">✦ VEDIC TIME DIVISION · 24-HOUR PLANETARY HORA ALMANAC</div>
+      <h2 class="panchang-modal-heading" id="horaModalHeading">Today's Planetary Horas</h2>
+      <div class="panchang-modal-date" id="horaModalSub">Calculated from Sunrise · Chaldean Planetary Hour Sequence</div>
+    </div>
+    <div style="background: rgba(223, 186, 109, 0.08); border-left: 3px solid #fce7b0; border-radius: 6px; padding: 10px 14px; margin: 12px 0 16px; font-size: 13px; color: #fce7b0; line-height: 1.55;">
+      <b id="horaCurrentSummary">Loading active hora…</b>
+    </div>
+    <div class="hora-table-wrap">
+      <div class="hora-row" style="background: rgba(0,0,0,0.5); font-weight: 700; color: #fce7b0; position: sticky; top: 0; z-index: 2;">
+        <span>Time</span>
+        <span>Hora Lord</span>
+        <span>Auspicious For</span>
+        <span>Nature</span>
+      </div>
+      <div id="horaRowsContainer">
+        <!-- Dynamically injected -->
       </div>
     </div>
-    <div id="zdmBody" style="font-family: 'Manrope', sans-serif; font-size: 14px; line-height: 1.7; color: #e2d3b5; margin-top: 14px;">
-      Loading Zodiac sign profile...
+  </div>
+</div>
+
+<!-- Sacred Audio Chanting & Resonance Customizer Modal -->
+<div class="modal-overlay" id="soundCustomizerModal" onclick="if(event.target===this) closeSoundCustomizerModal();">
+  <div class="modal-box sound-customizer-box">
+    <button type="button" class="modal-close" onclick="closeSoundCustomizerModal()" aria-label="Close modal">×</button>
+    <div class="panchang-modal-top">
+      <div class="panchang-modal-kicker">✦ SACRED COSMIC SOUNDSCAPE & FREQUENCY SYNTHESIZER</div>
+      <h2 class="panchang-modal-heading">Universal Resonance Customizer</h2>
+      <div class="panchang-modal-date">Harmonic Solfeggio & Vedic Meditation Tones</div>
+    </div>
+
+    <div class="sound-presets-grid" id="soundPresetsGrid">
+      <div class="sound-preset-card active" data-preset="om_432" onclick="OmChantEngine.selectPreset('om_432')">
+        <div class="sound-preset-icon">ॐ</div>
+        <div class="sound-preset-title">432 Hz Cosmic Om</div>
+        <div class="sound-preset-freq">Deep Vedic Drone & Chants</div>
+      </div>
+      <div class="sound-preset-card" data-preset="solar_528" onclick="OmChantEngine.selectPreset('solar_528')">
+        <div class="sound-preset-icon">☉</div>
+        <div class="sound-preset-title">528 Hz Solar Harmony</div>
+        <div class="sound-preset-freq">Miracle Tone of Transformation</div>
+      </div>
+      <div class="sound-preset-card" data-preset="singing_bowl" onclick="OmChantEngine.selectPreset('singing_bowl')">
+        <div class="sound-preset-icon">🥣</div>
+        <div class="sound-preset-title">Tibetan Singing Bowl</div>
+        <div class="sound-preset-freq">Metallic Overtone Resonator</div>
+      </div>
+      <div class="sound-preset-card" data-preset="temple_bells" onclick="OmChantEngine.selectPreset('temple_bells')">
+        <div class="sound-preset-icon">🔔</div>
+        <div class="sound-preset-title">Vedic Temple Bells</div>
+        <div class="sound-preset-freq">Pure Brass Shanti Chimes</div>
+      </div>
+    </div>
+
+    <div class="sound-slider-row">
+      <span style="font-size: 16px;">🔊</span>
+      <label style="font-size: 12.5px; color: #fce7b0; font-weight: 700; min-width: 100px;">Master Volume</label>
+      <input type="range" min="0" max="100" value="85" class="sound-slider" id="soundVolumeSlider" oninput="OmChantEngine.setVolume(this.value / 100)" />
+      <span id="soundVolLabel" style="font-size: 12px; color: #7fc5c0; font-weight: 700; min-width: 38px; text-align: right;">85%</span>
+    </div>
+
+    <div style="display: flex; gap: 10px; margin-top: 18px; justify-content: flex-end; flex-wrap: wrap;">
+      <button type="button" class="secondary" onclick="OmChantEngine.strikeTestSound()" style="padding: 8px 16px; font-size: 12px; border-radius: 8px; cursor: pointer; color: #fce7b0; border: 1px solid rgba(242,215,146,0.3); background: rgba(0,0,0,0.3);">🔔 Test Acoustic Strike</button>
+      <button type="button" class="primary" id="modalSoundToggleBtn" onclick="OmChantEngine.toggle(); syncModalSoundButton();" style="padding: 8px 20px; font-size: 12px; border-radius: 8px; font-weight: 700; cursor: pointer; background: linear-gradient(180deg, #f1d48a, #d8a04c); color: #201307; border: none;">▶ Start Playing Resonance</button>
     </div>
   </div>
 </div>
 
 <script>
 /* =========================================================
-   AUTHENTIC SACRED OM CHANTING AUDIO PLAYER
+   AUTHENTIC SACRED OM CHANTING & HARMONIC RESONANCE SYNTHESIZER
    ========================================================= */
 const OmChantEngine = (function() {
   let audioElem = null;
   let isPlaying = false;
   let fadeInterval = null;
+  let activePreset = 'om_432';
+  let masterVol = 0.85;
+
+  // Web Audio Context for Pure Harmonic Drone Synthesizer
+  let audioCtx = null;
+  let synthNodes = [];
+  let synthGain = null;
+
+  function getAudioContext() {
+    if (!audioCtx) {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (AudioContextClass) audioCtx = new AudioContextClass();
+    }
+    if (audioCtx && audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+    return audioCtx;
+  }
 
   function initAudio() {
     if (!audioElem) {
       audioElem = new Audio('/audio/om_chant.mp3');
       audioElem.loop = true;
-      audioElem.volume = 0.85;
+      audioElem.volume = masterVol;
       audioElem.onerror = function() {
         if (audioElem && audioElem.src.includes('om_chant.mp3')) {
           audioElem.src = '/audio/om_chant2.mp3';
@@ -6499,58 +8224,166 @@ const OmChantEngine = (function() {
     }
   }
 
-  function start() {
+  function startSynthDrone(presetKey) {
+    stopSynthDrone();
+    const ctx = getAudioContext();
+    if (!ctx) return;
+
+    synthGain = ctx.createGain();
+    synthGain.gain.setValueAtTime(0.001, ctx.currentTime);
+    synthGain.gain.exponentialRampToValueAtTime(Math.max(0.01, masterVol * 0.45), ctx.currentTime + 1.8);
+    synthGain.connect(ctx.destination);
+
+    let freqs = [432, 216, 108, 648]; // Default 432Hz Om
+    if (presetKey === 'solar_528') {
+      freqs = [528, 264, 132, 792]; // Solfeggio 528Hz Transformation
+    } else if (presetKey === 'singing_bowl') {
+      freqs = [288, 576, 864, 1152]; // Tibetan Bowl Harmonic Series
+    } else if (presetKey === 'temple_bells') {
+      freqs = [639, 1278, 1917, 2556]; // Pure Bell Ringing Chimes
+    }
+
+    synthNodes = freqs.map((freq, idx) => {
+      const osc = ctx.createOscillator();
+      const nodeGain = ctx.createGain();
+      osc.type = idx % 2 === 0 ? 'sine' : 'triangle';
+      osc.frequency.setValueAtTime(freq, ctx.currentTime);
+
+      // Add gentle cosmic chorus detune/vibrato
+      const detuneAmount = (idx - 1.5) * 2.2;
+      osc.detune.setValueAtTime(detuneAmount, ctx.currentTime);
+
+      nodeGain.gain.setValueAtTime((1 / (idx + 1.4)) * 0.7, ctx.currentTime);
+      osc.connect(nodeGain);
+      nodeGain.connect(synthGain);
+      osc.start();
+      return { osc, gain: nodeGain };
+    });
+  }
+
+  function stopSynthDrone() {
+    if (synthGain && audioCtx) {
+      try {
+        synthGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
+        setTimeout(() => {
+          synthNodes.forEach(n => { try { n.osc.stop(); n.osc.disconnect(); } catch(e){} });
+          synthNodes = [];
+          if (synthGain) synthGain.disconnect();
+          synthGain = null;
+        }, 550);
+      } catch (e) {
+        synthNodes.forEach(n => { try { n.osc.stop(); } catch(err){} });
+        synthNodes = [];
+      }
+    }
+  }
+
+  function strikeTestSound() {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+
+    const baseFreq = activePreset === 'solar_528' ? 528 : activePreset === 'singing_bowl' ? 288 : activePreset === 'temple_bells' ? 639 : 432;
+    const harmonics = [baseFreq, baseFreq * 1.5, baseFreq * 2, baseFreq * 2.76];
+
+    harmonics.forEach((f, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(f, now);
+      
+      const startLevel = (masterVol * 0.5) / (i + 1);
+      gain.gain.setValueAtTime(startLevel, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 3.2);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 3.3);
+    });
+  }
+
+  function setVolume(vol) {
+    masterVol = Math.max(0, Math.min(1, vol));
+    if (audioElem) audioElem.volume = masterVol;
+    if (synthGain && audioCtx) {
+      try { synthGain.gain.setValueAtTime(masterVol * 0.45, audioCtx.currentTime); } catch(e){}
+    }
+    const lbl = document.getElementById('soundVolLabel');
+    if (lbl) lbl.textContent = `${Math.round(masterVol * 100)}%`;
+  }
+
+  function selectPreset(key) {
+    activePreset = key;
+    document.querySelectorAll('.sound-preset-card').forEach(c => {
+      if (c.dataset.preset === key) c.classList.add('active');
+      else c.classList.remove('active');
+    });
+    if (isPlaying) {
+      if (key === 'om_432') {
+        stopSynthDrone();
+        startAudioTrack();
+      } else {
+        if (audioElem) audioElem.pause();
+        startSynthDrone(key);
+      }
+    }
+  }
+
+  function startAudioTrack() {
     initAudio();
     if (fadeInterval) clearInterval(fadeInterval);
     audioElem.volume = 0;
     const playPromise = audioElem.play();
     if (playPromise !== undefined) {
       playPromise.then(() => {
-        isPlaying = true;
-        updateUI(true);
         let vol = 0;
         fadeInterval = setInterval(() => {
-          vol += 0.1;
-          if (vol >= 0.85) {
-            vol = 0.85;
+          vol += 0.08;
+          if (vol >= masterVol) {
+            vol = masterVol;
             clearInterval(fadeInterval);
           }
           if (audioElem) audioElem.volume = vol;
-        }, 80);
+        }, 60);
       }).catch(err => {
-        console.warn("Autoplay prevented or audio load error:", err);
-        if (audioElem) {
-          audioElem.src = '/audio/om_chant2.mp3';
-          audioElem.play().then(() => {
-            isPlaying = true;
-            updateUI(true);
-            audioElem.volume = 0.85;
-          }).catch(e => console.error("Audio failure:", e));
-        }
+        console.warn("Audio element playback failed, falling back to Web Audio Drone:", err);
+        startSynthDrone(activePreset);
       });
     }
   }
 
-  function stop() {
-    if (!audioElem) return;
-    if (fadeInterval) clearInterval(fadeInterval);
-    let vol = audioElem.volume;
-    fadeInterval = setInterval(() => {
-      vol -= 0.1;
-      if (vol <= 0.05) {
-        vol = 0;
-        audioElem.pause();
-        audioElem.currentTime = 0;
-        clearInterval(fadeInterval);
-        isPlaying = false;
-        updateUI(false);
-      } else {
-        if (audioElem) audioElem.volume = vol;
-      }
-    }, 60);
+  function start() {
+    isPlaying = true;
+    updateUI(true);
+    if (activePreset === 'om_432') {
+      startAudioTrack();
+      startSynthDrone('om_432');
+    } else {
+      startSynthDrone(activePreset);
+    }
   }
 
-
+  function stop() {
+    isPlaying = false;
+    updateUI(false);
+    if (fadeInterval) clearInterval(fadeInterval);
+    if (audioElem) {
+      let vol = audioElem.volume;
+      fadeInterval = setInterval(() => {
+        vol -= 0.1;
+        if (vol <= 0.05) {
+          vol = 0;
+          audioElem.pause();
+          audioElem.currentTime = 0;
+          clearInterval(fadeInterval);
+        } else {
+          if (audioElem) audioElem.volume = vol;
+        }
+      }, 50);
+    }
+    stopSynthDrone();
+  }
 
   function toggle() {
     if (isPlaying) stop();
@@ -6561,23 +8394,35 @@ const OmChantEngine = (function() {
     const btnTop = document.getElementById('btnOmChant');
     const btnUtil = document.getElementById('mysticSoundBtn');
     const symbol = document.getElementById('omPulseSymbol');
+    const modalBtn = document.getElementById('modalSoundToggleBtn');
 
     if (btnTop) {
       if (active) {
-        btnTop.innerHTML = `<span>⏹</span> <b>Stop Om Chanting</b>`;
+        btnTop.innerHTML = `<span>⏹</span> <b>Resonate with Universe (ON)</b>`;
         btnTop.style.background = 'linear-gradient(180deg, #f2a8a8, #d15858)';
+        btnTop.title = 'Resonate with Universe · Click to Turn OFF';
       } else {
-        btnTop.innerHTML = `<span>▶</span> <b>Resonate with Universe</b>`;
+        btnTop.innerHTML = `<span>▶</span> <b>Resonate with Universe (OFF)</b>`;
         btnTop.style.background = 'linear-gradient(180deg, #f1d48a, #d8a04c)';
+        btnTop.title = 'Resonate with Universe · Click to Turn ON';
       }
     }
     if (btnUtil) {
       if (active) {
-        btnUtil.innerHTML = `<span>⏹</span> Om Chanting Active`;
+        btnUtil.innerHTML = `<span>⏹</span> Resonate with Universe (ON)`;
         btnUtil.classList.add('active-chanting');
       } else {
-        btnUtil.innerHTML = `✦ Resonate with Universe`;
+        btnUtil.innerHTML = `✦ Resonate with Universe (OFF)`;
         btnUtil.classList.remove('active-chanting');
+      }
+    }
+    if (modalBtn) {
+      if (active) {
+        modalBtn.innerHTML = `⏹ Stop Playing Resonance`;
+        modalBtn.style.background = 'linear-gradient(180deg, #f2a8a8, #d15858)';
+      } else {
+        modalBtn.innerHTML = `▶ Start Playing Resonance`;
+        modalBtn.style.background = 'linear-gradient(180deg, #f1d48a, #d8a04c)';
       }
     }
     if (symbol) {
@@ -6586,9 +8431,48 @@ const OmChantEngine = (function() {
     }
   }
 
-  return { toggle, start, stop };
+  return { toggle, start, stop, selectPreset, setVolume, strikeTestSound, getIsPlaying: () => isPlaying };
 })();
 window.OmChantEngine = OmChantEngine;
+
+function openSoundCustomizerModal() {
+  const modal = document.getElementById('soundCustomizerModal');
+  if (modal) {
+    modal.classList.add('open');
+    const modalBtn = document.getElementById('modalSoundToggleBtn');
+    if (modalBtn) {
+      if (OmChantEngine.getIsPlaying()) {
+        modalBtn.innerHTML = `⏹ Stop Playing Resonance`;
+        modalBtn.style.background = 'linear-gradient(180deg, #f2a8a8, #d15858)';
+      } else {
+        modalBtn.innerHTML = `▶ Start Playing Resonance`;
+        modalBtn.style.background = 'linear-gradient(180deg, #f1d48a, #d8a04c)';
+      }
+    }
+  }
+}
+
+function closeSoundCustomizerModal() {
+  const modal = document.getElementById('soundCustomizerModal');
+  if (modal) modal.classList.remove('open');
+}
+
+function syncModalSoundButton() {
+  const modalBtn = document.getElementById('modalSoundToggleBtn');
+  if (modalBtn) {
+    if (OmChantEngine.getIsPlaying()) {
+      modalBtn.innerHTML = `⏹ Stop Playing Resonance`;
+      modalBtn.style.background = 'linear-gradient(180deg, #f2a8a8, #d15858)';
+    } else {
+      modalBtn.innerHTML = `▶ Start Playing Resonance`;
+      modalBtn.style.background = 'linear-gradient(180deg, #f1d48a, #d8a04c)';
+    }
+  }
+}
+
+window.openSoundCustomizerModal = openSoundCustomizerModal;
+window.closeSoundCustomizerModal = closeSoundCustomizerModal;
+window.syncModalSoundButton = syncModalSoundButton;
 
 // Attach mystic sound button listener
 document.addEventListener('DOMContentLoaded', () => {
@@ -7253,190 +9137,6 @@ function closeSpecificPanchangDetail() {
   if (modal) modal.classList.remove('open');
 }
 
-/* Specific Zodiac Detail Modal */
-function openSpecificZodiacModal(zodiacKey) {
-  const modal = document.getElementById('zodiacDetailModal');
-  const title = document.getElementById('zdmModalTitle');
-  const kicker = document.getElementById('zdmModalKicker');
-  const body = document.getElementById('zdmModalBody');
-
-  if (!modal || !body) return;
-
-  const zodiacData = {
-    aries: {
-      name: "Aries (मेष - Mesh)",
-      lord: "Mars (मंगल)",
-      element: "Fire (अग्नि)",
-      color: "Bright Red / Crimson",
-      number: "9, 1",
-      icon: "/images/zodiac_svg/aries.svg",
-      prediction: "Today brings strong initiative, high energy, and courageous momentum. Mars inspires quick decision-making and leadership at work.",
-      guidance: "Channel passion productively without rushing into hasty verbal arguments."
-    },
-    taurus: {
-      name: "Taurus (वृषभ - Vrishabha)",
-      lord: "Venus (शुक्र)",
-      element: "Earth (पृथ्वी)",
-      color: "Emerald Green & White",
-      number: "6, 2",
-      icon: "/images/zodiac_svg/taurus.svg",
-      prediction: "Focus is on financial stability, luxury, artistic pursuits, and family comfort. Excellent day for long-term investments and creative harmony.",
-      guidance: "Enjoy earthly pleasures with mindfulness and stay open to positive financial suggestions."
-    },
-    gemini: {
-      name: "Gemini (मिथुन - Mithuna)",
-      lord: "Mercury (बुध)",
-      element: "Air (वायु)",
-      color: "Yellow & Sky Blue",
-      number: "5, 3",
-      icon: "/images/zodiac_svg/gemini.svg",
-      prediction: "Intellectual agility, lively communication, networking, and sharp business logic highlight your day.",
-      guidance: "Maintain focus on your primary objective rather than scattering energy across too many tasks."
-    },
-    cancer: {
-      name: "Cancer (कर्क - Karka)",
-      lord: "Moon (चन्द्र)",
-      element: "Water (जल)",
-      color: "Pearl White & Silver",
-      number: "2, 7",
-      icon: "/images/zodiac_svg/cancer.svg",
-      prediction: "Heightened intuition, deep emotional warmth, and strong protective instincts toward loved ones and home.",
-      guidance: "Trust your gut feelings in personal matters while keeping emotional boundaries clear."
-    },
-    leo: {
-      name: "Leo (सिंह - Simha)",
-      lord: "Sun (सूर्य)",
-      element: "Fire (अग्नि)",
-      color: "Gold & Saffron",
-      number: "1, 5",
-      icon: "/images/zodiac_svg/leo.svg",
-      prediction: "Radiant charisma, natural authority, and recognition from peers or superiors mark your transit today.",
-      guidance: "Lead with generosity and encourage your team or family members warmly."
-    },
-    virgo: {
-      name: "Virgo (कन्या - Kanya)",
-      lord: "Mercury (बुध)",
-      element: "Earth (पृथ्वी)",
-      color: "Olive Green & Cream",
-      number: "5, 8",
-      icon: "/images/zodiac_svg/virgo.svg",
-      prediction: "Precision, analytical problem solving, health organization, and structured execution bring solid accomplishments.",
-      guidance: "Avoid over-analyzing minor flaws; celebrate steady progress."
-    },
-    libra: {
-      name: "Libra (तुला - Tula)",
-      lord: "Venus (शुक्र)",
-      element: "Air (वायु)",
-      color: "Royal Blue & Pastel Pink",
-      number: "6, 7",
-      icon: "/images/zodiac_svg/libra.svg",
-      prediction: "Harmonious relationship developments, aesthetic refinement, and diplomatic balance grace your endeavors today.",
-      guidance: "Make firm decisions gracefully when faced with competing options."
-    },
-    scorpio: {
-      name: "Scorpio (वृश्चिक - Vrishchika)",
-      lord: "Mars / Ketu (मंगल/केतु)",
-      element: "Water (जल)",
-      color: "Maroon & Dark Violet",
-      number: "9, 4",
-      icon: "/images/zodiac_svg/scorpio.svg",
-      prediction: "Deep transformative insight, intense focus, strategic research, and spiritual willpower guide your path.",
-      guidance: "Channel deep emotions into constructive research and self-mastery."
-    },
-    sagittarius: {
-      name: "Sagittarius (धनु - Dhanu)",
-      lord: "Jupiter (गुरु/बृहस्पति)",
-      element: "Fire (अग्नि)",
-      color: "Bright Yellow & Orange",
-      number: "3, 9",
-      icon: "/images/zodiac_svg/sagittarius.svg",
-      prediction: "Optimism, higher philosophical learning, auspicious fortune, and wisdom illuminate your horoscope today.",
-      guidance: "Share your knowledge generously and remain receptive to spiritual guidance."
-    },
-    capricorn: {
-      name: "Capricorn (मकर - Makara)",
-      lord: "Saturn (शनि)",
-      element: "Earth (पृथ्वी)",
-      color: "Dark Blue & Charcoal Gray",
-      number: "8, 4",
-      icon: "/images/zodiac_svg/capricorn.svg",
-      prediction: "Disciplined perseverance, career milestone planning, and pragmatic execution yield solid long-term success.",
-      guidance: "Patience and structured consistency will unlock major rewards."
-    },
-    aquarius: {
-      name: "Aquarius (कुम्भ - Kumbha)",
-      lord: "Saturn / Rahu (शनि/राहु)",
-      element: "Air (वायु)",
-      color: "Electric Blue & Turquoise",
-      number: "8, 7",
-      icon: "/images/zodiac_svg/aquarius.svg",
-      prediction: "Innovative vision, community collaboration, humanitarian thinking, and fresh breakthroughs inspire your day.",
-      guidance: "Embrace unique ideas and share your vision with like-minded associates."
-    },
-    pisces: {
-      name: "Pisces (मीन - Meena)",
-      lord: "Jupiter (गुरु)",
-      element: "Water (जल)",
-      color: "Sea Green & Gold",
-      number: "3, 12",
-      icon: "/images/zodiac_svg/pisces.svg",
-      prediction: "Compassionate spiritual empathy, artistic imagination, and tranquil inner peace surround your horoscope.",
-      guidance: "Dedicate time to meditation, music, or spiritual contemplation."
-    }
-  };
-
-  const signKeys = ['aries','taurus','gemini','cancer','leo','virgo','libra','scorpio','sagittarius','capricorn','aquarius','pisces'];
-  let key = zodiacKey;
-  if (typeof key === 'number') key = signKeys[key] || 'aries';
-  key = String(key || 'aries').toLowerCase();
-  const z = zodiacData[key] || zodiacData['aries'];
-  const imgSrc = `/images/zodiac/${key}.jpg`;
-  const fallbackSrc = `/images/zodiac_svg/${key}.svg`;
-
-  kicker.textContent = "JYOTISH RASHI MANDALA";
-  title.textContent = z.name;
-
-  body.innerHTML = `
-    <div style="display: flex; align-items: center; gap: 20px; background: rgba(216, 160, 76, 0.12); border: 1.5px solid rgba(242, 215, 146, 0.45); border-radius: 16px; padding: 20px; margin-bottom: 22px; box-shadow: 0 0 25px rgba(0,0,0,0.4);">
-      <div style="position: relative; width: 90px; height: 90px; flex-shrink: 0;">
-        <img src="${imgSrc}" onError="this.onerror=null; this.src='${fallbackSrc}';" alt="${z.name}" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 2.5px solid #fce7b0; outline: 2px solid rgba(252,231,176,0.6); outline-offset: 3px; box-shadow: 0 0 20px rgba(252, 231, 176, 0.7), 0 0 30px rgba(127, 197, 192, 0.4);" />
-      </div>
-      <div>
-        <div style="font-size: 22px; font-weight: bold; color: #fce7b0; font-family: 'Cinzel', serif; letter-spacing: 0.03em; text-shadow: 0 0 10px rgba(242, 215, 146, 0.5);">${z.name}</div>
-        <div style="font-size: 13.5px; color: #7fc5c0; margin-top: 6px; line-height: 1.5;">Ruler: <b style="color:#ffffff;">${z.lord}</b> · Element: <b style="color:#ffffff;">${z.element}</b></div>
-      </div>
-    </div>
-
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
-      <div style="background: rgba(0,0,0,0.25); padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08);">
-        <span style="font-size: 11px; color: #a3b6be; text-transform: uppercase;">Auspicious Color</span>
-        <div style="font-size: 14px; font-weight: bold; color: #f7e4b8; margin-top: 2px;">${z.color}</div>
-      </div>
-      <div style="background: rgba(0,0,0,0.25); padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08);">
-        <span style="font-size: 11px; color: #a3b6be; text-transform: uppercase;">Lucky Numbers</span>
-        <div style="font-size: 14px; font-weight: bold; color: #7fc5c0; margin-top: 2px;">${z.number}</div>
-      </div>
-    </div>
-
-    <div style="margin-bottom: 16px;">
-      <h4 style="font-size: 15px; color: #f1d48a; margin: 0 0 8px 0; font-family: 'Cinzel', serif;">✦ TODAY'S HOROSCOPE PREDICTION</h4>
-      <p style="font-size: 14px; color: #d1dfd8; line-height: 1.6; margin: 0;">${z.prediction}</p>
-    </div>
-
-    <div style="background: rgba(127, 197, 192, 0.08); border-left: 3px solid #7fc5c0; padding: 12px 16px; border-radius: 0 10px 10px 0;">
-      <span style="font-size: 12px; font-weight: bold; color: #7fc5c0; text-transform: uppercase;">Vedic Guidance</span>
-      <p style="font-size: 13px; color: #b0c2cc; margin: 4px 0 0 0;">${z.guidance}</p>
-    </div>
-  `;
-
-  modal.classList.add('open');
-}
-
-function closeSpecificZodiacModal() {
-  const modal = document.getElementById('zodiacDetailModal');
-  if (modal) modal.classList.remove('open');
-}
-
 window.openEventDetails = openEventDetails;
 window.closeEventDetails = closeEventDetails;
 window.openPanchangModal = openPanchangModal;
@@ -7444,7 +9144,12 @@ window.closePanchangModal = closePanchangModal;
 window.openSpecificPanchangDetail = openSpecificPanchangDetail;
 window.closeSpecificPanchangDetail = closeSpecificPanchangDetail;
 window.openSpecificZodiacModal = openSpecificZodiacModal;
-window.closeSpecificZodiacModal = closeSpecificZodiacModal;
+window.closeSpecificZodiacModal = closeZodiacModal;
+window.closeZodiacModal = closeZodiacModal;
+window.selectRashifalSign = selectRashifalSign;
+window.openActiveZodiacInModal = openActiveZodiacInModal;
+window.onPanchangDateCheckerChange = onPanchangDateCheckerChange;
+window.resetPanchangDateToToday = resetPanchangDateToToday;
 </script>
 
 <script>
