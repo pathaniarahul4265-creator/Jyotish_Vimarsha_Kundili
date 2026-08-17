@@ -47,8 +47,8 @@
 }
 </script>
 
-  <link rel="icon" type="image/svg+xml" href="/public/favicon.svg">
-  <link rel="shortcut icon" href="/public/favicon.svg">
+  <link rel="icon" type="image/svg+xml" href="/public/images/celestial_zodiac_mandala.svg">
+  <link rel="shortcut icon" href="/public/images/celestial_zodiac_mandala.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;0,6..96,700;1,6..96,400&family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Manrope:wght@400;500;600;700&family=Marcellus&family=Noto+Serif+Devanagari:wght@400;500;600;700&family=Yatra+One&display=swap" rel="stylesheet">
@@ -4509,7 +4509,7 @@ body input, body select, body textarea {
   </div>
 
   <div class="astrology-pillars" style="margin-top:32px;">
-    <div onclick="openSpecificZodiacModal('aries'); selectRashifalSign('aries');" style="cursor:pointer;" title="Click to explore the 12 Vedic Rashis"><img src="/images/zodiac_gold/aries.png" class="rashi-pillar-img" alt="Rashis" /><strong>Rashis</strong><small>The twelve signs describe the field and style in which planetary themes unfold.</small></div>
+    <div onclick="openSpecificZodiacModal('aries'); selectRashifalSign('aries');" style="cursor:pointer;" title="Click to explore the 12 Vedic Rashis"><img src="/public/images/aries.png" class="rashi-pillar-img" alt="Rashis" /><strong>Rashis</strong><small>The twelve signs describe the field and style in which planetary themes unfold.</small></div>
     <div><span>☉</span><strong>Grahas</strong><small>The Sun, Moon and planets represent different functions, drives and experiences.</small></div>
     <div><span>⌂</span><strong>Bhavas</strong><small>The twelve houses connect those influences to distinct areas of life.</small></div>
     <div><span>☾</span><strong>Nakshatras</strong><small>The lunar mansions add a finer symbolic layer to the Moon and its cycles.</small></div>
@@ -4555,18 +4555,18 @@ body input, body select, body textarea {
 
   <div class="rashifal-selector-wrap">
     <div class="rashifal-grid-selector" id="rashifalSignSelector">
-      <button type="button" class="rashifal-pill active" data-sign="aries" onclick="selectRashifalSign('aries')" aria-label="Aries · Mesha"><img src="/images/zodiac_gold/aries.png" class="rashifal-pill-img" alt="Aries" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">मेष (Mesha)</b><small class="p-sign-en">Aries</small></span></button>
-      <button type="button" class="rashifal-pill" data-sign="taurus" onclick="selectRashifalSign('taurus')" aria-label="Taurus · Vrishabha"><img src="/images/zodiac_gold/taurus.png" class="rashifal-pill-img" alt="Taurus" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">वृषभ (Vrishabha)</b><small class="p-sign-en">Taurus</small></span></button>
-      <button type="button" class="rashifal-pill" data-sign="gemini" onclick="selectRashifalSign('gemini')" aria-label="Gemini · Mithuna"><img src="/images/zodiac_gold/gemini.png" class="rashifal-pill-img" alt="Gemini" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">मिथुन (Mithuna)</b><small class="p-sign-en">Gemini</small></span></button>
-      <button type="button" class="rashifal-pill" data-sign="cancer" onclick="selectRashifalSign('cancer')" aria-label="Cancer · Karka"><img src="/images/zodiac_gold/cancer.png" class="rashifal-pill-img" alt="Cancer" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">कर्क (Karka)</b><small class="p-sign-en">Cancer</small></span></button>
-      <button type="button" class="rashifal-pill" data-sign="leo" onclick="selectRashifalSign('leo')" aria-label="Leo · Simha"><img src="/images/zodiac_gold/leo.png" class="rashifal-pill-img" alt="Leo" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">सिंह (Simha)</b><small class="p-sign-en">Leo</small></span></button>
-      <button type="button" class="rashifal-pill" data-sign="virgo" onclick="selectRashifalSign('virgo')" aria-label="Virgo · Kanya"><img src="/images/zodiac_gold/virgo.png" class="rashifal-pill-img" alt="Virgo" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">कन्या (Kanya)</b><small class="p-sign-en">Virgo</small></span></button>
-      <button type="button" class="rashifal-pill" data-sign="libra" onclick="selectRashifalSign('libra')" aria-label="Libra · Tula"><img src="/images/zodiac_gold/libra.png" class="rashifal-pill-img" alt="Libra" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">तुला (Tula)</b><small class="p-sign-en">Libra</small></span></button>
-      <button type="button" class="rashifal-pill" data-sign="scorpio" onclick="selectRashifalSign('scorpio')" aria-label="Scorpio · Vrischika"><img src="/images/zodiac_gold/scorpio.png" class="rashifal-pill-img" alt="Scorpio" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">वृश्चिक (Vrischika)</b><small class="p-sign-en">Scorpio</small></span></button>
-      <button type="button" class="rashifal-pill" data-sign="sagittarius" onclick="selectRashifalSign('sagittarius')" aria-label="Sagittarius · Dhanu"><img src="/images/zodiac_gold/sagittarius.png" class="rashifal-pill-img" alt="Sagittarius" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">धनु (Dhanu)</b><small class="p-sign-en">Sagittarius</small></span></button>
-      <button type="button" class="rashifal-pill" data-sign="capricorn" onclick="selectRashifalSign('capricorn')" aria-label="Capricorn · Makara"><img src="/images/zodiac_gold/capricorn.png" class="rashifal-pill-img" alt="Capricorn" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">मकर (Makara)</b><small class="p-sign-en">Capricorn</small></span></button>
-      <button type="button" class="rashifal-pill" data-sign="aquarius" onclick="selectRashifalSign('aquarius')" aria-label="Aquarius · Kumbha"><img src="/images/zodiac_gold/aquarius.png" class="rashifal-pill-img" alt="Aquarius" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">कुंभ (Kumbha)</b><small class="p-sign-en">Aquarius</small></span></button>
-      <button type="button" class="rashifal-pill" data-sign="pisces" onclick="selectRashifalSign('pisces')" aria-label="Pisces · Meena"><img src="/images/zodiac_gold/pisces.png" class="rashifal-pill-img" alt="Pisces" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">मीन (Meena)</b><small class="p-sign-en">Pisces</small></span></button>
+      <button type="button" class="rashifal-pill active" data-sign="aries" onclick="selectRashifalSign('aries')" aria-label="Aries · Mesha"><img src="/public/images/aries.png" class="rashifal-pill-img" alt="Aries" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">मेष (Mesha)</b><small class="p-sign-en">Aries</small></span></button>
+      <button type="button" class="rashifal-pill" data-sign="taurus" onclick="selectRashifalSign('taurus')" aria-label="Taurus · Vrishabha"><img src="/public/images/taurus.png" class="rashifal-pill-img" alt="Taurus" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">वृषभ (Vrishabha)</b><small class="p-sign-en">Taurus</small></span></button>
+      <button type="button" class="rashifal-pill" data-sign="gemini" onclick="selectRashifalSign('gemini')" aria-label="Gemini · Mithuna"><img src="/public/images/gemini.png" class="rashifal-pill-img" alt="Gemini" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">मिथुन (Mithuna)</b><small class="p-sign-en">Gemini</small></span></button>
+      <button type="button" class="rashifal-pill" data-sign="cancer" onclick="selectRashifalSign('cancer')" aria-label="Cancer · Karka"><img src="/public/images/cancer.png" class="rashifal-pill-img" alt="Cancer" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">कर्क (Karka)</b><small class="p-sign-en">Cancer</small></span></button>
+      <button type="button" class="rashifal-pill" data-sign="leo" onclick="selectRashifalSign('leo')" aria-label="Leo · Simha"><img src="/public/images/leo.png" class="rashifal-pill-img" alt="Leo" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">सिंह (Simha)</b><small class="p-sign-en">Leo</small></span></button>
+      <button type="button" class="rashifal-pill" data-sign="virgo" onclick="selectRashifalSign('virgo')" aria-label="Virgo · Kanya"><img src="/public/images/virgo.png" class="rashifal-pill-img" alt="Virgo" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">कन्या (Kanya)</b><small class="p-sign-en">Virgo</small></span></button>
+      <button type="button" class="rashifal-pill" data-sign="libra" onclick="selectRashifalSign('libra')" aria-label="Libra · Tula"><img src="/public/images/libra.png" class="rashifal-pill-img" alt="Libra" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">तुला (Tula)</b><small class="p-sign-en">Libra</small></span></button>
+      <button type="button" class="rashifal-pill" data-sign="scorpio" onclick="selectRashifalSign('scorpio')" aria-label="Scorpio · Vrischika"><img src="/public/images/scorpio.png" class="rashifal-pill-img" alt="Scorpio" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">वृश्चिक (Vrischika)</b><small class="p-sign-en">Scorpio</small></span></button>
+      <button type="button" class="rashifal-pill" data-sign="sagittarius" onclick="selectRashifalSign('sagittarius')" aria-label="Sagittarius · Dhanu"><img src="/public/images/sagittarius.png" class="rashifal-pill-img" alt="Sagittarius" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">धनु (Dhanu)</b><small class="p-sign-en">Sagittarius</small></span></button>
+      <button type="button" class="rashifal-pill" data-sign="capricorn" onclick="selectRashifalSign('capricorn')" aria-label="Capricorn · Makara"><img src="/public/images/capricorn.png" class="rashifal-pill-img" alt="Capricorn" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">मकर (Makara)</b><small class="p-sign-en">Capricorn</small></span></button>
+      <button type="button" class="rashifal-pill" data-sign="aquarius" onclick="selectRashifalSign('aquarius')" aria-label="Aquarius · Kumbha"><img src="/public/images/aquarius.png" class="rashifal-pill-img" alt="Aquarius" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">कुंभ (Kumbha)</b><small class="p-sign-en">Aquarius</small></span></button>
+      <button type="button" class="rashifal-pill" data-sign="pisces" onclick="selectRashifalSign('pisces')" aria-label="Pisces · Meena"><img src="/public/images/pisces.png" class="rashifal-pill-img" alt="Pisces" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">मीन (Meena)</b><small class="p-sign-en">Pisces</small></span></button>
     </div>
   </div>
 
@@ -5147,7 +5147,7 @@ body input, body select, body textarea {
   <div class="modal-box zodiac-focus-modal-box">
     <button type="button" class="modal-close" onclick="closeZodiacModal()" aria-label="Close">&times;</button>
     <div style="display:flex;align-items:center;gap:14px;border-bottom:1px solid rgba(242,215,146,0.25);padding-bottom:14px;margin-bottom:18px;">
-      <img id="zodiacModalImg" src="/images/zodiac_gold/aries.png" class="rashifal-gold-logo" style="width:58px;height:58px;margin-bottom:0;" alt="Zodiac" />
+      <img id="zodiacModalImg" src="/public/images/aries.png" class="rashifal-gold-logo" style="width:58px;height:58px;margin-bottom:0;" alt="Zodiac" />
       <div>
         <h2 id="zodiacModalTitle" style="font-family:'Bodoni Moda','Cinzel',serif;font-size:22px;color:#fce7b0;margin:0;">Mesha · Aries</h2>
         <div id="zodiacModalSubtitle" style="font-size:13px;color:#7fc5c0;margin-top:2px;">Daily Planetary Transit &amp; Horoscope</div>
@@ -5533,18 +5533,18 @@ window.PAYWALL_CONFIG = {
   const zNames = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
   const imgNames = ['aries','taurus','gemini','cancer','leo','virgo','libra','scorpio','sagittarius','capricorn','aquarius','pisces'];
   const ZODIAC_IMAGE_MAP = {
-    aries: '/images/zodiac_gold/aries.png',
-    taurus: '/images/zodiac_gold/taurus.png',
-    gemini: '/images/zodiac_gold/gemini.png',
-    cancer: '/images/zodiac_gold/cancer.png',
-    leo: '/images/zodiac_gold/leo.png',
-    virgo: '/images/zodiac_gold/virgo.png',
-    libra: '/images/zodiac_gold/libra.png',
-    scorpio: '/images/zodiac_gold/scorpio.png',
-    sagittarius: '/images/zodiac_gold/sagittarius.png',
-    capricorn: '/images/zodiac_gold/capricorn.png',
-    aquarius: '/images/zodiac_gold/aquarius.png',
-    pisces: '/images/zodiac_gold/pisces.png'
+    aries: '/public/images/aries.png',
+    taurus: '/public/images/taurus.png',
+    gemini: '/public/images/gemini.png',
+    cancer: '/public/images/cancer.png',
+    leo: '/public/images/leo.png',
+    virgo: '/public/images/virgo.png',
+    libra: '/public/images/libra.png',
+    scorpio: '/public/images/scorpio.png',
+    sagittarius: '/public/images/sagittarius.png',
+    capricorn: '/public/images/capricorn.png',
+    aquarius: '/public/images/aquarius.png',
+    pisces: '/public/images/pisces.png'
   };
   window.ZODIAC_IMAGE_MAP = ZODIAC_IMAGE_MAP;
   const ring = document.getElementById('zodiacRing');
@@ -5552,7 +5552,7 @@ window.PAYWALL_CONFIG = {
     ring.innerHTML = ZODIAC.map((glyph, i) => {
       const angle = (i / ZODIAC.length) * 360;
       const img = imgNames[i];
-      const imgSrc = ZODIAC_IMAGE_MAP[img] || `/images/zodiac_gold/${img}.png`;
+      const imgSrc = ZODIAC_IMAGE_MAP[img] || `/public/images/${img}.png`;
       const name = zNames[i];
       return `<div class="hero-z-node" style="transform:rotate(${angle}deg) translate(var(--ring-r, 252px)) rotate(${-angle}deg);" title="${name} · Click to view Daily Horoscope & Astrological Analysis" onclick="openSpecificZodiacModal('${img}'); selectRashifalSign('${img}'); event.stopPropagation();" role="button" tabindex="0">
         <div class="hero-z-node-inner">
@@ -5590,7 +5590,7 @@ window.PAYWALL_CONFIG = {
     e.stopPropagation();
     signs.forEach(s=>s.classList.remove('is-active')); el.classList.add('is-active');
     const d=data[i]; const img = imgNames[i];
-    const imgSrc = `/images/zodiac_gold/${img}.png`;
+    const imgSrc = `/public/images/${img}.png`;
     detail.innerHTML=`<div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:8px;"><img src="${imgSrc}" style="width:52px;height:52px;border-radius:50%;border:2px solid #f2d792;box-shadow:0 0 18px rgba(242,215,146,0.7), 0 0 35px rgba(127,197,192,0.45);" alt="${d[1]}" referrerPolicy="no-referrer" /><div><b style="font-size:16px;margin:0;color:#fce7b0;text-shadow:0 0 8px rgba(224,198,116,0.6);">${d[0]} · ${d[1]}</b><small style="color:#e0c674;font-weight:600;margin-top:2px;display:block;">${d[2]} Element • ${d[3]}</small></div></div><small style="text-align:center !important;display:block;color:#d6c3a0;">Ruler: <strong style="color:#f2d792">${d[4]}</strong> — ${d[5]}</small>`; detail.classList.add('open');
   }));
   document.addEventListener('click',e=>{if(!e.target.closest('.z-sign')&&!e.target.closest('.rashi-detail')){detail.classList.remove('open');signs.forEach(s=>s.classList.remove('is-active'));}});
@@ -6168,7 +6168,7 @@ function renderDailyRashifal(targetDate = currentPanchangDate) {
   }
 
   const sign = ZODIAC_METADATA[activeRashifalSign] || ZODIAC_METADATA['aries'];
-  const imgSrc = `/images/zodiac_gold/${sign.key}.png`;
+  const imgSrc = `/public/images/${sign.key}.png`;
 
   container.innerHTML = `
     <div class="rashifal-art-box">
@@ -6296,7 +6296,7 @@ function openSpecificZodiacModal(signKey) {
   const mStr = String(d.getMonth() + 1).padStart(2, '0');
   const dStr = String(d.getDate()).padStart(2, '0');
   const dateIso = `${yStr}-${mStr}-${dStr}`;
-  const imgSrc = `/images/zodiac_gold/${sign.key}.png`;
+  const imgSrc = `/public/images/${sign.key}.png`;
 
   const titleEl = document.getElementById('zodiacModalTitle');
   const subEl = document.getElementById('zodiacModalSubtitle');
@@ -7414,7 +7414,7 @@ function getZodiacSignKey(signStr) {
 
 function getZodiacSvgUrl(signStr) {
   const key = getZodiacSignKey(signStr);
-  return `/images/zodiac_gold/${key}.png`;
+  return `/public/images/${key}.png`;
 }
 window.getZodiacSignKey = getZodiacSignKey;
 window.getZodiacSvgUrl = getZodiacSvgUrl;
@@ -9854,6 +9854,63 @@ button:hover{transform:translateY(-1px);filter:brightness(1.035);}
 @media(prefers-reduced-motion:reduce){
   .mandala,.wheel-aura,.cosmic-bg,.cosmic-bg:before,.cosmic-bg:after{animation:none!important;}
 }
+
+/* ========== FIX: Visible logos + full zodiac names (Aug 2026) ========== */
+.zodiac-wheel,
+.astrology-intro .zodiac-wheel,
+.zodiac-side-col .zodiac-wheel {
+  overflow: visible !important;
+}
+.zodiac-wheel .z-sign {
+  width: 72px !important;
+  height: auto !important;
+  min-height: 72px !important;
+  margin: -36px !important;
+  overflow: visible !important;
+  transform: rotate(var(--a)) translateY(-178px) !important;
+}
+.zodiac-wheel .z-sign .z-glyph,
+.zodiac-wheel .z-sign .z-logo-img {
+  display: block !important;
+  width: 52px !important;
+  height: 52px !important;
+  margin: 0 auto 3px auto !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  border: 2px solid #f2d792 !important;
+  box-shadow: 0 0 16px rgba(242,215,146,.75), 0 0 28px rgba(127,197,192,.4) !important;
+}
+.zodiac-wheel .z-sign b {
+  display: block !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.06em !important;
+  color: #fce7b0 !important;
+  text-transform: uppercase !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+  margin-top: 2px !important;
+  text-shadow: 0 0 8px rgba(0,0,0,0.9), 0 0 6px rgba(242,215,146,0.7) !important;
+  pointer-events: none !important;
+}
+@media (max-width: 680px) {
+  .zodiac-wheel .z-sign {
+    transform: rotate(var(--a)) translateY(-138px) !important;
+    width: 58px !important;
+    margin: -29px !important;
+  }
+  .zodiac-wheel .z-sign .z-logo-img,
+  .zodiac-wheel .z-sign .z-glyph {
+    width: 42px !important;
+    height: 42px !important;
+  }
+  .zodiac-wheel .z-sign b {
+    font-size: 8.5px !important;
+  }
+}
+/* ========== END FIX ========== */
+
 </style>
 <script>
 // Direct Razorpay checkout: paid actions open Razorpay immediately.
