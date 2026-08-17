@@ -8,8 +8,10 @@
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/[...path].js" },
     { "source": "/images/zodiac_gold/:sign\\.(png|jpg|jpeg|svg|webp)", "destination": "/images/zodiac/:sign.png" },
+    { "source": "/public/images/zodiac_gold/:sign\\.(png|jpg|jpeg|svg|webp)", "destination": "/images/zodiac/:sign.png" },
     { "source": "/public/images/:path*", "destination": "/images/:path*" },
     { "source": "/public/favicon.svg", "destination": "/favicon.svg" },
     { "source": "/public/manifest.json", "destination": "/manifest.json" }
   ]
 }
+
