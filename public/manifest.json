@@ -1,0 +1,22 @@
+{
+  "name": "Jyotish Vimarsha — Sacred Vedic Astrology",
+  "short_name": "Jyotish Vimarsha",
+  "description": "Sacred Vedic Birth Chart Reading, Live Sidereal Ephemeris, Dainik Panchang, and Kundli Matching.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#070e1c",
+  "theme_color": "#0c1830",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "128x128 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/public/images/celestial_zodiac_mandala.svg",
+      "sizes": "800x800",
+      "type": "image/svg+xml"
+    }
+  ]
+}
