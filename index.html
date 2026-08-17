@@ -7458,15 +7458,12 @@ function getZodiacSvgUrl(signStr) {
 function handleZodiacImgError(imgEl, signKey) {
   if (!imgEl) return;
   const key = getZodiacSignKey(signKey || imgEl.alt || 'aries');
-  if (!imgEl.dataset.retryCount) {
-    imgEl.dataset.retryCount = '1';
+  const count = parseInt(imgEl.dataset.retryCount || '0', 10);
+  imgEl.dataset.retryCount = String(count + 1);
+  if (count === 0) {
     imgEl.src = `/public/images/zodiac_gold/${key}.png`;
-  } else if (imgEl.dataset.retryCount === '1') {
-    imgEl.dataset.retryCount = '2';
-    imgEl.src = `/images/zodiac/${key}.png`;
-  } else if (imgEl.dataset.retryCount === '2') {
-    imgEl.dataset.retryCount = '3';
-    imgEl.src = `/public/images/zodiac/${key}.png`;
+  } else if (count === 1) {
+    imgEl.src = `/images/zodiac_gold/${key}.png`;
   }
 }
 window.getZodiacSignKey = getZodiacSignKey;

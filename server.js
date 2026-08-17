@@ -21,11 +21,11 @@ app.get(['/images/zodiac/:sign.:ext', '/images/zodiac_gold/:sign.:ext', '/public
   const sign = req.params.sign.toLowerCase().replace(/[^a-z]/g, '');
   const ext = (req.params.ext || 'png').toLowerCase();
   
-  // Preferred search paths: PNG gold first, then SVG
+  // Preferred search paths: PNG gold medallions first
   const candidates = [
     path.join(process.cwd(), 'public', 'images', 'zodiac_gold', `${sign}.png`),
-    path.join(process.cwd(), 'public', 'images', 'zodiac', `${sign}.svg`),
-    path.join(process.cwd(), 'public', 'images', 'zodiac_svg', `${sign}.svg`)
+    path.join(process.cwd(), 'public', 'images', 'zodiac', `${sign}.png`),
+    path.join(process.cwd(), 'public', 'images', 'zodiac', `${sign}.svg`)
   ];
 
   for (const candidate of candidates) {
