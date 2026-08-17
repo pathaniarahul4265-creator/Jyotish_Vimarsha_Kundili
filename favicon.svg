@@ -1,33 +1,37 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
   <defs>
-    <radialGradient id="bgGlow" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#183044"/>
-      <stop offset="100%" stop-color="#050b12"/>
+    <radialGradient id="favBg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#0c1830" />
+      <stop offset="60%" stop-color="#070c18" />
+      <stop offset="100%" stop-color="#03060c" />
     </radialGradient>
-    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#fce8af"/>
-      <stop offset="50%" stop-color="#d8a04c"/>
-      <stop offset="100%" stop-color="#a2752e"/>
+    <linearGradient id="favGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fff8e6" />
+      <stop offset="35%" stop-color="#f5dc9e" />
+      <stop offset="70%" stop-color="#dfad52" />
+      <stop offset="100%" stop-color="#9a6b16" />
     </linearGradient>
-    <linearGradient id="aquaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#9ee0dc"/>
-      <stop offset="100%" stop-color="#519e99"/>
+    <linearGradient id="favSilver" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#9bb3c7" />
     </linearGradient>
   </defs>
-  <!-- Background disc with gold ring -->
-  <circle cx="32" cy="32" r="30" fill="url(#bgGlow)" stroke="url(#goldGrad)" stroke-width="1.5"/>
-  
-  <!-- Outer zodiac tick ring -->
-  <circle cx="32" cy="32" r="26" fill="none" stroke="url(#goldGrad)" stroke-width="0.8" stroke-dasharray="2 3.4" opacity="0.85"/>
-  <circle cx="32" cy="32" r="23" fill="none" stroke="#7fc5c0" stroke-width="0.5" opacity="0.6"/>
-
-  <!-- Kundli / Vedic Chart Sacred Diamond -->
-  <rect x="18.5" y="18.5" width="27" height="27" rx="1.5" fill="none" stroke="url(#goldGrad)" stroke-width="1.2"/>
-  <path d="M32 18.5 L45.5 32 L32 45.5 L18.5 32 Z" fill="none" stroke="url(#aquaGrad)" stroke-width="1" opacity="0.9"/>
-  <path d="M18.5 18.5 L45.5 45.5 M45.5 18.5 L18.5 45.5" stroke="url(#goldGrad)" stroke-width="0.7" opacity="0.5"/>
-
-  <!-- Central Celestial Bindu & Star Rays -->
-  <path d="M32 21 V43 M21 32 H43" stroke="url(#goldGrad)" stroke-width="0.9" opacity="0.75"/>
-  <circle cx="32" cy="32" r="3.5" fill="url(#goldGrad)"/>
-  <circle cx="32" cy="32" r="1.5" fill="#ffffff"/>
+  <circle cx="64" cy="64" r="62" fill="url(#favBg)" stroke="url(#favGold)" stroke-width="2.5" />
+  <circle cx="64" cy="64" r="56" fill="none" stroke="url(#favSilver)" stroke-width="0.8" stroke-dasharray="2,3" opacity="0.8" />
+  <circle cx="64" cy="64" r="46" fill="none" stroke="url(#favGold)" stroke-width="1" opacity="0.6" />
+  <!-- 12 Star Nodes on rim -->
+  <g fill="url(#favGold)">
+    <circle cx="64" cy="18" r="2" /><circle cx="87" cy="24" r="1.5" /><circle cx="104" cy="41" r="1.5" />
+    <circle cx="110" cy="64" r="2" /><circle cx="104" cy="87" r="1.5" /><circle cx="87" cy="104" r="1.5" />
+    <circle cx="64" cy="110" r="2" /><circle cx="41" cy="104" r="1.5" /><circle cx="24" cy="87" r="1.5" />
+    <circle cx="18" cy="64" r="2" /><circle cx="24" cy="41" r="1.5" /><circle cx="41" cy="24" r="1.5" />
+  </g>
+  <!-- 8 Petal Lotus Star Geometry -->
+  <g stroke="url(#favGold)" stroke-width="1" fill="rgba(242,215,146,0.08)">
+    <polygon points="64,28 72,56 100,64 72,72 64,100 56,72 28,64 56,56" />
+    <polygon points="64,32 70,58 96,64 70,70 64,96 58,70 32,64 58,58" transform="rotate(45 64 64)" stroke="url(#favSilver)" stroke-width="0.8" />
+  </g>
+  <!-- Center Sacred Om -->
+  <circle cx="64" cy="64" r="22" fill="#070e1c" stroke="url(#favGold)" stroke-width="1.6" />
+  <text x="64" y="74" font-family="'Noto Serif Devanagari', 'Cinzel', serif" font-size="28" font-weight="bold" fill="url(#favGold)" text-anchor="middle">ॐ</text>
 </svg>

@@ -5,13 +5,11 @@
       "maxDuration": 60
     }
   },
-  "routes": [
-    { "src": "/images/zodiac/(.*)\\.(png|jpg|jpeg|svg|webp)", "dest": "/public/images/zodiac_gold/$1.png" },
-    { "src": "/images/zodiac_gold/(.*)", "dest": "/public/images/zodiac_gold/$1" },
-    { "src": "/images/(.*)", "dest": "/public/images/$1" },
-    { "src": "/favicon.svg", "dest": "/public/favicon.svg" },
-    { "src": "/api/(.*)", "dest": "/api/[...path].js" },
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/index.html" }
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/[...path].js" },
+    { "source": "/images/zodiac_gold/:sign\\.(png|jpg|jpeg|svg|webp)", "destination": "/images/zodiac/:sign.png" },
+    { "source": "/public/images/:path*", "destination": "/images/:path*" },
+    { "source": "/public/favicon.svg", "destination": "/favicon.svg" },
+    { "source": "/public/manifest.json", "destination": "/manifest.json" }
   ]
 }

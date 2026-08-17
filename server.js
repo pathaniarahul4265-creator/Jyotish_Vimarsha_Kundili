@@ -11,7 +11,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Serve static assets with explicit mappings
 app.use('/images', express.static(path.join(process.cwd(), 'public', 'images')));
-app.use('/images', express.static(path.join(process.cwd(), 'images')));
+app.use('/public/images', express.static(path.join(process.cwd(), 'public', 'images')));
 app.use('/public', express.static(path.join(process.cwd(), 'public')));
 app.use(express.static(path.join(process.cwd(), 'public')));
 app.use(express.static(process.cwd()));
@@ -19,12 +19,10 @@ app.use(express.static(process.cwd()));
 // Direct handler for zodiac images - serve high quality PNG medallions
 app.get(['/images/zodiac/:sign.:ext', '/images/zodiac_gold/:sign.:ext', '/public/images/zodiac/:sign.:ext', '/public/images/zodiac_gold/:sign.:ext'], (req, res, next) => {
   const sign = req.params.sign.toLowerCase().replace(/[^a-z]/g, '');
-  const ext = (req.params.ext || 'png').toLowerCase();
-  
-  // Preferred search paths: PNG gold medallions first
   const candidates = [
-    path.join(process.cwd(), 'public', 'images', 'zodiac_gold', `${sign}.png`),
     path.join(process.cwd(), 'public', 'images', 'zodiac', `${sign}.png`),
+    path.join(process.cwd(), 'public', 'images', 'zodiac_gold', `${sign}.png`),
+    path.join(process.cwd(), 'images', 'zodiac', `${sign}.png`),
     path.join(process.cwd(), 'public', 'images', 'zodiac', `${sign}.svg`)
   ];
 
@@ -37,6 +35,21 @@ app.get(['/images/zodiac/:sign.:ext', '/images/zodiac_gold/:sign.:ext', '/public
     }
   }
   next();
+});
+
+// Explicit favicon handler
+app.get(['/favicon.svg', '/public/favicon.svg', '/favicon.ico'], (req, res) => {
+  const p = path.join(process.cwd(), 'public', 'favicon.svg');
+  if (fs.existsSync(p)) {
+    res.setHeader('Content-Type', 'image/svg+xml');
+    return res.sendFile(p);
+  }
+  const rootFav = path.join(process.cwd(), 'favicon.svg');
+  if (fs.existsSync(rootFav)) {
+    res.setHeader('Content-Type', 'image/svg+xml');
+    return res.sendFile(rootFav);
+  }
+  res.status(404).end();
 });
 
 // Handle API routes
