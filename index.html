@@ -571,9 +571,9 @@ footer{text-align:center;color:var(--muted);font-size:13px;margin-top:44px;lette
   .z-sign:hover:before, .z-sign.is-active:before{border-color:#ffe8b5;box-shadow:0 0 22px rgba(255,232,181,.75),inset 0 0 22px rgba(255,232,181,.35);}
   .z-sign:hover .z-logo-img, .z-sign.is-active .z-logo-img{border-color:#ffe8b5;outline-color:rgba(255,232,181,.85);box-shadow:0 0 25px rgba(255,232,181,1), 0 0 50px rgba(127,197,192,.7), inset 0 0 12px rgba(0,0,0,.95);filter:saturate(1.4) contrast(1.15) brightness(1.18);transform:scale(1.12);}
   .zodiac-wheel:hover, .zodiac-wheel:hover .z-sign, .zodiac-wheel:hover .wheel-core, .zodiac-wheel:hover:after{animation-play-state:paused!important;}
-  .astrology-intro{min-height:790px;border-color:rgba(232,194,116,.30);background:radial-gradient(circle at 78% 20%,rgba(105,78,208,.30),transparent 27%),radial-gradient(circle at 14% 76%,rgba(214,115,45,.13),transparent 28%),radial-gradient(circle at 62% 85%,rgba(41,118,170,.10),transparent 30%),linear-gradient(145deg,rgba(11,8,30,.96),rgba(4,4,15,.95));box-shadow:0 35px 120px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.08);}
+  .astrology-intro{min-height:auto;padding:38px 40px 32px;border-color:rgba(232,194,116,.30);background:radial-gradient(circle at 78% 20%,rgba(105,78,208,.20),transparent 27%),radial-gradient(circle at 14% 76%,rgba(214,115,45,.10),transparent 28%),linear-gradient(145deg,rgba(11,8,30,.96),rgba(4,4,15,.95));box-shadow:0 35px 120px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.08);}
   .astrology-intro:before{content:"✦  ✧  ·  ✦  ·  ✧  ✦  ·  ✧  ✦";position:absolute;right:26px;bottom:20px;color:rgba(232,194,116,.20);font-size:11px;letter-spacing:.55em;pointer-events:none;z-index:1;}
-  .mystery-quote{font-size:22px;color:#efe0bf;max-width:650px;}
+  .mystery-quote{font-size:22px;color:#efe0bf;max-width:850px;}
   .sanskrit-opening{padding:10px 0 14px;border-top:1px solid rgba(232,194,116,.10);border-bottom:1px solid rgba(232,194,116,.10);}
   .sanskrit-opening div{font-family:'Yatra One','Cormorant Garamond',serif;font-size:25px;color:#f0d494;letter-spacing:.04em;}
   .sanskrit-opening span{font-family:'Yatra One','Cormorant Garamond',serif;font-size:22px;color:#f6e7bd;}
@@ -598,8 +598,8 @@ footer{text-align:center;color:var(--muted);font-size:13px;margin-top:44px;lette
   .report h3{scroll-margin-top:20px;}
   .visual-card,.placement-table-card,.timeline-card,.glossary-card{border-top:1px solid rgba(232,194,116,.20);}
   .visual-card h3,.placement-table-card h3,.timeline-card h3,.glossary-card h3{margin-top:0!important;}
-  @media(max-width:1000px){.zodiac-wheel{width:390px;height:390px;right:auto;}.astrology-intro{min-height:auto}.astrology-intro h2{font-size:40px;}}
-  @media(max-width:680px){.astrology-intro h2{font-size:31px}.zodiac-wheel{width:315px;height:315px}.z-sign{font-size:27px;width:62px;height:62px;margin:-31px}.zodiac-wheel .wheel-core{width:100px;height:100px}.wheel-core span{font-size:30px}.mystery-quote{font-size:19px}}
+  @media(max-width:1000px){.astrology-intro{min-height:auto;padding:28px 22px;}.astrology-intro h2{font-size:40px;}}
+  @media(max-width:680px){.astrology-intro h2{font-size:31px}.mystery-quote{font-size:19px}}
 
 
 /* ===== Premium celestial theme system ===== */
@@ -637,6 +637,7 @@ body{transition:color .5s ease,background-color .5s ease}
   --line: rgba(216,160,76,0.28); --accent: #d8a04c; --accent2: #7fc5c0;
   --glow: rgba(216,160,76,0.22); --cosmic-hue: 220deg;
   --bg-gradient: radial-gradient(circle at 50% 20%, #151a3a 0%, #080b18 55%, #03040a 100%);
+  --heading-bright: #fff3db;
 }
 html[data-theme="dawn"], body[data-theme="dawn"] {
   --night: #12091c; --night2: #1c0e2b; --panel: #26143a; --panel2: #301a48;
@@ -644,6 +645,7 @@ html[data-theme="dawn"], body[data-theme="dawn"] {
   --line: rgba(226,140,176,0.32); --accent: #e28cb0; --accent2: #fbcfe8;
   --glow: rgba(226,140,176,0.24); --cosmic-hue: 290deg;
   --bg-gradient: radial-gradient(circle at 50% 20%, #2b143c 0%, #150922 55%, #0a0412 100%);
+  --heading-bright: #fce7f3;
 }
 html[data-theme="temple"], body[data-theme="temple"] {
   --night: #0a0804; --night2: #141008; --panel: #1e170c; --panel2: #281f10;
@@ -651,6 +653,7 @@ html[data-theme="temple"], body[data-theme="temple"] {
   --line: rgba(255,215,0,0.35); --accent: #ffd700; --accent2: #f59e0b;
   --glow: rgba(255,215,0,0.28); --cosmic-hue: 45deg;
   --bg-gradient: radial-gradient(circle at 50% 20%, #291f0a 0%, #120e05 55%, #050402 100%);
+  --heading-bright: #fff8cc;
 }
 html[data-theme="lunar"], body[data-theme="lunar"] {
   --night: #060a12; --night2: #0c1220; --panel: #121c30; --panel2: #182540;
@@ -658,6 +661,7 @@ html[data-theme="lunar"], body[data-theme="lunar"] {
   --line: rgba(147,197,253,0.30); --accent: #93c5fd; --accent2: #cbd5e1;
   --glow: rgba(147,197,253,0.22); --cosmic-hue: 210deg;
   --bg-gradient: radial-gradient(circle at 50% 20%, #122240 0%, #091222 55%, #03060c 100%);
+  --heading-bright: #f0f9ff;
 }
 html[data-theme="saffron"], body[data-theme="saffron"] {
   --night: #140704; --night2: #200d07; --panel: #2e140b; --panel2: #3a1a0e;
@@ -665,8 +669,43 @@ html[data-theme="saffron"], body[data-theme="saffron"] {
   --line: rgba(255,153,51,0.32); --accent: #ff9933; --accent2: #fbbf24;
   --glow: rgba(255,153,51,0.25); --cosmic-hue: 20deg;
   --bg-gradient: radial-gradient(circle at 50% 20%, #351306 0%, #1a0802 55%, #0a0301 100%);
+  --heading-bright: #fff1e0;
 }
-@media(max-width:680px){.theme-switcher{position:relative;right:auto;top:auto;width:max-content;margin:0 0 18px auto}.zodiac-wheel .z-sign{animation:none}.zodiac-wheel .z-sign .z-glyph{animation:none}}
+html[data-theme="day"], body[data-theme="day"] {
+  --night: #f7f4ed; --night2: #ede7dc; --panel: #ffffff; --panel2: #f4ede2;
+  --gold: #b47e28; --gold-soft: #452c0e; --marigold: #c48b2e; --muted: #64748b;
+  --line: rgba(180,126,40,0.25); --accent: #b47e28; --accent2: #0284c7;
+  --glow: rgba(180,126,40,0.15); --cosmic-hue: 40deg;
+  --bg-gradient: radial-gradient(circle at 50% 20%, #fdfbf7 0%, #f4eee2 60%, #eae1d2 100%);
+  --heading-bright: #1e1509;
+}
+html[data-theme="day"] body {
+  color: #1e293b;
+}
+html[data-theme="day"] .card, html[data-theme="day"] .astrology-intro, html[data-theme="day"] .mode-tabs, html[data-theme="day"] .report-card {
+  background: #ffffff !important;
+  box-shadow: 0 12px 35px rgba(45,28,10,0.08), 0 1px 3px rgba(45,28,10,0.05) !important;
+  border-color: rgba(180,126,40,0.22) !important;
+}
+html[data-theme="day"] .hero h1, html[data-theme="day"] h2, html[data-theme="day"] h3, html[data-theme="day"] h4 {
+  color: #1e1509 !important;
+}
+html[data-theme="day"] p, html[data-theme="day"] li, html[data-theme="day"] .intro-lead {
+  color: #334155 !important;
+}
+html[data-theme="day"] input, html[data-theme="day"] select, html[data-theme="day"] textarea {
+  background: #fcfbfa !important;
+  color: #0f172a !important;
+  border-color: #d1c7b7 !important;
+}
+html[data-theme="day"] .sky-planet, html[data-theme="day"] .sign-chip, html[data-theme="day"] .astrology-pillars > div {
+  background: #fbf9f5 !important;
+  border-color: rgba(180,126,40,0.2) !important;
+}
+html[data-theme="day"] .header-brand-title {
+  color: #7c4a03 !important;
+}
+@media(max-width:680px){.theme-switcher{position:relative;right:auto;top:auto;width:max-content;margin:0 0 18px auto}}
 
 
 /* ===== Final premium UI refinement ===== */
@@ -4224,6 +4263,13 @@ body input, body select, body textarea {
           </div>
           <small>Deep maroon + saffron + gold</small>
         </div>
+        <div class="theme-opt" data-theme-val="day" onclick="setVedicTheme('day')">
+          <div class="theme-opt-header">
+            <span class="theme-dot" style="background:#f4eee2;border:1px solid #b47e28;"></span>
+            <b>Celestial Day</b>
+          </div>
+          <small>Parchment light + sharp gold + clean slate</small>
+        </div>
       </div>
     </div>
 
@@ -4445,12 +4491,11 @@ body input, body select, body textarea {
     <button class="theme-btn" type="button" data-theme-choice="temple" onclick="setVedicTheme('temple')" style="--swatch:#ffd700" aria-label="Golden Temple theme" title="Golden Temple"></button>
     <button class="theme-btn" type="button" data-theme-choice="lunar" onclick="setVedicTheme('lunar')" style="--swatch:#93c5fd" aria-label="Lunar Silver theme" title="Lunar Silver"></button>
     <button class="theme-btn" type="button" data-theme-choice="saffron" onclick="setVedicTheme('saffron')" style="--swatch:#ff9933" aria-label="Saffron Flame theme" title="Saffron Flame"></button>
+    <button class="theme-btn" type="button" data-theme-choice="day" onclick="setVedicTheme('day')" style="--swatch:#f4eee2;border-color:#b47e28!important;" aria-label="Celestial Day theme" title="Celestial Day"></button>
   </div>
 
-  <div class="intro-orbit orbit-a"></div><div class="intro-orbit orbit-b"></div>
-  <div class="intro-mystery-stars"></div>
-  <div class="intro-top-row">
-    <div class="intro-copy">
+  <div class="intro-top-row" style="display:block;max-width:1000px;margin:0 auto;">
+    <div class="intro-copy" style="max-width:100%;">
       <div class="intro-eyebrow">✦ A MAP OF TIME • A MIRROR OF PATTERNS • A LANGUAGE OF THE SKY</div>
       <div class="mystery-quote">“Some questions are not answered by looking farther ahead —<br><em>they begin by learning how to read the sky.</em>”</div>
       <div class="sanskrit-opening"><div>ॐ <span>ज्योतिषां ज्योतिः</span></div><small>Jyotiṣām Jyotiḥ — “the light among lights”</small></div>
@@ -4459,57 +4504,11 @@ body input, body select, body textarea {
       <p class="intro-lead">For thousands of years, people have watched the movement of the Sun, Moon and planets and searched for meaning in the rhythm of time. Astrology begins with that human curiosity: observing the heavens and using celestial cycles as a symbolic language for understanding life, temperament, relationships, choices and changing seasons.</p>
       <p class="intro-lead secondary-lead"><strong>Jyotish</strong>, the Indian tradition of astrology, takes that idea further through a birth chart — a symbolic map calculated for a particular moment and place. The chart brings together <strong>Rashis</strong> (zodiac signs), <strong>Bhavas</strong> (houses), <strong>Grahas</strong> (planetary influences), <strong>Nakshatras</strong> (lunar mansions), <strong>Yogas</strong> and <strong>Dashas</strong> to explore both <em>what</em> a pattern may signify and <em>when</em> it may become more prominent.</p>
       <div class="mystery-statement"><span>✧</span><div><b>Your chart is not a verdict.</b><small>It is a symbolic map of tendencies, cycles and possibilities — interpreted with context, not fear.</small></div></div>
-      <div class="intro-actions"><button class="secondary" id="beginReadingBtn" type="button">Open the birth chart <span>→</span></button><span class="intro-note">Your date • time • place become the key</span></div>
-    </div>
-    <div class="zodiac-side-col">
-      <div class="zodiac-wheel" aria-label="Twelve-sign Rashi wheel">
-        <div class="wheel-aura"></div><div class="wheel-glow"></div>
-        <div class="wheel-track track-one"></div><div class="wheel-track track-two"></div>
-        <div class="mandala-geometry" aria-hidden="true">
-          <svg viewBox="0 0 500 500" class="sacred-geom-svg">
-            <circle cx="250" cy="250" r="238" fill="none" stroke="rgba(242,215,146,0.38)" stroke-width="1.5" />
-            <circle cx="250" cy="250" r="218" fill="none" stroke="rgba(242,215,146,0.22)" stroke-width="1" stroke-dasharray="2,6" />
-            <circle cx="250" cy="250" r="185" fill="none" stroke="rgba(119,197,192,0.35)" stroke-width="1" />
-            <circle cx="250" cy="250" r="140" fill="none" stroke="rgba(242,215,146,0.28)" stroke-width="1.2" stroke-dasharray="4,8" />
-            <circle cx="250" cy="250" r="92" fill="none" stroke="rgba(214,155,69,0.38)" stroke-width="1" />
-            <g stroke="rgba(242,215,146,0.2)" stroke-width="0.85" fill="none">
-              <line x1="250" y1="12" x2="250" y2="488" />
-              <line x1="12" y1="250" x2="488" y2="250" />
-              <line x1="44" y1="131" x2="456" y2="369" />
-              <line x1="131" y1="44" x2="369" y2="456" />
-              <line x1="44" y1="369" x2="456" y2="131" />
-              <line x1="131" y1="456" x2="369" y2="44" />
-              <polygon points="250,32 468,250 250,468 32,250" stroke="rgba(242,215,146,0.25)" stroke-width="1" />
-              <polygon points="96,96 404,96 404,404 96,404" stroke="rgba(119,197,192,0.22)" stroke-width="0.9" />
-              <polygon points="250,85 393,332 107,332" stroke="rgba(242,215,146,0.32)" stroke-width="1.2" />
-              <polygon points="250,415 393,168 107,168" stroke="rgba(242,215,146,0.32)" stroke-width="1.2" />
-              <polygon points="250,120 363,315 137,315" stroke="rgba(214,155,69,0.28)" stroke-width="1" />
-              <polygon points="250,380 363,185 137,185" stroke="rgba(214,155,69,0.28)" stroke-width="1" />
-            </g>
-            <g fill="none" stroke="rgba(242,215,146,0.22)" stroke-width="0.8">
-              <circle cx="250" cy="110" r="30" opacity="0.35" />
-              <circle cx="320" cy="129" r="30" opacity="0.35" />
-              <circle cx="370" cy="180" r="30" opacity="0.35" />
-              <circle cx="390" cy="250" r="30" opacity="0.35" />
-              <circle cx="370" cy="320" r="30" opacity="0.35" />
-              <circle cx="320" cy="370" r="30" opacity="0.35" />
-              <circle cx="250" cy="390" r="30" opacity="0.35" />
-              <circle cx="180" cy="370" r="30" opacity="0.35" />
-              <circle cx="130" cy="320" r="30" opacity="0.35" />
-              <circle cx="110" cy="250" r="30" opacity="0.35" />
-              <circle cx="130" cy="180" r="30" opacity="0.35" />
-              <circle cx="180" cy="129" r="30" opacity="0.35" />
-            </g>
-          </svg>
-        </div>
-        <div class="wheel-core"><div class="celestial-crest" aria-hidden="true"><svg viewBox="0 0 64 64" role="img"><circle cx="32" cy="32" r="26" fill="none" stroke="currentColor" stroke-width="1" opacity=".7"/><circle cx="32" cy="32" r="18" fill="none" stroke="currentColor" stroke-width="1" opacity=".45"/><path d="M32 7v50M7 32h50M14 14l36 36M50 14L14 50" stroke="currentColor" stroke-width=".8" opacity=".35"/><circle cx="32" cy="32" r="5" fill="currentColor" opacity=".9"/></svg></div><small>RASHI<br>MANDALA</small></div>
-        <span class="z-sign z1" onclick="openSpecificZodiacModal('aries'); selectRashifalSign('aries'); event.stopPropagation();" title="Click for Aries / Mesha Daily Horoscope & Analysis" aria-label="Aries · Mesha"><img src="/images/zodiac_gold/aries.png" class="z-logo-img" alt="Aries" width="58" height="58" loading="eager" /><b>MESHA</b></span><span class="z-sign z2" onclick="openSpecificZodiacModal('taurus'); selectRashifalSign('taurus'); event.stopPropagation();" title="Click for Taurus / Vrishabha Daily Horoscope & Analysis" aria-label="Taurus · Vrishabha"><img src="/images/zodiac_gold/taurus.png" class="z-logo-img" alt="Taurus" width="58" height="58" loading="eager" /><b>VRISHABHA</b></span><span class="z-sign z3" onclick="openSpecificZodiacModal('gemini'); selectRashifalSign('gemini'); event.stopPropagation();" title="Click for Gemini / Mithuna Daily Horoscope & Analysis" aria-label="Gemini · Mithuna"><img src="/images/zodiac_gold/gemini.png" class="z-logo-img" alt="Gemini" width="58" height="58" loading="eager" /><b>MITHUNA</b></span><span class="z-sign z4" onclick="openSpecificZodiacModal('cancer'); selectRashifalSign('cancer'); event.stopPropagation();" title="Click for Cancer / Karka Daily Horoscope & Analysis" aria-label="Cancer · Karka"><img src="/images/zodiac_gold/cancer.png" class="z-logo-img" alt="Cancer" width="58" height="58" loading="eager" /><b>KARKA</b></span><span class="z-sign z5" onclick="openSpecificZodiacModal('leo'); selectRashifalSign('leo'); event.stopPropagation();" title="Click for Leo / Simha Daily Horoscope & Analysis" aria-label="Leo · Simha"><img src="/images/zodiac_gold/leo.png" class="z-logo-img" alt="Leo" width="58" height="58" loading="eager" /><b>SIMHA</b></span><span class="z-sign z6" onclick="openSpecificZodiacModal('virgo'); selectRashifalSign('virgo'); event.stopPropagation();" title="Click for Virgo / Kanya Daily Horoscope & Analysis" aria-label="Virgo · Kanya"><img src="/images/zodiac_gold/virgo.png" class="z-logo-img" alt="Virgo" width="58" height="58" loading="eager" /><b>KANYA</b></span><span class="z-sign z7" onclick="openSpecificZodiacModal('libra'); selectRashifalSign('libra'); event.stopPropagation();" title="Click for Libra / Tula Daily Horoscope & Analysis" aria-label="Libra · Tula"><img src="/images/zodiac_gold/libra.png" class="z-logo-img" alt="Libra" width="58" height="58" loading="eager" /><b>TULA</b></span><span class="z-sign z8" onclick="openSpecificZodiacModal('scorpio'); selectRashifalSign('scorpio'); event.stopPropagation();" title="Click for Scorpio / Vrischika Daily Horoscope & Analysis" aria-label="Scorpio · Vrischika"><img src="/images/zodiac_gold/scorpio.png" class="z-logo-img" alt="Scorpio" width="58" height="58" loading="eager" /><b>VRISCHIKA</b></span><span class="z-sign z9" onclick="openSpecificZodiacModal('sagittarius'); selectRashifalSign('sagittarius'); event.stopPropagation();" title="Click for Sagittarius / Dhanu Daily Horoscope & Analysis" aria-label="Sagittarius · Dhanu"><img src="/images/zodiac_gold/sagittarius.png" class="z-logo-img" alt="Sagittarius" width="58" height="58" loading="eager" /><b>DHANU</b></span><span class="z-sign z10" onclick="openSpecificZodiacModal('capricorn'); selectRashifalSign('capricorn'); event.stopPropagation();" title="Click for Capricorn / Makara Daily Horoscope & Analysis" aria-label="Capricorn · Makara"><img src="/images/zodiac_gold/capricorn.png" class="z-logo-img" alt="Capricorn" width="58" height="58" loading="eager" /><b>MAKARA</b></span><span class="z-sign z11" onclick="openSpecificZodiacModal('aquarius'); selectRashifalSign('aquarius'); event.stopPropagation();" title="Click for Aquarius / Kumbha Daily Horoscope & Analysis" aria-label="Aquarius · Kumbha"><img src="/images/zodiac_gold/aquarius.png" class="z-logo-img" alt="Aquarius" width="58" height="58" loading="eager" /><b>KUMBHA</b></span><span class="z-sign z12" onclick="openSpecificZodiacModal('pisces'); selectRashifalSign('pisces'); event.stopPropagation();" title="Click for Pisces / Meena Daily Horoscope & Analysis" aria-label="Pisces · Meena"><img src="/images/zodiac_gold/pisces.png" class="z-logo-img" alt="Pisces" width="58" height="58" loading="eager" /><b>MEENA</b></span>
-      </div>
-      <div class="rashi-detail" id="rashiDetail" aria-live="polite"><b>Rashi</b><small>Click a sign to explore its element, quality, ruler and archetype.</small></div>
+      <div class="intro-actions" style="margin-top:24px;"><button class="secondary" id="beginReadingBtn" type="button" onclick="document.getElementById('modeSelector').scrollIntoView({behavior:'smooth',block:'start'})">Open the birth chart <span>→</span></button><span class="intro-note">Your date • time • place become the key</span></div>
     </div>
   </div>
 
-  <div class="astrology-pillars">
+  <div class="astrology-pillars" style="margin-top:32px;">
     <div onclick="openSpecificZodiacModal('aries'); selectRashifalSign('aries');" style="cursor:pointer;" title="Click to explore the 12 Vedic Rashis"><img src="/images/zodiac_gold/aries.png" class="rashi-pillar-img" alt="Rashis" /><strong>Rashis</strong><small>The twelve signs describe the field and style in which planetary themes unfold.</small></div>
     <div><span>☉</span><strong>Grahas</strong><small>The Sun, Moon and planets represent different functions, drives and experiences.</small></div>
     <div><span>⌂</span><strong>Bhavas</strong><small>The twelve houses connect those influences to distinct areas of life.</small></div>
@@ -7843,33 +7842,59 @@ function formatReportSectionHtml(text){
 
 function cleanVisibleSectionText(text){
   return cleanAstroText(text)
-    .replace(/^[•\-–—\s]*(?:Sun|Moon|Mars|Mercury|Jupiter|Venus|Saturn|Rahu|Ketu)\s*\|\s*[^|]+\s*\|\s*\d{1,2}(?:st|nd|rd|th)?\s*(?:house|bhava)?\s*\|\s*[^|]+$/gim,'')
-    .replace(/^LAGNA\s*\|\s*.+$/gim,'')
-    .replace(/^MOON\s+SIGN\s*\|\s*.+$/gim,'')
-    .replace(/^AREA\s*\|\s*INTERPRETATION\s*\|\s*ASTROLOGICAL BASIS\s*\|\s*TIMING$/gim,'')
+    .replace(/^[•\-–—\s]*(?:Sun|Moon|Mars|Mercury|Jupiter|Venus|Saturn|Rahu|Ketu|सूर्य|चन्द्र|मंगल|बुध|बृहस्पति|गुरु|शुक्र|शनि|राहु|केतु)\s*\|\s*[^|]+\s*\|\s*\d{1,2}(?:st|nd|rd|th|वाँ|वां|th)?\s*(?:house|bhava|भाव)?\s*\|\s*[^|]+$/gim,'')
+    .replace(/^(?:LAGNA|लग्न)\s*\|\s*.+$/gim,'')
+    .replace(/^(?:MOON\s+SIGN|चंद्र\s*राशि)\s*\|\s*.+$/gim,'')
+    .replace(/^(?:AREA|क्षेत्र)\s*\|\s*(?:INTERPRETATION|जीवन पर प्रभाव|प्रभाव)\s*\|\s*(?:ASTROLOGICAL BASIS|ज्योतिषीय आधार|आधार)\s*\|\s*(?:TIMING|कालखंड|समय)$/gim,'')
     .replace(/\n{3,}/g,'\n\n').trim();
 }
 
 function renderInterpretationTable(){
   const card=document.getElementById('interpretationTableCard'); if(!card) return;
+  const isHi = window.currentVedicLang === 'hi';
+  const h3 = card.querySelector('h3');
+  if(h3) h3.textContent = isHi ? 'जीवन-क्षेत्र फलकथन मानचित्र (Life-Area Interpretation Map)' : 'Life-Area Interpretation Map';
+  const thead = card.querySelector('thead');
+  if(thead) thead.innerHTML = `<tr><th>${isHi ? 'क्षेत्र (Life Area)' : 'Area'}</th><th>${isHi ? 'जीवन पर प्रभाव (What it means)' : 'What it means for you'}</th><th>${isHi ? 'ज्योतिषीय आधार (Astrological Basis)' : 'Why the chart says this'}</th><th>${isHi ? 'कालखंड (Timing)' : 'Timing'}</th></tr>`;
+
   const tbody=document.getElementById('interpretationTableBody');
-  const match=fullReportText.match(/## Strengths, purpose and closing synthesis\n\n([\s\S]*?)(?=\n\n## |$)/i);
+  const match=fullReportText.match(/## (?:Strengths, purpose and closing synthesis|शक्तियां, जीवन का मूल उद्देश्य एवं अंतिम समग्र निष्कर्ष)\n\n([\s\S]*?)(?=\n\n## |$)/i);
   const text=match?match[1]:fullReportText;
   const rows=[];
+  const areaLabels = {
+    career: isHi ? 'करियर व आजीविका (Career)' : 'Career',
+    relationships: isHi ? 'प्रेम व संबंध (Relationships)' : 'Relationships',
+    wealth: isHi ? 'धन व संपदा (Wealth)' : 'Wealth',
+    'personal growth': isHi ? 'आत्म-विकास (Personal Growth)' : 'Personal Growth',
+    family: isHi ? 'परिवार व गृहस्थी (Family)' : 'Family',
+    'inner life': isHi ? 'आंतरिक चेतना (Inner Life)' : 'Inner Life',
+    spirituality: isHi ? 'अध्यात्म व धर्म (Spirituality)' : 'Spirituality',
+    health: isHi ? 'स्वास्थ्य व ऊर्जा (Health)' : 'Health'
+  };
+
   text.split('\n').forEach(line=>{
     let parts=line.split('|').map(x=>cleanAstroText(x.trim())).filter(x => x !== '');
-    if(parts.length>=4 && ['Career','Relationships','Wealth','Personal Growth','Family','Inner Life','Spirituality','Health'].some(a=>parts[0].toLowerCase().includes(a.toLowerCase()))){
+    if(parts.length>=4 && ['Career','Relationships','Wealth','Personal Growth','Family','Inner Life','Spirituality','Health','करियर','संबंध','धन','विकास','परिवार','चेतना','अध्यात्म','स्वास्थ्य'].some(a=>parts[0].toLowerCase().includes(a.toLowerCase()))){
       rows.push(parts.slice(0,4));
     }
   });
   if(!rows.length){card.style.display='none';return;}
   card.style.display='block';
-  tbody.innerHTML=rows.map(r=>`<tr>
-    <td style="font-weight:700;color:var(--gold-soft);white-space:nowrap;">${escapeHtml(r[0])}</td>
-    <td style="line-height:1.65;">${escapeHtml(r[1])}</td>
-    <td style="color:#7fc5c0;font-size:13.5px;">${escapeHtml(r[2])}</td>
-    <td style="font-weight:600;color:#fce7b0;font-size:13.5px;">${escapeHtml(r[3])}</td>
-  </tr>`).join('');
+  tbody.innerHTML=rows.map(r=>{
+    let displayArea = r[0];
+    for (const key in areaLabels) {
+      if (displayArea.toLowerCase().includes(key)) {
+        displayArea = areaLabels[key];
+        break;
+      }
+    }
+    return `<tr>
+      <td style="font-weight:700;color:var(--gold-soft);white-space:nowrap;">${escapeHtml(displayArea)}</td>
+      <td style="line-height:1.65;">${escapeHtml(r[1])}</td>
+      <td style="color:#7fc5c0;font-size:13.5px;">${escapeHtml(r[2])}</td>
+      <td style="font-weight:600;color:#fce7b0;font-size:13.5px;">${escapeHtml(r[3])}</td>
+    </tr>`;
+  }).join('');
 }
 
 function extractChartData(text){
@@ -8016,16 +8041,36 @@ function renderPanchangReportCard(){
 
 function renderPlacementTable(){
   const card=document.getElementById('placementTableCard'); if(!card) return;
+  const isHi = window.currentVedicLang === 'hi';
+  const h3 = card.querySelector('h3');
+  if(h3) h3.textContent = isHi ? 'ग्रह स्थिति एवं भाव सारणी (Planetary Placements)' : 'Planetary Placement Table';
+  const thead = card.querySelector('thead');
+  if(thead) thead.innerHTML = `<tr><th>${isHi ? 'ग्रह (Graha)' : 'Graha'}</th><th>${isHi ? 'राशि (Rashi)' : 'Rashi'}</th><th>${isHi ? 'अंश (Degree)' : 'Degree'}</th><th>${isHi ? 'भाव (House)' : 'House'}</th><th>${isHi ? 'गति (Motion)' : 'Motion'}</th><th>${isHi ? 'अवस्था (Dignity)' : 'Dignity'}</th></tr>`;
+
   const data=extractChartData(fullReportText);
   const rows=Object.entries(data.signs);
   if(!rows.length){ card.style.display='none'; return; }
   card.style.display='block';
   const tbody=document.getElementById('placementTableBody');
+  const planetLabels = {
+    Sun: isHi ? 'सूर्य (Sun)' : 'Sun',
+    Moon: isHi ? 'चन्द्र (Moon)' : 'Moon',
+    Mars: isHi ? 'मंगल (Mars)' : 'Mars',
+    Mercury: isHi ? 'बुध (Mercury)' : 'Mercury',
+    Jupiter: isHi ? 'बृहस्पति (Jupiter)' : 'Jupiter',
+    Venus: isHi ? 'शुक्र (Venus)' : 'Venus',
+    Saturn: isHi ? 'शनि (Saturn)' : 'Saturn',
+    Rahu: isHi ? 'राहु (Rahu)' : 'Rahu',
+    Ketu: isHi ? 'केतु (Ketu)' : 'Ketu'
+  };
+
   tbody.innerHTML=rows.map(([p,sign])=>{
     const svgUrl = getZodiacSvgUrl(sign);
     const signKey = getZodiacSignKey(sign);
+    const pLabel = planetLabels[p] || p;
+    const motionLabel = data.retrograde?.[p] ? (isHi ? 'वक्री (Retrograde)' : 'Retrograde') : (isHi ? 'मार्गी (Direct)' : 'Direct');
     return `<tr>
-      <td><b>${p}</b></td>
+      <td><b>${pLabel}</b></td>
       <td>
         <span onclick="openSpecificZodiacModal('${signKey}'); selectRashifalSign('${signKey}');" style="display:inline-flex;align-items:center;gap:7px;cursor:pointer;" title="Explore ${sign} details">
           <img src="${svgUrl}" style="width:22px;height:22px;border-radius:50%;border:1.2px solid #fce7b0;box-shadow:0 0 8px rgba(242,215,146,0.6);vertical-align:middle;flex-shrink:0;" alt="" />
@@ -8034,7 +8079,7 @@ function renderPlacementTable(){
       </td>
       <td>${data.degrees?.[p]!=null?formatDegree(data.degrees[p]):'—'}</td>
       <td>${data.placements[p]||'—'}</td>
-      <td>${data.retrograde?.[p]?'Retrograde':'Direct'}</td>
+      <td>${motionLabel}</td>
       <td>${data.dignity[p]||'—'}</td>
     </tr>`;
   }).join('');
@@ -8045,28 +8090,80 @@ function renderPlacementTable(){
     const moonSvg = getZodiacSvgUrl(data.moonSign || data.signs.Moon);
     const lagnaKey = getZodiacSignKey(data.lagna);
     const moonKey = getZodiacSignKey(data.moonSign || data.signs.Moon);
+    const lagnaText = data.lagna ? formatRashiNameWithHindi(data.lagna) : (isHi ? 'पंचांग खंड देखें' : 'See Panchang section');
+    const moonText = (data.moonSign || data.signs.Moon) ? formatRashiNameWithHindi(data.moonSign || data.signs.Moon) : (isHi ? 'पंचांग खंड देखें' : 'See Panchang section');
     meta.innerHTML=`<div style="display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:8px;">
       <span onclick="openSpecificZodiacModal('${lagnaKey}'); selectRashifalSign('${lagnaKey}');" style="display:inline-flex;align-items:center;gap:8px;background:rgba(242,215,146,0.1);padding:4px 12px;border-radius:20px;border:1px solid rgba(242,215,146,0.3);cursor:pointer;" title="Click for Lagna Rashi profile">
         <img src="${lagnaSvg}" style="width:24px;height:24px;border-radius:50%;border:1.5px solid #fce7b0;box-shadow:0 0 10px rgba(242,215,146,0.5);" alt="Lagna" />
-        <span>Lagna (Ascendant): <b>${formatRashiNameWithHindi(data.lagna||'See Panchang section')}</b></span>
+        <span>${isHi ? 'लग्न (Lagna / Ascendant):' : 'Lagna (Ascendant):'} <b>${lagnaText}</b></span>
       </span>
       <span onclick="openSpecificZodiacModal('${moonKey}'); selectRashifalSign('${moonKey}');" style="display:inline-flex;align-items:center;gap:8px;background:rgba(127,197,192,0.1);padding:4px 12px;border-radius:20px;border:1px solid rgba(127,197,192,0.3);cursor:pointer;" title="Click for Moon Sign profile">
         <img src="${moonSvg}" style="width:24px;height:24px;border-radius:50%;border:1.5px solid #7fc5c0;box-shadow:0 0 10px rgba(127,197,192,0.5);" alt="Moon sign" />
-        <span>Moon Sign (Chandra Rashi): <b>${formatRashiNameWithHindi(data.moonSign||data.signs.Moon||'See Panchang section')}</b></span>
+        <span>${isHi ? 'चंद्र राशि (Chandra Rashi / Moon Sign):' : 'Moon Sign (Chandra Rashi):'} <b>${moonText}</b></span>
       </span>
     </div>`;
+  }
+}
+
+function buildAtAGlance(){
+  const card = document.getElementById('atAGlanceCard');
+  if(!card) return;
+  const isHi = window.currentVedicLang === 'hi';
+  const kicker = card.querySelector('.glance-kicker');
+  if(kicker) kicker.textContent = isHi ? 'आपकी कुंडली · एक नज़र में' : 'YOUR CHART · AT A GLANCE';
+  const h3 = card.querySelector('h3');
+  if(h3) h3.textContent = isHi ? 'यह कुंडली आपके जीवन के किन पहलुओं पर प्रकाश डालती है' : 'What this chart is asking you to understand';
+
+  const grid = document.getElementById('glanceGrid');
+  const data = extractChartData(fullReportText);
+  if(!Object.keys(data.signs).length && !fullReportText){ card.style.display = 'none'; return; }
+  
+  card.style.display = 'block';
+  if(grid){
+    grid.innerHTML = `
+      <div class="glance-item">
+        <span class="glance-tag">${isHi ? 'लग्न / आत्म-ऊर्जा' : 'LAGNA / CORE SELF'}</span>
+        <b>${data.lagna ? formatRashiNameWithHindi(data.lagna) : (isHi ? 'लग्न विश्लेषण जारी' : 'Analyzing Lagna')}</b>
+        <p>${isHi ? 'शारीरिक स्वास्थ्य, मानसिक शक्ति एवं जीवन पथ का मूल आधार।' : 'Shapes fundamental vitality, temperament, and life trajectory.'}</p>
+      </div>
+      <div class="glance-item">
+        <span class="glance-tag">${isHi ? 'चंद्र राशि / मन' : 'MOON / MIND'}</span>
+        <b>${(data.moonSign || data.signs.Moon) ? formatRashiNameWithHindi(data.moonSign || data.signs.Moon) : (isHi ? 'चंद्र विचार जारी' : 'Analyzing Moon')}</b>
+        <p>${isHi ? 'मानसिक शांति, भावनात्मक दृष्टिकोण एवं सहज प्रतिक्रियाओं का केंद्र।' : 'Governs emotional filters, inner instincts, and cognitive peace.'}</p>
+      </div>
+      <div class="glance-item">
+        <span class="glance-tag">${isHi ? 'सूर्य / आत्म-विश्वास' : 'SUN / SOUL'}</span>
+        <b>${data.signs.Sun ? formatRashiNameWithHindi(data.signs.Sun) : (isHi ? 'सूर्य विचार जारी' : 'Analyzing Sun')}</b>
+        <p>${isHi ? 'आत्म-सम्मान, अधिकार, महत्वाकांक्षा एवं नेतृत्व क्षमता का प्रतीक।' : 'Reflects self-esteem, authority, vitality, and inner purpose.'}</p>
+      </div>
+    `;
   }
 }
 
 function renderDashaTimeline(){
   const el=document.getElementById('dashaTimeline'), raw=document.getElementById('timelineRaw');
   if(!el) return;
-  const match=fullReportText.match(/## Dasha timeline and life phases\n\n([\s\S]*?)(?=\n\n## |$)/i);
+  const isHi = window.currentVedicLang === 'hi';
+  const h3 = document.querySelector('#timelineVisualCard h3');
+  if(h3) h3.textContent = isHi ? 'सक्रिय विंशोत्तरी दशा व जीवन कालखंड' : 'Interactive Dasha & Life-Phase Timeline';
+  
+  const detailGrid = document.getElementById('dashaDetailGrid');
+  if(detailGrid){
+    detailGrid.innerHTML = `
+      <div class="dasha-detail-card"><b>${isHi ? 'वर्तमान दशा चरण' : 'Current phase'}</b><span>${isHi ? 'सक्रिय महादशा और अंतर्दशा का विश्लेषण रिपोर्ट तैयार होने पर यहाँ प्रदर्शित होगा।' : 'Current Mahadasha and Antardasha interpretation will appear here after the verified chart is generated.'}</span></div>
+      <div class="dasha-detail-card"><b>${isHi ? 'करियर व आर्थिक स्थिति' : 'Career & money'}</b><span>${isHi ? 'सक्रिय कालखंड आपके पेशेवर प्राथमिकताओं, अधिकार और आय के अवसरों को कैसे प्रभावित करता है।' : 'How the active period may change professional priorities, authority, income and opportunity.'}</span></div>
+      <div class="dasha-detail-card"><b>${isHi ? 'संबंध व आंतरिक चेतना' : 'Relationships & inner life'}</b><span>${isHi ? 'सक्रिय चक्र पारिवारिक सामंजस्य, आत्मविश्वास और प्राथमिकताओं को कैसे दिशा देता है।' : 'How the active cycle may influence attachment, family, confidence, learning and personal priorities.'}</span></div>
+    `;
+  }
+
+  const match=fullReportText.match(/## (?:Dasha timeline and life phases|विंशोत्तरी दशा समय-सारणी एवं जीवन के आगामी चरण)\n\n([\s\S]*?)(?=\n\n## |$)/i);
   const text=match?cleanAstroText(match[1]):'';
-  raw.textContent=text ? 'Detailed timeline analysis: '+text.slice(0,900)+(text.length>900?'…':'') : 'The detailed Dasha section will appear below as it is generated.';
-  const chunks=text.split(/(?=Current|Upcoming|Later|Mahadasha|Antardasha)/i).filter(x=>x.trim()).slice(0,3);
-  const labels=['Current phase','Upcoming phase','Later phase'];
-  el.innerHTML=labels.map((label,i)=>`<div class="timeline-phase"><b>${label}</b><span>${cleanAstroText(chunks[i] || 'See the Dasha timeline section below for the full planetary sequence and approximate timing.')}</span></div>`).join('');
+  if(raw) {
+    raw.textContent=text ? (isHi ? 'विस्तृत दशा समय-सारणी: ' : 'Detailed timeline analysis: ')+text.slice(0,900)+(text.length>900?'…':'') : (isHi ? 'दशा समय-सारणी का विस्तृत विश्लेषण नीचे स्वतः प्रदर्शित होगा।' : 'The detailed Dasha section will appear below as it is generated.');
+  }
+  const chunks=text.split(/(?=Current|Upcoming|Later|Mahadasha|Antardasha|वर्तमान|आगामी|उत्तर|महादशा|अंतर्दशा)/i).filter(x=>x.trim()).slice(0,3);
+  const labels=isHi ? ['वर्तमान चरण (Current)', 'आगामी चरण (Upcoming)', 'उत्तर चरण (Later)'] : ['Current phase','Upcoming phase','Later phase'];
+  el.innerHTML=labels.map((label,i)=>`<div class="timeline-phase"><b>${label}</b><span>${cleanAstroText(chunks[i] || (isHi ? 'पूर्ण ग्रहीय अनुक्रम और समय के लिए नीचे दिए गए दशा खंड को देखें।' : 'See the Dasha timeline section below for the full planetary sequence and approximate timing.'))}</span></div>`).join('');
 }
 
 function escapeHtml(v){return String(v).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","\'":"&#39;"}[m]||m));}
@@ -8075,15 +8172,27 @@ function extractSection(title){
   const m=fullReportText.match(re); return m?cleanAstroText(m[1]):'';
 }
 function renderClassicalModules(){
-  const kar=extractSection('Jaimini Karakas: Atmakaraka and Amatyakaraka');
-  const varga=extractSection('Divisional charts: Navamsa and Dashamsa');
-  const trans=extractSection('Sade Sati, Saturn and major transit windows');
-  const health=extractSection('Vitality, stress patterns, yogas and doshas');
+  const isHi = window.currentVedicLang === 'hi';
+  const karTitle = document.querySelector('#karakaCard h3');
+  if(karTitle) karTitle.textContent = isHi ? 'जैमिनी चर कारक: आत्मकारक व अमात्यकारक' : 'Jaimini Karakas';
+  const vargaTitle = document.querySelector('#vargaCard h3');
+  if(vargaTitle) vargaTitle.textContent = isHi ? 'वर्ग कुंडली विश्लेषण: नवांश (D9) व दशमांश (D10)' : 'Varga Compass';
+  const transitTitle = document.querySelector('#transitCard h3');
+  if(transitTitle) transitTitle.textContent = isHi ? 'गोचर व साढ़े साती स्थिति' : 'Transit & Sade Sati Snapshot';
+  const yogaTitle = document.querySelector('#yogaCard h3');
+  if(yogaTitle) yogaTitle.textContent = isHi ? 'शुभ राजयोग, धनयोग व दोष विश्लेषण' : 'Yogas, Doshas & Their Impact on Your Life';
+  const yogaThead = document.querySelector('#yogaCard thead');
+  if(yogaThead) yogaThead.innerHTML = `<tr><th>${isHi ? 'संयोजन (Yoga/Dosha)' : 'Combination'}</th><th>${isHi ? 'स्थिति (Status)' : 'Status'}</th><th>${isHi ? 'निर्माण (Formation)' : 'Formation'}</th><th>${isHi ? 'जीवन पर प्रभाव (Impact)' : 'Impact on life'}</th></tr>`;
+
+  const kar=extractSection('Jaimini Karakas: Atmakaraka and Amatyakaraka') || extractSection('जैमिनी चर कारक: आत्मकारक एवं अमात्यकारक विचार');
+  const varga=extractSection('Divisional charts: Navamsa and Dashamsa') || extractSection('वर्ग कुंडली विमर्श: नवांश (D9) व दशमांश (D10) विश्लेषण');
+  const trans=extractSection('Sade Sati, Saturn and major transit windows') || extractSection('गोचर विचार, साढ़े साती एवं प्रमुख ग्रहीय कालखंड');
+  const health=extractSection('Vitality, stress patterns, yogas and doshas') || extractSection('शारीरिक ऊर्जा, तनाव प्रबंधन, शुभ योग एवं दोष विश्लेषण');
   const set=(id,text)=>{const c=document.getElementById(id); if(!c||!text)return; c.style.display='block'; const body=c.querySelector('.module-copy')||c; body.innerHTML='<p>'+escapeHtml(text.slice(0,1800)).replace(/\n\n/g,'</p><p>')+'</p>';};
   set('karakaCard',kar); set('vargaCard',varga); set('transitCard',trans);
   const yogaCard=document.getElementById('yogaCard'), tbody=document.getElementById('yogaTableBody');
   if(yogaCard&&health){
-    const rows=[]; health.split('\n').forEach(line=>{const parts=line.split('|').map(x=>cleanAstroText(x.trim())); if(parts.length>=4 && parts[0] && (parts[1].match(/Present|Absent|Not clearly|Not assessable/i)||parts[1].length<35)) rows.push(parts.slice(0,4));});
+    const rows=[]; health.split('\n').forEach(line=>{const parts=line.split('|').map(x=>cleanAstroText(x.trim())); if(parts.length>=4 && parts[0] && (parts[1].match(/Present|Absent|Not clearly|Not assessable|उपस्थित|अनुपस्थित|विद्यमान/i)||parts[1].length<35)) rows.push(parts.slice(0,4));});
     if(rows.length){yogaCard.style.display='block'; tbody.innerHTML=rows.slice(0,18).map(r=>'<tr>'+r.map(c=>'<td>'+escapeHtml(c)+'</td>').join('')+'</tr>').join('');}
   }
 }
@@ -11078,7 +11187,7 @@ document.addEventListener('DOMContentLoaded', () => {
    VEDIC ATMOSPHERE THEME SWITCHER
    ========================================================================== */
 window.setVedicTheme = function(themeName) {
-  const allowed = ['cosmic', 'dawn', 'temple', 'lunar', 'saffron'];
+  const allowed = ['cosmic', 'dawn', 'temple', 'lunar', 'saffron', 'day'];
   if (!allowed.includes(themeName)) themeName = 'cosmic';
   
   document.documentElement.setAttribute('data-theme', themeName);
@@ -11092,7 +11201,8 @@ window.setVedicTheme = function(themeName) {
     dawn: 'Sacred Dawn',
     temple: 'Golden Temple',
     lunar: 'Lunar Silver',
-    saffron: 'Saffron Flame'
+    saffron: 'Saffron Flame',
+    day: 'Celestial Day'
   };
 
   const labelEl = document.getElementById('currentThemeLabel');
@@ -11144,7 +11254,7 @@ document.addEventListener('click', (e) => {
 })();
 
 /* ==========================================================================
-   AUTHENTIC HINDI / ENGLISH FULL SITE & REPORT TRANSLATOR
+   AUTHENTIC HINDI / ENGLISH FULL-SITE TRANSLATION ENGINE
    ========================================================================== */
 window.currentVedicLang = 'en';
 
@@ -11156,6 +11266,7 @@ window.setVedicLanguage = function(lang) {
 
   const isHi = lang === 'hi';
 
+  // 1. Header & Brand
   const btnText = document.getElementById('langBtnText');
   const titleText = document.getElementById('brandTitleText');
   const subtitleText = document.getElementById('brandSubtitleText');
@@ -11167,28 +11278,166 @@ window.setVedicLanguage = function(lang) {
   if (subtitleText) subtitleText.textContent = isHi ? 'पवित्र वैदिक कुंडली एवं प्रत्यक्ष ग्रह गणना' : 'Sacred Vedic Chart Reading & Ephemeris';
   if (feedbackBtnText) feedbackBtnText.textContent = isHi ? 'सुझाव व संपर्क' : 'Feedback';
   if (glossaryBtnText) glossaryBtnText.textContent = isHi ? 'पारिभाषिक शब्दावली' : 'Glossary';
-  
-  // Hero Section
+
+  // 2. Observatory Telemetry HUD
+  const hudSpans = document.querySelectorAll('.observatory-telemetry-hud > span');
+  if (hudSpans && hudSpans.length >= 2) {
+    hudSpans[0].textContent = isHi ? 'खगोलीय वेधशाला · प्रत्यक्ष लाहिरी अयनांश 24°10\'38"' : 'CELESTIAL OBSERVATORY · SIDEREAL LAHIRI AYANAMSHA 24°10\'38"';
+    hudSpans[1].textContent = isHi ? 'वेधशाला अक्षांश 28°37\'उ • रेखांश 77°13\'पू ☉' : 'OBSERVER LAT 28°37\'N • LON 77°13\'E ☉';
+  }
+  const horaTitle = document.getElementById('horaHeaderTitle');
+  if (horaTitle && horaTitle.textContent.includes('Calculating')) {
+    horaTitle.textContent = isHi ? '⏰ होरा: गणना जारी…' : '⏰ Hora: Calculating…';
+  }
+  const omChantBtnB = document.querySelector('#btnOmChant b');
+  if (omChantBtnB) {
+    const isPlaying = window.OmChantEngine && window.OmChantEngine.isPlaying;
+    const st = isHi ? (isPlaying ? 'चालू' : 'बंद') : (isPlaying ? 'ACTIVE' : 'OFF');
+    omChantBtnB.innerHTML = `${isHi ? '432Hz ॐ ध्वनि अनुनाद' : '432Hz Om Resonance'} (<span id="omStatusText">${st}</span>)`;
+  }
+
+  // 3. Panchang Bar & Items
+  const panchangBadge = document.querySelector('.panchang-badge');
+  if (panchangBadge) panchangBadge.textContent = isHi ? '✦ आज का दैनिक पंचांग व राहु काल' : '✦ TODAY\'S DAINIK PANCHANG & RAHU KAAL';
+  const panchangTrigger = document.querySelector('.panchang-detail-trigger-btn');
+  if (panchangTrigger) panchangTrigger.textContent = isHi ? '🔍 संपूर्ण पंचांग, चौघड़िया व शुभ मुहूर्त देखें ✦' : '🔍 View Complete Panchang & All Muhurtas ✦';
+  const dateCheckerLabel = document.querySelector('.panchang-date-picker-wrap span');
+  if (dateCheckerLabel) dateCheckerLabel.textContent = isHi ? '📅 तिथि चुनें:' : '📅 Date Checker:';
+  const liveTodayBtn = document.querySelector('.panchang-date-picker-wrap button');
+  if (liveTodayBtn) liveTodayBtn.textContent = isHi ? 'आज का दिन' : 'Live Today';
+
+  const panchangSmallLabels = {
+    hinduCal: isHi ? '📜 संवत व मास 🔍' : '📜 HINDU YEAR & MAAS 🔍',
+    tithi: isHi ? '🌙 तिथि व पक्ष 🔍' : '🌙 TITHI & PAKSHA 🔍',
+    nakshatra: isHi ? '✨ नक्षत्र व पद 🔍' : '✨ NAKSHATRA & PADA 🔍',
+    yoga: isHi ? '☸ योग 🔍' : '☸ YOGA 🔍',
+    karana: isHi ? '⚡ करण 🔍' : '⚡ KARANA 🔍',
+    rahuKaal: isHi ? '⚠️ राहु काल (अशुभ काल) 🔍' : '⚠️ RAHU KAAL (INAUSPICIOUS) 🔍',
+    abhijit: isHi ? '🌟 अभिजित मुहूर्त (अति शुभ) 🔍' : '🌟 ABHIJIT MUHURTA (AUSPICIOUS) 🔍',
+    sun: isHi ? '🌅 सूर्योदय व सूर्यास्त 🔍' : '🌅 SUNRISE & SUNSET 🔍',
+    choghadiya: isHi ? '⏱ दिन का चौघड़िया 🔍' : '⏱ DAY CHOGHADIYA 🔍',
+    events: isHi ? '🪔 पर्व, व्रत व त्यौहार 🔍' : '🪔 ACTIVE FESTIVAL & VRAT 🔍'
+  };
+  document.querySelectorAll('.panchang-grid .panchang-item').forEach(item => {
+    const sm = item.querySelector('small');
+    if (!sm) return;
+    const onclickStr = item.getAttribute('onclick') || '';
+    for (const key in panchangSmallLabels) {
+      if (onclickStr.includes(key)) {
+        sm.textContent = panchangSmallLabels[key];
+        break;
+      }
+    }
+  });
+
+  // 4. Hero Section
   const h1 = document.querySelector('.hero h1');
   if (h1) h1.textContent = isHi ? 'ज्योतिष विमर्श' : 'Jyotish Vimarsha';
   const heroSub = document.querySelector('.hero .subtitle');
   if (heroSub) heroSub.textContent = isHi ? 'पवित्र वैदिक कुंडली विश्लेषण एवं प्रत्यक्ष ग्रह गोचर' : 'Sacred Vedic Chart Reading & Ephemeris';
 
-  // Mode Tabs
-  const tabNatal = document.querySelector('[data-mode="natal"]');
-  if (tabNatal) tabNatal.textContent = isHi ? 'विस्तृत जन्म कुंडली' : 'Comprehensive Birth Chart';
-  const tabKundli = document.querySelector('[data-mode="kundli"]');
-  if (tabKundli) tabKundli.textContent = isHi ? 'कुंडली एवं गुण मिलान' : 'Match Compatibility';
+  // 5. Meditation Guide & Reflection Quote
+  const medKicker = document.querySelector('.meditation-kicker');
+  if (medKicker) medKicker.textContent = isHi ? 'वैदिक चिंतन व धर्म संदेश' : 'VEDIC CONTEMPLATION & DHARMA';
+  const medTitle = document.querySelector('.meditation-title');
+  if (medTitle) medTitle.textContent = isHi ? 'अपनी कुंडली अध्ययन के प्रति सही दृष्टिकोण' : 'How to Approach Your Chart Reading';
+  const medLead = document.querySelector('.meditation-lead');
+  if (medLead) {
+    medLead.innerHTML = isHi
+      ? 'प्राचीन वैदिक परंपरा (<em>ज्योतिष विद्या</em>) में जन्म कुंडली कोई भाग्यवादी फैसला नहीं, बल्कि आपके <strong>संचित</strong> और <strong>प्रारब्ध</strong> कर्मों का पवित्र मानचित्र है। इस विश्लेषण को शांत विवेक से समझें: अपनी शक्तियों को पहचानें, प्राकृतिक जीवन-ऋतुओं का सम्मान करें और अपने सर्वोच्च धर्म के अनुरूप सचेत कर्म (<em>क्रियमाण कर्म</em>) करें।'
+      : 'In classical Vedic tradition (<em>Jyotish Vidya</em>), your birth chart is not a fatalistic forecast, but a sacred map of your <strong>Sanchita</strong> (accumulated) and <strong>Prarabdha</strong> (currently ripening) karma. Approach this reading with calm discernment: seek understanding of your core strengths, recognize natural seasonal cycles, and use planetary awareness to empower conscious action (<em>Kriyamana Karma</em>) aligned with your highest Dharma.';
+  }
+  const medPillars = document.querySelectorAll('.meditation-pillars .med-pillar div');
+  if (medPillars.length >= 3) {
+    medPillars[0].innerHTML = isHi ? '<b>मन की स्थिरता:</b> बिना भय या अहंकार के ग्रह संकेतों को समझें।' : '<b>Stillness of Mind:</b> Reflect upon patterns without fear, dread or ego attachment.';
+    medPillars[1].innerHTML = isHi ? '<b>कठिनाई नहीं, अवसर:</b> प्रतिकूल ग्रह स्थिति आत्म-विकास और प्रज्ञा का मार्ग प्रशस्त करती है।' : '<b>Context Over Doom:</b> Challenging placements are evolutionary opportunities for wisdom.';
+    medPillars[2].innerHTML = isHi ? '<b>सचेत पुरुषार्थ:</b> ग्रह केवल दिशा दर्शाते हैं; अंतिम निर्णय आपके कर्म और विवेक का है।' : '<b>Conscious Free Will:</b> The stars impel; they do not compel your conscious daily choices.';
+  }
+  const refBadge = document.querySelector('.reflection-badge');
+  if (refBadge) refBadge.textContent = isHi ? '✦ दैनिक खगोलीय चिंतन · वैदिक ज्ञानामृत' : '✦ DAILY CELESTIAL CONTEMPLATION · VEDIC WISDOM';
+  const refEng = document.getElementById('reflectionEnglish');
+  if (refEng) {
+    refEng.textContent = isHi ? '“जैसी मनुष्य की आंतरिक भावना और चिंतन होता है, वैसा ही उसके जीवन पथ का यथार्थ प्रकट होता है।”' : '“As is the inner contemplation and devotion of the mind, so unfolds the reality of one’s path.”';
+  }
 
-  // Form Fields & Buttons
-  const calcBtn = document.getElementById('calcBtn');
-  if (calcBtn) calcBtn.textContent = isHi ? 'पवित्र जन्म कुंडली गणना करें ✦' : 'Cast Sacred Chart ✦';
-  const matchBtn = document.getElementById('matchBtn');
-  if (matchBtn) matchBtn.textContent = isHi ? 'विस्तृत गुण मिलान करें ✦' : 'Calculate Guna Milan ✦';
-  const endReadingBtn = document.getElementById('endReadingBtn');
-  if (endReadingBtn) endReadingBtn.textContent = isHi ? 'सत्र समाप्त करें' : 'End Reading';
+  // 6. Intro Section
+  const introEyebrow = document.querySelector('.intro-eyebrow');
+  if (introEyebrow) introEyebrow.textContent = isHi ? '✦ काल चक्र का मानचित्र • कर्म का दर्पण • आकाश की दिव्य भाषा' : '✦ A MAP OF TIME • A MIRROR OF PATTERNS • A LANGUAGE OF THE SKY';
+  const mysteryQuote = document.querySelector('.mystery-quote');
+  if (mysteryQuote) {
+    mysteryQuote.innerHTML = isHi
+      ? '“कुछ प्रश्नों के उत्तर केवल आगे देखने से नहीं —<br><em>वे आकाश के संकेतों को समझने से प्राप्त होते हैं।</em>”'
+      : '“Some questions are not answered by looking farther ahead —<br><em>they begin by learning how to read the sky.</em>”';
+  }
+  const introKicker = document.querySelector('.intro-kicker');
+  if (introKicker) introKicker.textContent = isHi ? 'प्राचीन आकाश, वर्तमान जीवन के परिप्रेक्ष्य में' : 'THE ANCIENT SKY, READ FOR THE PRESENT MOMENT';
+  const introH2 = document.querySelector('.astrology-intro h2');
+  if (introH2) {
+    introH2.innerHTML = isHi ? 'क्या आकाश में संजोए हैं<br><em>आपके जीवन के गुप्त रहस्य?</em>' : 'What if the sky<br><em>has been keeping a pattern?</em>';
+  }
+  const introLeads = document.querySelectorAll('.astrology-intro .intro-lead');
+  if (introLeads.length >= 2) {
+    introLeads[0].textContent = isHi
+      ? 'हजारों वर्षों से ऋषियों ने सूर्य, चंद्र और ग्रहों की गतियों का सूक्ष्म अवलोकन किया और काल के प्रवाह में जीवन के गहरे अर्थ तलाशे। ज्योतिष विद्या इसी जिज्ञासा से आरंभ होती है: आकाशीय चक्रों को स्वभाव, संबंध, निर्णय और जीवन की ऋतुओं को समझने की प्रतीकात्मक भाषा के रूप में देखना।'
+      : 'For thousands of years, people have watched the movement of the Sun, Moon and planets and searched for meaning in the rhythm of time. Astrology begins with that human curiosity: observing the heavens and using celestial cycles as a symbolic language for understanding life, temperament, relationships, choices and changing seasons.';
+    introLeads[1].innerHTML = isHi
+      ? '<strong>ज्योतिष</strong>, सनातन भारतीय परंपरा, इस विचार को जन्म कुंडली के माध्यम से मूर्त रूप देती है — जो किसी विशिष्ट क्षण और स्थान पर बने आकाश का दिव्य मानचित्र है। यह कुंडली <strong>राशियों</strong>, <strong>भावों</strong>, <strong>ग्रहों</strong>, <strong>नक्षत्रों</strong>, <strong>योगों</strong> और <strong>दशाओं</strong> को जोड़कर दर्शाती है कि जीवन के विभिन्न पहलू <em>क्या</em> संकेत दे रहे हैं और वे <em>कब</em> फलित होंगे।'
+      : '<strong>Jyotish</strong>, the Indian tradition of astrology, takes that idea further through a birth chart — a symbolic map calculated for a particular moment and place. The chart brings together <strong>Rashis</strong> (zodiac signs), <strong>Bhavas</strong> (houses), <strong>Grahas</strong> (planetary influences), <strong>Nakshatras</strong> (lunar mansions), <strong>Yogas</strong> and <strong>Dashas</strong> to explore both <em>what</em> a pattern may signify and <em>when</em> it may become more prominent.';
+  }
+  const mysteryStmt = document.querySelector('.mystery-statement');
+  if (mysteryStmt) {
+    mysteryStmt.innerHTML = isHi
+      ? '<span>✧</span><div><b>आपकी कुंडली कोई अंतिम फैसला नहीं है।</b><small>यह प्रवृत्तियों, चक्रों और संभावनाओं का पवित्र मानचित्र है — जिसे विवेक से समझना चाहिए, भय से नहीं।</small></div>'
+      : '<span>✧</span><div><b>Your chart is not a verdict.</b><small>It is a symbolic map of tendencies, cycles and possibilities — interpreted with context, not fear.</small></div>';
+  }
+  const beginBtn = document.getElementById('beginReadingBtn');
+  if (beginBtn) {
+    beginBtn.innerHTML = isHi ? 'जन्म कुंडली गणना प्रारंभ करें <span>→</span>' : 'Open the birth chart <span>→</span>';
+  }
+  const introNote = document.querySelector('.intro-note');
+  if (introNote) introNote.textContent = isHi ? 'आपकी जन्म तिथि • समय • स्थान ही इसकी कुंजी हैं' : 'Your date • time • place become the key';
 
-  // Dainik Rashifal Headers
+  // 7. Pillars & Cosmic Facts
+  const pillars = document.querySelectorAll('.astrology-pillars > div');
+  if (pillars.length >= 4) {
+    pillars[0].querySelector('strong').textContent = isHi ? 'राशियां' : 'Rashis';
+    pillars[0].querySelector('small').textContent = isHi ? 'बारह राशियां उस क्षेत्र और स्वरूप को दर्शाती हैं जिनमें ग्रह फलित होते हैं।' : 'The twelve signs describe the field and style in which planetary themes unfold.';
+    pillars[1].querySelector('strong').textContent = isHi ? 'नवग्रह' : 'Grahas';
+    pillars[1].querySelector('small').textContent = isHi ? 'सूर्य, चंद्र और ग्रह विभिन्न मनोभावों, प्रेरणाओं और कर्मों का प्रतिनिधित्व करते हैं।' : 'The Sun, Moon and planets represent different functions, drives and experiences.';
+    pillars[2].querySelector('strong').textContent = isHi ? 'द्वादश भाव' : 'Bhavas';
+    pillars[2].querySelector('small').textContent = isHi ? 'बारह भाव इन प्रभावों को जीवन के विशिष्ट क्षेत्रों से जोड़ते हैं।' : 'The twelve houses connect those influences to distinct areas of life.';
+    pillars[3].querySelector('strong').textContent = isHi ? 'नक्षत्र' : 'Nakshatras';
+    pillars[3].querySelector('small').textContent = isHi ? 'सत्ताईस नक्षत्र चंद्र चक्रों और जीवन की सूक्ष्म प्रवृत्तियों को उजागर करते हैं।' : 'The lunar mansions add a finer symbolic layer to the Moon and its cycles.';
+  }
+
+  const cosmicFactDivs = document.querySelectorAll('.cosmic-facts > div');
+  if (cosmicFactDivs.length >= 4) {
+    cosmicFactDivs[0].querySelector('b').textContent = isHi ? 'जन्म का क्षण' : 'Birth moment';
+    cosmicFactDivs[0].querySelector('small').textContent = isHi ? 'सटीक समय और स्थान क्यों महत्वपूर्ण हैं।' : 'Why the exact time and place matter.';
+    cosmicFactDivs[1].querySelector('b').textContent = isHi ? 'कुंडली संरचना' : 'Read the architecture';
+    cosmicFactDivs[1].querySelector('small').textContent = isHi ? 'लग्न, चंद्र, ग्रह, भाव और राशियां।' : 'Lagna, Moon, planets, houses and signs.';
+    cosmicFactDivs[2].querySelector('b').textContent = isHi ? 'शुभ व अशुभ योग' : 'Find the patterns';
+    cosmicFactDivs[2].querySelector('small').textContent = isHi ? 'महादशा, शक्ति और जीवन के अवसर।' : 'Yogas, Dashas, strengths and tensions.';
+    cosmicFactDivs[3].querySelector('b').textContent = isHi ? 'काल चक्र प्रवाह' : 'Follow the cycles';
+    cosmicFactDivs[3].querySelector('small').textContent = isHi ? 'दशा अवधियों के माध्यम से समय का आकलन।' : 'Timing themes through planetary periods.';
+  }
+
+  // 8. How it works
+  const howTitle = document.querySelector('.how-it-works .how-title span');
+  if (howTitle) howTitle.textContent = isHi ? 'सामान्य दैनिक राशिफल से परे' : 'BEYOND A DAILY HOROSCOPE';
+  const howSteps = document.querySelectorAll('.how-grid .how-step');
+  if (howSteps.length >= 4) {
+    howSteps[0].querySelector('b').textContent = isHi ? 'आकाश से शुरुआत' : 'Start with the sky';
+    howSteps[0].querySelector('span:last-child').textContent = isHi ? 'हम आपके जन्म समय और स्थान की वास्तविक खगोलीय स्थिति से गणना करते हैं — सामान्य सन-साइन राशिफल नहीं।' : 'We begin from the celestial moment represented by your birth date, time and place — not a generic Sun-sign horoscope.';
+    howSteps[1].querySelector('b').textContent = isHi ? 'कुंडली निर्माण' : 'Build the Kundli';
+    howSteps[1].querySelector('span:last-child').textContent = isHi ? 'कुंडली राशियों, भावों, ग्रह स्थितियों, पंचांग और नक्षत्रों को एक संपूर्ण मानचित्र में व्यवस्थित करती है।' : 'The chart organizes Rashis, houses, planetary placements, Panchang and Nakshatra information into one symbolic map.';
+    howSteps[2].querySelector('b').textContent = isHi ? 'ग्रहीय संबंधों का अध्ययन' : 'Read the relationships';
+    howSteps[2].querySelector('span:last-child').textContent = isHi ? 'अर्थ संयोजनों से निकलता है: भावेश, दृष्टि, उच्च-नीच अवस्था, योग, दोष और विभिन्न ग्रह कारक।' : 'Meaning comes from combinations: lordships, dignity, aspects, Yogas, Doshas and the interaction of multiple chart factors.';
+    howSteps[3].querySelector('b').textContent = isHi ? 'समय का प्रकटीकरण' : 'Watch time unfold';
+    howSteps[3].querySelector('span:last-child').textContent = isHi ? 'विंशोत्तरी दशाएं करियर, संबंध, विद्या या आध्यात्मिक परिवर्तन के प्रमुख कालखंडों का सटीक मार्गदर्शन करती हैं।' : 'Dashas and other timing indicators help frame periods in which career, relationships, learning or inner change may become more prominent.';
+  }
+
+  // 9. Dainik Rashifal Headers
   const rashifalTitle = document.getElementById('rashifalTitleText');
   if (rashifalTitle) rashifalTitle.textContent = isHi ? 'आपकी चंद्र राशि के अनुसार आज का ग्रह गोचर एवं दैनिक राशिफल' : "Today's Planetary Transit & Horoscope for Your Moon Sign (Chandra Rashi)";
   const rashifalKicker = document.getElementById('rashifalKickerText');
@@ -11196,22 +11445,266 @@ window.setVedicLanguage = function(lang) {
   const rashifalSub = document.getElementById('rashifalDateSubtitle');
   if (rashifalSub) rashifalSub.textContent = isHi ? 'सक्रिय ग्रह गोचर, करियर गतिशीलता, भावनात्मक सामंजस्य व शुभ मुहूर्त' : 'Explore active Gochara house transits, career momentum, emotional harmony, lucky metrics & auspicious timings';
 
-  // Daily Panchang Headings
-  const panchangHead = document.querySelector('.panchang-card h2');
-  if (panchangHead) panchangHead.textContent = isHi ? 'दैनिक पंचांग व राहु काल गणना' : '✦ DAINIK PANCHANG, HINDU CALENDAR & RAHU KAAL';
+  // 10. Ephemeris Sky Card
+  const skyKicker = document.querySelector('.current-sky-kicker');
+  if (skyKicker) skyKicker.textContent = isHi ? 'प्रत्यक्ष खगोलीय ग्रह स्थिति' : 'LIVE CELESTIAL EPHEMERIS';
+  const skyH2 = document.querySelector('.current-sky-head h2');
+  if (skyH2) skyH2.textContent = isHi ? 'वर्तमान में ग्रहों की वास्तविक स्थिति' : 'Where the Grahas are now';
+  const skyFoot = document.querySelector('.current-sky-foot');
+  if (skyFoot) skyFoot.textContent = isHi ? 'निरयण ग्रह स्थिति · लाहिरी अयनांश · प्रत्यक्ष रूप से अद्यतित।' : 'Sidereal positions · Lahiri ayanamsha · refreshed automatically in real-time.';
 
-  // Current Sky Headings
-  const skyHead = document.querySelector('.current-sky-head h2');
-  if (skyHead) skyHead.textContent = isHi ? 'प्रत्यक्ष खगोलीय ग्रह स्थिति (लाहिड़ी अयनांश)' : '✦ CURRENT CELESTIAL POSITIONS (EPHEMERIS)';
+  // 11. Disclaimer & Sample Preview
+  const disclaimer = document.querySelector('.disclaimer');
+  if (disclaimer) {
+    disclaimer.innerHTML = isHi
+      ? '<b>शुरू करने से पहले:</b> यह जन्म कुंडली विश्लेषण महर्षि पाराशर और जैमिनी सूत्रों पर आधारित है, जो आत्म-चिंतन और व्यक्तिगत मार्गदर्शन के लिए प्रस्तुत किया गया है — यह किसी चिकित्सा, कानूनी या वित्तीय सलाह का विकल्प नहीं है। ग्रह स्थितियां लाहिरी अयनांश के अनुसार वास्तविक निरयण खगोल गणना से प्राप्त की जाती हैं।'
+      : '<b>Before you begin:</b> this reading is generated through classical Parashari and Jaimini reasoning, offered for reflection and self-understanding — not a substitute for professional medical, legal, or financial guidance. Planetary longitudes, signs and degrees are calculated from the connected sidereal ephemeris service using Lahiri ayanamsha; if the service is unavailable, chart generation pauses rather than substituting guessed degrees. This reading never prescribes gemstones, mantras, poojas, rituals, fasting, or other remedies — interpretation and understanding only.';
+  }
 
-  // Chat Heading
+  // 12. Mode Tabs
+  const tabIndividual = document.getElementById('tabIndividual');
+  if (tabIndividual) tabIndividual.textContent = isHi ? '✦ व्यक्तिगत जन्म कुंडली (Individual)' : '✦ Individual Reading';
+  const tabKundli = document.getElementById('tabKundli');
+  if (tabKundli) tabKundli.textContent = isHi ? '✦ कुंडली एवं गुण मिलान (Kundli Matching)' : '✦ Kundli Matching';
+
+  // 13. Forms (Birth Details & Kundli Matching)
+  const setupH2 = document.querySelector('#setupCard h2');
+  if (setupH2) setupH2.textContent = isHi ? 'जन्म विवरण (Birth Details)' : 'Birth details';
+  const kundliSetupH2 = document.querySelector('#kundliSetupCard h2');
+  if (kundliSetupH2) kundliSetupH2.textContent = isHi ? 'कुंडली मिलान (अष्टकूट 36 गुण मिलान)' : 'Kundli Matching (Ashtakoot Guna Milan)';
+  const gunaNote = document.querySelector('.guna-note');
+  if (gunaNote) gunaNote.textContent = isHi ? 'पारंपरिक 36-अंक अष्टकूट गुण मिलान, मांगलिक दोष विश्लेषण और वैवाहिक अनुकूलता के लिए दोनों पक्षों का जन्म विवरण दर्ज करें।' : 'Enter both partners\' birth details for a traditional 36-point Ashtakoot compatibility analysis, Mangal Dosha assessment, and an overall relationship outlook — for reflection, not a verdict.';
+
+  // Form Field Labels & Placeholders
+  const nameLabel = document.querySelector('#setupCard label[for="name"], #setupCard label:has(#name)');
+  if (nameLabel) nameLabel.childNodes[0].nodeValue = isHi ? 'पूरा नाम ' : 'Name ';
+  const genderLabel = document.querySelector('#setupCard label:has(#gender)');
+  if (genderLabel) genderLabel.childNodes[0].nodeValue = isHi ? 'लिंग ' : 'Gender ';
+  const genderSelect = document.getElementById('gender');
+  if (genderSelect && genderSelect.options.length >= 3) {
+    genderSelect.options[0].text = isHi ? 'महिला (Female)' : 'Female';
+    genderSelect.options[1].text = isHi ? 'पुरुष (Male)' : 'Male';
+    genderSelect.options[2].text = isHi ? 'अन्य / अनिर्दिष्ट (Other)' : 'Other';
+  }
+  const dobLabel = document.querySelector('#setupCard label:has(#dob)');
+  if (dobLabel) dobLabel.childNodes[0].nodeValue = isHi ? 'जन्म तिथि ' : 'Date of birth ';
+  const tobLabel = document.querySelector('#setupCard label:has(#tob)');
+  if (tobLabel) tobLabel.childNodes[0].nodeValue = isHi ? 'जन्म समय ' : 'Time of birth ';
+  const pobLabel = document.querySelector('#setupCard label:has(#pob)');
+  if (pobLabel) pobLabel.childNodes[0].nodeValue = isHi ? 'जन्म स्थान (शहर, राज्य, देश) ' : 'Place of birth ';
+  const pobInput = document.getElementById('pob');
+  if (pobInput) pobInput.placeholder = isHi ? 'उदा. नई दिल्ली, मुंबई, जयपुर, वाराणसी, लंदन…' : 'e.g. New Delhi, Mumbai, Jaipur, London…';
+
+  const advCoordToggle = document.getElementById('advCoordToggle');
+  if (advCoordToggle) advCoordToggle.textContent = isHi ? '⚙ अक्षांश / देशांतर (वैकल्पिक)' : '⚙ Advanced Coordinates (optional)';
+  const latLabel = document.querySelector('#setupCard label:has(#lat)');
+  if (latLabel) latLabel.childNodes[0].nodeValue = isHi ? 'अक्षांश (°N) ' : 'Latitude (°N) ';
+  const lonLabel = document.querySelector('#setupCard label:has(#lon)');
+  if (lonLabel) lonLabel.childNodes[0].nodeValue = isHi ? 'देशांतर (°E) ' : 'Longitude (°E) ';
+  const tzLabel = document.querySelector('#setupCard label:has(#tz)');
+  if (tzLabel) tzLabel.childNodes[0].nodeValue = isHi ? 'समय क्षेत्र (घंटे) ' : 'Timezone Offset (hours) ';
+
+  const consentLabel = document.querySelector('#setupCard .consent-check-row span');
+  if (consentLabel) {
+    consentLabel.innerHTML = isHi
+      ? 'मैं समझता/समझती हूँ कि यह जन्म कुंडली अध्ययन वैदिक चिंतन और आत्म-मार्गदर्शन के लिए है — किसी चिकित्सा, कानूनी या वित्तीय सलाह का विकल्प नहीं है।'
+      : 'I understand this reading is for self-reflection and personal inquiry — not medical, legal, or financial advice.';
+  }
+
+  const genBtn = document.getElementById('genBtn');
+  if (genBtn) genBtn.textContent = isHi ? 'पवित्र जन्म कुंडली गणना करें · ₹59' : 'Reveal the chart · ₹59';
+  const matchBtn = document.getElementById('matchBtn');
+  if (matchBtn) matchBtn.textContent = isHi ? 'गुण मिलान परिणाम देखें · निःशुल्क' : 'View Guna Milan · Free';
+  const unlockMatchBtn = document.getElementById('unlockMatchBtn');
+  if (unlockMatchBtn) unlockMatchBtn.textContent = isHi ? 'विस्तृत गुण मिलान व मांगलिक विश्लेषण अनलॉक करें · ₹99' : 'Unlock detailed match · ₹99';
+
+  // 14. Astro Facts Cards
+  const astroYantraDiv = document.querySelector('.sacred-yantra-divider');
+  if (astroYantraDiv) astroYantraDiv.textContent = isHi ? '✦ पवित्र वैदिक ज्योतिष रहस्य एवं खगोलीय ज्ञान ✦' : '✦ SACRED VEDIC ASTRO FACTS & CELESTIAL WISDOM ✦';
+  const astroKicker = document.querySelector('.astro-kicker');
+  if (astroKicker) astroKicker.textContent = isHi ? 'निरयण खगोल विज्ञान एवं पाराशरी सिद्धांत' : 'SIDEREAL MECHANICS & CLASSICAL PARASHARI CONCEPTS';
+  const astroH2 = document.querySelector('.astro-facts-header h2');
+  if (astroH2) astroH2.textContent = isHi ? 'वैदिक ज्योतिष की आधारशिला' : 'Celestial Architecture at a Glance';
+  const astroP = document.querySelector('.astro-facts-header p');
+  if (astroP) astroP.textContent = isHi ? 'वे मौलिक खगोलीय और वैदिक सिद्धांत जो आपकी जन्म कुंडली और फलकथन का आधार बनते हैं।' : 'Essential astronomical and Vedic astrological principles that form the foundation of your Kundli and planetary readings.';
+
+  const factCards = document.querySelectorAll('.facts-grid .astro-fact-card');
+  if (factCards.length >= 6) {
+    // Card 1
+    factCards[0].querySelector('.fact-badge').textContent = isHi ? 'खगोल विज्ञान एवं अयनांश' : 'ASTRONOMY & AYANAMSHA';
+    factCards[0].querySelector('h3').textContent = isHi ? 'निरयण राशि चक्र एवं लाहिरी अयनांश' : 'Sidereal Zodiac & Lahiri Precession';
+    factCards[0].querySelector('p').innerHTML = isHi
+      ? 'वैदिक ज्योतिष <strong>निरयण राशि चक्र</strong> का उपयोग करता है, जो वास्तविक नक्षत्रों से जुड़ा है। पृथ्वी की धुरी हर 72 वर्षों में ~1° झुकती है। सायन और निरयण राशि चक्र के अंतर को <em>अयनांश</em> कहते हैं (वर्तमान में <strong>24°10\'38" लाहिरी</strong>), जिससे ग्रहों की सटीक खगोलीय स्थिति प्राप्त होती है।'
+      : 'Vedic Astrology uses the <strong>Sidereal Zodiac</strong>, fixed to physical stellar constellations. Earth\'s axis precesses ~1° every 72 years (~25,772-year Great Year). The difference between Tropical 0° Aries and Sidereal 0° Aries is the <em>Ayanamsha</em> (currently <strong>24°10\'38" Lahiri</strong>), ensuring planetary longitudes match exact astronomical positions.';
+    
+    // Card 2
+    factCards[1].querySelector('.fact-badge').textContent = isHi ? 'चंद्र नक्षत्र' : 'LUNAR MANSIONS';
+    factCards[1].querySelector('h3').textContent = isHi ? '27 नक्षत्र एवं विंशोत्तरी दशा' : '27 Nakshatras & Vimshottari Dasha';
+    factCards[1].querySelector('p').innerHTML = isHi
+      ? '360° के संपूर्ण राशि चक्र को 27 चंद्र नक्षत्रों में 13°20\' के भागों में विभाजित किया गया है। जन्म के समय चंद्रमा जिस नक्षत्र में स्थित होता है, वह आपका <em>जन्म नक्षत्र</em> कहलाता है और वही आपके 120-वर्षीय <strong>विंशोत्तरी दशा चक्र</strong> का आरंभ बिंदु तय करता है।'
+      : 'The 360° zodiac is divided into 27 lunar mansions (<strong>Nakshatras</strong>) of 13°20\' each. The Moon visits one Nakshatra daily. Your birth Moon\'s Nakshatra degree sets your <em>Janma Nakshatra</em> and unlocks your 120-year <strong>Vimshottari Dasha</strong> sequence — charting major timing windows of life.';
+
+    // Card 3
+    factCards[2].querySelector('.fact-badge').textContent = isHi ? 'वर्ग कुंडलियां' : 'DIVISIONAL CHARTS';
+    factCards[2].querySelector('h3').textContent = isHi ? 'नवांश (D9) — आत्मा का दर्पण' : 'Navamsha (D9) — The Soul\'s Mirror';
+    factCards[2].querySelector('p').innerHTML = isHi
+      ? 'जन्म कुंडली (D1) जीवन के भौतिक प्रकटीकरण को दर्शाती है, जबकि प्रत्येक राशि को 9 सूक्ष्म भागों (3°20\') में बांटकर <strong>नवांश (D9)</strong> कुंडली बनती है। यह ग्रहों के सूक्ष्म बल (<em>वर्गोत्तम</em>), वैवाहिक सुख और 30 वर्ष की आयु के बाद परिपक्व होने वाली आत्म-क्षमता को दर्शाती है।'
+      : 'While the birth chart (D1) represents physical manifestation, each sign is subdivided into 9 harmonic arcs of 3°20\' to form the <strong>Navamsha (D9)</strong> chart. It reveals planetary micro-dignity (<em>Vargottama</em>), marital harmony, and inner spiritual potential maturing after age 30.';
+
+    // Card 4
+    factCards[3].querySelector('.fact-badge').textContent = isHi ? 'द्वादश भाव' : 'HOUSES OF LIFE';
+    factCards[3].querySelector('h3').textContent = isHi ? '12 भाव: केंद्र एवं त्रिकोण भाव' : '12 Bhavas: Kendras & Trikonas';
+    factCards[3].querySelector('p').innerHTML = isHi
+      ? '12 भाव जीवन के सभी क्षेत्रों (लग्न से 10वें कर्म भाव तक) को समेटे हुए हैं। <strong>केंद्र भाव</strong> (1, 4, 7, 10) जीवन के सुदृढ़ आधार स्तंभ हैं, जबकि <strong>त्रिकोण भाव</strong> (1, 5, 9) लक्ष्मी की कृपा, <em>पूर्व पुण्य</em> और ज्ञान व विवेक का प्रतीक हैं।'
+      : 'The 12 houses span life from vitality (1st / Lagna) to career (10th). The <strong>Kendra houses</strong> (1, 4, 7, 10) form the structural pillars of destiny, while the <strong>Trikona houses</strong> (1, 5, 9) signify Lakshmi\'s divine grace, past-life merit (<em>Purva Punya</em>), and wisdom.';
+
+    // Card 5
+    factCards[4].querySelector('.fact-badge').textContent = isHi ? 'ग्रह गतियां' : 'PLANETARY MOTIONS';
+    factCards[4].querySelector('h3').textContent = isHi ? 'वक्री गति (वक्र) एवं चेष्टा बल' : 'Retrograde (Vakra) & Cheshta Bala';
+    factCards[4].querySelector('p').innerHTML = isHi
+      ? 'जब पृथ्वी किसी बाहरी ग्रह को पार करती है, तो वह ग्रह पीछे की ओर चलता प्रतीत होता है, जिसे <strong>वक्री (वक्र) गति</strong> कहते हैं। पाराशरी ज्योतिष में वक्री ग्रह अत्यधिक <em>चेष्टा बल</em> (प्रयास बल) प्राप्त करते हैं, जो गहन कर्म पुनर्मूल्यांकन और विशिष्ट प्रतिभा का संकेत देते हैं।'
+      : 'When Earth overtakes an outer planet, the planet appears to move backward in <strong>Retrograde (Vakra)</strong> motion. In Parashari astrology, retrograde planets gain high <em>Cheshta Bala</em> (effort strength), indicating deep karmic re-evaluation, intensity, and unconventional talent.';
+
+    // Card 6
+    factCards[5].querySelector('.fact-badge').textContent = isHi ? 'गुण मिलान' : 'COMPATIBILITY';
+    factCards[5].querySelector('h3').textContent = isHi ? 'अष्टकूट गुण मिलान (36 अंक)' : 'Ashtakoot Guna Milan (36 Points)';
+    factCards[5].querySelector('p').innerHTML = isHi
+      ? 'वैदिक संबंध मिलान जन्म चंद्रमा के आधार पर ऊर्जावान सामंजस्य के 8 आयामों का मूल्यांकन करता है। प्रमुख घटकों में <strong>ग्रह मैत्री</strong> (मानसिक मित्रता - 5 अंक), <strong>योनि</strong> (स्वभाव अनुकूलता - 4 अंक), <strong>भकूट</strong> (भावनात्मक तरंग - 7 अंक), और <strong>नाड़ी</strong> (स्वास्थ्य व आनुवंशिक संतुलन - 8 अंक) शामिल हैं।'
+      : 'Vedic relationship matching evaluates 8 dimensions of energetic harmony between lunar birth positions. Key metrics include <strong>Graha Maitri</strong> (mental friendship - 5 pts), <strong>Yoni</strong> (instinctive compatibility - 4 pts), <strong>Bhakoot</strong> (emotional wavelength - 7 pts), and <strong>Nadi</strong> (genetic &amp; physiological balance - 8 pts).';
+  }
+  const factsFooterQuote = document.querySelector('.facts-footer-quote p');
+  if (factsFooterQuote) {
+    factsFooterQuote.textContent = isHi
+      ? '“समस्त ब्रह्मांड और उसके चक्र ग्रहों के अधीन हैं — ज्योतिष विद्या इन चक्रों को सचेत एवं सार्थक जीवन जीने का दर्पण मानती है।”'
+      : '“The universe and its rhythms move under celestial influence — astrology observes these patterns as a mirror for conscious living.”';
+  }
+
+  // 15. How to Read Kundli 4-Step Mini-Guide
+  const howToReadHeadB = document.querySelector('.how-to-read-guide b');
+  if (howToReadHeadB) howToReadHeadB.textContent = isHi ? 'अपनी कुंडली कैसे समझें · 4 सरल चरण' : 'HOW TO READ YOUR KUNDLI · 4 EASY STEPS';
+  const howToReadHeadP = document.querySelector('.how-to-read-guide p');
+  if (howToReadHeadP) howToReadHeadP.textContent = isHi ? 'भाव, ग्रह और दशा चक्रों को समझने का सरल प्रारंभिक मार्गदर्शक।' : 'A simple beginner\'s guide to navigating your houses, planets and dasha cycles.';
+
+  const stepDivs = document.querySelectorAll('#howToReadSteps > div');
+  if (stepDivs.length >= 4) {
+    stepDivs[0].querySelector('b').textContent = isHi ? '1. अपना लग्न पहचानें (प्रथम भाव)' : '1. Locate Your Lagna (1st House)';
+    stepDivs[0].querySelector('p').textContent = isHi ? 'उत्तर भारतीय कुंडली में शीर्ष-केंद्र का चतुर्भुज। यह आपके शारीरिक स्वास्थ्य, मनोवृत्ति और जीवन की मुख्य दिशा को दर्शाता है।' : 'Top-center diamond in North Indian chart. Represents your physical vitality, mindset, and life\'s primary trajectory.';
+    stepDivs[1].querySelector('b').textContent = isHi ? '2. चंद्र व जन्म राशि देखें' : '2. Check Moon & Janma Rashi';
+    stepDivs[1].querySelector('p').textContent = isHi ? 'चंद्रमा (Mo) जिस राशि में स्थित है, वह आपका भावनात्मक दृष्टिकोण, सहज प्रतिक्रियाएं और जन्म नक्षत्र तय करता है।' : 'Where the Moon (Mo) resides defines your emotional filter, instinctive reactions, and birth Nakshatra.';
+    stepDivs[2].querySelector('b').textContent = isHi ? '3. योग व केंद्र भावों को समझें' : '3. Identify Yogas & Kendras';
+    stepDivs[2].querySelector('p').textContent = isHi ? 'केंद्र भावों (1, 4, 7, 10) में स्थित ग्रह कर्म, करियर और संबंधों के मुख्य आधार स्तंभ बनते हैं।' : 'Planets in Kendra houses (1, 4, 7, 10) form the structural pillars of action, career and relationships.';
+    stepDivs[3].querySelector('b').textContent = isHi ? '4. सक्रिय दशा चक्र का अनुसरण करें' : '4. Follow Your Active Dasha';
+    stepDivs[3].querySelector('p').textContent = isHi ? 'नीचे दी गई समय-सारणी में देखें कि वर्तमान समय में किस ग्रह का आकाशीय चक्र आपके जीवन में सक्रिय है।' : 'Review the timeline below to see which planet\'s cosmic period is activating specific themes right now.';
+  }
+
+  // 16. Report Card, Action Buttons & Kundli Visuals
+  const reportHead = document.getElementById('reportHeading');
+  if (reportHead) reportHead.textContent = isHi ? 'आपकी जन्म कुंडली व फलकथन' : 'Your reading';
+  const progressHead = document.getElementById('progressHeading');
+  if (progressHead) progressHead.textContent = isHi ? 'कुंडली गणना जारी है…' : 'Casting the chart';
+
+  const reportActions = document.querySelectorAll('.report-actions-bar button');
+  if (reportActions.length >= 3) {
+    reportActions[0].innerHTML = isHi ? '<span>📥</span> पीडीएफ डाउनलोड' : '<span>📥</span> Download PDF';
+    reportActions[1].innerHTML = isHi ? '<span>✉</span> ईमेल पर भेजें' : '<span>✉</span> Email Reading';
+    reportActions[2].innerHTML = isHi ? '<span>🖨</span> प्रिंट' : '<span>🖨</span> Print';
+  }
+
+  const chartVisualH3 = document.querySelector('#chartVisualCard h3');
+  if (chartVisualH3) chartVisualH3.textContent = isHi ? 'सचित्र वैदिक जन्म कुंडली' : 'Visual Kundli Chart';
+  const chartTabs = document.querySelectorAll('.chart-tabs button');
+  if (chartTabs.length >= 3) {
+    chartTabs[0].textContent = isHi ? 'उत्तर भारतीय शैली' : 'North Indian';
+    chartTabs[1].textContent = isHi ? 'दक्षिण भारतीय शैली' : 'South Indian';
+    chartTabs[2].textContent = isHi ? 'पूर्वी शैली (बंगाली / उड़िया)' : 'East Indian (Bengali/Odia)';
+  }
+  const chartCaption = document.querySelector('#chartVisualCard .chart-caption');
+  if (chartCaption) {
+    chartCaption.textContent = isHi
+      ? 'उपरोक्त कुंडली इस अध्ययन में प्रयुक्त प्रत्यक्ष ग्रहीय गणना से निर्मित की गई है। भाव फलकथन का विवरण नीचे लिखित खंडों में दिया गया है। ग्रह स्थितियां लाहिरी निरयण खगोल गणना पर आधारित हैं।'
+      : 'The chart above is generated directly from the structured planetary placements used in this reading. Interpretive meaning is explained in the written sections below. Planetary positions displayed here come from the connected Lahiri sidereal ephemeris calculation; the AI layer is not allowed to invent or alter degrees.';
+  }
+
+  // 17. Jyotish Glossary in Report
+  const repGlossaryH3 = document.querySelector('#glossaryCard h3');
+  if (repGlossaryH3) repGlossaryH3.textContent = isHi ? 'पारिभाषिक ज्योतिष शब्दावली' : 'Jyotish Glossary';
+  const repGlossaryGrid = document.querySelector('#glossaryCard .glossary-grid');
+  if (repGlossaryGrid) {
+    repGlossaryGrid.innerHTML = isHi
+      ? `<span><b>लग्न</b><small>जन्म के समय पूर्व क्षितिज पर उदित राशि एवं भावों का आरंभ बिंदु।</small></span>
+         <span><b>ग्रह</b><small>फलकथन में प्रयुक्त नौ आकाशीय प्रभाव और ऊर्जा केंद्र।</small></span>
+         <span><b>राशि</b><small>ग्रहों द्वारा अधिष्ठित बारह राशियों में से एक क्षेत्र।</small></span>
+         <span><b>नक्षत्र</b><small>27 चंद्र नक्षत्र जो अर्थ की सूक्ष्म परत जोड़ते हैं।</small></span>
+         <span><b>भाव</b><small>कुंडली के बारह घर जो जीवन के विशिष्ट क्षेत्रों को दर्शाते हैं।</small></span>
+         <span><b>दशा</b><small>घटनाओं के सटीक काल निर्धारण हेतु ग्रहीय कालखंड।</small></span>`
+      : `<span><b>Lagna</b><small>Ascendant and starting point of the houses.</small></span>
+         <span><b>Graha</b><small>Planetary influence used in interpretation.</small></span>
+         <span><b>Rashi</b><small>Zodiac sign occupied by a graha.</small></span>
+         <span><b>Nakshatra</b><small>Lunar mansion adding a finer layer of meaning.</small></span>
+         <span><b>Bhava</b><small>Life area represented by a house.</small></span>
+         <span><b>Dasha</b><small>Planetary period used for timing.</small></span>`;
+  }
+
+  // 18. Premium Gate
+  const gateKicker = document.querySelector('.premium-gate .gate-kicker');
+  if (gateKicker) gateKicker.textContent = isHi ? 'गहन कुंडली प्रज्ञा' : 'Deeper Chart Intelligence';
+  const gateH3 = document.querySelector('.premium-gate h3');
+  if (gateH3) gateH3.textContent = isHi ? 'संपूर्ण जन्म कुंडली अध्ययन अनलॉक करें' : 'Unlock the Complete Reading';
+  const gateP = document.querySelector('.premium-gate p:not(.premium-note)');
+  if (gateP) {
+    gateP.textContent = isHi
+      ? 'विस्तृत राजयोग, संपूर्ण 120-वर्षीय विंशोत्तरी दशा अनुक्रम, जीवन-चरण विश्लेषण, सूक्ष्म काल-निर्धारण और संपूर्ण प्रश्न-उत्तर अनुभव प्राप्त करें।'
+      : 'Unlock the extended interpretation including detailed Yogas, full Vimshottari Dasha sequencing, life-phase analysis, advanced timing, deeper relationship patterns and the complete Ask the Chart experience.';
+  }
+  const gatePoints = document.querySelector('.premium-gate .gate-points');
+  if (gatePoints) {
+    gatePoints.innerHTML = isHi
+      ? '<span>विस्तृत राजयोग</span><span>महादशा व अंतर्दशा</span><span>जीवन-चरण फल</span><span>सटीक काल-निर्धारण</span><span>असीमित प्रश्न-उत्तर</span>'
+      : '<span>Detailed Yogas</span><span>Mahadasha &amp; Antardasha</span><span>Life-phase interpretation</span><span>Advanced timing</span><span>Full Ask the Chart</span>';
+  }
+  const premUnlockBtn = document.getElementById('premiumUnlockBtn');
+  if (premUnlockBtn) premUnlockBtn.textContent = isHi ? 'प्रीमियम अध्ययन अनलॉक करें · ₹59' : 'Unlock Premium Reading';
+
+  // 19. Chat Card
   const chatHead = document.getElementById('chatHeading');
   if (chatHead) chatHead.textContent = isHi ? 'अपनी कुंडली से जुड़े प्रश्न पूछें' : 'Ask about this reading';
-
-  // Re-render Daily Rashifal in current language
-  if (typeof renderDailyRashifal === 'function') {
-    renderDailyRashifal(currentPanchangDate);
+  const chatStatusSpan = document.querySelector('.chat-status > span:first-child');
+  if (chatStatusSpan) {
+    chatStatusSpan.textContent = isHi
+      ? 'कुंडली, दशा, योग, संबंध, करियर या जीवन चरणों के बारे में विशिष्ट प्रश्न पूछें।'
+      : 'Ask specific questions about the chart, Dasha, Yogas, relationships, career, or life phases. Each question costs ₹29.';
   }
+  const chatInput = document.getElementById('chatInput');
+  if (chatInput) chatInput.placeholder = isHi ? 'अपनी कुंडली से संबंधित प्रश्न यहाँ लिखें…' : 'Type a question about your chart…';
+  const chatSendBtn = document.getElementById('chatSend');
+  if (chatSendBtn) chatSendBtn.textContent = isHi ? 'पूछें' : 'Ask';
+  const chatHint = document.getElementById('chatHint');
+  if (chatHint) {
+    chatHint.textContent = isHi
+      ? 'कुंडली की गणना हो रही है — पहला खंड प्रकट होते ही आप अपने प्रश्न पूछ सकते हैं।'
+      : 'The chart is being cast — you can start asking questions the moment the first section appears above.';
+  }
+
+  // 20. End Reading Button & Bottom Actions
+  const endReadingBtn = document.getElementById('endReadingBtn');
+  if (endReadingBtn) endReadingBtn.textContent = isHi ? 'नया अध्ययन प्रारंभ करें' : 'End reading';
+  const mysticBtn = document.getElementById('mysticSoundBtn');
+  if (mysticBtn) {
+    const isPlaying = window.OmChantEngine && window.OmChantEngine.isPlaying;
+    mysticBtn.textContent = isHi ? `✦ ॐ नाद अनुनाद (${isPlaying ? 'चालू' : 'बंद'})` : `✦ Resonate with Universe (${isPlaying ? 'ACTIVE' : 'OFF'})`;
+  }
+  const feedbackBtnFixed = document.getElementById('feedbackBtnFixed');
+  if (feedbackBtnFixed) feedbackBtnFixed.textContent = isHi ? '✦ सुझाव व संपर्क' : '✦ Feedback';
+  const accessBtn = document.getElementById('accessBtn');
+  if (accessBtn) accessBtn.innerHTML = isHi ? '<span>⌁</span> गोपनीय लॉगिन' : '<span>⌁</span> Private access';
+
+  // 21. Re-render dynamic components in the new language
+  if (typeof renderPlacementTable === 'function') renderPlacementTable();
+  if (typeof renderInterpretationTable === 'function') renderInterpretationTable();
+  if (typeof renderDashaTimeline === 'function') renderDashaTimeline();
+  if (typeof renderClassicalModules === 'function') renderClassicalModules();
+  if (typeof buildAtAGlance === 'function') buildAtAGlance();
+  if (typeof renderDailyRashifal === 'function') renderDailyRashifal(currentPanchangDate);
 };
 
 window.toggleVedicLanguage = function() {
