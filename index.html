@@ -47,11 +47,11 @@
 }
 </script>
 
-  <link rel="icon" type="image/svg+xml" href="/public/images/celestial_zodiac_mandala.svg">
-  <link rel="shortcut icon" href="/public/images/celestial_zodiac_mandala.svg">
+  <link rel="icon" type="image/svg+xml" href="/public/favicon.svg">
+  <link rel="shortcut icon" href="/public/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;0,6..96,700;1,6..96,400&family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Manrope:wght@400;500;600;700&family=Marcellus&family=Noto+Serif+Devanagari:wght@400;500;600;700&family=Yatra+One&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;0,6..96,700;1,6..96,400&family=Cinzel:wght@400;600;700;800&family=Cinzel+Decorative:wght@700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Eczar:wght@500;600;700;800&family=Manrope:wght@400;500;600;700&family=Marcellus&family=Noto+Serif+Devanagari:wght@400;500;600;700&family=Philosopher:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Rozha+One&family=Spectral:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Yatra+One&display=swap" rel="stylesheet">
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <style>
   @property --hue{
@@ -630,7 +630,8 @@ body{transition:color .5s ease,background-color .5s ease}
 .icon-orbit{font-family:'Marcellus',serif;color:var(--accent);text-shadow:0 0 14px var(--glow)}
 .astrology-pillars span{font-family:'Marcellus',serif;color:var(--accent);}
 .celestial-crest{width:46px;height:46px;color:var(--accent);filter:drop-shadow(0 0 12px var(--glow));margin-bottom:4px}.celestial-crest svg{width:100%;height:100%;display:block}.wheel-core small{margin-top:2px}.wheel-core em{margin-top:5px}
-/* Theme presets for full-site atmosphere */
+/* ===== HOLISTIC VEDIC THEME ATMOSPHERES (Colors, Typography, Geometry, Shadows & Backdrops) ===== */
+
 :root, html[data-theme="cosmic"], body[data-theme="cosmic"] {
   --night: #050814; --night2: #090d20; --panel: #0d132c; --panel2: #121938;
   --gold: #d8a04c; --gold-soft: #fce7b0; --marigold: #e09f3e; --muted: #94a3b8;
@@ -638,51 +639,123 @@ body{transition:color .5s ease,background-color .5s ease}
   --glow: rgba(216,160,76,0.22); --cosmic-hue: 220deg;
   --bg-gradient: radial-gradient(circle at 50% 20%, #151a3a 0%, #080b18 55%, #03040a 100%);
   --heading-bright: #fff3db;
+  --display-font: 'Cinzel', serif;
+  --heading-font: 'Cinzel', serif;
+  --reading-font: 'Cormorant Garamond', Georgia, serif;
+  --ui-font: 'Manrope', sans-serif;
+  --card-radius: 16px;
+  --btn-radius: 10px;
+  --heading-transform: uppercase;
+  --heading-spacing: 0.06em;
+  --card-border: 1px solid rgba(216,160,76,0.24);
+  --card-shadow: 0 24px 60px rgba(0,0,0,0.5), 0 0 20px rgba(216,160,76,0.12);
+  --card-bg-gradient: linear-gradient(180deg, #0e1a24, #12232e);
 }
+
 html[data-theme="dawn"], body[data-theme="dawn"] {
   --night: #12091c; --night2: #1c0e2b; --panel: #26143a; --panel2: #301a48;
   --gold: #e28cb0; --gold-soft: #fce4ec; --marigold: #f48fb1; --muted: #b39ddb;
-  --line: rgba(226,140,176,0.32); --accent: #e28cb0; --accent2: #fbcfe8;
-  --glow: rgba(226,140,176,0.24); --cosmic-hue: 290deg;
-  --bg-gradient: radial-gradient(circle at 50% 20%, #2b143c 0%, #150922 55%, #0a0412 100%);
-  --heading-bright: #fce7f3;
+  --line: rgba(226,140,176,0.35); --accent: #e28cb0; --accent2: #fbcfe8;
+  --glow: rgba(226,140,176,0.26); --cosmic-hue: 290deg;
+  --bg-gradient: radial-gradient(circle at 50% 20%, #2e1540 0%, #160924 55%, #0b0414 100%);
+  --heading-bright: #fdf2f8;
+  --display-font: 'Bodoni Moda', 'Playfair Display', serif;
+  --heading-font: 'Bodoni Moda', serif;
+  --reading-font: 'Spectral', 'Cormorant Garamond', serif;
+  --ui-font: 'Philosopher', 'Manrope', sans-serif;
+  --card-radius: 24px;
+  --btn-radius: 999px;
+  --heading-transform: none;
+  --heading-spacing: 0.02em;
+  --card-border: 1px solid rgba(226,140,176,0.32);
+  --card-shadow: 0 24px 60px rgba(18,9,28,0.55), 0 0 30px rgba(226,140,176,0.16);
+  --card-bg-gradient: linear-gradient(145deg, #26143a, #1c0e2b);
 }
+
 html[data-theme="temple"], body[data-theme="temple"] {
   --night: #0a0804; --night2: #141008; --panel: #1e170c; --panel2: #281f10;
   --gold: #ffd700; --gold-soft: #fff3a3; --marigold: #ffb703; --muted: #d4af37;
-  --line: rgba(255,215,0,0.35); --accent: #ffd700; --accent2: #f59e0b;
-  --glow: rgba(255,215,0,0.28); --cosmic-hue: 45deg;
-  --bg-gradient: radial-gradient(circle at 50% 20%, #291f0a 0%, #120e05 55%, #050402 100%);
-  --heading-bright: #fff8cc;
+  --line: rgba(255,215,0,0.38); --accent: #ffd700; --accent2: #f59e0b;
+  --glow: rgba(255,215,0,0.32); --cosmic-hue: 45deg;
+  --bg-gradient: radial-gradient(circle at 50% 20%, #2c210c 0%, #140f06 55%, #060402 100%);
+  --heading-bright: #fff9db;
+  --display-font: 'Yatra One', 'Cinzel Decorative', serif;
+  --heading-font: 'Rozha One', 'Yatra One', serif;
+  --reading-font: 'Cormorant Garamond', 'Noto Serif Devanagari', serif;
+  --ui-font: 'Manrope', sans-serif;
+  --card-radius: 8px;
+  --btn-radius: 6px;
+  --heading-transform: none;
+  --heading-spacing: 0.04em;
+  --card-border: 2px solid rgba(255,215,0,0.45);
+  --card-shadow: 0 0 0 1px #594314, 0 24px 60px rgba(0,0,0,0.6), inset 0 0 25px rgba(255,215,0,0.06);
+  --card-bg-gradient: linear-gradient(180deg, #1c150c, #261e12);
 }
+
 html[data-theme="lunar"], body[data-theme="lunar"] {
   --night: #060a12; --night2: #0c1220; --panel: #121c30; --panel2: #182540;
   --gold: #93c5fd; --gold-soft: #e0f2fe; --marigold: #60a5fa; --muted: #94a3b8;
-  --line: rgba(147,197,253,0.30); --accent: #93c5fd; --accent2: #cbd5e1;
-  --glow: rgba(147,197,253,0.22); --cosmic-hue: 210deg;
-  --bg-gradient: radial-gradient(circle at 50% 20%, #122240 0%, #091222 55%, #03060c 100%);
+  --line: rgba(147,197,253,0.32); --accent: #93c5fd; --accent2: #cbd5e1;
+  --glow: rgba(147,197,253,0.24); --cosmic-hue: 210deg;
+  --bg-gradient: radial-gradient(circle at 50% 20%, #142544 0%, #0a1424 55%, #03070e 100%);
   --heading-bright: #f0f9ff;
+  --display-font: 'Marcellus', 'Spectral', serif;
+  --heading-font: 'Marcellus', serif;
+  --reading-font: 'Spectral', Georgia, serif;
+  --ui-font: 'Manrope', sans-serif;
+  --card-radius: 12px;
+  --btn-radius: 8px;
+  --heading-transform: uppercase;
+  --heading-spacing: 0.1em;
+  --card-border: 1px solid rgba(147,197,253,0.35);
+  --card-shadow: 0 24px 60px rgba(2,6,14,0.7), 0 0 25px rgba(147,197,253,0.18);
+  --card-bg-gradient: linear-gradient(180deg, #12202e, #182b3d);
 }
+
 html[data-theme="saffron"], body[data-theme="saffron"] {
   --night: #140704; --night2: #200d07; --panel: #2e140b; --panel2: #3a1a0e;
   --gold: #ff9933; --gold-soft: #fed7aa; --marigold: #ea580c; --muted: #fdba74;
-  --line: rgba(255,153,51,0.32); --accent: #ff9933; --accent2: #fbbf24;
-  --glow: rgba(255,153,51,0.25); --cosmic-hue: 20deg;
-  --bg-gradient: radial-gradient(circle at 50% 20%, #351306 0%, #1a0802 55%, #0a0301 100%);
-  --heading-bright: #fff1e0;
+  --line: rgba(255,153,51,0.35); --accent: #ff9933; --accent2: #fbbf24;
+  --glow: rgba(255,153,51,0.28); --cosmic-hue: 20deg;
+  --bg-gradient: radial-gradient(circle at 50% 20%, #381507 0%, #1c0903 55%, #0b0301 100%);
+  --heading-bright: #fff3e6;
+  --display-font: 'Rozha One', 'Eczar', serif;
+  --heading-font: 'Eczar', 'Rozha One', serif;
+  --reading-font: 'Cormorant Garamond', serif;
+  --ui-font: 'Manrope', sans-serif;
+  --card-radius: 18px;
+  --btn-radius: 12px;
+  --heading-transform: none;
+  --heading-spacing: 0.03em;
+  --card-border: 1.5px solid rgba(255,153,51,0.45);
+  --card-shadow: 0 24px 60px rgba(20,5,2,0.65), 0 0 30px rgba(255,153,51,0.22);
+  --card-bg-gradient: linear-gradient(180deg, #2c0e13, #3b141b);
 }
+
 html[data-theme="day"], body[data-theme="day"] {
-  --night: #f7f4ed; --night2: #ede7dc; --panel: #ffffff; --panel2: #f4ede2;
+  --night: #f8f5ee; --night2: #eee7dc; --panel: #ffffff; --panel2: #f6efe4;
   --gold: #b47e28; --gold-soft: #452c0e; --marigold: #c48b2e; --muted: #64748b;
-  --line: rgba(180,126,40,0.25); --accent: #b47e28; --accent2: #0284c7;
-  --glow: rgba(180,126,40,0.15); --cosmic-hue: 40deg;
-  --bg-gradient: radial-gradient(circle at 50% 20%, #fdfbf7 0%, #f4eee2 60%, #eae1d2 100%);
+  --line: rgba(180,126,40,0.28); --accent: #b47e28; --accent2: #0284c7;
+  --glow: rgba(180,126,40,0.16); --cosmic-hue: 40deg;
+  --bg-gradient: radial-gradient(circle at 50% 20%, #fdfcf9 0%, #f5efe4 60%, #eae0d0 100%);
   --heading-bright: #1e1509;
+  --display-font: 'Bodoni Moda', 'Cinzel', serif;
+  --heading-font: 'Bodoni Moda', serif;
+  --reading-font: 'Cormorant Garamond', Georgia, serif;
+  --ui-font: 'Manrope', sans-serif;
+  --card-radius: 16px;
+  --btn-radius: 10px;
+  --heading-transform: none;
+  --heading-spacing: 0.03em;
+  --card-border: 1px solid rgba(180,126,40,0.28);
+  --card-shadow: 0 16px 45px rgba(60,42,14,0.09), 0 2px 6px rgba(60,42,14,0.04);
+  --card-bg-gradient: linear-gradient(180deg, #ffffff, #faf7f2);
 }
+
 html[data-theme="day"] body {
   color: #1e293b;
 }
-html[data-theme="day"] .card, html[data-theme="day"] .astrology-intro, html[data-theme="day"] .mode-tabs, html[data-theme="day"] .report-card {
+html[data-theme="day"] .card, html[data-theme="day"] .astrology-intro, html[data-theme="day"] .mode-tabs, html[data-theme="day"] .report-card, html[data-theme="day"] .panchang-hub, html[data-theme="day"] .meditation-guide-box, html[data-theme="day"] .daily-celestial-reflection, html[data-theme="day"] .visual-card {
   background: #ffffff !important;
   box-shadow: 0 12px 35px rgba(45,28,10,0.08), 0 1px 3px rgba(45,28,10,0.05) !important;
   border-color: rgba(180,126,40,0.22) !important;
@@ -698,7 +771,7 @@ html[data-theme="day"] input, html[data-theme="day"] select, html[data-theme="da
   color: #0f172a !important;
   border-color: #d1c7b7 !important;
 }
-html[data-theme="day"] .sky-planet, html[data-theme="day"] .sign-chip, html[data-theme="day"] .astrology-pillars > div {
+html[data-theme="day"] .sky-planet, html[data-theme="day"] .sign-chip, html[data-theme="day"] .astrology-pillars > div, html[data-theme="day"] .how-step, html[data-theme="day"] .panchang-item, html[data-theme="day"] .rashifal-mini-card, html[data-theme="day"] .rashifal-section-card {
   background: #fbf9f5 !important;
   border-color: rgba(180,126,40,0.2) !important;
 }
@@ -707,30 +780,59 @@ html[data-theme="day"] .header-brand-title {
 }
 @media(max-width:680px){.theme-switcher{position:relative;right:auto;top:auto;width:max-content;margin:0 0 18px auto}}
 
-
-/* ===== Final premium UI refinement ===== */
-:root{--display-font:'Bodoni Moda',Georgia,serif;--ui-font:'Manrope',Arial,sans-serif;--reading-font:'Cormorant Garamond',Georgia,serif;}
-body{font-family:var(--reading-font);letter-spacing:.005em;background:transparent;}
-body h1,.astrology-intro h2,.intro-card h2{font-family:var(--display-font)!important;font-weight:500;letter-spacing:-.02em;}
-body h2,body h3,body h4,.card h2,.report h3,.modal-box h2,.modal-box h4,label,button,.subtitle,.intro-eyebrow,.intro-kicker,.theme-label,.how-title,.how-step b{font-family:var(--ui-font)!important;}
-body h2,body h3,body h4{letter-spacing:.045em;}
-.card,.report-card,.mode-tabs,.astrology-intro,.intro-card{border-radius:18px;}
-.card{box-shadow:0 24px 70px rgba(0,0,0,.26),inset 0 1px 0 rgba(255,255,255,.035);}
-.card h2,.report h3,.modal-box h2{position:relative;padding-bottom:14px;border-bottom:0!important;}
-.card h2:after,.report h3:after,.modal-box h2:after{content:"";position:absolute;left:0;bottom:0;width:86px;height:1px;background:linear-gradient(90deg,var(--accent),transparent);}
-.card h2:before,.report h3:before{content:"✦";color:var(--accent);font-size:.65em;margin-right:4px;vertical-align:middle;}
-input,select,textarea{font-family:var(--ui-font)!important;font-size:14px!important;border-radius:10px!important;background:color-mix(in srgb,var(--panel) 88%,#000 12%)!important;transition:border-color .25s,box-shadow .25s,transform .25s;}
-input:focus,select:focus,textarea:focus{border-color:var(--accent)!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 12%,transparent),0 8px 24px rgba(0,0,0,.16);outline:none;}
-button{border-radius:10px!important;transition:transform .25s,box-shadow .25s,filter .25s!important;}
-button:hover{transform:translateY(-1px);box-shadow:0 10px 28px color-mix(in srgb,var(--accent) 12%,transparent);}
-.astrology-intro{background:radial-gradient(circle at 82% 22%,color-mix(in srgb,var(--accent2) 11%,transparent),transparent 28%),radial-gradient(circle at 18% 72%,color-mix(in srgb,var(--accent) 10%,transparent),transparent 30%),linear-gradient(145deg,color-mix(in srgb,var(--night2) 96%,#fff 4%),var(--night));}
-.astrology-intro h2{font-size:clamp(36px,4.3vw,58px);line-height:1.02;text-shadow:0 18px 50px rgba(0,0,0,.42);}
-.mystery-quote{font-family:var(--display-font)!important;font-weight:400;letter-spacing:.01em;}
-.sanskrit-opening>div{font-family:'Noto Serif Devanagari',serif!important;}
-.sanskrit-opening small{font-family:var(--ui-font)!important;}
-.theme-switcher{border-color:color-mix(in srgb,var(--accent) 28%,transparent);background:color-mix(in srgb,var(--night) 78%,transparent);box-shadow:0 16px 40px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.05);}
-.theme-btn{width:27px!important;height:27px!important;border-radius:8px!important;position:relative;overflow:hidden;}
-.theme-btn.active{outline:1px solid var(--accent);outline-offset:3px;}
+/* Base Typography & Geometry Application */
+body {
+  font-family: var(--reading-font);
+  letter-spacing: .005em;
+  background: transparent;
+}
+body h1, .astrology-intro h2, .intro-card h2 {
+  font-family: var(--display-font) !important;
+  font-weight: 600;
+  letter-spacing: var(--heading-spacing);
+  text-transform: var(--heading-transform);
+}
+body h2, body h3, body h4, .card h2, .report h3, .modal-box h2, .modal-box h4, label, button, .subtitle, .intro-eyebrow, .intro-kicker, .theme-label, .how-title, .how-step b, .header-brand-title, .meditation-title, .reflection-badge {
+  font-family: var(--heading-font) !important;
+  letter-spacing: var(--heading-spacing);
+}
+.card, .report-card, .mode-tabs, .astrology-intro, .intro-card, .panchang-hub, .meditation-guide-box, .daily-celestial-reflection, .visual-card {
+  border-radius: var(--card-radius) !important;
+  border: var(--card-border) !important;
+  box-shadow: var(--card-shadow) !important;
+}
+button, .primary, .secondary, .rashifal-quick-btn {
+  border-radius: var(--btn-radius) !important;
+}
+.theme-btn {
+  border-radius: var(--btn-radius) !important;
+}
+.mystery-quote {
+  font-family: var(--display-font) !important;
+  font-weight: 400;
+}
+.sanskrit-opening > div, .temple-sanskrit-engraving, .reflection-sanskrit {
+  font-family: 'Noto Serif Devanagari', serif !important;
+}
+.sanskrit-opening small {
+  font-family: var(--ui-font) !important;
+}
+.theme-switcher {
+  border-color: color-mix(in srgb, var(--accent) 28%, transparent);
+  background: color-mix(in srgb, var(--night) 78%, transparent);
+  box-shadow: 0 16px 40px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.05);
+}
+.theme-btn {
+  width: 27px !important;
+  height: 27px !important;
+  position: relative;
+  overflow: hidden;
+}
+.theme-btn.active {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  transform: scale(1.12);
+}
 /* Premium static Rashi mandala: no spinning glyph ring. */
 .zodiac-wheel{filter:drop-shadow(0 0 46px var(--glow));}
 .zodiac-wheel:before{inset:19px;border-width:1px;box-shadow:0 0 0 10px color-mix(in srgb,var(--accent) 3%,transparent),0 0 0 34px color-mix(in srgb,var(--accent2) 4%,transparent),0 0 0 66px rgba(255,255,255,.012);}
@@ -4220,59 +4322,6 @@ body input, body select, body textarea {
     </div>
   </div>
   <div class="header-brand-right">
-    <!-- Visual Atmosphere Theme Switcher -->
-    <div class="header-theme-wrap" id="headerThemeWrap">
-      <button type="button" class="header-theme-btn" id="themePickerBtn" onclick="toggleThemePickerMenu(event)" title="Change Vedic Visual Atmosphere Theme">
-        <span>🪷</span>
-        <span id="currentThemeLabel">Cosmic Night</span>
-        <span>▾</span>
-      </button>
-      <div class="theme-picker-dropdown" id="themePickerDropdown" style="display:none;">
-        <div class="theme-opt active" data-theme-val="cosmic" onclick="setVedicTheme('cosmic')">
-          <div class="theme-opt-header">
-            <span class="theme-dot" style="background:#d8a04c;"></span>
-            <b>Cosmic Night</b>
-          </div>
-          <small>Midnight navy + gold + silver</small>
-        </div>
-        <div class="theme-opt" data-theme-val="dawn" onclick="setVedicTheme('dawn')">
-          <div class="theme-opt-header">
-            <span class="theme-dot" style="background:#e28cb0;"></span>
-            <b>Sacred Dawn</b>
-          </div>
-          <small>Deep indigo → lavender + rose gold</small>
-        </div>
-        <div class="theme-opt" data-theme-val="temple" onclick="setVedicTheme('temple')">
-          <div class="theme-opt-header">
-            <span class="theme-dot" style="background:#ffd700;"></span>
-            <b>Golden Temple</b>
-          </div>
-          <small>Rich black + pure gold + amber</small>
-        </div>
-        <div class="theme-opt" data-theme-val="lunar" onclick="setVedicTheme('lunar')">
-          <div class="theme-opt-header">
-            <span class="theme-dot" style="background:#93c5fd;"></span>
-            <b>Lunar Silver</b>
-          </div>
-          <small>Charcoal + silver + soft blue</small>
-        </div>
-        <div class="theme-opt" data-theme-val="saffron" onclick="setVedicTheme('saffron')">
-          <div class="theme-opt-header">
-            <span class="theme-dot" style="background:#ff9933;"></span>
-            <b>Saffron Flame</b>
-          </div>
-          <small>Deep maroon + saffron + gold</small>
-        </div>
-        <div class="theme-opt" data-theme-val="day" onclick="setVedicTheme('day')">
-          <div class="theme-opt-header">
-            <span class="theme-dot" style="background:#f4eee2;border:1px solid #b47e28;"></span>
-            <b>Celestial Day</b>
-          </div>
-          <small>Parchment light + sharp gold + clean slate</small>
-        </div>
-      </div>
-    </div>
-
     <!-- Soft Hindi Language Toggle -->
     <button type="button" class="header-lang-btn" id="langToggleBtn" onclick="toggleVedicLanguage()" title="Switch between English and Hindi headings (भाषा बदलें)">
       <span>🕉</span> <b id="langBtnText">हिंदी</b>
@@ -4484,16 +4533,6 @@ body input, body select, body textarea {
 <div class="lotus-divider">✦ ✦ ✦</div>
 
 <section class="astrology-intro" id="introCard">
-  <div class="theme-switcher" aria-label="Choose celestial theme">
-    <span class="theme-label" id="introThemeLabel">Atmosphere</span>
-    <button class="theme-btn active" type="button" data-theme-choice="cosmic" onclick="setVedicTheme('cosmic')" style="--swatch:#d8a04c" aria-label="Cosmic Night theme" title="Cosmic Night"></button>
-    <button class="theme-btn" type="button" data-theme-choice="dawn" onclick="setVedicTheme('dawn')" style="--swatch:#e28cb0" aria-label="Sacred Dawn theme" title="Sacred Dawn"></button>
-    <button class="theme-btn" type="button" data-theme-choice="temple" onclick="setVedicTheme('temple')" style="--swatch:#ffd700" aria-label="Golden Temple theme" title="Golden Temple"></button>
-    <button class="theme-btn" type="button" data-theme-choice="lunar" onclick="setVedicTheme('lunar')" style="--swatch:#93c5fd" aria-label="Lunar Silver theme" title="Lunar Silver"></button>
-    <button class="theme-btn" type="button" data-theme-choice="saffron" onclick="setVedicTheme('saffron')" style="--swatch:#ff9933" aria-label="Saffron Flame theme" title="Saffron Flame"></button>
-    <button class="theme-btn" type="button" data-theme-choice="day" onclick="setVedicTheme('day')" style="--swatch:#f4eee2;border-color:#b47e28!important;" aria-label="Celestial Day theme" title="Celestial Day"></button>
-  </div>
-
   <div class="intro-top-row" style="display:block;max-width:1000px;margin:0 auto;">
     <div class="intro-copy" style="max-width:100%;">
       <div class="intro-eyebrow">✦ A MAP OF TIME • A MIRROR OF PATTERNS • A LANGUAGE OF THE SKY</div>
@@ -4509,7 +4548,7 @@ body input, body select, body textarea {
   </div>
 
   <div class="astrology-pillars" style="margin-top:32px;">
-    <div onclick="openSpecificZodiacModal('aries'); selectRashifalSign('aries');" style="cursor:pointer;" title="Click to explore the 12 Vedic Rashis"><img src="/public/images/aries.png" class="rashi-pillar-img" alt="Rashis" /><strong>Rashis</strong><small>The twelve signs describe the field and style in which planetary themes unfold.</small></div>
+    <div onclick="openSpecificZodiacModal('aries'); selectRashifalSign('aries');" style="cursor:pointer;" title="Click to explore the 12 Vedic Rashis"><img src="/images/zodiac_gold/aries.png" class="rashi-pillar-img" alt="Rashis" /><strong>Rashis</strong><small>The twelve signs describe the field and style in which planetary themes unfold.</small></div>
     <div><span>☉</span><strong>Grahas</strong><small>The Sun, Moon and planets represent different functions, drives and experiences.</small></div>
     <div><span>⌂</span><strong>Bhavas</strong><small>The twelve houses connect those influences to distinct areas of life.</small></div>
     <div><span>☾</span><strong>Nakshatras</strong><small>The lunar mansions add a finer symbolic layer to the Moon and its cycles.</small></div>
@@ -4555,18 +4594,18 @@ body input, body select, body textarea {
 
   <div class="rashifal-selector-wrap">
     <div class="rashifal-grid-selector" id="rashifalSignSelector">
-      <button type="button" class="rashifal-pill active" data-sign="aries" onclick="selectRashifalSign('aries')" aria-label="Aries · Mesha"><img src="/public/images/aries.png" class="rashifal-pill-img" alt="Aries" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">मेष (Mesha)</b><small class="p-sign-en">Aries</small></span></button>
-      <button type="button" class="rashifal-pill" data-sign="taurus" onclick="selectRashifalSign('taurus')" aria-label="Taurus · Vrishabha"><img src="/public/images/taurus.png" class="rashifal-pill-img" alt="Taurus" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">वृषभ (Vrishabha)</b><small class="p-sign-en">Taurus</small></span></button>
-      <button type="button" class="rashifal-pill" data-sign="gemini" onclick="selectRashifalSign('gemini')" aria-label="Gemini · Mithuna"><img src="/public/images/gemini.png" class="rashifal-pill-img" alt="Gemini" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">मिथुन (Mithuna)</b><small class="p-sign-en">Gemini</small></span></button>
-      <button type="button" class="rashifal-pill" data-sign="cancer" onclick="selectRashifalSign('cancer')" aria-label="Cancer · Karka"><img src="/public/images/cancer.png" class="rashifal-pill-img" alt="Cancer" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">कर्क (Karka)</b><small class="p-sign-en">Cancer</small></span></button>
-      <button type="button" class="rashifal-pill" data-sign="leo" onclick="selectRashifalSign('leo')" aria-label="Leo · Simha"><img src="/public/images/leo.png" class="rashifal-pill-img" alt="Leo" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">सिंह (Simha)</b><small class="p-sign-en">Leo</small></span></button>
-      <button type="button" class="rashifal-pill" data-sign="virgo" onclick="selectRashifalSign('virgo')" aria-label="Virgo · Kanya"><img src="/public/images/virgo.png" class="rashifal-pill-img" alt="Virgo" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">कन्या (Kanya)</b><small class="p-sign-en">Virgo</small></span></button>
-      <button type="button" class="rashifal-pill" data-sign="libra" onclick="selectRashifalSign('libra')" aria-label="Libra · Tula"><img src="/public/images/libra.png" class="rashifal-pill-img" alt="Libra" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">तुला (Tula)</b><small class="p-sign-en">Libra</small></span></button>
-      <button type="button" class="rashifal-pill" data-sign="scorpio" onclick="selectRashifalSign('scorpio')" aria-label="Scorpio · Vrischika"><img src="/public/images/scorpio.png" class="rashifal-pill-img" alt="Scorpio" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">वृश्चिक (Vrischika)</b><small class="p-sign-en">Scorpio</small></span></button>
-      <button type="button" class="rashifal-pill" data-sign="sagittarius" onclick="selectRashifalSign('sagittarius')" aria-label="Sagittarius · Dhanu"><img src="/public/images/sagittarius.png" class="rashifal-pill-img" alt="Sagittarius" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">धनु (Dhanu)</b><small class="p-sign-en">Sagittarius</small></span></button>
-      <button type="button" class="rashifal-pill" data-sign="capricorn" onclick="selectRashifalSign('capricorn')" aria-label="Capricorn · Makara"><img src="/public/images/capricorn.png" class="rashifal-pill-img" alt="Capricorn" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">मकर (Makara)</b><small class="p-sign-en">Capricorn</small></span></button>
-      <button type="button" class="rashifal-pill" data-sign="aquarius" onclick="selectRashifalSign('aquarius')" aria-label="Aquarius · Kumbha"><img src="/public/images/aquarius.png" class="rashifal-pill-img" alt="Aquarius" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">कुंभ (Kumbha)</b><small class="p-sign-en">Aquarius</small></span></button>
-      <button type="button" class="rashifal-pill" data-sign="pisces" onclick="selectRashifalSign('pisces')" aria-label="Pisces · Meena"><img src="/public/images/pisces.png" class="rashifal-pill-img" alt="Pisces" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">मीन (Meena)</b><small class="p-sign-en">Pisces</small></span></button>
+      <button type="button" class="rashifal-pill active" data-sign="aries" onclick="selectRashifalSign('aries')" aria-label="Aries · Mesha"><img src="/images/zodiac_gold/aries.png" class="rashifal-pill-img" alt="Aries" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">मेष (Mesha)</b><small class="p-sign-en">Aries</small></span></button>
+      <button type="button" class="rashifal-pill" data-sign="taurus" onclick="selectRashifalSign('taurus')" aria-label="Taurus · Vrishabha"><img src="/images/zodiac_gold/taurus.png" class="rashifal-pill-img" alt="Taurus" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">वृषभ (Vrishabha)</b><small class="p-sign-en">Taurus</small></span></button>
+      <button type="button" class="rashifal-pill" data-sign="gemini" onclick="selectRashifalSign('gemini')" aria-label="Gemini · Mithuna"><img src="/images/zodiac_gold/gemini.png" class="rashifal-pill-img" alt="Gemini" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">मिथुन (Mithuna)</b><small class="p-sign-en">Gemini</small></span></button>
+      <button type="button" class="rashifal-pill" data-sign="cancer" onclick="selectRashifalSign('cancer')" aria-label="Cancer · Karka"><img src="/images/zodiac_gold/cancer.png" class="rashifal-pill-img" alt="Cancer" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">कर्क (Karka)</b><small class="p-sign-en">Cancer</small></span></button>
+      <button type="button" class="rashifal-pill" data-sign="leo" onclick="selectRashifalSign('leo')" aria-label="Leo · Simha"><img src="/images/zodiac_gold/leo.png" class="rashifal-pill-img" alt="Leo" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">सिंह (Simha)</b><small class="p-sign-en">Leo</small></span></button>
+      <button type="button" class="rashifal-pill" data-sign="virgo" onclick="selectRashifalSign('virgo')" aria-label="Virgo · Kanya"><img src="/images/zodiac_gold/virgo.png" class="rashifal-pill-img" alt="Virgo" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">कन्या (Kanya)</b><small class="p-sign-en">Virgo</small></span></button>
+      <button type="button" class="rashifal-pill" data-sign="libra" onclick="selectRashifalSign('libra')" aria-label="Libra · Tula"><img src="/images/zodiac_gold/libra.png" class="rashifal-pill-img" alt="Libra" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">तुला (Tula)</b><small class="p-sign-en">Libra</small></span></button>
+      <button type="button" class="rashifal-pill" data-sign="scorpio" onclick="selectRashifalSign('scorpio')" aria-label="Scorpio · Vrischika"><img src="/images/zodiac_gold/scorpio.png" class="rashifal-pill-img" alt="Scorpio" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">वृश्चिक (Vrischika)</b><small class="p-sign-en">Scorpio</small></span></button>
+      <button type="button" class="rashifal-pill" data-sign="sagittarius" onclick="selectRashifalSign('sagittarius')" aria-label="Sagittarius · Dhanu"><img src="/images/zodiac_gold/sagittarius.png" class="rashifal-pill-img" alt="Sagittarius" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">धनु (Dhanu)</b><small class="p-sign-en">Sagittarius</small></span></button>
+      <button type="button" class="rashifal-pill" data-sign="capricorn" onclick="selectRashifalSign('capricorn')" aria-label="Capricorn · Makara"><img src="/images/zodiac_gold/capricorn.png" class="rashifal-pill-img" alt="Capricorn" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">मकर (Makara)</b><small class="p-sign-en">Capricorn</small></span></button>
+      <button type="button" class="rashifal-pill" data-sign="aquarius" onclick="selectRashifalSign('aquarius')" aria-label="Aquarius · Kumbha"><img src="/images/zodiac_gold/aquarius.png" class="rashifal-pill-img" alt="Aquarius" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">कुंभ (Kumbha)</b><small class="p-sign-en">Aquarius</small></span></button>
+      <button type="button" class="rashifal-pill" data-sign="pisces" onclick="selectRashifalSign('pisces')" aria-label="Pisces · Meena"><img src="/images/zodiac_gold/pisces.png" class="rashifal-pill-img" alt="Pisces" width="28" height="28" /><span class="pill-text"><b class="p-sign-hi">मीन (Meena)</b><small class="p-sign-en">Pisces</small></span></button>
     </div>
   </div>
 
@@ -5147,7 +5186,7 @@ body input, body select, body textarea {
   <div class="modal-box zodiac-focus-modal-box">
     <button type="button" class="modal-close" onclick="closeZodiacModal()" aria-label="Close">&times;</button>
     <div style="display:flex;align-items:center;gap:14px;border-bottom:1px solid rgba(242,215,146,0.25);padding-bottom:14px;margin-bottom:18px;">
-      <img id="zodiacModalImg" src="/public/images/aries.png" class="rashifal-gold-logo" style="width:58px;height:58px;margin-bottom:0;" alt="Zodiac" />
+      <img id="zodiacModalImg" src="/images/zodiac_gold/aries.png" class="rashifal-gold-logo" style="width:58px;height:58px;margin-bottom:0;" alt="Zodiac" />
       <div>
         <h2 id="zodiacModalTitle" style="font-family:'Bodoni Moda','Cinzel',serif;font-size:22px;color:#fce7b0;margin:0;">Mesha · Aries</h2>
         <div id="zodiacModalSubtitle" style="font-size:13px;color:#7fc5c0;margin-top:2px;">Daily Planetary Transit &amp; Horoscope</div>
@@ -5533,18 +5572,18 @@ window.PAYWALL_CONFIG = {
   const zNames = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
   const imgNames = ['aries','taurus','gemini','cancer','leo','virgo','libra','scorpio','sagittarius','capricorn','aquarius','pisces'];
   const ZODIAC_IMAGE_MAP = {
-    aries: '/public/images/aries.png',
-    taurus: '/public/images/taurus.png',
-    gemini: '/public/images/gemini.png',
-    cancer: '/public/images/cancer.png',
-    leo: '/public/images/leo.png',
-    virgo: '/public/images/virgo.png',
-    libra: '/public/images/libra.png',
-    scorpio: '/public/images/scorpio.png',
-    sagittarius: '/public/images/sagittarius.png',
-    capricorn: '/public/images/capricorn.png',
-    aquarius: '/public/images/aquarius.png',
-    pisces: '/public/images/pisces.png'
+    aries: '/images/zodiac_gold/aries.png',
+    taurus: '/images/zodiac_gold/taurus.png',
+    gemini: '/images/zodiac_gold/gemini.png',
+    cancer: '/images/zodiac_gold/cancer.png',
+    leo: '/images/zodiac_gold/leo.png',
+    virgo: '/images/zodiac_gold/virgo.png',
+    libra: '/images/zodiac_gold/libra.png',
+    scorpio: '/images/zodiac_gold/scorpio.png',
+    sagittarius: '/images/zodiac_gold/sagittarius.png',
+    capricorn: '/images/zodiac_gold/capricorn.png',
+    aquarius: '/images/zodiac_gold/aquarius.png',
+    pisces: '/images/zodiac_gold/pisces.png'
   };
   window.ZODIAC_IMAGE_MAP = ZODIAC_IMAGE_MAP;
   const ring = document.getElementById('zodiacRing');
@@ -5552,12 +5591,12 @@ window.PAYWALL_CONFIG = {
     ring.innerHTML = ZODIAC.map((glyph, i) => {
       const angle = (i / ZODIAC.length) * 360;
       const img = imgNames[i];
-      const imgSrc = ZODIAC_IMAGE_MAP[img] || `/public/images/${img}.png`;
+      const imgSrc = ZODIAC_IMAGE_MAP[img] || `/images/zodiac_gold/${img}.png`;
       const name = zNames[i];
       return `<div class="hero-z-node" style="transform:rotate(${angle}deg) translate(var(--ring-r, 252px)) rotate(${-angle}deg);" title="${name} · Click to view Daily Horoscope & Astrological Analysis" onclick="openSpecificZodiacModal('${img}'); selectRashifalSign('${img}'); event.stopPropagation();" role="button" tabindex="0">
         <div class="hero-z-node-inner">
-          <img src="${imgSrc}" class="hero-z-img" alt="${name}" referrerPolicy="no-referrer" />
-          <span class="hero-z-symbol">${glyph}</span>
+          <img src="${imgSrc}" class="hero-z-img" alt="${name}" onerror="handleZodiacImgError(this, '${img}')" referrerPolicy="no-referrer" />
+          <span class="hero-z-symbol">${name}</span>
         </div>
       </div>`;
     }).join('');
@@ -5590,7 +5629,7 @@ window.PAYWALL_CONFIG = {
     e.stopPropagation();
     signs.forEach(s=>s.classList.remove('is-active')); el.classList.add('is-active');
     const d=data[i]; const img = imgNames[i];
-    const imgSrc = `/public/images/${img}.png`;
+    const imgSrc = `/images/zodiac_gold/${img}.png`;
     detail.innerHTML=`<div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:8px;"><img src="${imgSrc}" style="width:52px;height:52px;border-radius:50%;border:2px solid #f2d792;box-shadow:0 0 18px rgba(242,215,146,0.7), 0 0 35px rgba(127,197,192,0.45);" alt="${d[1]}" referrerPolicy="no-referrer" /><div><b style="font-size:16px;margin:0;color:#fce7b0;text-shadow:0 0 8px rgba(224,198,116,0.6);">${d[0]} · ${d[1]}</b><small style="color:#e0c674;font-weight:600;margin-top:2px;display:block;">${d[2]} Element • ${d[3]}</small></div></div><small style="text-align:center !important;display:block;color:#d6c3a0;">Ruler: <strong style="color:#f2d792">${d[4]}</strong> — ${d[5]}</small>`; detail.classList.add('open');
   }));
   document.addEventListener('click',e=>{if(!e.target.closest('.z-sign')&&!e.target.closest('.rashi-detail')){detail.classList.remove('open');signs.forEach(s=>s.classList.remove('is-active'));}});
@@ -6168,13 +6207,13 @@ function renderDailyRashifal(targetDate = currentPanchangDate) {
   }
 
   const sign = ZODIAC_METADATA[activeRashifalSign] || ZODIAC_METADATA['aries'];
-  const imgSrc = `/public/images/${sign.key}.png`;
+  const imgSrc = `/images/zodiac_gold/${sign.key}.png`;
 
   container.innerHTML = `
     <div class="rashifal-art-box">
       <div class="rashifal-date-banner"><span style="font-size:14px;">🗓️</span> <b>${formattedDate}</b></div>
-      <img src="${imgSrc}" alt="${sign.nameFull}" class="rashifal-gold-logo" width="120" height="120" loading="eager" />
-      <span class="rashifal-symbol-watermark">${sign.symbol}</span>
+      <img src="${imgSrc}" alt="${sign.nameFull}" class="rashifal-gold-logo" width="120" height="120" onerror="handleZodiacImgError(this, '${sign.key}')" loading="eager" />
+      <span class="rashifal-symbol-watermark">${sign.nameHindi}</span>
       <div class="rashifal-sign-title">${sign.nameFull}</div>
       <div class="rashifal-sign-sub">Ruler: <b>${sign.lord}</b> · Element: <b>${sign.element}</b> (${sign.nature})</div>
       
@@ -6296,7 +6335,7 @@ function openSpecificZodiacModal(signKey) {
   const mStr = String(d.getMonth() + 1).padStart(2, '0');
   const dStr = String(d.getDate()).padStart(2, '0');
   const dateIso = `${yStr}-${mStr}-${dStr}`;
-  const imgSrc = `/public/images/${sign.key}.png`;
+  const imgSrc = `/images/zodiac_gold/${sign.key}.png`;
 
   const titleEl = document.getElementById('zodiacModalTitle');
   const subEl = document.getElementById('zodiacModalSubtitle');
@@ -6313,8 +6352,8 @@ function openSpecificZodiacModal(signKey) {
     bodyEl.innerHTML = `
       <div class="zodiac-modal-top-grid">
         <div class="zodiac-modal-art">
-          <img src="${imgSrc}" alt="${sign.nameFull}" class="rashifal-gold-logo" width="130" height="130" />
-          <div style="margin-top:10px;font-family:'Bodoni Moda','Cinzel',serif;font-size:17px;color:#fce7b0;font-weight:700;">${sign.symbol} ${sign.nameFull}</div>
+          <img src="${imgSrc}" alt="${sign.nameFull}" class="rashifal-gold-logo" width="130" height="130" onerror="handleZodiacImgError(this, '${sign.key}')" />
+          <div style="margin-top:10px;font-family:'Bodoni Moda','Cinzel',serif;font-size:17px;color:#fce7b0;font-weight:700;">${sign.nameFull}</div>
           <div style="font-size:12.5px;color:#9fc9c2;margin-top:4px;">Ruler: <b>${sign.lord}</b> · Element: <b>${sign.element}</b> (${sign.nature})</div>
         </div>
         <div class="zodiac-modal-details">
@@ -7414,10 +7453,25 @@ function getZodiacSignKey(signStr) {
 
 function getZodiacSvgUrl(signStr) {
   const key = getZodiacSignKey(signStr);
-  return `/public/images/${key}.png`;
+  return `/images/zodiac_gold/${key}.png`;
+}
+function handleZodiacImgError(imgEl, signKey) {
+  if (!imgEl) return;
+  const key = getZodiacSignKey(signKey || imgEl.alt || 'aries');
+  if (!imgEl.dataset.retryCount) {
+    imgEl.dataset.retryCount = '1';
+    imgEl.src = `/public/images/zodiac_gold/${key}.png`;
+  } else if (imgEl.dataset.retryCount === '1') {
+    imgEl.dataset.retryCount = '2';
+    imgEl.src = `/images/zodiac/${key}.png`;
+  } else if (imgEl.dataset.retryCount === '2') {
+    imgEl.dataset.retryCount = '3';
+    imgEl.src = `/public/images/zodiac/${key}.png`;
+  }
 }
 window.getZodiacSignKey = getZodiacSignKey;
 window.getZodiacSvgUrl = getZodiacSvgUrl;
+window.handleZodiacImgError = handleZodiacImgError;
 
 function formatRashiNameWithHindi(signStr) {
   if (!signStr) return '—';
@@ -7497,7 +7551,7 @@ function renderCurrentSky(chart,stamp){
     const signKey = getZodiacSignKey(p.sign);
     return `<div class="sky-planet" onclick="openSpecificZodiacModal('${signKey}'); selectRashifalSign('${signKey}');" style="cursor:pointer;" title="Click for ${p.sign} horoscope & details">
       <div style="display:flex;align-items:center;gap:11px;">
-        <img src="${svgUrl}" class="sky-planet-zodiac-img" alt="${p.sign}" width="36" height="36" />
+        <img src="${svgUrl}" class="sky-planet-zodiac-img" onerror="handleZodiacImgError(this, '${signKey}')" alt="${p.sign}" width="36" height="36" />
         <div style="min-width:0;flex:1;">
           <b>${p.name}</b>
           <span>${formatRashiNameWithHindi(p.sign)} · ${formatDegree(p.degree)}</span>
@@ -8073,7 +8127,7 @@ function renderPlacementTable(){
       <td><b>${pLabel}</b></td>
       <td>
         <span onclick="openSpecificZodiacModal('${signKey}'); selectRashifalSign('${signKey}');" style="display:inline-flex;align-items:center;gap:7px;cursor:pointer;" title="Explore ${sign} details">
-          <img src="${svgUrl}" style="width:22px;height:22px;border-radius:50%;border:1.2px solid #fce7b0;box-shadow:0 0 8px rgba(242,215,146,0.6);vertical-align:middle;flex-shrink:0;" alt="" />
+          <img src="${svgUrl}" onerror="handleZodiacImgError(this, '${signKey}')" style="width:22px;height:22px;border-radius:50%;border:1.2px solid #fce7b0;box-shadow:0 0 8px rgba(242,215,146,0.6);vertical-align:middle;flex-shrink:0;" alt="${sign}" />
           <span>${formatRashiNameWithHindi(sign)}</span>
         </span>
       </td>
@@ -8094,11 +8148,11 @@ function renderPlacementTable(){
     const moonText = (data.moonSign || data.signs.Moon) ? formatRashiNameWithHindi(data.moonSign || data.signs.Moon) : (isHi ? 'पंचांग खंड देखें' : 'See Panchang section');
     meta.innerHTML=`<div style="display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:8px;">
       <span onclick="openSpecificZodiacModal('${lagnaKey}'); selectRashifalSign('${lagnaKey}');" style="display:inline-flex;align-items:center;gap:8px;background:rgba(242,215,146,0.1);padding:4px 12px;border-radius:20px;border:1px solid rgba(242,215,146,0.3);cursor:pointer;" title="Click for Lagna Rashi profile">
-        <img src="${lagnaSvg}" style="width:24px;height:24px;border-radius:50%;border:1.5px solid #fce7b0;box-shadow:0 0 10px rgba(242,215,146,0.5);" alt="Lagna" />
+        <img src="${lagnaSvg}" onerror="handleZodiacImgError(this, '${lagnaKey}')" style="width:24px;height:24px;border-radius:50%;border:1.5px solid #fce7b0;box-shadow:0 0 10px rgba(242,215,146,0.5);" alt="Lagna" />
         <span>${isHi ? 'लग्न (Lagna / Ascendant):' : 'Lagna (Ascendant):'} <b>${lagnaText}</b></span>
       </span>
       <span onclick="openSpecificZodiacModal('${moonKey}'); selectRashifalSign('${moonKey}');" style="display:inline-flex;align-items:center;gap:8px;background:rgba(127,197,192,0.1);padding:4px 12px;border-radius:20px;border:1px solid rgba(127,197,192,0.3);cursor:pointer;" title="Click for Moon Sign profile">
-        <img src="${moonSvg}" style="width:24px;height:24px;border-radius:50%;border:1.5px solid #7fc5c0;box-shadow:0 0 10px rgba(127,197,192,0.5);" alt="Moon sign" />
+        <img src="${moonSvg}" onerror="handleZodiacImgError(this, '${moonKey}')" style="width:24px;height:24px;border-radius:50%;border:1.5px solid #7fc5c0;box-shadow:0 0 10px rgba(127,197,192,0.5);" alt="Moon sign" />
         <span>${isHi ? 'चंद्र राशि (Chandra Rashi / Moon Sign):' : 'Moon Sign (Chandra Rashi):'} <b>${moonText}</b></span>
       </span>
     </div>`;
@@ -8120,20 +8174,35 @@ function buildAtAGlance(){
   
   card.style.display = 'block';
   if(grid){
+    const lagnaSvg = getZodiacSvgUrl(data.lagna);
+    const moonSvg = getZodiacSvgUrl(data.moonSign || data.signs.Moon);
+    const sunSvg = getZodiacSvgUrl(data.signs.Sun);
+    const lagnaKey = getZodiacSignKey(data.lagna);
+    const moonKey = getZodiacSignKey(data.moonSign || data.signs.Moon);
+    const sunKey = getZodiacSignKey(data.signs.Sun);
     grid.innerHTML = `
       <div class="glance-item">
         <span class="glance-tag">${isHi ? 'लग्न / आत्म-ऊर्जा' : 'LAGNA / CORE SELF'}</span>
-        <b>${data.lagna ? formatRashiNameWithHindi(data.lagna) : (isHi ? 'लग्न विश्लेषण जारी' : 'Analyzing Lagna')}</b>
+        <b style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;" onclick="openSpecificZodiacModal('${lagnaKey}'); selectRashifalSign('${lagnaKey}');">
+          ${data.lagna ? `<img src="${lagnaSvg}" onerror="handleZodiacImgError(this, '${lagnaKey}')" style="width:24px;height:24px;border-radius:50%;border:1.5px solid #fce7b0;box-shadow:0 0 8px rgba(242,215,146,0.5);vertical-align:middle;flex-shrink:0;" alt="" />` : ''}
+          <span>${data.lagna ? formatRashiNameWithHindi(data.lagna) : (isHi ? 'लग्न विश्लेषण जारी' : 'Analyzing Lagna')}</span>
+        </b>
         <p>${isHi ? 'शारीरिक स्वास्थ्य, मानसिक शक्ति एवं जीवन पथ का मूल आधार।' : 'Shapes fundamental vitality, temperament, and life trajectory.'}</p>
       </div>
       <div class="glance-item">
         <span class="glance-tag">${isHi ? 'चंद्र राशि / मन' : 'MOON / MIND'}</span>
-        <b>${(data.moonSign || data.signs.Moon) ? formatRashiNameWithHindi(data.moonSign || data.signs.Moon) : (isHi ? 'चंद्र विचार जारी' : 'Analyzing Moon')}</b>
+        <b style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;" onclick="openSpecificZodiacModal('${moonKey}'); selectRashifalSign('${moonKey}');">
+          ${(data.moonSign || data.signs.Moon) ? `<img src="${moonSvg}" onerror="handleZodiacImgError(this, '${moonKey}')" style="width:24px;height:24px;border-radius:50%;border:1.5px solid #7fc5c0;box-shadow:0 0 8px rgba(127,197,192,0.5);vertical-align:middle;flex-shrink:0;" alt="" />` : ''}
+          <span>${(data.moonSign || data.signs.Moon) ? formatRashiNameWithHindi(data.moonSign || data.signs.Moon) : (isHi ? 'चंद्र विचार जारी' : 'Analyzing Moon')}</span>
+        </b>
         <p>${isHi ? 'मानसिक शांति, भावनात्मक दृष्टिकोण एवं सहज प्रतिक्रियाओं का केंद्र।' : 'Governs emotional filters, inner instincts, and cognitive peace.'}</p>
       </div>
       <div class="glance-item">
         <span class="glance-tag">${isHi ? 'सूर्य / आत्म-विश्वास' : 'SUN / SOUL'}</span>
-        <b>${data.signs.Sun ? formatRashiNameWithHindi(data.signs.Sun) : (isHi ? 'सूर्य विचार जारी' : 'Analyzing Sun')}</b>
+        <b style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;" onclick="openSpecificZodiacModal('${sunKey}'); selectRashifalSign('${sunKey}');">
+          ${data.signs.Sun ? `<img src="${sunSvg}" onerror="handleZodiacImgError(this, '${sunKey}')" style="width:24px;height:24px;border-radius:50%;border:1.5px solid #fce7b0;box-shadow:0 0 8px rgba(242,215,146,0.5);vertical-align:middle;flex-shrink:0;" alt="" />` : ''}
+          <span>${data.signs.Sun ? formatRashiNameWithHindi(data.signs.Sun) : (isHi ? 'सूर्य विचार जारी' : 'Analyzing Sun')}</span>
+        </b>
         <p>${isHi ? 'आत्म-सम्मान, अधिकार, महत्वाकांक्षा एवं नेतृत्व क्षमता का प्रतीक।' : 'Reflects self-esteem, authority, vitality, and inner purpose.'}</p>
       </div>
     `;
@@ -9446,14 +9515,14 @@ input::placeholder{color:#718086 !important;}
     linear-gradient(145deg,rgba(7,16,22,.96),rgba(3,8,12,.97)) !important;
 }
 .mystery-quote{
-  font-family:'Bodoni Moda',serif !important;
+  font-family: var(--display-font), 'Bodoni Moda', serif !important;
   font-size:21px !important;
   line-height:1.55 !important;
   color:#e7d8b4 !important;
   letter-spacing:.01em;
 }
 .astrology-intro h2{
-  font-family:'Bodoni Moda',serif !important;
+  font-family: var(--display-font), 'Bodoni Moda', serif !important;
   font-size:45px !important;
   line-height:1.08 !important;
   color:#f0d9a2 !important;
@@ -9461,11 +9530,11 @@ input::placeholder{color:#718086 !important;}
 
 /* Premium buttons */
 button{
-  font-family:'Manrope',sans-serif !important;
+  font-family: var(--ui-font), 'Manrope', sans-serif !important;
   font-weight:700 !important;
   letter-spacing:.07em !important;
   text-transform:none !important;
-  border-radius:10px !important;
+  border-radius: var(--btn-radius, 10px) !important;
   box-shadow:0 12px 32px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.18) !important;
 }
 button:hover{transform:translateY(-1px);filter:brightness(1.035);}
@@ -9854,63 +9923,6 @@ button:hover{transform:translateY(-1px);filter:brightness(1.035);}
 @media(prefers-reduced-motion:reduce){
   .mandala,.wheel-aura,.cosmic-bg,.cosmic-bg:before,.cosmic-bg:after{animation:none!important;}
 }
-
-/* ========== FIX: Visible logos + full zodiac names (Aug 2026) ========== */
-.zodiac-wheel,
-.astrology-intro .zodiac-wheel,
-.zodiac-side-col .zodiac-wheel {
-  overflow: visible !important;
-}
-.zodiac-wheel .z-sign {
-  width: 72px !important;
-  height: auto !important;
-  min-height: 72px !important;
-  margin: -36px !important;
-  overflow: visible !important;
-  transform: rotate(var(--a)) translateY(-178px) !important;
-}
-.zodiac-wheel .z-sign .z-glyph,
-.zodiac-wheel .z-sign .z-logo-img {
-  display: block !important;
-  width: 52px !important;
-  height: 52px !important;
-  margin: 0 auto 3px auto !important;
-  border-radius: 50% !important;
-  object-fit: cover !important;
-  border: 2px solid #f2d792 !important;
-  box-shadow: 0 0 16px rgba(242,215,146,.75), 0 0 28px rgba(127,197,192,.4) !important;
-}
-.zodiac-wheel .z-sign b {
-  display: block !important;
-  font-size: 10px !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.06em !important;
-  color: #fce7b0 !important;
-  text-transform: uppercase !important;
-  white-space: nowrap !important;
-  overflow: visible !important;
-  text-overflow: unset !important;
-  margin-top: 2px !important;
-  text-shadow: 0 0 8px rgba(0,0,0,0.9), 0 0 6px rgba(242,215,146,0.7) !important;
-  pointer-events: none !important;
-}
-@media (max-width: 680px) {
-  .zodiac-wheel .z-sign {
-    transform: rotate(var(--a)) translateY(-138px) !important;
-    width: 58px !important;
-    margin: -29px !important;
-  }
-  .zodiac-wheel .z-sign .z-logo-img,
-  .zodiac-wheel .z-sign .z-glyph {
-    width: 42px !important;
-    height: 42px !important;
-  }
-  .zodiac-wheel .z-sign b {
-    font-size: 8.5px !important;
-  }
-}
-/* ========== END FIX ========== */
-
 </style>
 <script>
 // Direct Razorpay checkout: paid actions open Razorpay immediately.
@@ -11253,6 +11265,20 @@ window.setVedicTheme = function(themeName) {
     localStorage.setItem('jyotish_theme', themeName);
   } catch (e) {}
 
+  const themeColors = {
+    cosmic: '#050814',
+    dawn: '#12091c',
+    temple: '#0a0804',
+    lunar: '#060a12',
+    saffron: '#140704',
+    day: '#f8f5ee'
+  };
+
+  const metaTheme = document.querySelector('meta[name="theme-color"]');
+  if (metaTheme && themeColors[themeName]) {
+    metaTheme.setAttribute('content', themeColors[themeName]);
+  }
+
   const themeLabels = {
     cosmic: 'Cosmic Night',
     dawn: 'Sacred Dawn',
@@ -11283,6 +11309,10 @@ window.setVedicTheme = function(themeName) {
 
   const dd = document.getElementById('themePickerDropdown');
   if (dd) dd.style.display = 'none';
+
+  try {
+    window.dispatchEvent(new CustomEvent('vedicthemechange', { detail: { theme: themeName } }));
+  } catch(e) {}
 };
 
 window.toggleThemePickerMenu = function(e) {
