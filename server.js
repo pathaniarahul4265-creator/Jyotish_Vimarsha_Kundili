@@ -20,10 +20,11 @@ app.use(express.static(process.cwd()));
 app.get(['/images/zodiac/:sign.:ext', '/images/zodiac_gold/:sign.:ext', '/public/images/zodiac/:sign.:ext', '/public/images/zodiac_gold/:sign.:ext'], (req, res, next) => {
   const sign = req.params.sign.toLowerCase().replace(/[^a-z]/g, '');
   const candidates = [
+    path.join(process.cwd(), 'public', 'images', 'zodiac', `${sign}.svg`),
     path.join(process.cwd(), 'public', 'images', 'zodiac', `${sign}.png`),
-    path.join(process.cwd(), 'public', 'images', 'zodiac_gold', `${sign}.png`),
+    path.join(process.cwd(), 'images', 'zodiac', `${sign}.svg`),
     path.join(process.cwd(), 'images', 'zodiac', `${sign}.png`),
-    path.join(process.cwd(), 'public', 'images', 'zodiac', `${sign}.svg`)
+    path.join(process.cwd(), 'public', 'images', 'zodiac_gold', `${sign}.png`)
   ];
 
   for (const candidate of candidates) {

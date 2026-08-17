@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs>
+    <radialGradient id="bg_ta" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#14213d"/><stop offset="70%" stop-color="#080e1c"/><stop offset="100%" stop-color="#03060c"/>
+    </radialGradient>
+    <linearGradient id="gold_ta" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fff0bd"/><stop offset="35%" stop-color="#d4af37"/><stop offset="70%" stop-color="#aa7c11"/><stop offset="100%" stop-color="#fdf3cd"/>
+    </linearGradient>
+    <linearGradient id="silver_ta" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/><stop offset="50%" stop-color="#c9d2db"/><stop offset="100%" stop-color="#7a889b"/>
+    </linearGradient>
+    <filter id="glow_ta" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#f0c242" flood-opacity="0.45"/></filter>
+  </defs>
+  <circle cx="100" cy="100" r="96" fill="url(#bg_ta)"/>
+  <g fill="#e2e8f0" opacity="0.65"><circle cx="40" cy="50" r="1.5"/><circle cx="165" cy="65" r="1.2"/><circle cx="150" cy="145" r="1.8"/><circle cx="45" cy="140" r="1.2"/><circle cx="100" cy="28" r="1"/></g>
+  <circle cx="100" cy="100" r="95" fill="none" stroke="url(#gold_ta)" stroke-width="2.5"/>
+  <circle cx="100" cy="100" r="90" fill="none" stroke="url(#gold_ta)" stroke-width="0.8" stroke-dasharray="2,3"/>
+  <circle cx="100" cy="100" r="86" fill="none" stroke="url(#gold_ta)" stroke-width="1.2" opacity="0.7"/>
+  <g filter="url(#glow_ta)">
+    <!-- Majestic Taurus Bull Horns & Head -->
+    <path d="M48,46 C54,82 82,92 100,92 C118,92 146,82 152,46 C140,54 125,62 100,62 C75,62 60,54 48,46 Z" fill="url(#gold_ta)"/>
+    <!-- Celestial Bull Head Circle -->
+    <circle cx="100" cy="115" r="28" fill="url(#silver_ta)" stroke="url(#gold_ta)" stroke-width="3"/>
+    <circle cx="100" cy="115" r="18" fill="url(#bg_ta)" stroke="url(#gold_ta)" stroke-width="1.5"/>
+    <polygon points="100,105 103,112 110,115 103,118 100,125 97,118 90,115 97,112" fill="url(#gold_ta)"/>
+  </g>
+  <text x="100" y="186" text-anchor="middle" font-family="'Cinzel',serif" font-size="10" font-weight="700" fill="url(#gold_ta)" letter-spacing="2">VRISHABHA · TAURUS</text>
+</svg>
