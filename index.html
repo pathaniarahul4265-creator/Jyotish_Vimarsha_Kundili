@@ -7727,8 +7727,8 @@ setupPlaceAutocomplete('k1');
 setupPlaceAutocomplete('k2');
 
 const EMBEDDED_KEY = "";
-const PRIMARY_MODEL = "gemini-3.5-flash";
-const FALLBACK_MODEL = "gemini-3.1-flash-lite";
+const PRIMARY_MODEL = "gemini-2.5-flash";
+const FALLBACK_MODEL = "gemini-2.5-flash";
 let activeKey = EMBEDDED_KEY;
 let activeModel = PRIMARY_MODEL;
 
@@ -8163,7 +8163,7 @@ async function rawCall(model, key, systemText, userText, maxTokens){
   return data.text;
 }
 
-async function callGemini(systemText, userText, maxTokens){
+async function callGemini(systemText, userText, maxTokens = 3200){
   const maxAttempts = 3;
   let lastErr;
   for(let attempt = 1; attempt <= maxAttempts; attempt++){
@@ -8172,13 +8172,13 @@ async function callGemini(systemText, userText, maxTokens){
     }catch(err){
       lastErr = err;
       if(err?.isAuth) throw err;
-      if(err?.modelNotFound && activeModel !== FALLBACK_MODEL){
+      if((err?.modelNotFound || err?.status === 404) && activeModel !== FALLBACK_MODEL){
         activeModel = FALLBACK_MODEL;
         continue;
       }
-      const transient = err?.status === 429 || err?.status === 503 || err?.status === 500 || err?.status === 0;
+      const transient = err?.status === 429 || err?.status === 504 || err?.status === 503 || err?.status === 502 || err?.status === 500 || err?.status === 408 || err?.status === 0;
       if(transient && attempt < maxAttempts){
-        await sleep(attempt * 1500);
+        await sleep(attempt * 1200);
         continue;
       }
       throw err;
@@ -8836,8 +8836,8 @@ async function generateSection(index, reportBody, stepListEl, progressErrorEl){
   li.classList.add('active');
   progressErrorEl.innerHTML = '';
   try{
-    const userText = `Birth data:\n${birthContext}\n\nWrite the "${section.title}" section of this reading.\n${section.instruction}\nAim for approximately 1600-2400 words for major interpretive sections with rich, granular detail on lived impact, behavior, career, wealth, and relationships. Write directly to the person reading the report in a dignified, compassionate, and precise tone.\n\nSTRUCTURAL FORMATTING RULES:\n1. Organize your analysis with clear, descriptive subheadings using ### (e.g., "### 1. Core Psychological Blueprint" or "### Career Trajectory & Wealth Capacity").\n2. Highlight key takeaways with structured callout lines, such as:\n- **Core Takeaway:** Summary of the primary insight\n- **Astrological Mechanism:** Planets, bhavas, rashis, and yogas causing this effect\n- **Practical Impact:** Concrete consequences in daily life, work, or relationships\n- **Vedic Remedy / उपाय:** Authentic remedial measure or practical guidance\n- **Timing Window:** Key planetary period or transit when this effect manifests\n3. Use clear bullet points (- item) or numbered lists (1. item) for sequential factors.\n4. Write in rich, fluid paragraphs without repetitive filler or stray asterisks.\n5. Do not include the main section title at the very beginning of your response.`;
-    const rawText = await callGemini(activeRules, userText, 8192);
+    const userText = `Birth data:\n${birthContext}\n\nWrite the "${section.title}" section of this reading.\n${section.instruction}\nProvide an insightful, comprehensive astrological reading on lived impact, behavior, career, wealth, and relationships. Write directly to the person reading the report in a dignified, compassionate, and precise tone.\n\nSTRUCTURAL FORMATTING RULES:\n1. Organize your analysis with clear, descriptive subheadings using ### (e.g., "### 1. Core Psychological Blueprint" or "### Career Trajectory & Wealth Capacity").\n2. Highlight key takeaways with structured callout lines, such as:\n- **Core Takeaway:** Summary of the primary insight\n- **Astrological Mechanism:** Planets, bhavas, rashis, and yogas causing this effect\n- **Practical Impact:** Concrete consequences in daily life, work, or relationships\n- **Vedic Remedy / उपाय:** Authentic remedial measure or practical guidance\n- **Timing Window:** Key planetary period or transit when this effect manifests\n3. Use clear bullet points (- item) or numbered lists (1. item) for sequential factors.\n4. Write in rich, fluid paragraphs without repetitive filler or stray asterisks.\n5. Do not include the main section title at the very beginning of your response.`;
+    const rawText = await callGemini(activeRules, userText, 3200);
     const text = cleanAstroText(rawText);
     fullReportText += `\n\n## ${section.title}\n\n${text}`;
     
@@ -9640,7 +9640,7 @@ document.getElementById('chatSend').onclick = async () => {
   const userText = `${contextLabel}:\n${birthContext}\n\nComplete reading from the beginning through the latest section:\n${reportContext}\n\nConversation so far:\n${historyText}\n\nAnswer the latest question as a detailed continuation of the complete reading. Use the entire supplied reading from the beginning, not only its last section. Start with a direct answer in plain language. Then explain the relevant chart combinations, show the astrological evidence, connect it to the person's lived experience, discuss timing when relevant, distinguish strong indications from estimates, and finish with a clear synthesis. Do not merely define planets or signs. Do not introduce generic astrology that is not grounded in this chart. Aim for 1200-1800 words when the question warrants depth. Begin with the direct answer, then walk through the relevant placements and show how they translate into lived experience, behaviour and likely outcomes. Use the entire supplied reading from the beginning. Never use asterisks.`;
 
   try{
-    const rawText = await callGemini(activeRules, userText, 8192);
+    const rawText = await callGemini(activeRules, userText, 2500);
     const text = cleanAstroText(rawText);
     pendingDiv.remove();
     appendChat('model', 'Answer\n\n' + text);

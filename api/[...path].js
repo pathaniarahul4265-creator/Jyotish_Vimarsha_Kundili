@@ -162,14 +162,75 @@ async function createOrder(amount, plan, receiptCustom){
   }
 }
 async function aiCall({model,systemText,userText,maxTokens}){
-  const chosen=model===process.env.GEMINI_FALLBACK_MODEL?model:(process.env.GEMINI_PRIMARY_MODEL||model||'gemini-2.5-flash');
-  const url=`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(chosen)}:generateContent`;
-  const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':process.env.GEMINI_API_KEY},body:JSON.stringify({systemInstruction:{parts:[{text:systemText}]},contents:[{role:'user',parts:[{text:userText}]}],generationConfig:{maxOutputTokens:Math.min(12000,Math.max(256,Number(maxTokens)||4096)),temperature:.85}})});
-  const j=await r.json().catch(()=>({}));
-  if(!r.ok){const e=new Error(j?.error?.message||`Gemini request failed (${r.status})`);e.status=r.status;throw e;}
-  const text=j?.candidates?.[0]?.content?.parts?.map(x=>x.text||'').join('')||'';
-  if(!text)throw new Error('No response returned by the AI service.');
-  return text;
+  function normalizeModel(m) {
+    if (!m) return 'gemini-2.5-flash';
+    const cleanStr = String(m).trim().toLowerCase();
+    if (cleanStr.includes('3.5-flash') || cleanStr.includes('3.5')) return 'gemini-2.5-flash';
+    if (cleanStr.includes('3.1-flash-lite') || cleanStr.includes('flash-lite')) return 'gemini-3.1-flash-lite';
+    if (cleanStr.includes('3.7-flash')) return 'gemini-3.7-flash';
+    if (cleanStr.includes('flash')) return 'gemini-2.5-flash';
+    if (cleanStr.includes('pro')) return 'gemini-2.5-pro';
+    return m;
+  }
+
+  const primaryChoice = normalizeModel(process.env.GEMINI_PRIMARY_MODEL || model || 'gemini-2.5-flash');
+  
+  async function invokeGemini(targetModel, tokens) {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(targetModel)}:generateContent`;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 26000);
+    try {
+      const r = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-goog-api-key': process.env.GEMINI_API_KEY
+        },
+        signal: controller.signal,
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: systemText }] },
+          contents: [{ role: 'user', parts: [{ text: userText }] }],
+          generationConfig: {
+            maxOutputTokens: Math.min(4096, Math.max(256, Number(tokens) || 2800)),
+            temperature: 0.8
+          }
+        })
+      });
+      clearTimeout(timeout);
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) {
+        const errMsg = j?.error?.message || `Gemini request failed (${r.status})`;
+        const e = new Error(errMsg);
+        e.status = r.status;
+        throw e;
+      }
+      const text = j?.candidates?.[0]?.content?.parts?.map(x => x.text || '').join('') || '';
+      if (!text) throw new Error('No response returned by the AI service.');
+      return text;
+    } catch (err) {
+      clearTimeout(timeout);
+      if (err.name === 'AbortError') {
+        const e = new Error('AI generation timed out upstream.');
+        e.status = 504;
+        throw e;
+      }
+      throw err;
+    }
+  }
+
+  try {
+    return await invokeGemini(primaryChoice, maxTokens);
+  } catch (err) {
+    // If primary failed with 404, 504, 503, 500, or 429, attempt immediate fallback to gemini-2.5-flash with compact token budget
+    if (primaryChoice !== 'gemini-2.5-flash') {
+      try {
+        return await invokeGemini('gemini-2.5-flash', Math.min(2500, Number(maxTokens) || 2500));
+      } catch (fallbackErr) {
+        throw fallbackErr;
+      }
+    }
+    throw err;
+  }
 }
 
 export default async function handler(req,res){
@@ -381,9 +442,17 @@ export default async function handler(req,res){
     }
 
     if(req.method==='POST'&&path==='/ai'){
-      if(!process.env.GEMINI_API_KEY)return json(res,503,{error:'AI service is not configured on the server.'});
-      const b=await readBody(req); if(!b.systemText||!b.userText)return json(res,400,{error:'AI request is incomplete.'});
-      try{return json(res,200,{text:await aiCall(b)});}catch(e){if(e.status===404&&process.env.GEMINI_FALLBACK_MODEL&&b.model!==process.env.GEMINI_FALLBACK_MODEL){return json(res,200,{text:await aiCall({...b,model:process.env.GEMINI_FALLBACK_MODEL})});}throw e;}
+      if(!process.env.GEMINI_API_KEY) return json(res,503,{error:'AI service is not configured on the server. Please ensure GEMINI_API_KEY is provided.'});
+      const b = await readBody(req);
+      if(!b.systemText || !b.userText) return json(res,400,{error:'AI request is incomplete.'});
+      try {
+        const text = await aiCall(b);
+        return json(res, 200, { text });
+      } catch (e) {
+        console.error('[AI Handler Error]', e);
+        const status = Number(e.status) || 500;
+        return json(res, status, { error: e.message || 'AI request failed' });
+      }
     }
 
     if(req.method==='POST'&&path==='/create-order'){
