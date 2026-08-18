@@ -701,18 +701,45 @@ export default async function handler(req,res){
         }
       }
       if(req.method==='GET'&&path==='/admin/vip'){
+        let dbCodes = [];
         try {
-          const data=await db.select('vip_codes','select=*&order=created_at.desc&limit=1000');
-          return json(res,200,{codes:data || inMemoryVipCodes});
-        } catch {
-          return json(res,200,{codes:inMemoryVipCodes});
+          const data = await db.select('vip_codes','select=*&order=created_at.desc&limit=1000');
+          if (Array.isArray(data)) dbCodes = data;
+        } catch (err) {
+          console.warn('[Supabase VIP Select]', err.message);
         }
+
+        // Merge DB codes and in-memory codes so newly generated codes are immediately visible
+        const map = new Map();
+        for (const c of inMemoryVipCodes) {
+          const key = String(c.display_code || c.code || c.id || '').toUpperCase().trim();
+          if (key) map.set(key, { ...c, display_code: c.display_code || c.code || key });
+        }
+        for (const c of dbCodes) {
+          const key = String(c.display_code || c.code || c.id || '').toUpperCase().trim();
+          if (key) {
+            const existing = map.get(key) || {};
+            map.set(key, {
+              ...existing,
+              ...c,
+              display_code: c.display_code || existing.display_code || key,
+              assigned_to: c.assigned_to !== undefined ? c.assigned_to : existing.assigned_to,
+              max_uses: c.max_uses || existing.max_uses || 1,
+              uses: c.uses !== undefined ? c.uses : (existing.uses || 0),
+              active: c.active !== undefined ? c.active : (existing.active !== false)
+            });
+          }
+        }
+
+        const merged = Array.from(map.values()).sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+        return json(res, 200, { codes: merged });
       }
       if(req.method==='POST'&&path==='/admin/vip'){
         const b=await readBody(req);
         const maxUses=Math.min(1000,Math.max(1,Number(b.maxUses)||1));
         const assignedTo = clean(b.assignedTo || b.assigned_to || b.name || '', 100);
         const codes=[];
+        const newItems = [];
         
         if (b.customCode && typeof b.customCode === 'string' && b.customCode.trim().length > 0) {
           const plain = b.customCode.trim().toUpperCase().replace(/[^A-Z0-9_-]/g, '');
@@ -728,18 +755,30 @@ export default async function handler(req,res){
             created_at: new Date().toISOString() 
           };
           inMemoryVipCodes.unshift(item);
-          try { await db.insert('vip_codes',{code_hash:item.code_hash,display_code:plain,assigned_to:assignedTo,max_uses:maxUses}); } catch {}
+          newItems.push(item);
           codes.push(plain);
           saveJsonFile('vip_codes.json', inMemoryVipCodes);
+
+          // Persist to Supabase with fallback if schema lacks optional columns
+          try {
+            await db.insert('vip_codes', { code_hash: item.code_hash, display_code: plain, assigned_to: assignedTo, max_uses: maxUses });
+          } catch {
+            try {
+              await db.insert('vip_codes', { code_hash: item.code_hash, display_code: plain, max_uses: maxUses });
+            } catch (err2) {
+              console.warn('[Supabase Custom VIP Insert]', err2.message);
+            }
+          }
+
           logAudit(clientIp, 'VIP_GENERATE', `Generated custom VIP code ${plain} (Assigned to: ${assignedTo || 'Unassigned'}) with max uses ${maxUses}`, 'SUCCESS');
-          return json(res, 200, { codes, maxUses, assigned_to: assignedTo });
+          return json(res, 200, { ok: true, codes, maxUses, assigned_to: assignedTo, items: newItems });
         }
 
         const count=Math.min(100,Math.max(1,Number(b.count)||1));
         for(let i=0;i<count;i++){
           let plain = 'JV-'+crypto.randomBytes(5).toString('hex').toUpperCase();
           const item = { 
-            id: 'vip_' + Date.now() + '_' + i, 
+            id: 'vip_' + Date.now() + '_' + i + '_' + Math.random().toString(36).substr(2, 4), 
             code_hash: hashCode(plain), 
             display_code: plain, 
             assigned_to: assignedTo,
@@ -749,12 +788,22 @@ export default async function handler(req,res){
             created_at: new Date().toISOString() 
           };
           inMemoryVipCodes.unshift(item);
-          try { await db.insert('vip_codes',{code_hash:item.code_hash,display_code:plain,assigned_to:assignedTo,max_uses:maxUses}); } catch {}
+          newItems.push(item);
           codes.push(plain);
+
+          try {
+            await db.insert('vip_codes', { code_hash: item.code_hash, display_code: plain, assigned_to: assignedTo, max_uses: maxUses });
+          } catch {
+            try {
+              await db.insert('vip_codes', { code_hash: item.code_hash, display_code: plain, max_uses: maxUses });
+            } catch (err2) {
+              console.warn('[Supabase Batch VIP Insert]', err2.message);
+            }
+          }
         }
         saveJsonFile('vip_codes.json', inMemoryVipCodes);
         logAudit(clientIp, 'VIP_GENERATE', `Generated ${count} VIP code(s) (Assigned to: ${assignedTo || 'Unassigned'}) with max uses ${maxUses}`, 'SUCCESS');
-        return json(res,200,{codes,maxUses,assigned_to:assignedTo});
+        return json(res, 200, { ok: true, codes, maxUses, assigned_to: assignedTo, items: newItems });
       }
       const vam=path.match(/^\/admin\/vip\/([^/]+)\/assign$/);
       if(req.method==='POST'&&vam){

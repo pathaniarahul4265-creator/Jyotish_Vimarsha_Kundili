@@ -9286,6 +9286,7 @@ window.closeCompanyModal = function() {
     `;
   }
 
+  let lastVipNoticeHtml = '';
   function renderVip(rows){
     const container = $('adminVip');
     if (!container) return;
@@ -9297,23 +9298,24 @@ window.closeCompanyModal = function() {
           </thead>
           <tbody>
             ${items.length ? items.map(r => {
-              const code = esc(r.display_code || r.code);
+              const code = esc(r.display_code || r.code || r.id);
               const id = esc(r.id || r.display_code || r.code);
               const assigned = esc(r.assigned_to || '—');
+              const createdDate = r.created_at ? new Date(r.created_at).toLocaleString() : 'Just now';
               return `
                 <tr id="vip_row_${id}">
                   <td><code style="color:#f2d792;font-size:13.5px;font-weight:bold;letter-spacing:0.04em;">${code}</code></td>
-                  <td><span class="admin-status-pill ${r.active ? 'ok' : 'err'}">${r.active ? 'Active' : 'Disabled'}</span></td>
+                  <td><span class="admin-status-pill ${r.active !== false ? 'ok' : 'err'}">${r.active !== false ? 'Active' : 'Disabled'}</span></td>
                   <td>
                     <span id="assignee_text_${id}" style="color:${r.assigned_to ? '#e0f2fe' : 'var(--muted)'};font-weight:${r.assigned_to ? '500' : 'normal'};">${assigned}</span>
                     <button type="button" class="small secondary edit-assignee-btn" data-vip-id="${id}" data-current-name="${esc(r.assigned_to || '')}" style="padding:2px 6px;margin-left:6px;font-size:11px;" title="Edit or assign name">✎ Edit</button>
                   </td>
                   <td>${r.uses || 0}</td>
-                  <td>${r.max_uses}</td>
-                  <td style="white-space:nowrap;font-size:12px;color:var(--muted);">${esc(new Date(r.created_at).toLocaleString())}</td>
+                  <td>${r.max_uses ?? 1}</td>
+                  <td style="white-space:nowrap;font-size:12px;color:var(--muted);">${esc(createdDate)}</td>
                   <td style="white-space:nowrap;">
                     <button type="button" class="small secondary copy-code-btn" data-code="${code}" style="margin-right:4px;">Copy</button>
-                    <button type="button" class="small" data-vip-id="${id}" style="margin-right:4px;">${r.active ? 'Disable' : 'Enable'}</button>
+                    <button type="button" class="small" data-vip-id="${id}" style="margin-right:4px;">${r.active !== false ? 'Disable' : 'Enable'}</button>
                     <button type="button" class="small danger" data-delete-vip-id="${id}" data-vip-code="${code}">Delete</button>
                   </td>
                 </tr>
@@ -9334,27 +9336,38 @@ window.closeCompanyModal = function() {
           <label>Batch Count<input id="vipCountAdmin" type="number" min="1" max="100" value="5" style="width:70px;"></label>
           <label>Max Uses<input id="vipMaxUsesAdmin" type="number" min="1" max="1000" value="1" style="width:75px;"></label>
           <button id="generateVipAdmin" type="button" style="height:42px;">Generate VIP Code(s)</button>
-          ${rows.length ? '<button id="clearAllVipAdmin" type="button" class="small secondary" style="height:42px;margin-left:auto;background:rgba(235,87,87,0.12);border:1px solid rgba(235,87,87,0.3);color:#ff9b9b;">Clear All VIP Codes</button>' : ''}
+          ${rows.length ? '<button id="clearAllVipAdmin" type="button" class="small secondary" style="height:42px;margin-left:auto;background:rgba(235,87,87,0.12);border:1px solid rgba(235,87,87,0.3);color:#ff9b9b;">Clear All VIP Codes (' + rows.length + ')</button>' : ''}
         </div>
-        <div id="newVipCodes" class="admin-notice" style="display:none;margin-top:12px"></div>
+        <div id="newVipCodes" class="admin-notice" style="${lastVipNoticeHtml ? 'display:block;' : 'display:none;'}margin-top:12px">${lastVipNoticeHtml}</div>
       </div>
       <div id="vipTableArea">${renderTable(rows)}</div>
     `;
     
     $('generateVipAdmin').onclick = async () => {
+      const genBtn = $('generateVipAdmin');
+      const origText = genBtn.textContent;
       try {
+        genBtn.disabled = true;
+        genBtn.textContent = 'Generating…';
         const customCode = $('vipCustomCodeAdmin')?.value?.trim();
         const assignedTo = $('vipAssignedToAdmin')?.value?.trim();
-        const count = $('vipCountAdmin').value;
-        const maxUses = $('vipMaxUsesAdmin').value;
+        const count = $('vipCountAdmin')?.value || '1';
+        const maxUses = $('vipMaxUsesAdmin')?.value || '1';
         const j = await adminFetch('/api/admin/vip', { method: 'POST', body: JSON.stringify({ customCode, assignedTo, count, maxUses }) });
-        $('newVipCodes').style.display = 'block';
-        $('newVipCodes').innerHTML = '<strong>Generated ' + j.codes.length + ' code(s)' + (assignedTo ? ' for ' + esc(assignedTo) : '') + ':</strong><br><code style="color:#ffe099;display:block;margin-top:6px;font-size:14px;">' + j.codes.join(', ') + '</code>';
+        
+        const codeList = j.codes || [];
+        lastVipNoticeHtml = `<strong>✓ Successfully generated ${codeList.length} code(s)${assignedTo ? ' for ' + esc(assignedTo) : ''}:</strong><br><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">${codeList.map(c => `<code style="background:rgba(255,255,255,0.1);padding:4px 8px;border-radius:4px;color:#ffe099;font-size:14px;font-weight:bold;">${esc(c)}</code>`).join(' ')}</div>`;
+        
         if ($('vipCustomCodeAdmin')) $('vipCustomCodeAdmin').value = '';
         if ($('vipAssignedToAdmin')) $('vipAssignedToAdmin').value = '';
         await loadAdmin();
       } catch (e) {
-        alert(e.message);
+        alert('Failed to generate VIP code: ' + e.message);
+      } finally {
+        if (genBtn) {
+          genBtn.disabled = false;
+          genBtn.textContent = origText;
+        }
       }
     };
 
