@@ -892,6 +892,272 @@ html[data-theme="day"] .header-brand-title {
 }
 @media(max-width:680px){.theme-switcher{position:relative;right:auto;top:auto;width:max-content;margin:0 0 18px auto}}
 
+/* --- 36 Guna Milan Result Card Styles --- */
+.guna-milan-result-card {
+  margin-bottom: 24px;
+  padding: 24px;
+}
+.guna-header-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 18px 22px;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--line);
+  margin-bottom: 22px;
+}
+.guna-partner-pill {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 220px;
+}
+.guna-partner-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(216, 160, 76, 0.12);
+  border: 1px solid var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.guna-partner-icon img {
+  width: 32px;
+  height: 32px;
+}
+.guna-partner-info b {
+  display: block;
+  font-family: var(--heading-font);
+  font-size: 15px;
+  color: var(--heading-bright);
+}
+.guna-partner-info span {
+  font-size: 13px;
+  color: var(--gold-soft);
+  display: block;
+  margin-top: 2px;
+}
+.guna-partner-info small {
+  font-size: 11.5px;
+  color: var(--muted);
+  display: block;
+}
+.guna-vs-badge {
+  font-family: var(--heading-font);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--marigold);
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(216, 160, 76, 0.3);
+  background: rgba(216, 160, 76, 0.08);
+}
+.guna-score-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 20px;
+  padding: 24px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(216, 160, 76, 0.14), rgba(127, 197, 192, 0.08));
+  border: 1.5px solid var(--gold);
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  text-align: center;
+}
+.guna-score-num-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.guna-score-digits {
+  font-family: var(--heading-font);
+  font-size: 54px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--gold-soft);
+  text-shadow: 0 0 24px var(--glow);
+}
+.guna-score-max {
+  font-size: 20px;
+  color: var(--muted);
+  margin-left: 4px;
+  font-weight: 500;
+}
+.guna-score-label {
+  font-family: var(--ui-font);
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-top: 6px;
+  font-weight: 600;
+}
+.guna-verdict-box {
+  max-width: 420px;
+  text-align: left;
+}
+.guna-verdict-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: var(--heading-font);
+  margin-bottom: 8px;
+}
+.guna-verdict-badge.excellent {
+  background: rgba(34, 197, 94, 0.2);
+  border: 1px solid #22c55e;
+  color: #86efac;
+}
+.guna-verdict-badge.good {
+  background: rgba(234, 179, 8, 0.2);
+  border: 1px solid #eab308;
+  color: #fde047;
+}
+.guna-verdict-badge.average {
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid #ef4444;
+  color: #fca5a5;
+}
+.guna-verdict-desc {
+  font-size: 13.5px;
+  color: var(--ivory);
+  line-height: 1.55;
+  margin: 0;
+}
+.guna-table-wrap {
+  overflow-x: auto;
+  margin-bottom: 24px;
+  border-radius: 12px;
+  border: 1px solid rgba(216, 160, 76, 0.2);
+}
+.guna-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+.guna-table th {
+  background: rgba(0, 0, 0, 0.45);
+  color: var(--gold-soft);
+  font-family: var(--heading-font);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 12px 14px;
+  border-bottom: 1.5px solid var(--line);
+  text-align: left;
+}
+.guna-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(216, 160, 76, 0.12);
+  color: var(--ivory);
+  line-height: 1.45;
+}
+.guna-table tr:hover td {
+  background: rgba(255, 255, 255, 0.03);
+}
+.guna-score-cell {
+  font-weight: 700;
+  color: var(--gold-soft);
+  font-family: var(--heading-font);
+  font-size: 14px;
+  white-space: nowrap;
+}
+.guna-status-tag {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.guna-status-tag.pass {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+.guna-status-tag.partial {
+  background: rgba(234, 179, 8, 0.15);
+  color: #facc15;
+  border: 1px solid rgba(234, 179, 8, 0.3);
+}
+.guna-status-tag.dosha {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+.guna-unlock-card {
+  padding: 26px 24px;
+  border-radius: 16px;
+  background: radial-gradient(circle at 50% 30%, rgba(216, 160, 76, 0.16), transparent 70%), linear-gradient(145deg, rgba(20, 26, 44, 0.95), rgba(9, 13, 24, 0.95));
+  border: 1.5px solid var(--gold);
+  text-align: center;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+}
+.guna-unlock-title {
+  font-family: var(--heading-font);
+  font-size: 20px;
+  color: var(--gold-soft);
+  letter-spacing: 0.04em;
+  margin: 0 0 10px;
+}
+.guna-unlock-desc {
+  font-size: 14px;
+  color: var(--muted);
+  max-width: 680px;
+  margin: 0 auto 18px;
+  line-height: 1.6;
+}
+.guna-unlock-features {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+.guna-feature-chip {
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(216, 160, 76, 0.1);
+  border: 1px solid rgba(216, 160, 76, 0.25);
+  font-size: 12.5px;
+  color: var(--gold-soft);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.guna-unlock-btn {
+  font-family: var(--heading-font);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 14px 34px;
+  border-radius: var(--btn-radius);
+  background: linear-gradient(180deg, var(--gold-soft), var(--marigold));
+  color: #241606;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 0 24px rgba(224, 159, 62, 0.4);
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.guna-unlock-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 34px rgba(224, 159, 62, 0.65);
+}
+
 /* Base Typography & Geometry Application */
 body {
   font-family: var(--reading-font);
@@ -5044,6 +5310,9 @@ body input, body select, body textarea {
     <h2 id="reportHeading" style="margin:0;">Your reading</h2>
   </div>
 
+  <!-- Free Instant 36 Guna Milan Result Card -->
+  <div class="visual-card guna-milan-result-card" id="gunaMilanResultCard" style="display:none;"></div>
+
   <!-- How to Read Your Kundli Mini-Guide -->
   <div class="how-to-read-guide visual-card" style="background:rgba(18,24,38,0.7);border:1px solid rgba(216,160,76,0.35);border-radius:12px;padding:16px 20px;margin-bottom:20px;">
     <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;" onclick="toggleMobileSection('howToReadSteps', this)">
@@ -8742,24 +9011,557 @@ document.getElementById('genBtn').onclick = async () => {
   await runFrom(0, reportBody, stepList, document.getElementById('progressError'));
 };
 
-document.getElementById('matchBtn').onclick = async () => {
-  const required=['k1_dob','k1_tob','k1_pob','k2_dob','k2_tob','k2_pob'];
-  if(required.some(id=>!document.getElementById(id).value)){alert('Both partners need at least date of birth, time of birth, and place of birth to run a match.');return;}
-  if(!document.getElementById('k_consent').checked){alert('Please agree to the Terms & Conditions and Privacy Policy before matching.');return;}
-  activeSections=KUNDLI_SECTIONS; activeRules=KUNDLI_RULES; birthContext=buildKundliContext(); fullReportText=''; chatHistory=[]; chatQuestionsUsed=0; chatUnlocked=false; activeKey=EMBEDDED_KEY; activeModel=PRIMARY_MODEL; window.matchDetailedUnlocked=false;
-  document.getElementById('progressHeading').textContent='Calculating Guna Milan'; document.getElementById('reportHeading').textContent='Your Guna Milan'; document.getElementById('chatHeading').textContent='Ask about this match'; document.getElementById('progressCard').style.display='block'; document.getElementById('reportCard').style.display='block'; document.getElementById('chatCard').style.display='none';
-  const gate=document.getElementById('matchPremiumGate'); if(gate) gate.style.display='none';
-  const stepList=document.getElementById('stepList'); stepList.innerHTML=activeSections.map(s=>`<li id="step-${s.id}"><span class="dot"></span>${s.title}</li>`).join('');
-  const reportBody=document.getElementById('reportBody'); reportBody.innerHTML=''; const ptc=document.getElementById('placementTableCard'); if(ptc) ptc.style.display='none'; const itc=document.getElementById('interpretationTableCard'); if(itc) itc.style.display='none';
-  const chartWrap=document.getElementById('kundliChartWrap'); if(chartWrap) chartWrap.dataset.chartMode='north'; renderKundliVisuals(); document.getElementById('chatLog').innerHTML='<div class="empty-hint" id="chatHint">Detailed questions become available after unlocking the complete compatibility reading.</div>';
-  document.getElementById('progressCard').scrollIntoView({behavior:'smooth',block:'start'});
-  await runFrom(0,reportBody,stepList,document.getElementById('progressError'),1);
-  if(gate){gate.style.display='flex';gate.scrollIntoView({behavior:'smooth',block:'nearest'});}
+/* =========================================================
+   CLIENT-SIDE ASHTA KOOTA 36 GUNA MILAN ENGINE (ZERO API CALLS)
+   ========================================================= */
+const GUNA_NAKSHATRAS = [
+  { name: 'Ashwini', hindi: 'अश्विनी', lord: 'Ketu', gana: 'Deva', yoni: 'Horse', nadi: 'Adi' },
+  { name: 'Bharani', hindi: 'भरणी', lord: 'Venus', gana: 'Manushya', yoni: 'Elephant', nadi: 'Madhya' },
+  { name: 'Krittika', hindi: 'कृत्तिका', lord: 'Sun', gana: 'Rakshasa', yoni: 'Sheep', nadi: 'Antya' },
+  { name: 'Rohini', hindi: 'रोहिणी', lord: 'Moon', gana: 'Manushya', yoni: 'Serpent', nadi: 'Antya' },
+  { name: 'Mrigashira', hindi: 'मृगशिरा', lord: 'Mars', gana: 'Deva', yoni: 'Serpent', nadi: 'Madhya' },
+  { name: 'Ardra', hindi: 'आर्द्रा', lord: 'Rahu', gana: 'Manushya', yoni: 'Dog', nadi: 'Adi' },
+  { name: 'Punarvasu', hindi: 'पुनर्वसु', lord: 'Jupiter', gana: 'Deva', yoni: 'Cat', nadi: 'Adi' },
+  { name: 'Pushya', hindi: 'पुष्य', lord: 'Saturn', gana: 'Deva', yoni: 'Sheep', nadi: 'Madhya' },
+  { name: 'Ashlesha', hindi: 'आश्लेषा', lord: 'Mercury', gana: 'Rakshasa', yoni: 'Cat', nadi: 'Antya' },
+  { name: 'Magha', hindi: 'मघा', lord: 'Ketu', gana: 'Rakshasa', yoni: 'Rat', nadi: 'Antya' },
+  { name: 'Purva Phalguni', hindi: 'पूर्वाफाल्गुनी', lord: 'Venus', gana: 'Manushya', yoni: 'Rat', nadi: 'Madhya' },
+  { name: 'Uttara Phalguni', hindi: 'उत्तराफाल्गुनी', lord: 'Sun', gana: 'Manushya', yoni: 'Cow', nadi: 'Adi' },
+  { name: 'Hasta', hindi: 'हस्त', lord: 'Mercury', gana: 'Deva', yoni: 'Buffalo', nadi: 'Adi' },
+  { name: 'Chitra', hindi: 'चित्रा', lord: 'Mars', gana: 'Rakshasa', yoni: 'Tiger', nadi: 'Madhya' },
+  { name: 'Swati', hindi: 'स्वाति', lord: 'Rahu', gana: 'Deva', yoni: 'Buffalo', nadi: 'Antya' },
+  { name: 'Vishakha', hindi: 'विशाखा', lord: 'Jupiter', gana: 'Rakshasa', yoni: 'Tiger', nadi: 'Antya' },
+  { name: 'Anuradha', hindi: 'अनुराधा', lord: 'Saturn', gana: 'Deva', yoni: 'Deer', nadi: 'Madhya' },
+  { name: 'Jyeshtha', hindi: 'ज्येष्ठा', lord: 'Mercury', gana: 'Rakshasa', yoni: 'Deer', nadi: 'Adi' },
+  { name: 'Mula', hindi: 'मूल', lord: 'Ketu', gana: 'Rakshasa', yoni: 'Dog', nadi: 'Adi' },
+  { name: 'Purva Ashadha', hindi: 'पूर्वाषाढ़ा', lord: 'Venus', gana: 'Manushya', yoni: 'Monkey', nadi: 'Madhya' },
+  { name: 'Uttara Ashadha', hindi: 'उत्तराषाढ़ा', lord: 'Sun', gana: 'Manushya', yoni: 'Mongoose', nadi: 'Antya' },
+  { name: 'Shravana', hindi: 'श्रवण', lord: 'Moon', gana: 'Deva', yoni: 'Monkey', nadi: 'Antya' },
+  { name: 'Dhanishta', hindi: 'धनिष्ठा', lord: 'Mars', gana: 'Rakshasa', yoni: 'Lion', nadi: 'Madhya' },
+  { name: 'Shatabhisha', hindi: 'शतभिषा', lord: 'Rahu', gana: 'Rakshasa', yoni: 'Horse', nadi: 'Adi' },
+  { name: 'Purva Bhadrapada', hindi: 'पूर्वभाद्रपद', lord: 'Jupiter', gana: 'Manushya', yoni: 'Lion', nadi: 'Adi' },
+  { name: 'Uttara Bhadrapada', hindi: 'उत्तरभाद्रपद', lord: 'Saturn', gana: 'Manushya', yoni: 'Cow', nadi: 'Madhya' },
+  { name: 'Revati', hindi: 'रेवती', lord: 'Mercury', gana: 'Deva', yoni: 'Elephant', nadi: 'Antya' }
+];
+
+const GUNA_RASHIS = [
+  { name: 'Aries', hindi: 'मेष (Mesha)', lord: 'Mars', varnaRank: 3, varna: 'Kshatriya', vashya: 'Chatushpada' },
+  { name: 'Taurus', hindi: 'वृषभ (Vrishabha)', lord: 'Venus', varnaRank: 2, varna: 'Vaishya', vashya: 'Chatushpada' },
+  { name: 'Gemini', hindi: 'मिथुन (Mithuna)', lord: 'Mercury', varnaRank: 1, varna: 'Shudra', vashya: 'Manava' },
+  { name: 'Cancer', hindi: 'कर्क (Karka)', lord: 'Moon', varnaRank: 4, varna: 'Brahmin', vashya: 'Jalachara' },
+  { name: 'Leo', hindi: 'सिंह (Simha)', lord: 'Sun', varnaRank: 3, varna: 'Kshatriya', vashya: 'Vanachara' },
+  { name: 'Virgo', hindi: 'कन्या (Kanya)', lord: 'Mercury', varnaRank: 2, varna: 'Vaishya', vashya: 'Manava' },
+  { name: 'Libra', hindi: 'तुला (Tula)', lord: 'Venus', varnaRank: 1, varna: 'Shudra', vashya: 'Manava' },
+  { name: 'Scorpio', hindi: 'वृश्चिक (Vrischika)', lord: 'Mars', varnaRank: 4, varna: 'Brahmin', vashya: 'Keeta' },
+  { name: 'Sagittarius', hindi: 'धनु (Dhanu)', lord: 'Jupiter', varnaRank: 3, varna: 'Kshatriya', vashya: 'Manava' },
+  { name: 'Capricorn', hindi: 'मकर (Makara)', lord: 'Saturn', varnaRank: 2, varna: 'Vaishya', vashya: 'Chatushpada' },
+  { name: 'Aquarius', hindi: 'कुंभ (Kumbha)', lord: 'Saturn', varnaRank: 1, varna: 'Shudra', vashya: 'Manava' },
+  { name: 'Pisces', hindi: 'मीन (Meena)', lord: 'Jupiter', varnaRank: 4, varna: 'Brahmin', vashya: 'Jalachara' }
+];
+
+function getSiderealMoonPosition(dobStr, tobStr, latVal, lonVal) {
+  const [y, m, d] = (dobStr || '2000-01-01').split('-').map(Number);
+  const [hh, mm] = (tobStr || '12:00').split(':').map(Number);
+  const lon = Number(lonVal) || 77.2090;
+
+  let tzOffsetHours = 5.5;
+  if (lon < 65 || lon > 100) {
+    tzOffsetHours = lon / 15.0;
+  }
+  
+  const localMinutes = (hh || 0) * 60 + (mm || 0);
+  const utcMinutes = localMinutes - tzOffsetHours * 60;
+  const utcDate = new Date(Date.UTC(y, (m || 1) - 1, d || 1, 0, utcMinutes, 0));
+
+  const jd = (utcDate.getTime() / 86400000) + 2440587.5;
+  const T = (jd - 2451545.0) / 36525;
+  const ayanamsha = 23.85 + (T * 1.3963);
+
+  const L0 = 218.3164477 + 481267.88128 * T;
+  const M_sun = (357.5291 + 35999.0503 * T) * (Math.PI / 180);
+  const M_moon = (134.9634 + 477198.8676 * T) * (Math.PI / 180);
+  const D = (297.8502 + 445267.1114 * T) * (Math.PI / 180);
+  const F = (93.2721 + 483202.0175 * T) * (Math.PI / 180);
+
+  let moonLon = L0 
+    + 6.288774 * Math.sin(M_moon)
+    + 1.274027 * Math.sin(2 * D - M_moon)
+    + 0.658309 * Math.sin(2 * D)
+    + 0.213618 * Math.sin(2 * M_moon)
+    - 0.185116 * Math.sin(M_sun)
+    - 0.114332 * Math.sin(2 * F)
+    + 0.058793 * Math.sin(2 * D - 2 * M_moon)
+    + 0.057066 * Math.sin(2 * D - M_sun - M_moon)
+    + 0.053322 * Math.sin(2 * D + M_moon);
+
+  let siderealMoonLon = ((moonLon - ayanamsha) % 360 + 360) % 360;
+
+  const rashiIndex = Math.floor(siderealMoonLon / 30);
+  const degreeInRashi = siderealMoonLon % 30;
+
+  const nakshatraSpan = 360 / 27;
+  const nakshatraIndex = Math.floor(siderealMoonLon / nakshatraSpan);
+  const degreeInNakshatra = siderealMoonLon % nakshatraSpan;
+  const pada = Math.floor(degreeInNakshatra / (nakshatraSpan / 4)) + 1;
+
+  return {
+    longitude: siderealMoonLon,
+    rashiIndex: Math.min(11, Math.max(0, rashiIndex)),
+    degreeInRashi,
+    nakshatraIndex: Math.min(26, Math.max(0, nakshatraIndex)),
+    pada: Math.min(4, Math.max(1, pada))
+  };
+}
+
+function calculateAshtaKootaGunaMilan(bData, gData) {
+  const bMoon = getSiderealMoonPosition(bData.dob, bData.tob, bData.lat, bData.lon);
+  const gMoon = getSiderealMoonPosition(gData.dob, gData.tob, gData.lat, gData.lon);
+
+  const bRashi = GUNA_RASHIS[bMoon.rashiIndex];
+  const gRashi = GUNA_RASHIS[gMoon.rashiIndex];
+  const bNak = GUNA_NAKSHATRAS[bMoon.nakshatraIndex];
+  const gNak = GUNA_NAKSHATRAS[gMoon.nakshatraIndex];
+
+  // 1. Varna (Max: 1)
+  let varnaScore = (bRashi.varnaRank >= gRashi.varnaRank) ? 1 : 0;
+  const kootaVarna = {
+    name: 'Varna (वर्ण)',
+    area: 'Spiritual ego & work ethos',
+    max: 1,
+    score: varnaScore,
+    groomVal: bRashi.varna,
+    brideVal: gRashi.varna,
+    status: varnaScore === 1 ? 'pass' : 'dosha',
+    desc: varnaScore === 1 ? `Harmonious spiritual alignment (${bRashi.varna} & ${gRashi.varna}).` : `Different spiritual inclinations (${bRashi.varna} & ${gRashi.varna}).`
+  };
+
+  // 2. Vashya (Max: 2)
+  let vashyaScore = 1;
+  const bV = bRashi.vashya;
+  const gV = gRashi.vashya;
+  if (bV === gV) {
+    vashyaScore = 2;
+  } else if ((bV === 'Manava' && gV === 'Chatushpada') || (bV === 'Chatushpada' && gV === 'Manava')) {
+    vashyaScore = 1;
+  } else if ((bV === 'Manava' && gV === 'Jalachara') || (bV === 'Jalachara' && gV === 'Manava')) {
+    vashyaScore = 0.5;
+  } else if (bV === 'Vanachara' || gV === 'Vanachara' || bV === 'Keeta' || gV === 'Keeta') {
+    vashyaScore = (bV === gV) ? 2 : 0;
+  } else {
+    vashyaScore = 1;
+  }
+  const kootaVashya = {
+    name: 'Vashya (वश्य)',
+    area: 'Mutual attraction & emotional dominance',
+    max: 2,
+    score: vashyaScore,
+    groomVal: bV,
+    brideVal: gV,
+    status: vashyaScore === 2 ? 'pass' : vashyaScore > 0 ? 'partial' : 'dosha',
+    desc: vashyaScore === 2 ? 'Natural mutual affection and deep devotion.' : vashyaScore > 0 ? 'Balanced mutual accommodation.' : 'Requires deliberate balance of influence.'
+  };
+
+  // 3. Tara / Dina (Max: 3)
+  const countGtoB = ((bMoon.nakshatraIndex - gMoon.nakshatraIndex + 27) % 27) + 1;
+  const rem1 = countGtoB % 9;
+  const countBtoG = ((gMoon.nakshatraIndex - bMoon.nakshatraIndex + 27) % 27) + 1;
+  const rem2 = countBtoG % 9;
+  const isAuspicious = rem => [2, 4, 6, 8, 0].includes(rem);
+  let taraScore = (isAuspicious(rem1) && isAuspicious(rem2)) ? 3 : (isAuspicious(rem1) || isAuspicious(rem2)) ? 1.5 : 0;
+  const taraNames = { 1: 'Janma', 2: 'Sampat (Prosperity)', 3: 'Vipat', 4: 'Kshema (Wellbeing)', 5: 'Pratyak', 6: 'Sadhana (Success)', 7: 'Naidhana', 8: 'Mitra (Friend)', 0: 'Param Mitra (Supreme Friend)' };
+  const kootaTara = {
+    name: 'Tara / Dina (तारा)',
+    area: 'Destiny, health, longevity & fortune',
+    max: 3,
+    score: taraScore,
+    groomVal: taraNames[rem1] || 'Neutral',
+    brideVal: taraNames[rem2] || 'Neutral',
+    status: taraScore === 3 ? 'pass' : taraScore > 0 ? 'partial' : 'dosha',
+    desc: taraScore === 3 ? 'Highly favorable cosmic destiny and long-term prosperity.' : taraScore > 0 ? 'Supportive mutual fortune.' : 'Patience needed during major astrological transits.'
+  };
+
+  // 4. Yoni (Max: 4)
+  const bYoni = bNak.yoni;
+  const gYoni = gNak.yoni;
+  const swornEnemies = [
+    ['Horse', 'Buffalo'], ['Elephant', 'Lion'], ['Sheep', 'Monkey'],
+    ['Serpent', 'Mongoose'], ['Dog', 'Deer'], ['Cat', 'Rat'], ['Cow', 'Tiger']
+  ];
+  const isYoniEnemy = swornEnemies.some(([a, b]) => (bYoni === a && gYoni === b) || (bYoni === b && gYoni === a));
+  let yoniScore = 2;
+  if (bYoni === gYoni) yoniScore = 4;
+  else if (isYoniEnemy) yoniScore = 0;
+  else {
+    const friendly = [['Horse', 'Deer'], ['Elephant', 'Sheep'], ['Serpent', 'Cow'], ['Dog', 'Horse'], ['Monkey', 'Elephant'], ['Cat', 'Cow']];
+    if (friendly.some(([a, b]) => (bYoni === a && gYoni === b) || (bYoni === b && gYoni === a))) yoniScore = 3;
+    else yoniScore = 2;
+  }
+  const kootaYoni = {
+    name: 'Yoni (योनि)',
+    area: 'Intimacy, biological synergy & temperamental bonding',
+    max: 4,
+    score: yoniScore,
+    groomVal: bYoni,
+    brideVal: gYoni,
+    status: yoniScore >= 3 ? 'pass' : yoniScore > 0 ? 'partial' : 'dosha',
+    desc: yoniScore === 4 ? `Supreme biological & instinctive harmony (${bYoni} & ${gYoni}).` : yoniScore === 3 ? `Favorable mutual affinity (${bYoni} & ${gYoni}).` : yoniScore > 0 ? `Stable domestic harmony (${bYoni} & ${gYoni}).` : `Opposing animal instincts (${bYoni} vs ${gYoni}); conscious patience needed.`
+  };
+
+  // 5. Graha Maitri (Max: 5)
+  const relations = {
+    Sun: { friends: ['Moon', 'Mars', 'Jupiter'], neutrals: ['Mercury'], enemies: ['Venus', 'Saturn'] },
+    Moon: { friends: ['Sun', 'Mercury'], neutrals: ['Mars', 'Jupiter', 'Venus', 'Saturn'], enemies: [] },
+    Mars: { friends: ['Sun', 'Moon', 'Jupiter'], neutrals: ['Venus', 'Saturn'], enemies: ['Mercury'] },
+    Mercury: { friends: ['Sun', 'Venus'], neutrals: ['Mars', 'Jupiter', 'Saturn'], enemies: ['Moon'] },
+    Jupiter: { friends: ['Sun', 'Moon', 'Mars'], neutrals: ['Saturn'], enemies: ['Mercury', 'Venus'] },
+    Venus: { friends: ['Mercury', 'Saturn'], neutrals: ['Mars', 'Jupiter'], enemies: ['Sun', 'Moon'] },
+    Saturn: { friends: ['Mercury', 'Venus'], neutrals: ['Jupiter'], enemies: ['Sun', 'Moon', 'Mars'] }
+  };
+  function getRel(p1, p2) {
+    if (p1 === p2) return 'friend';
+    if (relations[p1]?.friends.includes(p2)) return 'friend';
+    if (relations[p1]?.neutrals.includes(p2)) return 'neutral';
+    return 'enemy';
+  }
+  const rel1 = getRel(bRashi.lord, gRashi.lord);
+  const rel2 = getRel(gRashi.lord, bRashi.lord);
+  let maitriScore = 0;
+  if (bRashi.lord === gRashi.lord || (rel1 === 'friend' && rel2 === 'friend')) maitriScore = 5;
+  else if ((rel1 === 'friend' && rel2 === 'neutral') || (rel1 === 'neutral' && rel2 === 'friend')) maitriScore = 4;
+  else if (rel1 === 'neutral' && rel2 === 'neutral') maitriScore = 3;
+  else if ((rel1 === 'friend' && rel2 === 'enemy') || (rel1 === 'enemy' && rel2 === 'friend')) maitriScore = 1;
+  else if ((rel1 === 'neutral' && rel2 === 'enemy') || (rel1 === 'enemy' && rel2 === 'neutral')) maitriScore = 0.5;
+  else maitriScore = 0;
+
+  const kootaMaitri = {
+    name: 'Graha Maitri (ग्रह मैत्री)',
+    area: 'Intellectual rapport, friendship & worldviews',
+    max: 5,
+    score: maitriScore,
+    groomVal: `${bRashi.name} (${bRashi.lord})`,
+    brideVal: `${gRashi.name} (${gRashi.lord})`,
+    status: maitriScore >= 4 ? 'pass' : maitriScore >= 1 ? 'partial' : 'dosha',
+    desc: maitriScore >= 4 ? 'Excellent intellectual friendship and mutual understanding.' : maitriScore >= 1 ? 'Good intellectual harmony with complementary ideas.' : 'Different dispositions; respectful conversation advised.'
+  };
+
+  // 6. Gana (Max: 6)
+  let ganaScore = 0;
+  const bG = bNak.gana;
+  const gG = gNak.gana;
+  if (bG === gG) ganaScore = 6;
+  else if ((bG === 'Deva' && gG === 'Manushya') || (bG === 'Manushya' && gG === 'Deva')) ganaScore = 5;
+  else if (bG === 'Rakshasa' && gG === 'Deva') ganaScore = 1;
+  else ganaScore = 0;
+
+  const kootaGana = {
+    name: 'Gana (गण)',
+    area: 'Temperament, lifestyle rhythm & fundamental values',
+    max: 6,
+    score: ganaScore,
+    groomVal: bG,
+    brideVal: gG,
+    status: ganaScore >= 5 ? 'pass' : ganaScore > 0 ? 'partial' : 'dosha',
+    desc: ganaScore >= 5 ? `Ideal temperamental compatibility (${bG} & ${gG}).` : ganaScore > 0 ? `Moderate temperamental balance (${bG} & ${gG}).` : `Distinct behavioral temperaments (${bG} vs ${gG}); mutual patience helps.`
+  };
+
+  // 7. Bhakoot (Max: 7)
+  const diffRashi = ((bMoon.rashiIndex - gMoon.rashiIndex + 12) % 12) + 1;
+  let bhakootScore = 0;
+  let bhakootParihara = false;
+  if ([1, 7, 3, 11, 4, 10].includes(diffRashi)) {
+    bhakootScore = 7;
+  } else if (bRashi.lord === gRashi.lord) {
+    bhakootScore = 7;
+    bhakootParihara = true;
+  } else {
+    bhakootScore = 0;
+  }
+  const kootaBhakoot = {
+    name: 'Bhakoot (भकूट)',
+    area: 'Emotional wavelength, family welfare & domestic joy',
+    max: 7,
+    score: bhakootScore,
+    groomVal: bRashi.name,
+    brideVal: gRashi.name,
+    status: bhakootScore === 7 ? 'pass' : 'dosha',
+    desc: bhakootScore === 7 ? (bhakootParihara ? `Bhakoot Dosha cancelled due to shared sign lord (${bRashi.lord}); full harmony granted.` : 'Auspicious emotional wavelength fostering domestic prosperity.') : 'Requires emotional maturity and open communication.'
+  };
+
+  // 8. Nadi (Max: 8)
+  let nadiScore = 0;
+  let nadiParihara = false;
+  if (bNak.nadi !== gNak.nadi) {
+    nadiScore = 8;
+  } else if (bMoon.nakshatraIndex === gMoon.nakshatraIndex && bMoon.pada !== gMoon.pada) {
+    nadiScore = 8;
+    nadiParihara = true;
+  } else if (bRashi.name === gRashi.name && bMoon.nakshatraIndex !== gMoon.nakshatraIndex) {
+    nadiScore = 8;
+    nadiParihara = true;
+  } else {
+    nadiScore = 0;
+  }
+  const kootaNadi = {
+    name: 'Nadi (नाड़ी)',
+    area: 'Physiological harmony, genetic health & nervous energy',
+    max: 8,
+    score: nadiScore,
+    groomVal: `${bNak.nadi} (${bNak.name})`,
+    brideVal: `${gNak.nadi} (${gNak.name})`,
+    status: nadiScore === 8 ? 'pass' : 'dosha',
+    desc: nadiScore === 8 ? (nadiParihara ? `Nadi Dosha cancelled (${bNak.nadi} with distinct Nakshatra/Padas); physiological harmony assured.` : `Excellent physiological & nervous energy harmony (${bNak.nadi} & ${gNak.nadi}).`) : `Same Nadi (${bNak.nadi}) detected; detailed Vedic chart review recommended.`
+  };
+
+  const kootas = [kootaVarna, kootaVashya, kootaTara, kootaYoni, kootaMaitri, kootaGana, kootaBhakoot, kootaNadi];
+  const totalScore = kootas.reduce((acc, k) => acc + k.score, 0);
+
+  return {
+    groom: {
+      name: bData.name || 'Partner A (Groom)',
+      rashi: bRashi,
+      nakshatra: bNak,
+      pada: bMoon.pada,
+      longitude: bMoon.longitude
+    },
+    bride: {
+      name: gData.name || 'Partner B (Bride)',
+      rashi: gRashi,
+      nakshatra: gNak,
+      pada: gMoon.pada,
+      longitude: gMoon.longitude
+    },
+    kootas,
+    totalScore,
+    maxScore: 36
+  };
+}
+
+function renderGunaMilanResultCard(milanResult) {
+  const container = document.getElementById('gunaMilanResultCard');
+  if (!container) return;
+
+  const { groom, bride, kootas, totalScore, maxScore } = milanResult;
+  const pct = Math.round((totalScore / maxScore) * 100);
+
+  let verdictClass = 'average';
+  let verdictText = `Average Compatibility · ${totalScore} / 36 Gunas`;
+  let verdictDesc = 'Scoring is below the traditional 18-point threshold. Unlocking the in-depth Parashari report is recommended to evaluate protective Yogas and cancellation factors.';
+
+  if (totalScore >= 28) {
+    verdictClass = 'excellent';
+    verdictText = `★ Uttam / Excellent Match · ${totalScore} / 36 Gunas (अति उत्तम)`;
+    verdictDesc = 'Outstanding energetic & celestial alignment. Highly auspicious and recommended for a fulfilling, joyful and prosperous life partnership.';
+  } else if (totalScore >= 18) {
+    verdictClass = 'good';
+    verdictText = `✓ Madhyam / Auspicious Match · ${totalScore} / 36 Gunas (शुभ / मध्यम)`;
+    verdictDesc = 'Favorable compatibility comfortably exceeding the classical Vedic threshold of 18 points. Recommended for life partnership.';
+  }
+
+  const bSignKey = getZodiacSignKey(groom.rashi.name);
+  const gSignKey = getZodiacSignKey(bride.rashi.name);
+  const bSvg = getZodiacSvgUrl(groom.rashi.name);
+  const gSvg = getZodiacSvgUrl(bride.rashi.name);
+
+  container.innerHTML = `
+    <div style="text-align:center;margin-bottom:20px;">
+      <span style="font-family:'Cinzel','Marcellus',serif;font-size:12px;letter-spacing:0.12em;color:var(--gold-soft);font-weight:700;display:inline-block;margin-bottom:4px;">✦ AUTHENTIC ASHTA KOOTA VEDIC MATCHING ✦</span>
+      <h3 style="font-family:'Cinzel',serif;font-size:22px;color:#fce7b0;margin:0 0 4px;">Instant 36 Guna Milan Result</h3>
+      <p style="font-size:13px;color:var(--muted);margin:0;">Calculated instantly with Sidereal Lahiri Ephemeris &amp; Classical Parashari Rules</p>
+    </div>
+
+    <!-- Header Box: Partner A & Partner B Details -->
+    <div class="guna-header-box">
+      <div class="guna-partner-pill">
+        <div class="guna-partner-icon">
+          <img src="${bSvg}" alt="${groom.rashi.name}" onerror="handleZodiacImgError(this, '${bSignKey}')" />
+        </div>
+        <div class="guna-partner-info">
+          <b>${groom.name} ♂</b>
+          <span>${groom.rashi.hindi} · ${groom.nakshatra.name} (Pada ${groom.pada})</span>
+          <small>Lord: ${groom.rashi.lord} · Gana: ${groom.nakshatra.gana} · Nadi: ${groom.nakshatra.nadi}</small>
+        </div>
+      </div>
+
+      <div class="guna-vs-badge">✦ MATCH ✦</div>
+
+      <div class="guna-partner-pill" style="justify-content:flex-end;text-align:right;">
+        <div class="guna-partner-info">
+          <b>${bride.name} ♀</b>
+          <span>${bride.rashi.hindi} · ${bride.nakshatra.name} (Pada ${bride.pada})</span>
+          <small>Lord: ${bride.rashi.lord} · Gana: ${bride.nakshatra.gana} · Nadi: ${bride.nakshatra.nadi}</small>
+        </div>
+        <div class="guna-partner-icon">
+          <img src="${gSvg}" alt="${bride.rashi.name}" onerror="handleZodiacImgError(this, '${gSignKey}')" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Score Hero -->
+    <div class="guna-score-hero">
+      <div class="guna-score-num-box">
+        <div class="guna-score-digits">${totalScore}<span class="guna-score-max">/ 36</span></div>
+        <div class="guna-score-label">Gunas Matched (${pct}%)</div>
+      </div>
+
+      <div class="guna-verdict-box">
+        <div class="guna-verdict-badge ${verdictClass}">
+          <span>✦</span> ${verdictText}
+        </div>
+        <p class="guna-verdict-desc">${verdictDesc}</p>
+      </div>
+    </div>
+
+    <!-- Ashtakoot 8-Factor Breakdown Table -->
+    <div class="guna-table-wrap">
+      <table class="guna-table">
+        <thead>
+          <tr>
+            <th>Koota (कूत)</th>
+            <th>Area of Life Governed</th>
+            <th style="text-align:center;">Max</th>
+            <th style="text-align:center;">Score</th>
+            <th>Assessment &amp; Placement Factors</th>
+            <th style="text-align:center;">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${kootas.map(k => {
+            const statusClass = k.status === 'pass' ? 'pass' : (k.status === 'partial' ? 'partial' : 'dosha');
+            const statusLabel = k.status === 'pass' ? '✓ Pass' : (k.status === 'partial' ? '⚡ Partial' : '⚠ Dosha');
+            return `
+              <tr>
+                <td><b>${k.name}</b></td>
+                <td style="color:var(--muted);font-size:12.5px;">${k.area}</td>
+                <td style="text-align:center;color:var(--muted);">${k.max}</td>
+                <td style="text-align:center;" class="guna-score-cell">${k.score}</td>
+                <td>
+                  <div style="font-size:12.5px;color:#fce7b0;margin-bottom:2px;">${groom.name}: <b>${k.groomVal}</b> | ${bride.name}: <b>${k.brideVal}</b></div>
+                  <div style="font-size:12px;color:var(--muted);">${k.desc}</div>
+                </td>
+                <td style="text-align:center;">
+                  <span class="guna-status-tag ${statusClass}">${statusLabel}</span>
+                </td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Unlock Detailed 18-Page Astrological Report CTA Card -->
+    <div class="guna-unlock-card" id="gunaUnlockCard">
+      <div style="font-size:28px;margin-bottom:6px;">📜 ✨</div>
+      <h3 class="guna-unlock-title">Unlock Detailed Kundli Compatibility Report — ₹99</h3>
+      <p class="guna-unlock-desc">
+        While the 36 Guna score provides the initial lunar baseline, a complete Vedic relationship verdict requires analyzing Mangal (Manglik) Dosha, Navamsha (D9) synastry, dual Vimshottari Dasha overlays, and planetary dignity.
+      </p>
+
+      <div class="guna-unlock-features">
+        <span class="guna-feature-chip"><span>✦</span> Mangal (Kuja) Dosha Check &amp; Cancellations</span>
+        <span class="guna-feature-chip"><span>✦</span> Navamsha (D9) Marriage Synastry</span>
+        <span class="guna-feature-chip"><span>✦</span> Dual Vimshottari Dasha Timeline Overlay</span>
+        <span class="guna-feature-chip"><span>✦</span> Emotional &amp; Financial Compatibility</span>
+        <span class="guna-feature-chip"><span>✦</span> 5 Detailed Questions with AI Astrologer</span>
+      </div>
+
+      <button type="button" class="guna-unlock-btn" onclick="window.unlockDetailedKundliReport()">
+        <span>✦</span> Unlock Complete Compatibility Report · ₹99
+      </button>
+    </div>
+  `;
+
+  container.style.display = 'block';
+}
+
+window.unlockDetailedKundliReport = async function() {
+  if (window.matchDetailedUnlocked) return;
+  const payOk = await window.requestPaidAccess('match', 99);
+  if (!payOk) return;
+  window.matchDetailedUnlocked = true;
+
+  const gate = document.getElementById('matchPremiumGate');
+  if (gate) gate.style.display = 'none';
+
+  document.getElementById('progressHeading').textContent = 'Generating Detailed Compatibility Report';
+  document.getElementById('reportHeading').textContent = 'Detailed Kundli Compatibility Reading';
+  document.getElementById('progressCard').style.display = 'block';
+  document.getElementById('reportCard').style.display = 'block';
+
+  const stepList = document.getElementById('stepList');
+  activeSections = KUNDLI_SECTIONS;
+  activeRules = KUNDLI_RULES;
+  birthContext = buildKundliContext();
+  fullReportText = '';
+  chatHistory = [];
+  chatQuestionsUsed = 0;
+  chatUnlocked = false;
+  activeKey = EMBEDDED_KEY;
+  activeModel = PRIMARY_MODEL;
+
+  stepList.innerHTML = activeSections.map(s => `<li id="step-${s.id}"><span class="dot"></span>${s.title}</li>`).join('');
+  const reportBody = document.getElementById('reportBody');
+  reportBody.innerHTML = '';
+  const ptc = document.getElementById('placementTableCard'); if (ptc) ptc.style.display = 'none';
+  const itc = document.getElementById('interpretationTableCard'); if (itc) itc.style.display = 'none';
+
+  const chartWrap = document.getElementById('kundliChartWrap');
+  if (chartWrap) chartWrap.dataset.chartMode = 'north';
+  renderKundliVisuals();
+
+  document.getElementById('chatLog').innerHTML = '<div class="empty-hint" id="chatHint">The complete compatibility reading is being cast — ask specific questions once the reading finishes.</div>';
+  document.getElementById('progressCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  await runFrom(0, reportBody, stepList, document.getElementById('progressError'));
 };
 
-document.getElementById('unlockMatchBtn')?.addEventListener('click',async()=>{
-  if(window.matchDetailedUnlocked)return; if(!await window.requestPaidAccess('match'))return; window.matchDetailedUnlocked=true; const gate=document.getElementById('matchPremiumGate'); if(gate) gate.style.display='none';
-  const reportBody=document.getElementById('reportBody'),stepList=document.getElementById('stepList'); activeSections=KUNDLI_SECTIONS; stepList.innerHTML=KUNDLI_SECTIONS.map((s,i)=>`<li id="step-${s.id}" class="${i===0?'done':''}"><span class="dot"></span>${s.title}</li>`).join(''); await runFrom(1,reportBody,stepList,document.getElementById('progressError'));
+document.getElementById('matchBtn').onclick = () => {
+  const required = ['k1_dob', 'k1_tob', 'k1_pob', 'k2_dob', 'k2_tob', 'k2_pob'];
+  if (required.some(id => !document.getElementById(id).value)) {
+    alert('Both partners need at least date of birth, time of birth, and place of birth to calculate Guna Milan.');
+    return;
+  }
+  if (!document.getElementById('k_consent').checked) {
+    alert('Please agree to the Terms & Conditions and Privacy Policy before matching.');
+    return;
+  }
+
+  // 100% Client-Side Instant Guna Milan Calculation (Zero API Calls)
+  const p1 = {
+    name: document.getElementById('k1_name').value || 'Partner A',
+    dob: document.getElementById('k1_dob').value,
+    tob: document.getElementById('k1_tob').value,
+    pob: document.getElementById('k1_pob').value,
+    lat: document.getElementById('k1_lat').value,
+    lon: document.getElementById('k1_lon').value
+  };
+  const p2 = {
+    name: document.getElementById('k2_name').value || 'Partner B',
+    dob: document.getElementById('k2_dob').value,
+    tob: document.getElementById('k2_tob').value,
+    pob: document.getElementById('k2_pob').value,
+    lat: document.getElementById('k2_lat').value,
+    lon: document.getElementById('k2_lon').value
+  };
+
+  const milanResult = calculateAshtaKootaGunaMilan(p1, p2);
+  renderGunaMilanResultCard(milanResult);
+
+  // Hide AI generation loaders, show reportCard with Guna Milan Scorecard
+  document.getElementById('progressCard').style.display = 'none';
+  document.getElementById('reportCard').style.display = 'block';
+  document.getElementById('reportHeading').textContent = 'Your Guna Milan Compatibility';
+
+  const reportBody = document.getElementById('reportBody');
+  if (reportBody) reportBody.innerHTML = '';
+  const ptc = document.getElementById('placementTableCard'); if (ptc) ptc.style.display = 'none';
+  const itc = document.getElementById('interpretationTableCard'); if (itc) itc.style.display = 'none';
+  const gate = document.getElementById('matchPremiumGate'); if (gate) gate.style.display = 'none';
+
+  // Smooth scroll to the result scorecard
+  document.getElementById('gunaMilanResultCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+
+document.getElementById('unlockMatchBtn')?.addEventListener('click', () => {
+  window.unlockDetailedKundliReport();
 });
 
 document.getElementById('endReadingBtn').onclick = () => {
@@ -8768,6 +9570,8 @@ document.getElementById('endReadingBtn').onclick = () => {
   document.getElementById('reportCard').style.display='none';
   document.getElementById('chatCard').style.display='none';
   document.getElementById('premiumGate').style.display='none';
+  const gunaCard = document.getElementById('gunaMilanResultCard');
+  if (gunaCard) { gunaCard.style.display = 'none'; gunaCard.innerHTML = ''; }
   document.getElementById('reportBody').innerHTML='';
   document.getElementById('chatLog').innerHTML='<div class="empty-hint">Your next reading will begin a fresh paid session.</div>';
   fullReportText=''; birthContext=''; chatHistory=[]; chatQuestionsUsed=0; chatUnlocked=false;
