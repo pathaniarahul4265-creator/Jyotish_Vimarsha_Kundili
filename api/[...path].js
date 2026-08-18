@@ -713,6 +713,36 @@ export default async function handler(req,res){
         logAudit(clientIp, 'VIP_TOGGLE', `Toggled active state for VIP code ID ${targetId}`, 'SUCCESS');
         return json(res,200,{ok:true});
       }
+      const vdm=path.match(/^\/admin\/vip\/([^/]+)$/);
+      if(req.method==='DELETE'&&vdm){
+        const targetId = vdm[1];
+        const idx = inMemoryVipCodes.findIndex(x => x.id == targetId || x.display_code == targetId);
+        let deletedCode = targetId;
+        if (idx >= 0) {
+          deletedCode = inMemoryVipCodes[idx].display_code || inMemoryVipCodes[idx].id;
+          inMemoryVipCodes.splice(idx, 1);
+          saveJsonFile('vip_codes.json', inMemoryVipCodes);
+        }
+        try {
+          await db.delete('vip_codes', `id=eq.${encodeURIComponent(targetId)}`);
+        } catch {
+          try {
+            await db.update('vip_codes', { active: false, max_uses: 0 }, `id=eq.${encodeURIComponent(targetId)}`);
+          } catch {}
+        }
+        logAudit(clientIp, 'VIP_DELETE', `Deleted VIP code ${deletedCode} (ID: ${targetId})`, 'SUCCESS');
+        return json(res, 200, { ok: true, deleted: targetId });
+      }
+      if (req.method === 'DELETE' && path === '/admin/vip') {
+        const count = inMemoryVipCodes.length;
+        inMemoryVipCodes.length = 0;
+        saveJsonFile('vip_codes.json', inMemoryVipCodes);
+        try {
+          await db.delete('vip_codes', 'id=neq.placeholder');
+        } catch {}
+        logAudit(clientIp, 'VIP_CLEAR', `Cleared all ${count} VIP codes`, 'SUCCESS');
+        return json(res, 200, { ok: true, count });
+      }
       if(req.method==='GET'&&path==='/admin/settings'){
         try {
           const settings=await getSettings();

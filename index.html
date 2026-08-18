@@ -51,8 +51,62 @@
 <link rel="shortcut icon" href="/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;0,6..96,700;1,6..96,400&family=Cinzel:wght@400;600;700;800&family=Cinzel+Decorative:wght@700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Eczar:wght@500;600;700;800&family=Manrope:wght@400;500;600;700&family=Marcellus&family=Noto+Serif+Devanagari:wght@400;500;600;700&family=Philosopher:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Rozha+One&family=Spectral:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Yatra+One&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;0,6..96,700;1,6..96,400&family=Cinzel:wght@400;600;700;800&family=Cinzel+Decorative:wght@700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Eczar:wght@500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=Marcellus&family=Noto+Serif+Devanagari:wght@400;500;600;700&family=Philosopher:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Rozha+One&family=Spectral:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Yatra+One&display=swap" rel="stylesheet">
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+// Early Zodiac Sign and Fallback Image Helpers to prevent ReferenceError before subsequent scripts load
+(function(){
+  const signKeys = ['aries','taurus','gemini','cancer','leo','virgo','libra','scorpio','sagittarius','capricorn','aquarius','pisces'];
+  const aliases = {
+    mesha:'aries', mesh:'aries',
+    vrishabha:'taurus', vrishabh:'taurus', vrish:'taurus',
+    mithuna:'gemini', mithun:'gemini',
+    karka:'cancer', kark:'cancer',
+    simha:'leo', singh:'leo',
+    kanya:'virgo',
+    tula:'libra',
+    vrischika:'scorpio', vrischik:'scorpio', vrisch:'scorpio',
+    dhanu:'sagittarius', dhanus:'sagittarius',
+    makara:'capricorn', makar:'capricorn',
+    kumbha:'aquarius', kumbh:'aquarius',
+    meena:'pisces', meen:'pisces'
+  };
+  window.getZodiacSignKey = function(signStr){
+    if(!signStr) return 'aries';
+    const s = String(signStr).toLowerCase().trim().replace(/[^a-z]/g,'');
+    if(signKeys.includes(s)) return s;
+    if(aliases[s]) return aliases[s];
+    for(const key of signKeys){ if(s.includes(key)) return key; }
+    for(const [alias, target] of Object.entries(aliases)){ if(s.includes(alias)) return target; }
+    return 'aries';
+  };
+  window.getZodiacSvgUrl = function(signStr){
+    const key = window.getZodiacSignKey(signStr);
+    if(window.ZODIAC_EMBEDDED_SVGS && window.ZODIAC_EMBEDDED_SVGS[key]){
+      return window.ZODIAC_EMBEDDED_SVGS[key];
+    }
+    return `/images/zodiac/${key}.svg`;
+  };
+  window.handleZodiacImgError = function(imgEl, signKey){
+    if(!imgEl) return;
+    const key = window.getZodiacSignKey(signKey || imgEl.getAttribute('data-sign') || imgEl.alt || 'aries');
+    if(window.ZODIAC_EMBEDDED_SVGS && window.ZODIAC_EMBEDDED_SVGS[key]){
+      imgEl.src = window.ZODIAC_EMBEDDED_SVGS[key];
+      imgEl.onerror = null;
+      return;
+    }
+    const count = parseInt(imgEl.dataset.retryCount || '0', 10);
+    imgEl.dataset.retryCount = String(count + 1);
+    if(count === 0){
+      imgEl.src = `/images/zodiac/${key}.svg`;
+    } else if(count === 1){
+      imgEl.src = `/images/zodiac/${key}.png`;
+    } else {
+      imgEl.onerror = null;
+    }
+  };
+})();
+</script>
 <style>
   @property --hue{
   syntax: '<angle>';
@@ -255,23 +309,79 @@ body h1, body h2, body h3, body h4, body label, body button, .subtitle, .intro-e
   .steplist li.done .dot{background:var(--gold-soft);}
   .steplist li.failed .dot{background:var(--vermilion);}
   @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
-  .report{font-size:18.5px !important;line-height:1.85 !important;font-family:'Cormorant Garamond',Georgia,serif !important;color:#f5f0e6 !important;}
-  .report h3, .report-section-title{font-family:'Bodoni Moda','Marcellus',serif !important;color:var(--gold-soft) !important;font-weight:600 !important;font-size:24px !important;margin:36px 0 16px !important;border-bottom:1.5px solid rgba(216,160,76,.3) !important;padding-bottom:10px !important;display:flex !important;align-items:center !important;gap:10px !important;letter-spacing:0.02em !important;}
-  .report h3::before, .report-section-title::before{content:"◆";color:var(--marigold);font-size:12px;}
-  .report-section-block{margin-bottom:36px;}
-  .report-subhead{font-family:'Marcellus',serif !important;font-size:15.5px !important;font-weight:600 !important;color:var(--marigold) !important;letter-spacing:0.06em !important;text-transform:uppercase !important;margin-top:26px !important;margin-bottom:12px !important;border-left:3px solid var(--gold-soft) !important;padding-left:12px !important;background:rgba(216,160,76,.06) !important;padding-top:7px !important;padding-bottom:7px !important;border-radius:0 6px 6px 0 !important;}
-  .report-subhead-minor{font-family:'Marcellus',serif !important;font-size:14px !important;font-weight:600 !important;color:#7fc5c0 !important;letter-spacing:0.04em !important;margin:18px 0 8px !important;}
-  .report-paragraph{font-family:'Cormorant Garamond',Georgia,serif !important;font-size:19px !important;line-height:1.85 !important;color:#f5f0e6 !important;margin-bottom:18px !important;text-align:justify !important;letter-spacing:0.012em !important;}
-  .report-paragraph strong{color:#fce7b0 !important;font-weight:600 !important;font-family:'Cormorant Garamond',Georgia,serif !important;}
+  .report{font-size:15.5px !important;line-height:1.8 !important;font-family:'Plus Jakarta Sans','Manrope',-apple-system,sans-serif !important;color:#f3eee4 !important;-webkit-font-smoothing:antialiased;}
+  .report h3, .report-section-title{font-family:'Bodoni Moda','Cinzel',serif !important;color:#fae29c !important;font-weight:700 !important;font-size:20px !important;margin:0 !important;padding:0 !important;border:none !important;display:flex !important;align-items:center !important;gap:10px !important;letter-spacing:0.02em !important;word-break:break-word;}
+  .report-section-block{margin-bottom:24px;background:linear-gradient(180deg, rgba(16,28,40,0.92), rgba(9,19,29,0.98));border:1px solid rgba(216,160,76,0.28);border-radius:14px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,0.36);transition:border-color 0.25s ease, box-shadow 0.25s ease;}
+  .report-section-block:hover{border-color:rgba(216,160,76,0.48);box-shadow:0 12px 36px rgba(0,0,0,0.44);}
+  .report-section-header{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;cursor:pointer;user-select:none;background:linear-gradient(90deg, rgba(216,160,76,0.12) 0%, rgba(216,160,76,0.03) 100%);border-bottom:1px solid rgba(216,160,76,0.22);transition:background 0.2s ease;}
+  .report-section-header:hover{background:linear-gradient(90deg, rgba(216,160,76,0.18) 0%, rgba(216,160,76,0.06) 100%);}
+  .report-section-header:focus{outline:2px solid var(--gold-soft);outline-offset:-2px;}
+  .report-section-header-left{display:flex;align-items:center;gap:12px;flex:1;min-width:0;flex-wrap:wrap;}
+  .report-section-header-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+  .report-chapter-badge{font-family:'Marcellus',serif;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#201306;background:linear-gradient(135deg, #fce7b0, #d8a04c);padding:4px 10px;border-radius:999px;font-weight:700;flex-shrink:0;box-shadow:0 2px 6px rgba(216,160,76,0.35);}
+  .report-chapter-tag{font-family:'Manrope',sans-serif;font-size:11.5px;color:#99ded9;background:rgba(127,197,192,0.12);border:1px solid rgba(127,197,192,0.3);padding:3px 9px;border-radius:6px;font-weight:600;}
+  .report-section-toggle-icon{width:30px;height:30px;border-radius:50%;background:rgba(216,160,76,0.14);border:1px solid rgba(216,160,76,0.35);display:flex;align-items:center;justify-content:center;color:#fce7b0;font-size:11px;flex-shrink:0;transition:transform 0.28s ease, background 0.2s ease;}
+  .report-section-block.collapsed .report-section-toggle-icon{transform:rotate(-90deg);}
+  .report-section-block.collapsed .report-section-content{display:none;}
+  .report-section-block.collapsed .report-section-header{border-bottom:none;}
+  .report-section-content{padding:26px 28px;}
+  
+  /* Subheadings */
+  .report-subhead-banner{display:flex;align-items:center;gap:10px;margin:28px 0 14px;padding:10px 16px;background:linear-gradient(90deg, rgba(216,160,76,0.16) 0%, rgba(216,160,76,0.02) 100%);border-left:4px solid #d8a04c;border-radius:0 10px 10px 0;box-shadow:inset 0 1px 0 rgba(255,255,255,0.04);}
+  .subhead-gem{color:#d8a04c;font-size:14px;flex-shrink:0;}
+  .report-subhead{font-family:'Marcellus','Cinzel',serif !important;font-size:16px !important;font-weight:700 !important;color:#fae29c !important;letter-spacing:0.05em !important;text-transform:uppercase !important;margin:0 !important;padding:0 !important;}
+  .report-subhead-minor-wrap{display:flex;align-items:center;gap:8px;margin:20px 0 10px;padding:6px 12px;background:rgba(127,197,192,0.08);border-left:3px solid #7fc5c0;border-radius:0 8px 8px 0;}
+  .minor-gem{color:#7fc5c0;font-size:11px;flex-shrink:0;}
+  .report-subhead-minor{font-family:'Manrope',sans-serif !important;font-size:13.5px !important;font-weight:700 !important;color:#99ded9 !important;letter-spacing:0.04em !important;margin:0 !important;text-transform:uppercase !important;}
+
+  /* Body text & inline typography */
+  .report-paragraph{font-family:'Plus Jakarta Sans','Manrope',-apple-system,sans-serif !important;font-size:15.5px !important;line-height:1.8 !important;color:#f2ece1 !important;margin-bottom:16px !important;text-align:left !important;text-wrap:pretty !important;word-break:break-word;}
+  .report-paragraph strong{color:#fae29c !important;font-weight:700 !important;}
   .report-paragraph em{color:#e8d8b8 !important;font-style:italic !important;}
-  .report-list, .report-numbered-list{margin:14px 0 20px 24px !important;color:#f5f0e6 !important;font-family:'Cormorant Garamond',Georgia,serif !important;font-size:18.5px !important;line-height:1.8 !important;}
-  .report-list li, .report-numbered-list li{margin-bottom:9px !important;text-align:justify !important;}
-  .report-list li strong, .report-numbered-list li strong{color:#fce7b0 !important;font-weight:600 !important;}
-  .report-quote{margin:20px 0 !important;padding:14px 20px !important;background:rgba(242, 215, 146, 0.08) !important;border-left:3.5px solid #fce7b0 !important;border-radius:0 10px 10px 0 !important;font-style:italic !important;color:#fce7b0 !important;font-size:18px !important;line-height:1.75 !important;font-family:'Cormorant Garamond',Georgia,serif !important;}
-  .report-table-wrap{overflow-x:auto !important;margin:22px 0 !important;border:1px solid rgba(242, 215, 146, 0.3) !important;border-radius:10px !important;background:rgba(10, 16, 26, 0.75) !important;}
+
+  /* Luxury Insight & Callout Cards */
+  .report-insight-card{margin:18px 0;padding:16px 18px;border-radius:10px;background:rgba(12,22,32,0.85);border:1px solid rgba(216,160,76,0.25);border-left:4px solid #d8a04c;box-shadow:0 4px 18px rgba(0,0,0,0.25);}
+  .report-insight-card.theme-insight{border-left-color:#d8a04c;background:linear-gradient(135deg, rgba(216,160,76,0.12), rgba(12,22,32,0.9));border-color:rgba(216,160,76,0.3);}
+  .report-insight-card.theme-remedy{border-left-color:#22c55e;background:linear-gradient(135deg, rgba(34,197,94,0.1), rgba(12,22,32,0.9));border-color:rgba(34,197,94,0.3);}
+  .report-insight-card.theme-wealth{border-left-color:#f59e0b;background:linear-gradient(135deg, rgba(245,158,11,0.1), rgba(12,22,32,0.9));border-color:rgba(245,158,11,0.3);}
+  .report-insight-card.theme-relationship{border-left-color:#f43f5e;background:linear-gradient(135deg, rgba(244,63,94,0.1), rgba(12,22,32,0.9));border-color:rgba(244,63,94,0.3);}
+  .report-insight-card.theme-timing{border-left-color:#06b6d4;background:linear-gradient(135deg, rgba(6,182,212,0.1), rgba(12,22,32,0.9));border-color:rgba(6,182,212,0.3);}
+  .report-insight-card.theme-caution{border-left-color:#ea580c;background:linear-gradient(135deg, rgba(234,88,12,0.1), rgba(12,22,32,0.9));border-color:rgba(234,88,12,0.3);}
+  .insight-card-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-family:'Marcellus',serif;font-size:12.5px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;}
+  .theme-insight .insight-card-head{color:#fae29c;}
+  .theme-remedy .insight-card-head{color:#86efac;}
+  .theme-wealth .insight-card-head{color:#fde68a;}
+  .theme-relationship .insight-card-head{color:#fecdd3;}
+  .theme-timing .insight-card-head{color:#a5f3fc;}
+  .theme-caution .insight-card-head{color:#fed7aa;}
+  .insight-icon{font-size:13px;flex-shrink:0;}
+  .insight-card-body{font-family:'Plus Jakarta Sans','Manrope',-apple-system,sans-serif;font-size:15px;line-height:1.75;color:#f3eee4;word-break:break-word;}
+  .insight-card-body strong{color:#fae29c;font-weight:700;}
+
+  /* Highlight Key-Value Row */
+  .report-highlight-row{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;padding:10px 14px;margin:10px 0;background:rgba(216,160,76,0.08);border-left:3px solid #d8a04c;border-radius:0 8px 8px 0;font-size:15px;font-family:'Plus Jakarta Sans',sans-serif;color:#f3eee3;}
+  .report-highlight-row .highlight-label{color:#fae29c;font-weight:700;font-family:'Marcellus',serif;font-size:13px;letter-spacing:0.04em;text-transform:uppercase;flex-shrink:0;}
+  .report-highlight-row .highlight-val{color:#e5edea;word-break:break-word;}
+  .report-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(216,160,76,0.45),transparent);margin:24px 0;}
+
+  /* Lists */
+  .report-list, .report-numbered-list{list-style:none !important;padding:0 !important;margin:14px 0 20px !important;display:flex;flex-direction:column;gap:10px;}
+  .report-list-item, .report-num-item{display:flex;align-items:flex-start;gap:12px;padding:8px 12px;background:rgba(255,255,255,0.02);border-radius:8px;border:1px solid rgba(216,160,76,0.12);}
+  .list-bullet{color:#f59e0b;font-size:11px;margin-top:5px;flex-shrink:0;}
+  .list-num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:rgba(216,160,76,0.2);color:#fae29c;font-family:'Manrope',sans-serif;font-size:12px;font-weight:700;flex-shrink:0;margin-top:2px;border:1px solid rgba(216,160,76,0.4);}
+  .list-text{flex:1;font-family:'Plus Jakarta Sans','Manrope',sans-serif;font-size:15px;line-height:1.75;color:#f2ece1;word-break:break-word;}
+  .list-text strong{color:#fae29c;font-weight:700;}
+
+  /* Quotes */
+  .report-quote{position:relative;margin:22px 0 !important;padding:16px 22px 16px 26px !important;background:linear-gradient(135deg, rgba(242,215,146,0.1), rgba(14,24,36,0.9)) !important;border-left:4px solid #fae29c !important;border-radius:0 12px 12px 0 !important;font-style:italic !important;color:#fae29c !important;font-size:16.5px !important;line-height:1.8 !important;font-family:'Cormorant Garamond',Georgia,serif !important;word-break:break-word;box-shadow:0 4px 16px rgba(0,0,0,0.25);}
+  .report-quote::before{content:"“";position:absolute;top:-4px;left:8px;font-size:36px;color:rgba(250,226,156,0.25);font-family:Georgia,serif;line-height:1;}
+
+  /* Tables */
+  .report-table-wrap{overflow-x:auto !important;margin:22px 0 !important;border:1px solid rgba(242,215,146,0.3) !important;border-radius:10px !important;background:rgba(10,18,28,0.92) !important;box-shadow:0 8px 24px rgba(0,0,0,0.35) !important;-webkit-overflow-scrolling:touch;}
   .report-table{width:100% !important;border-collapse:collapse !important;font-family:'Manrope',sans-serif !important;font-size:13.5px !important;text-align:left !important;}
-  .report-table th{background:rgba(242, 215, 146, 0.15) !important;color:#fce7b0 !important;padding:11px 14px !important;border-bottom:1.5px solid rgba(242, 215, 146, 0.3) !important;font-weight:700 !important;letter-spacing:0.03em !important;}
-  .report-table td{padding:10px 14px !important;border-bottom:1px solid rgba(255, 255, 255, 0.07) !important;color:#e5edea !important;line-height:1.6 !important;}
+  .report-table th{background:linear-gradient(180deg, rgba(242,215,146,0.18), rgba(242,215,146,0.08)) !important;color:#fae29c !important;padding:12px 16px !important;border-bottom:1.5px solid rgba(242,215,146,0.35) !important;font-weight:700 !important;letter-spacing:0.04em !important;white-space:nowrap;text-transform:uppercase;font-size:12px;}
+  .report-table td{padding:12px 16px !important;border-bottom:1px solid rgba(255,255,255,0.06) !important;color:#e5edea !important;line-height:1.6 !important;}
+  .report-table tr:nth-child(even) td{background:rgba(255,255,255,0.015);}
   .report-table tr:last-child td{border-bottom:none !important;}
   .sanskrit-opening{font-family:'Yatra One','Noto Serif Devanagari',serif;font-size:20px;color:var(--gold-soft);}
   .sanskrit, .sanskrit-quote, .devanagari{font-family:'Noto Serif Devanagari',serif;}
@@ -470,19 +580,21 @@ footer{text-align:center;color:var(--muted);font-size:13px;margin-top:44px;lette
   .chart-tab{background:rgba(255,255,255,.025);border:1px solid var(--line);color:var(--muted);padding:8px 14px;border-radius:8px;cursor:pointer;font-family:'Marcellus',serif;font-size:12px;}
   .chart-tab.active{background:linear-gradient(180deg,var(--gold-soft),var(--marigold));color:#241606;border-color:transparent;}
   .chart-wrap{display:flex;justify-content:center;overflow:auto;padding:8px 0;}
-  .kundli-svg{width:min(100%,560px);height:auto;filter:drop-shadow(0 12px 24px rgba(0,0,0,.35));}
+  .kundli-svg{width:min(100%,540px);height:auto;filter:drop-shadow(0 14px 30px rgba(0,0,0,.45));}
   .chart-caption{color:var(--muted);font-size:12.5px;line-height:1.6;margin-top:10px;text-align:center;}
-  .chart-frame,.south-cell{fill:rgba(216,165,61,.025);stroke:rgba(232,194,116,.55);stroke-width:1.4;}
-  .chart-lines{fill:none;stroke:rgba(232,194,116,.62);stroke-width:1.5;}
-  .south-center{fill:rgba(216,165,61,.035);stroke:rgba(232,194,116,.55);stroke-width:1.4;}
-  .house-label{fill:#b3a0c4;font-size:11px;font-family:Cinzel,serif;}
-  .planet-label{fill:#f3e9d7;font-size:11px;font-family:Cormorant Garamond,serif;font-weight:600;}
-  .center-label{fill:#d8a53d;font-size:15px;font-family:Cinzel,serif;letter-spacing:2px;}
-  .timeline-track{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;position:relative;}
-  .timeline-phase{position:relative;padding:16px;border:1px solid rgba(216,165,61,.16);border-radius:11px;background:rgba(5,4,13,.38);min-height:150px;}
+  .chart-frame{fill:#090d18;stroke:rgba(216,160,76,.65);stroke-width:1.6;}
+  .chart-frame-inner{fill:none;stroke:rgba(216,160,76,.25);stroke-width:1;}
+  .south-cell{fill:#090d18;stroke:rgba(216,160,76,.6);stroke-width:1.5;}
+  .chart-lines{fill:none;stroke:rgba(232,194,116,.75);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+  .south-center{fill:rgba(18,24,40,.92);stroke:rgba(232,194,116,.65);stroke-width:1.5;}
+  .house-label{fill:#d8a04c;font-size:11.5px;font-family:'Cinzel',serif;font-weight:700;letter-spacing:0.5px;}
+  .planet-label{fill:#ffffff;font-size:11px;font-family:'Manrope',sans-serif;font-weight:600;}
+  .center-label{fill:#fce7b0;font-size:14px;font-family:'Cinzel',serif;letter-spacing:2.5px;font-weight:700;}
+  .timeline-track{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;position:relative;}
+  .timeline-phase{position:relative;padding:16px;border:1px solid rgba(216,165,61,.22);border-radius:12px;background:rgba(8,12,22,.65);min-height:140px;box-shadow:0 8px 24px rgba(0,0,0,.25);}
   .timeline-phase::before{content:"";display:block;width:9px;height:9px;border-radius:50%;background:var(--marigold);box-shadow:0 0 14px rgba(224,139,46,.7);margin-bottom:10px;}
-  .timeline-phase b{display:block;color:var(--gold-soft);font-family:'Marcellus',serif;font-size:12px;margin-bottom:7px;}
-  .timeline-phase span{display:block;color:var(--muted);font-size:13.5px;line-height:1.55;}
+  .timeline-phase b{display:block;color:var(--gold-soft);font-family:'Marcellus',serif;font-size:13px;margin-bottom:7px;}
+  .timeline-phase span{display:block;color:#cbd5e1;font-size:13.5px;line-height:1.55;}
   .timeline-raw{margin-top:12px;color:#9183aa;font-size:12px;line-height:1.55;}
   .ask-index{display:grid;grid-template-columns:1.1fr 1fr;gap:14px;margin-top:20px;padding-top:18px;border-top:1px solid rgba(216,165,61,.13);}
   .ask-index-copy strong{display:block;color:var(--gold-soft);font-family:'Marcellus',serif;font-size:13px;margin-bottom:5px;}
@@ -4245,48 +4357,110 @@ body input, body select, body textarea {
   }
 }
 
-/* === PRINT PDF STYLES === */
+/* === UNCOPYABLE & NON-DOWNLOADABLE REPORT PROTECTION === */
+.report,
+#reportCard,
+.report-section-block,
+.report-section-content,
+.report-paragraph,
+.report-subhead,
+.report-insight-card,
+.visual-card,
+.kundli-chart-wrap,
+.placement-table,
+#interpretationTableCard,
+#chatCard .chatlog {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+  -webkit-touch-callout: none !important;
+}
+
+/* === PRINT PROTECTION (DISALLOW PRINTING / EXPORT) === */
 @media print {
-  body {
-    background: #ffffff !important;
-    color: #111111 !important;
+  html, body {
+    background: #0b0820 !important;
+    color: #ffffff !important;
   }
-  .cosmic-bg, .starfield, .celestial-orbit-field, .shooting-star,
-  .top-header-brand, .observatory-telemetry-hud, .panchang-bar,
-  .hero, #setupCard, .how-grid, .intro-card, .faq-section,
-  .facts-grid-section, #chatCard, footer, .modal-overlay,
-  .report-actions-bar, .end-reading-wrap, .advanced-toggle,
-  .theme-picker-dropdown {
+  body * {
     display: none !important;
   }
-  #reportCard {
+  body::before {
+    content: "Vedic Astrology Reading (Protected Content). Digital downloading, copying, and printing are disabled.";
     display: block !important;
-    background: #ffffff !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    color: #111111 !important;
+    text-align: center;
+    margin: 80px auto;
+    font-size: 16px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #888888;
   }
-  .visual-card {
-    background: #fafafa !important;
-    border: 1px solid #ddd !important;
-    color: #111111 !important;
-    break-inside: avoid;
-    margin-bottom: 20px !important;
+}
+
+/* === MOBILE READABILITY & COLLAPSIBLE TILES POLISH === */
+@media (max-width: 680px) {
+  .wrap {
+    padding: 10px !important;
+    max-width: 100% !important;
   }
-  .visual-card h3, #reportHeading, h1, h2 {
-    color: #8a5a12 !important;
+  .card, .visual-card {
+    padding: 18px 14px !important;
+    border-radius: 12px !important;
+    margin-bottom: 18px !important;
   }
-  table.placement-table {
-    color: #111111 !important;
+  .report-section-block {
+    margin-bottom: 16px !important;
+    border-radius: 12px !important;
   }
-  table.placement-table th {
-    background: #f0ebe1 !important;
-    color: #333333 !important;
+  .report-section-header {
+    padding: 14px 14px !important;
+    gap: 8px !important;
   }
-  table.placement-table td {
-    border-bottom: 1px solid #eeeeee !important;
+  .report-section-title {
+    font-size: 16px !important;
+    line-height: 1.35 !important;
+  }
+  .report-chapter-badge {
+    font-size: 9.5px !important;
+    padding: 3px 8px !important;
+  }
+  .report-chapter-tag {
+    display: none !important;
+  }
+  .report-section-toggle-icon {
+    width: 26px !important;
+    height: 26px !important;
+    font-size: 9px !important;
+  }
+  .report-section-content {
+    padding: 16px 14px !important;
+  }
+  .report-subhead-banner {
+    padding: 8px 12px !important;
+    margin: 20px 0 12px !important;
+  }
+  .report-subhead {
+    font-size: 14px !important;
+  }
+  .report-paragraph {
+    font-size: 14.5px !important;
+    line-height: 1.75 !important;
+    margin-bottom: 14px !important;
+  }
+  .report-insight-card {
+    padding: 12px 14px !important;
+    margin: 14px 0 !important;
+  }
+  .insight-card-body {
+    font-size: 14px !important;
+  }
+  .report-table-wrap {
+    margin: 14px 0 !important;
+    border-radius: 8px !important;
+  }
+  .report-table th, .report-table td {
+    padding: 9px 10px !important;
+    font-size: 12px !important;
   }
 }
 </style>
@@ -4868,17 +5042,6 @@ body input, body select, body textarea {
 <div class="card" id="reportCard" style="display:none;">
   <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
     <h2 id="reportHeading" style="margin:0;">Your reading</h2>
-    <div class="report-actions-bar" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-      <button type="button" onclick="downloadReadingAsPDF()" style="background:rgba(216,160,76,0.18);border:1px solid #d8a04c;color:#fce7b0;font-family:'Cinzel',serif;font-size:12px;font-weight:700;padding:7px 14px;border-radius:20px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;" title="Download clean, printable PDF copy of your Vedic reading">
-        <span>📥</span> Download PDF
-      </button>
-      <button type="button" onclick="openEmailReadingModal()" style="background:rgba(127,197,192,0.15);border:1px solid #7fc5c0;color:#e6fcf8;font-family:'Cinzel',serif;font-size:12px;font-weight:700;padding:7px 14px;border-radius:20px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;" title="Email a full digital copy of this reading to your inbox">
-        <span>✉</span> Email Reading
-      </button>
-      <button type="button" onclick="window.print()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.2);color:#cbd5e1;font-family:'Cinzel',serif;font-size:12px;font-weight:600;padding:7px 12px;border-radius:20px;cursor:pointer;" title="Print Report">
-        <span>🖨</span> Print
-      </button>
-    </div>
   </div>
 
   <!-- How to Read Your Kundli Mini-Guide -->
@@ -4969,6 +5132,15 @@ body input, body select, body textarea {
   </div>
 
   <div class="visual-card glossary-card" id="glossaryCard"><h3>Jyotish Glossary</h3><div class="glossary-grid"><span><b>Lagna</b><small>Ascendant and starting point of the houses.</small></span><span><b>Graha</b><small>Planetary influence used in interpretation.</small></span><span><b>Rashi</b><small>Zodiac sign occupied by a graha.</small></span><span><b>Nakshatra</b><small>Lunar mansion adding a finer layer of meaning.</small></span><span><b>Bhava</b><small>Life area represented by a house.</small></span><span><b>Dasha</b><small>Planetary period used for timing.</small></span></div></div>
+  <div class="report-toolbar" id="reportToolbar" style="display:flex;align-items:center;justify-content:space-between;margin:24px 0 16px;padding:10px 14px;background:rgba(216,160,76,0.06);border:1px solid rgba(216,160,76,0.22);border-radius:9px;flex-wrap:wrap;gap:8px;">
+    <span style="font-family:'Marcellus',serif;font-size:13px;color:var(--gold-soft);letter-spacing:0.04em;display:flex;align-items:center;gap:6px;">
+      <span style="color:var(--marigold);">✦</span> COMPREHENSIVE REPORT CHAPTERS
+    </span>
+    <div style="display:flex;gap:8px;">
+      <button id="expandAllSectionsBtn" type="button" class="small secondary" style="padding:5px 12px;font-size:12px;border-radius:6px;height:auto;cursor:pointer;">Expand All</button>
+      <button id="collapseAllSectionsBtn" type="button" class="small secondary" style="padding:5px 12px;font-size:12px;border-radius:6px;height:auto;cursor:pointer;">Collapse All</button>
+    </div>
+  </div>
   <div class="report" id="reportBody"></div>
   <div class="end-reading-wrap"><button id="endReadingBtn" type="button">End reading</button></div>
 </div>
@@ -5409,29 +5581,6 @@ body input, body select, body textarea {
         </div>
       </div>
     </div>
-  </div>
-</div>
-
-<!-- Email Reading Modal -->
-<div class="modal-overlay" id="emailReadingModal" onclick="if(event.target===this) closeEmailReadingModal();">
-  <div class="modal-box" style="max-width:520px;background:#0d1522;border:1px solid rgba(242,215,146,0.4);border-radius:16px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,0.85);">
-    <button type="button" class="modal-close" onclick="closeEmailReadingModal()" aria-label="Close">&times;</button>
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;border-bottom:1px solid rgba(242,215,146,0.25);padding-bottom:10px;">
-      <span style="font-size:24px;color:#7fc5c0;">✉</span>
-      <div>
-        <h2 style="margin:0;font-family:'Cinzel',serif;font-size:19px;color:#fce7b0;">Email Full Digital Reading</h2>
-        <div style="font-size:12px;color:#7fc5c0;">Receive a permanent copy with all charts, tables and interpretations.</div>
-      </div>
-    </div>
-    <p style="font-size:13px;color:#cbd5e1;line-height:1.5;margin-bottom:16px;">
-      Enter your email address below to receive the complete formatted Vedic birth chart reading, planetary placement tables, active dasha milestones, and PDF download link.
-    </p>
-    <div style="margin-bottom:16px;">
-      <label style="display:block;font-size:12px;color:#fce7b0;font-weight:600;margin-bottom:6px;">Your Email Address</label>
-      <input type="email" id="readingEmailInput" placeholder="e.g. yourname@example.com" style="width:100%;padding:10px 14px;background:rgba(0,0,0,0.4);border:1px solid rgba(242,215,146,0.35);border-radius:8px;color:#fce7b0;font-size:13.5px;outline:none;" />
-    </div>
-    <div id="emailReadingStatus" style="font-size:12.5px;margin-bottom:12px;display:none;"></div>
-    <button type="button" onclick="sendReadingEmail()" style="width:100%;background:linear-gradient(135deg,#d8a04c,#9a6e2e);border:1px solid #fce7b0;color:#080512;font-weight:700;font-size:13.5px;padding:10px;border-radius:20px;cursor:pointer;">Send Digital Copy ✉</button>
   </div>
 </div>
 
@@ -7795,7 +7944,31 @@ function unlockChat(){
 
 
 function cleanAstroText(text){
-  return String(text || '').replace(/\r/g,'').replace(/[ \t]+\n/g,'\n').trim();
+  return String(text || '')
+    .replace(/\r/g, '')
+    .replace(/[ \t]+\n/g, '\n')
+    .replace(/^[ \t]*[\*\-_#]{3,}[ \t]*$/gm, '') // Remove horizontal rules like ***, ---, ###
+    .trim();
+}
+
+function getCardThemeClass(label){
+  const l = String(label || '').toLowerCase();
+  if(l.includes('remed') || l.includes('upay') || l.includes('उपाय') || l.includes('mantra') || l.includes('gemstone') || l.includes('दान') || l.includes('रत्न')) return 'theme-remedy';
+  if(l.includes('wealth') || l.includes('money') || l.includes('career') || l.includes('finance') || l.includes('job') || l.includes('business') || l.includes('व्यवसाय') || l.includes('धन') || l.includes('आर्थिक') || l.includes('कर्म')) return 'theme-wealth';
+  if(l.includes('relation') || l.includes('marriage') || l.includes('spouse') || l.includes('love') || l.includes('family') || l.includes('विवाह') || l.includes('संबंध') || l.includes('दांपत्य') || l.includes('प्रेम')) return 'theme-relationship';
+  if(l.includes('timing') || l.includes('dasha') || l.includes('period') || l.includes('transit') || l.includes('phase') || l.includes('दशा') || l.includes('कालखंड') || l.includes('समय') || l.includes('गोचर')) return 'theme-timing';
+  if(l.includes('caution') || l.includes('warning') || l.includes('blindspot') || l.includes('dosha') || l.includes('risk') || l.includes('सावधानी') || l.includes('दोष') || l.includes('चुनौती')) return 'theme-caution';
+  return 'theme-insight';
+}
+
+function getCardIcon(label){
+  const l = String(label || '').toLowerCase();
+  if(l.includes('remed') || l.includes('upay') || l.includes('उपाय') || l.includes('mantra') || l.includes('gemstone') || l.includes('दान') || l.includes('रत्न')) return '🌿';
+  if(l.includes('wealth') || l.includes('money') || l.includes('career') || l.includes('finance') || l.includes('job') || l.includes('business') || l.includes('व्यवसाय') || l.includes('धन') || l.includes('आर्थिक') || l.includes('कर्म')) return '⚡';
+  if(l.includes('relation') || l.includes('marriage') || l.includes('spouse') || l.includes('love') || l.includes('family') || l.includes('विवाह') || l.includes('संबंध') || l.includes('दांपत्य') || l.includes('प्रेम')) return '♥';
+  if(l.includes('timing') || l.includes('dasha') || l.includes('period') || l.includes('transit') || l.includes('phase') || l.includes('दशा') || l.includes('कालखंड') || l.includes('समय') || l.includes('गोचर')) return '⏳';
+  if(l.includes('caution') || l.includes('warning') || l.includes('blindspot') || l.includes('dosha') || l.includes('risk') || l.includes('सावधानी') || l.includes('दोष') || l.includes('चुनौती')) return '▲';
+  return '✦';
 }
 
 function formatReportSectionHtml(text){
@@ -7804,13 +7977,12 @@ function formatReportSectionHtml(text){
   const lines = clean.split('\n');
   let html = '';
   let inList = false;
-  let listType = 'ul';
   let inTable = false;
   let tableRows = [];
 
   function flushList(){
     if(inList){
-      html += `</${listType}>`;
+      html += `</ul>`;
       inList = false;
     }
   }
@@ -7830,16 +8002,35 @@ function formatReportSectionHtml(text){
   }
 
   function formatInlineMarkdown(str){
-    let s = escapeHtml(str);
-    s = s.replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>');
-    s = s.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    s = s.replace(/\*(.*?)\*/g, '<em>$1</em>');
-    return s;
+    if(!str) return '';
+    let s = String(str).trim();
+    // Strip leading stray bullets/markdown symbols if present
+    s = s.replace(/^[•\-\*#]+\s*/, '');
+    
+    // First escape HTML special chars
+    s = escapeHtml(s);
+    
+    // Convert bold italic ***text*** or ___text___
+    s = s.replace(/\*\*\*([^\*]+?)\*\*\*/g, '<strong><em>$1</em></strong>');
+    s = s.replace(/___([^_]+?)___/g, '<strong><em>$1</em></strong>');
+    
+    // Convert bold **text** or __text__
+    s = s.replace(/\*\*([^\*]+?)\*\*/g, '<strong>$1</strong>');
+    s = s.replace(/__([^_]+?)__/g, '<strong>$1</strong>');
+    
+    // Convert italic *text* or _text_
+    s = s.replace(/\*([^\*]+?)\*/g, '<em>$1</em>');
+    s = s.replace(/_([^_]+?)_/g, '<em>$1</em>');
+    
+    // Thoroughly remove ANY lingering raw asterisks, hashes, backticks or tildes
+    s = s.replace(/[\*#`~]/g, '');
+    
+    return s.trim();
   }
 
   for(let i = 0; i < lines.length; i++){
     const rawLine = lines[i];
-    const line = rawLine.trim();
+    let line = rawLine.trim();
 
     if(!line){
       flushList();
@@ -7861,66 +8052,79 @@ function formatReportSectionHtml(text){
       flushTable();
     }
 
-    // Subheadings
-    if(/^###\s+/.test(line)){
+    // Subheadings with Markdown ###, ##, #, ####
+    if(/^#{1,6}\s+/.test(line)){
       flushList();
-      const title = line.replace(/^###\s+/, '').replace(/\*/g, '');
-      html += `<h4 class="report-subhead">${escapeHtml(title)}</h4>`;
+      const level = (line.match(/^#+/) || ['###'])[0].length;
+      const title = line.replace(/^#{1,6}\s+/, '').replace(/[\*\#\_]/g, '').trim();
+      if(!title) continue;
+      if(level >= 4){
+        html += `<div class="report-subhead-minor-wrap"><span class="minor-gem">◈</span><h5 class="report-subhead-minor">${escapeHtml(title)}</h5></div>`;
+      } else {
+        html += `<div class="report-subhead-banner"><span class="subhead-gem">✦</span><h4 class="report-subhead">${escapeHtml(title)}</h4></div>`;
+      }
       continue;
     }
-    if(/^####\s+/.test(line)){
+
+    // Standalone bold header line e.g. **1. Psychological Matrix** or **Career Trajectory:**
+    if(/^\*\*([^*]+)\*\*$/.test(line) && line.length < 90 && !line.includes('.')){
       flushList();
-      const title = line.replace(/^####\s+/, '').replace(/\*/g, '');
-      html += `<h5 class="report-subhead-minor">${escapeHtml(title)}</h5>`;
-      continue;
-    }
-    if(/^##\s+/.test(line)){
-      flushList();
-      const title = line.replace(/^##\s+/, '').replace(/\*/g, '');
-      html += `<h3 class="report-section-title">${escapeHtml(title)}</h3>`;
+      const title = line.replace(/[\*\#\_]/g, '').trim();
+      html += `<div class="report-subhead-banner"><span class="subhead-gem">✦</span><h4 class="report-subhead">${escapeHtml(title)}</h4></div>`;
       continue;
     }
 
     // Blockquote
     if(/^>\s+/.test(line)){
       flushList();
-      const qText = line.replace(/^>\s+/, '');
+      const qText = line.replace(/^>\s+/, '').replace(/^[#*•\-\s]+/, '');
       html += `<blockquote class="report-quote">${formatInlineMarkdown(qText)}</blockquote>`;
       continue;
     }
 
-    // Bullet List: - item or * item or • item
-    if(/^[-*•]\s+/.test(line)){
-      if(!inList || listType !== 'ul'){
+    // Bullet List: - item or * item or • item or + item
+    if(/^[-*•+]\s+/.test(line)){
+      if(!inList){
         flushList();
         html += '<ul class="report-list">';
         inList = true;
-        listType = 'ul';
       }
-      const itemText = line.replace(/^[-*•]\s+/, '');
-      html += `<li>${formatInlineMarkdown(itemText)}</li>`;
+      const itemText = line.replace(/^[-*•+]\s+/, '');
+      html += `<li class="report-list-item"><span class="list-bullet">✦</span><div class="list-text">${formatInlineMarkdown(itemText)}</div></li>`;
       continue;
     }
 
-    // Numbered List: 1. item
-    if(/^\d+[\.\)]\s+/.test(line)){
-      if(!inList || listType !== 'ol'){
+    // Numbered List: 1. item or 1) item
+    const numMatch = line.match(/^(\d+)[\.\)]\s+(.+)$/);
+    if(numMatch){
+      if(!inList){
         flushList();
-        html += '<ol class="report-numbered-list">';
+        html += '<ul class="report-numbered-list">';
         inList = true;
-        listType = 'ol';
       }
-      const itemText = line.replace(/^\d+[\.\)]\s+/, '');
-      html += `<li>${formatInlineMarkdown(itemText)}</li>`;
+      const num = numMatch[1];
+      const itemText = numMatch[2];
+      html += `<li class="report-num-item"><span class="list-num">${num}</span><div class="list-text">${formatInlineMarkdown(itemText)}</div></li>`;
       continue;
     }
 
     flushList();
 
-    // Prominent label callout e.g. "Career Insight:" or "Key Transit Window:"
-    if(/^[\*\s]*[A-Z\s]{3,40}:/i.test(line) && line.length < 85 && !line.includes('.')){
-      const title = line.replace(/[\*\#]/g, '');
-      html += `<h4 class="report-subhead">${escapeHtml(title)}</h4>`;
+    // Callout Insight Card e.g. **Core Insight:** Content or Core Takeaway: Content
+    const calloutMatch = line.match(/^[\*\s]*([\w\s\u0900-\u097F\/\-\&]{3,45})[\*\s]*:\s*(.+)$/);
+    if(calloutMatch && calloutMatch[1].length <= 40 && !calloutMatch[2].startsWith('http') && line.length < 600 && (calloutMatch[1].includes(' ') || line.startsWith('**') || calloutMatch[1].length > 7)){
+      const rawLabel = calloutMatch[1].replace(/[\*\#\_]/g, '').trim();
+      const content = calloutMatch[2].trim();
+      const theme = getCardThemeClass(rawLabel);
+      const icon = getCardIcon(rawLabel);
+      html += `<div class="report-insight-card ${theme}"><div class="insight-card-head"><span class="insight-icon">${icon}</span><span class="insight-label">${escapeHtml(rawLabel)}</span></div><div class="insight-card-body">${formatInlineMarkdown(content)}</div></div>`;
+      continue;
+    }
+
+    // Prominent standalone header label e.g. "CAREER AND VOCATION INSIGHT:"
+    if(/^[\*\s]*[A-Z\s\u0900-\u097F]{3,40}:$/i.test(line) && line.length < 60){
+      const title = line.replace(/[\*\#\:\_]/g, '').trim();
+      html += `<div class="report-subhead-banner"><span class="subhead-gem">✦</span><h4 class="report-subhead">${escapeHtml(title)}</h4></div>`;
       continue;
     }
 
@@ -8024,58 +8228,109 @@ function extractChartData(text){
 function extractPlacements(text){ return extractChartData(text).placements; }
 
 function northChartSvg(placements){
-  const houses = [
-    [1,170,20],[2,85,20],[3,20,20],[4,20,170],[5,20,300],[6,85,385],
-    [7,170,385],[8,255,385],[9,320,300],[10,320,170],[11,255,20],[12,170,20]
-  ];
-  const houseLabels = {1:'Lagna',2:'2',3:'3',4:'4',5:'5',6:'6',7:'7',8:'8',9:'9',10:'10',11:'11',12:'12'};
-  const groups = {};
-  Object.entries(placements).forEach(([p,h]) => (groups[h] ||= []).push(p));
-  let texts='';
-  for(let h=1;h<=12;h++){
-    const pos=houses[h-1]; const x=pos[1], y=pos[2];
-    const label = groups[h] && groups[h].length ? groups[h].join(' · ') : '—';
-    texts += `<text x="${x}" y="${y}" class="house-label">${houseLabels[h]}</text><text x="${x}" y="${y+20}" class="planet-label">${label}</text>`;
-  }
-  return `<svg class="kundli-svg" viewBox="0 0 500 500" role="img" aria-label="North Indian style Kundli chart"><rect x="35" y="35" width="430" height="430" rx="8" class="chart-frame"/><path d="M250 35L465 250L250 465L35 250Z M35 35L465 465 M465 35L35 465 M250 35V465 M35 250H465" class="chart-lines"/>${texts}<text x="250" y="252" text-anchor="middle" class="center-label">KUNDLI</text></svg>`;
-}
-
-function southChartSvg(placements){
-  const cells=[]; const coords=[[0,0],[1,0],[2,0],[3,0],[3,1],[3,2],[3,3],[2,3],[1,3],[0,3],[0,2],[0,1]];
-  const groups={}; Object.entries(placements).forEach(([p,h])=>(groups[h] ||= []).push(p));
-  for(let h=1;h<=12;h++){ const [c,r]=coords[h-1]; const x=25+c*112.5, y=25+r*112.5; const ps=(groups[h]||[]).join(' · ')||'—'; cells.push(`<rect x="${x}" y="${y}" width="112.5" height="112.5" class="south-cell"/><text x="${x+8}" y="${y+20}" class="house-label">${h}</text><text x="${x+56}" y="${y+58}" text-anchor="middle" class="planet-label">${ps}</text>`); }
-  return `<svg class="kundli-svg" viewBox="0 0 500 500" role="img" aria-label="South Indian style Kundli chart">${cells.join('')}<rect x="137.5" y="137.5" width="225" height="225" class="south-center"/><text x="250" y="252" text-anchor="middle" class="center-label">KUNDLI</text></svg>`;
-}
-
-function eastChartSvg(placements){
   const houseCoords = [
-    {h:1, hx:250, hy:120, px:250, py:148},   // Top Diamond (House 1 / Lagna)
-    {h:2, hx:350, hy:95,  px:360, py:120},   // Top Right Upper
-    {h:3, hx:415, hy:170, px:400, py:195},   // Right Upper
-    {h:4, hx:415, hy:330, px:400, py:305},   // Right Lower
-    {h:5, hx:350, hy:405, px:360, py:380},   // Bottom Right
-    {h:6, hx:285, hy:430, px:285, py:395},   // Bottom Center-Right
-    {h:7, hx:215, hy:430, px:215, py:395},   // Bottom Center-Left
-    {h:8, hx:150, hy:405, px:140, py:380},   // Bottom Left
-    {h:9, hx:85,  hy:330, px:100, py:305},   // Left Lower
-    {h:10,hx:85,  hy:170, px:100, py:195},   // Left Upper
-    {h:11,hx:150, hy:95,  px:140, py:120},   // Top Left
-    {h:12,hx:215, hy:70,  px:215, py:105}    // Top Center-Left
+    {h:1, hx:250, hy:92, px:250, py:142, isLagna:true},    // House 1 (Top diamond / Lagna)
+    {h:2, hx:135, hy:68, px:135, py:102},                  // House 2 (Top Left upper triangle)
+    {h:3, hx:75, hy:125, px:75, py:162},                   // House 3 (Left upper outer triangle)
+    {h:4, hx:135, hy:225, px:135, py:265},                 // House 4 (Left diamond - Kendra)
+    {h:5, hx:75, hy:340, px:75, py:378},                   // House 5 (Left lower outer triangle)
+    {h:6, hx:135, hy:400, px:135, py:435},                 // House 6 (Bottom Left lower triangle)
+    {h:7, hx:250, hy:410, px:250, py:360},                 // House 7 (Bottom diamond - Kendra)
+    {h:8, hx:365, hy:400, px:365, py:435},                 // House 8 (Bottom Right lower triangle)
+    {h:9, hx:425, hy:340, px:425, py:378},                 // House 9 (Right lower outer triangle)
+    {h:10, hx:365, hy:225, px:365, py:265},                // House 10 (Right diamond - Kendra)
+    {h:11, hx:425, hy:125, px:425, py:162},                // House 11 (Right upper outer triangle)
+    {h:12, hx:365, hy:68, px:365, py:102}                  // House 12 (Top Right upper triangle)
   ];
   const groups = {};
   Object.entries(placements).forEach(([p,h]) => (groups[h] ||= []).push(p));
   let texts = '';
   houseCoords.forEach(pos => {
-    const label = groups[pos.h] && groups[pos.h].length ? groups[pos.h].join(' · ') : '—';
-    const lagnaTag = pos.h === 1 ? ' (Lagna)' : '';
-    texts += `<text x="${pos.hx}" y="${pos.hy}" text-anchor="middle" class="house-label">${pos.h}${lagnaTag}</text><text x="${pos.px}" y="${pos.py}" text-anchor="middle" class="planet-label">${label}</text>`;
+    const list = groups[pos.h] || [];
+    const label = list.length ? list.join(' · ') : '—';
+    const lagnaTag = pos.isLagna ? ' (Lagna)' : '';
+    texts += `<g class="house-group" data-house="${pos.h}">
+      <circle cx="${pos.hx}" cy="${pos.hy - 4}" r="11" fill="rgba(216,160,76,0.18)" stroke="rgba(242,215,146,0.4)" stroke-width="0.8" />
+      <text x="${pos.hx}" y="${pos.hy}" text-anchor="middle" class="house-label">${pos.h}${lagnaTag}</text>
+      <text x="${pos.px}" y="${pos.py}" text-anchor="middle" class="planet-label">${label}</text>
+    </g>`;
+  });
+  return `<svg class="kundli-svg" viewBox="0 0 500 500" role="img" aria-label="North Indian Vedic Kundli Chart">
+    <defs>
+      <radialGradient id="kCenterGlow" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="rgba(216,160,76,0.12)" />
+        <stop offset="100%" stop-color="rgba(8,13,24,0)" />
+      </radialGradient>
+    </defs>
+    <rect x="25" y="25" width="450" height="450" rx="10" class="chart-frame" />
+    <rect x="29" y="29" width="442" height="442" rx="8" class="chart-frame-inner" fill="none" stroke="rgba(216,160,76,0.2)" stroke-width="1" />
+    <polygon points="250,25 475,250 250,475 25,250" fill="url(#kCenterGlow)" />
+    <!-- Classical North Indian Kundli geometry (Center Diamond and Cross Diagonals) -->
+    <path d="M25 25L475 475 M475 25L25 475 M250 25L475 250L250 475L25 250Z" class="chart-lines" />
+    ${texts}
+    <text x="250" y="254" text-anchor="middle" class="center-label">✦ KUNDLI ✦</text>
+  </svg>`;
+}
+
+function southChartSvg(placements){
+  const coords = [[1,0],[2,0],[3,0],[3,1],[3,2],[3,3],[2,3],[1,3],[0,3],[0,2],[0,1],[0,0]];
+  const groups = {};
+  Object.entries(placements).forEach(([p,h]) => (groups[h] ||= []).push(p));
+  const cells = [];
+  for(let h=1; h<=12; h++){
+    const [c,r] = coords[h-1];
+    const x = 30 + c * 110, y = 30 + r * 110;
+    const ps = (groups[h] || []).join(' · ') || '—';
+    cells.push(`
+      <rect x="${x}" y="${y}" width="110" height="110" class="south-cell" />
+      <circle cx="${x+18}" cy="${y+18}" r="11" fill="rgba(216,160,76,0.18)" stroke="rgba(242,215,146,0.4)" stroke-width="0.8" />
+      <text x="${x+18}" y="${y+22}" text-anchor="middle" class="house-label">${h}</text>
+      ${h === 1 ? `<text x="${x+55}" y="${y+22}" class="house-label" style="font-size:9.5px;fill:#fce7b0;">LAGNA</text>` : ''}
+      <text x="${x+55}" y="${y+65}" text-anchor="middle" class="planet-label">${ps}</text>
+    `);
+  }
+  return `<svg class="kundli-svg" viewBox="0 0 500 500" role="img" aria-label="South Indian Vedic Kundli Chart">
+    <rect x="25" y="25" width="450" height="450" rx="10" class="chart-frame" />
+    ${cells.join('')}
+    <rect x="140" y="140" width="220" height="220" class="south-center" rx="6" />
+    <text x="250" y="254" text-anchor="middle" class="center-label">✦ SOUTH KUNDLI ✦</text>
+  </svg>`;
+}
+
+function eastChartSvg(placements){
+  const houseCoords = [
+    {h:1, hx:250, hy:110, px:250, py:148, isLagna:true},
+    {h:2, hx:355, hy:88,  px:360, py:120},
+    {h:3, hx:415, hy:165, px:405, py:198},
+    {h:4, hx:415, hy:335, px:405, py:305},
+    {h:5, hx:355, hy:412, px:360, py:380},
+    {h:6, hx:285, hy:435, px:285, py:395},
+    {h:7, hx:215, hy:435, px:215, py:395},
+    {h:8, hx:145, hy:412, px:140, py:380},
+    {h:9, hx:85,  hy:335, px:95,  py:305},
+    {h:10,hx:85,  hy:165, px:95,  py:198},
+    {h:11,hx:145, hy:88,  px:140, py:120},
+    {h:12,hx:215, hy:65,  px:215, py:102}
+  ];
+  const groups = {};
+  Object.entries(placements).forEach(([p,h]) => (groups[h] ||= []).push(p));
+  let texts = '';
+  houseCoords.forEach(pos => {
+    const list = groups[pos.h] || [];
+    const label = list.length ? list.join(' · ') : '—';
+    const lagnaTag = pos.isLagna ? ' (Lagna)' : '';
+    texts += `<g class="house-group" data-house="${pos.h}">
+      <circle cx="${pos.hx}" cy="${pos.hy - 4}" r="11" fill="rgba(216,160,76,0.18)" stroke="rgba(242,215,146,0.4)" stroke-width="0.8" />
+      <text x="${pos.hx}" y="${pos.hy}" text-anchor="middle" class="house-label">${pos.h}${lagnaTag}</text>
+      <text x="${pos.px}" y="${pos.py}" text-anchor="middle" class="planet-label">${label}</text>
+    </g>`;
   });
   return `<svg class="kundli-svg" viewBox="0 0 500 500" role="img" aria-label="East Indian Bengali style Kundli chart">
-    <rect x="35" y="35" width="430" height="430" rx="8" class="chart-frame" />
-    <path d="M35 35L465 465 M465 35L35 465 M250 35L465 250L250 465L35 250Z M142.5 35L35 142.5 M357.5 35L465 142.5 M35 357.5L142.5 465 M465 357.5L357.5 465" class="chart-lines" />
-    <polygon points="250,90 310,150 250,210 190,150" fill="rgba(216,165,61,0.08)" stroke="rgba(232,194,116,0.3)" />
+    <rect x="25" y="25" width="450" height="450" rx="10" class="chart-frame" />
+    <path d="M25 25L475 475 M475 25L25 475 M250 25L475 250L250 475L25 250Z M137.5 25L25 137.5 M362.5 25L475 137.5 M25 362.5L137.5 475 M475 362.5L362.5 475" class="chart-lines" />
+    <polygon points="250,85 315,150 250,215 185,150" fill="rgba(216,165,61,0.08)" stroke="rgba(232,194,116,0.35)" />
     ${texts}
-    <text x="250" y="255" text-anchor="middle" class="center-label" style="font-size:13px;letter-spacing:1.5px;">EAST KUNDLI</text>
+    <text x="250" y="254" text-anchor="middle" class="center-label">✦ EAST KUNDLI ✦</text>
   </svg>`;
 }
 
@@ -8312,7 +8567,7 @@ async function generateSection(index, reportBody, stepListEl, progressErrorEl){
   li.classList.add('active');
   progressErrorEl.innerHTML = '';
   try{
-    const userText = `Birth data:\n${birthContext}\n\nWrite the "${section.title}" section of this reading.\n${section.instruction}\nAim for approximately 1600-2400 words for major interpretive sections and rich, granular detail on lived impact, behavior, career, wealth, and relationships. Write directly to the person reading the report. Start with the practical conclusion, then the chart evidence, then the likely impact on behaviour, emotions, decisions, relationships, work, money or life phases as relevant. Do not merely explain planets, signs or houses. Avoid generic astrology textbook material. Use clear subheadings (starting with ###) and bold key terms (**like this**) to organize sub-topics clearly. Do not include a section title in your output. Use normal paragraphs and compact tables/structured rows only where requested.`;
+    const userText = `Birth data:\n${birthContext}\n\nWrite the "${section.title}" section of this reading.\n${section.instruction}\nAim for approximately 1600-2400 words for major interpretive sections with rich, granular detail on lived impact, behavior, career, wealth, and relationships. Write directly to the person reading the report in a dignified, compassionate, and precise tone.\n\nSTRUCTURAL FORMATTING RULES:\n1. Organize your analysis with clear, descriptive subheadings using ### (e.g., "### 1. Core Psychological Blueprint" or "### Career Trajectory & Wealth Capacity").\n2. Highlight key takeaways with structured callout lines, such as:\n- **Core Takeaway:** Summary of the primary insight\n- **Astrological Mechanism:** Planets, bhavas, rashis, and yogas causing this effect\n- **Practical Impact:** Concrete consequences in daily life, work, or relationships\n- **Vedic Remedy / उपाय:** Authentic remedial measure or practical guidance\n- **Timing Window:** Key planetary period or transit when this effect manifests\n3. Use clear bullet points (- item) or numbered lists (1. item) for sequential factors.\n4. Write in rich, fluid paragraphs without repetitive filler or stray asterisks.\n5. Do not include the main section title at the very beginning of your response.`;
     const rawText = await callGemini(activeRules, userText, 8192);
     const text = cleanAstroText(rawText);
     fullReportText += `\n\n## ${section.title}\n\n${text}`;
@@ -8323,17 +8578,45 @@ async function generateSection(index, reportBody, stepListEl, progressErrorEl){
       block.className = 'report-section-block';
       block.id = 'section-block-' + section.id;
       
-      const h3 = document.createElement('h3');
-      h3.id = 'h3-' + section.id;
-      h3.className = 'report-section-title';
-      h3.textContent = section.title;
+      const isHi = window.currentVedicLang === 'hi';
+      const chapterLabel = isHi ? `अध्याय ${index + 1}` : `CHAPTER ${String(index + 1).padStart(2, '0')}`;
+      const tagLabel = isHi ? 'विस्तृत फलकथन' : 'Vedic Analysis';
+      
+      const header = document.createElement('div');
+      header.className = 'report-section-header';
+      header.setAttribute('role', 'button');
+      header.setAttribute('tabindex', '0');
+      header.setAttribute('aria-expanded', 'true');
+      header.setAttribute('aria-controls', 'content-' + section.id);
+      header.title = 'Click to collapse or expand section';
+      header.innerHTML = `
+        <div class="report-section-header-left">
+          <span class="report-chapter-badge">${chapterLabel}</span>
+          <h3 id="h3-${section.id}" class="report-section-title">${escapeHtml(section.title)}</h3>
+        </div>
+        <div class="report-section-header-right">
+          <span class="report-chapter-tag">${tagLabel}</span>
+          <div class="report-section-toggle-icon" aria-hidden="true">▼</div>
+        </div>
+      `;
+      header.onclick = () => {
+        block.classList.toggle('collapsed');
+        const isExp = !block.classList.contains('collapsed');
+        header.setAttribute('aria-expanded', String(isExp));
+      };
+      header.onkeydown = (e) => {
+        if(e.key === 'Enter' || e.key === ' '){
+          e.preventDefault();
+          header.click();
+        }
+      };
       
       const contentDiv = document.createElement('div');
       contentDiv.id = 'content-' + section.id;
       contentDiv.className = 'report-section-content';
       contentDiv.innerHTML = formatReportSectionHtml(text);
       
-      block.appendChild(h3);
+      block.appendChild(header);
       block.appendChild(contentDiv);
       reportBody.appendChild(block);
     }else{
@@ -8493,6 +8776,22 @@ document.getElementById('endReadingBtn').onclick = () => {
   window.scrollTo({top:0,behavior:'smooth'});
 };
 
+document.getElementById('expandAllSectionsBtn')?.addEventListener('click', () => {
+  document.querySelectorAll('.report-section-block').forEach(b => {
+    b.classList.remove('collapsed');
+    const hdr = b.querySelector('.report-section-header');
+    if(hdr) hdr.setAttribute('aria-expanded', 'true');
+  });
+});
+
+document.getElementById('collapseAllSectionsBtn')?.addEventListener('click', () => {
+  document.querySelectorAll('.report-section-block').forEach(b => {
+    b.classList.add('collapsed');
+    const hdr = b.querySelector('.report-section-header');
+    if(hdr) hdr.setAttribute('aria-expanded', 'false');
+  });
+});
+
 document.querySelectorAll('.chart-tab').forEach(btn=>{
   btn.addEventListener('click',()=>{
     document.querySelectorAll('.chart-tab').forEach(b=>b.classList.remove('active'));
@@ -8562,10 +8861,32 @@ document.getElementById('chatInput').addEventListener('keydown', (e) => {
     document.getElementById('chatSend').click();
   }
 });
-// --- Reading protection: discourage casual copying while preserving form usability ---
-document.addEventListener('contextmenu', e => { if(e.target.closest('.report,.visual-card,.chatlog,.astrology-intro')) e.preventDefault(); });
-document.addEventListener('copy', e => { if(e.target.closest('.report,.visual-card,.chatlog,.astrology-intro')) e.preventDefault(); });
-document.addEventListener('dragstart', e => { if(e.target.closest('.report,.visual-card,.chatlog,.astrology-intro')) e.preventDefault(); });
+// --- Reading protection: Strict prevention of copying, cutting, printing, and context menu ---
+['copy', 'cut', 'contextmenu', 'dragstart', 'selectstart'].forEach(evtName => {
+  document.addEventListener(evtName, e => {
+    if(e.target && e.target.closest && e.target.closest('.report, .visual-card, .chatlog, #reportCard, #kundliVisualCard, .report-section-block, .report-insight-card')) {
+      e.preventDefault();
+      return false;
+    }
+  }, { capture: true });
+});
+
+// Intercept Ctrl+P, Cmd+P, Ctrl+S, Cmd+S, Ctrl+C, Cmd+C on reading content
+window.addEventListener('keydown', e => {
+  if((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 'P' || e.key === 's' || e.key === 'S')) {
+    e.preventDefault();
+    e.stopPropagation();
+    return false;
+  }
+  if((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'C')) {
+    const sel = window.getSelection ? window.getSelection() : null;
+    if(sel && sel.anchorNode && sel.anchorNode.parentElement && sel.anchorNode.parentElement.closest('.report, .visual-card, .chatlog, #reportCard')) {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
+  }
+}, { capture: true });
 
 
 // --- Feedback, VIP access and private admin console ---
@@ -9089,7 +9410,8 @@ window.closeCompanyModal = function() {
                   <td>${esc(new Date(r.created_at).toLocaleString())}</td>
                   <td>
                     <button class="small secondary copy-code-btn" data-code="${code}" style="margin-right:4px;">Copy</button>
-                    <button class="small" data-vip-id="${r.id}">${r.active ? 'Disable' : 'Enable'}</button>
+                    <button class="small" data-vip-id="${r.id}" style="margin-right:4px;">${r.active ? 'Disable' : 'Enable'}</button>
+                    <button class="small" data-delete-vip-id="${r.id}" data-vip-code="${code}" style="background:rgba(235,87,87,0.15);border:1px solid rgba(235,87,87,0.4);color:#ff9b9b;">Delete</button>
                   </td>
                 </tr>
               `;
@@ -9106,6 +9428,7 @@ window.closeCompanyModal = function() {
           <label>How many<input id="vipCountAdmin" type="number" min="1" max="100" value="5" style="width:90px;"></label>
           <label>Uses per code<input id="vipMaxUsesAdmin" type="number" min="1" max="1000" value="1" style="width:90px;"></label>
           <button id="generateVipAdmin" type="button" style="height:42px;">Generate codes</button>
+          ${rows.length ? '<button id="clearAllVipAdmin" type="button" class="small secondary" style="height:42px;margin-left:auto;background:rgba(235,87,87,0.12);border:1px solid rgba(235,87,87,0.3);color:#ff9b9b;">Clear All VIP Codes</button>' : ''}
         </div>
         <div id="newVipCodes" class="admin-notice" style="display:none;margin-top:12px"></div>
       </div>
@@ -9125,6 +9448,18 @@ window.closeCompanyModal = function() {
       }
     };
 
+    if($('clearAllVipAdmin')){
+      $('clearAllVipAdmin').onclick = async () => {
+        if(!confirm('Are you sure you want to delete ALL VIP codes? This action cannot be undone.')) return;
+        try {
+          await adminFetch('/api/admin/vip', { method: 'DELETE' });
+          await loadAdmin();
+        } catch (e) {
+          alert(e.message);
+        }
+      };
+    }
+
     const attachVipEvents = () => {
       document.querySelectorAll('.copy-code-btn').forEach(btn => {
         btn.onclick = () => {
@@ -9140,6 +9475,18 @@ window.closeCompanyModal = function() {
         b.onclick = async () => {
           try {
             await adminFetch('/api/admin/vip/' + b.dataset.vipId + '/toggle', { method: 'POST' });
+            await loadAdmin();
+          } catch (e) {
+            alert(e.message);
+          }
+        };
+      });
+      document.querySelectorAll('[data-delete-vip-id]').forEach(b => {
+        b.onclick = async () => {
+          const code = b.getAttribute('data-vip-code') || 'this code';
+          if(!confirm('Delete VIP code ' + code + '?')) return;
+          try {
+            await adminFetch('/api/admin/vip/' + b.dataset.deleteVipId, { method: 'DELETE' });
             await loadAdmin();
           } catch (e) {
             alert(e.message);
@@ -11729,13 +12076,6 @@ window.setVedicLanguage = function(lang) {
   const progressHead = document.getElementById('progressHeading');
   if (progressHead) progressHead.textContent = isHi ? 'कुंडली गणना जारी है…' : 'Casting the chart';
 
-  const reportActions = document.querySelectorAll('.report-actions-bar button');
-  if (reportActions.length >= 3) {
-    reportActions[0].innerHTML = isHi ? '<span>📥</span> पीडीएफ डाउनलोड' : '<span>📥</span> Download PDF';
-    reportActions[1].innerHTML = isHi ? '<span>✉</span> ईमेल पर भेजें' : '<span>✉</span> Email Reading';
-    reportActions[2].innerHTML = isHi ? '<span>🖨</span> प्रिंट' : '<span>🖨</span> Print';
-  }
-
   const chartVisualH3 = document.querySelector('#chartVisualCard h3');
   if (chartVisualH3) chartVisualH3.textContent = isHi ? 'सचित्र वैदिक जन्म कुंडली' : 'Visual Kundli Chart';
   const chartTabs = document.querySelectorAll('.chart-tabs button');
@@ -11917,81 +12257,6 @@ window.switchSampleTab = function(tabIndex) {
         content.style.display = 'none';
       }
     }
-  }
-};
-
-/* ==========================================================================
-   DOWNLOAD READING AS PDF
-   ========================================================================== */
-window.downloadReadingAsPDF = function() {
-  // Check if reading exists
-  const reportCard = document.getElementById('reportCard');
-  if (!reportCard || reportCard.style.display === 'none') {
-    alert('Please generate or unlock your birth chart reading first before downloading.');
-    return;
-  }
-  window.print();
-};
-
-/* ==========================================================================
-   EMAIL READING MODAL & DISPATCHER
-   ========================================================================== */
-window.openEmailReadingModal = function() {
-  window.openModal('emailReadingModal');
-  const st = document.getElementById('emailReadingStatus');
-  if (st) st.style.display = 'none';
-};
-
-window.closeEmailReadingModal = function() {
-  window.closeModal('emailReadingModal');
-};
-
-window.sendReadingEmail = async function() {
-  const emailInput = document.getElementById('readingEmailInput');
-  const statusEl = document.getElementById('emailReadingStatus');
-  if (!emailInput || !statusEl) return;
-
-  const email = (emailInput.value || '').trim();
-  if (!email || !email.includes('@') || !email.includes('.')) {
-    statusEl.style.display = 'block';
-    statusEl.style.color = '#ef4444';
-    statusEl.textContent = 'Please enter a valid email address.';
-    return;
-  }
-
-  statusEl.style.display = 'block';
-  statusEl.style.color = '#fce7b0';
-  statusEl.textContent = 'Preparing digital report package…';
-
-  try {
-    const reportBody = document.getElementById('reportBody')?.innerText || 'Vedic Reading';
-    const placementTable = document.getElementById('placementTableBody')?.innerText || '';
-    
-    // Send to backend endpoint or dispatch confirmation
-    const res = await fetch('/api/email-reading', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        email,
-        subject: 'Your Jyotish Vimarsha Vedic Chart Reading & Kundli Blueprint',
-        reportText: reportBody.slice(0, 5000),
-        generatedAt: new Date().toISOString()
-      })
-    }).catch(() => ({ ok: true })); // Graceful fallback if offline
-
-    statusEl.style.color = '#10b981';
-    statusEl.textContent = `✨ Reading successfully queued for dispatch to ${email}! Check your inbox shortly.`;
-    setTimeout(() => {
-      window.closeEmailReadingModal();
-      statusEl.style.display = 'none';
-    }, 2800);
-  } catch (err) {
-    statusEl.style.color = '#10b981';
-    statusEl.textContent = `✨ Digital reading saved and scheduled for ${email}!`;
-    setTimeout(() => {
-      window.closeEmailReadingModal();
-      statusEl.style.display = 'none';
-    }, 2800);
   }
 };
 
