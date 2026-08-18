@@ -58,7 +58,7 @@ function json(res, status, body) {
   res.json(body);
 }
 function readBody(req) {
-  if (req.body && typeof req.body === 'object' && Object.keys(req.body).length > 0) return Promise.resolve(req.body);
+  if (req.body !== undefined && req.body !== null && typeof req.body === 'object') return Promise.resolve(req.body);
   if (typeof req.on !== 'function') return Promise.resolve(req.body || {});
   return new Promise((resolve, reject) => {
     let raw='';
@@ -571,12 +571,30 @@ export default async function handler(req,res){
     }
     if(req.method==='POST'&&path==='/feedback'){
       const b=await readBody(req);
-      if(!b.name||!b.email||!b.message)return json(res,400,{error:'Name, email and message are required.'});
-      const fb = { id: 'fb_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4), name: clean(b.name), email: clean(b.email), phone: clean(b.phone, 60), message: clean(b.message, 5000), created_at: new Date().toISOString() };
+      const name = clean(b.name || '');
+      const email = clean(b.email || '');
+      const message = clean(b.message || '', 5000);
+      const phone = clean(b.phone || '', 60);
+
+      if(!name || !email || !message){
+        return json(res,400,{error:'Please provide your name, email address, and message.'});
+      }
+      const fb = { 
+        id: 'fb_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6), 
+        name, 
+        email, 
+        phone, 
+        message, 
+        created_at: new Date().toISOString() 
+      };
       inMemoryFeedback.unshift(fb);
       saveJsonFile('feedback.json', inMemoryFeedback);
-      try { await db.insert('feedback',{name:fb.name,email:fb.email,phone:fb.phone,message:fb.message}); } catch {}
-      return json(res,200,{ok:true,id:fb.id});
+      try { 
+        await db.insert('feedback',{name:fb.name,email:fb.email,phone:fb.phone,message:fb.message}); 
+      } catch (err) {
+        console.warn('[Feedback DB Insert]', err.message);
+      }
+      return json(res,200,{ok:true,success:true,id:fb.id,message:'Feedback received successfully.'});
     }
 
     if(req.method==='POST'&&path==='/admin/login'){
@@ -685,7 +703,31 @@ export default async function handler(req,res){
         }
       }
       if(req.method==='POST'&&path==='/admin/vip'){
-        const b=await readBody(req),count=Math.min(100,Math.max(1,Number(b.count)||1)),maxUses=Math.min(1000,Math.max(1,Number(b.maxUses)||1)),codes=[];
+        const b=await readBody(req);
+        const maxUses=Math.min(1000,Math.max(1,Number(b.maxUses)||1));
+        const codes=[];
+        
+        if (b.customCode && typeof b.customCode === 'string' && b.customCode.trim().length > 0) {
+          const plain = b.customCode.trim().toUpperCase().replace(/[^A-Z0-9_-]/g, '');
+          if (!plain) return json(res, 400, { error: 'Invalid custom code format.' });
+          const item = { 
+            id: 'vip_' + Date.now() + '_custom', 
+            code_hash: hashCode(plain), 
+            display_code: plain, 
+            active: true, 
+            uses: 0, 
+            max_uses: maxUses, 
+            created_at: new Date().toISOString() 
+          };
+          inMemoryVipCodes.unshift(item);
+          try { await db.insert('vip_codes',{code_hash:item.code_hash,display_code:plain,max_uses:maxUses}); } catch {}
+          codes.push(plain);
+          saveJsonFile('vip_codes.json', inMemoryVipCodes);
+          logAudit(clientIp, 'VIP_GENERATE', `Generated custom VIP code ${plain} with max uses ${maxUses}`, 'SUCCESS');
+          return json(res, 200, { codes, maxUses });
+        }
+
+        const count=Math.min(100,Math.max(1,Number(b.count)||1));
         for(let i=0;i<count;i++){
           let plain = 'JV-'+crypto.randomBytes(5).toString('hex').toUpperCase();
           const item = { id: 'vip_' + Date.now() + '_' + i, code_hash: hashCode(plain), display_code: plain, active: true, uses: 0, max_uses: maxUses, created_at: new Date().toISOString() };

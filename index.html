@@ -5234,12 +5234,12 @@ body input, body select, body textarea {
     <button class="modal-close" data-close-modal="accessModal" aria-label="Close">&times;</button>
     <div class="intro-eyebrow">Private access</div>
     <h2>Access portal</h2>
-    <p>Use a VIP code for complimentary access, or sign in to the private administration panel.</p>
+    <p>Use a complimentary VIP code to unlock full readings, or sign in to the private administration panel.</p>
     <div class="access-grid">
       <form id="vipForm" class="access-card">
         <h3>VIP access</h3>
-        <p>Enter a valid complimentary access code.</p>
-        <input id="vipCodeInput" autocomplete="off" placeholder="JV-XXXXXXXX">
+        <p>Enter a valid complimentary access code to unlock chart casting.</p>
+        <input id="vipCodeInput" autocomplete="off" placeholder="JV-XXXXXXXX or custom code">
         <button type="submit">Unlock access</button>
         <div id="vipStatus" class="coord-status" style="display:none"></div>
       </form>
@@ -5298,7 +5298,7 @@ body input, body select, body textarea {
   ॐ शान्तिः शान्तिः शान्तिः
   <div class="legal-links"><button type="button" class="legal-feedback" id="feedbackBtnInline" onclick="openFeedbackModal()" title="Share your feedback or experience">✦ Share your experience</button>·<a href="#" class="legal-link" data-modal="termsModal">Terms &amp; Conditions</a>·<a href="#" class="legal-link" data-modal="privacyModal">Privacy Policy</a></div>
   <div class="footer-actions">
-    <button type="button" class="footer-link private-access" id="accessBtn" onclick="openAccessModal()" aria-label="Private access"><span>⌁</span> Private access</button>
+    <button type="button" class="footer-link private-access" id="accessBtn" onclick="openAccessModal()" aria-label="Administration portal"><span>⌁</span> Administration</button>
   </div>
   <div class="brand">A service by <b class="company-link" id="companyBriefBtn" onclick="openCompanyModal()" title="Click to view company profile &amp; features">Pathania Enterprise Private Limited</b></div>
 </footer>
@@ -8914,7 +8914,7 @@ window.closeFeedbackModal = function() {
 };
 window.openAccessModal = function() {
   window.openModal('accessModal');
-  const input = document.getElementById('vipCodeInput');
+  const input = document.getElementById('adminPasswordInput');
   if (input) setTimeout(() => input.focus(), 100);
 };
 window.closeAccessModal = function() {
@@ -9008,21 +9008,24 @@ window.closeCompanyModal = function() {
         setTimeout(() => close('paymentModal'), 1200);
       } else {
         if (st) {
-          st.className = 'coord-status error';
+          st.className = 'coord-status err';
           st.textContent = 'Payment was cancelled or could not be completed.';
         }
       }
     } catch (err) {
       if (st) {
-        st.className = 'coord-status error';
+        st.className = 'coord-status err';
         st.textContent = err.message || 'Payment initiation failed.';
       }
     }
   });
   document.querySelectorAll('[data-close-modal]').forEach(b=>b.addEventListener('click',()=>close(b.getAttribute('data-close-modal'))));
+  
   $('feedbackForm')?.addEventListener('submit', async e => {
     e.preventDefault();
     const st = $('feedbackStatus');
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.disabled = true;
     if (st) {
       st.style.display = 'block';
       st.className = 'coord-status';
@@ -9034,13 +9037,17 @@ window.closeCompanyModal = function() {
       const phone = $('feedbackPhone')?.value?.trim() || '';
       const message = $('feedbackMessage')?.value?.trim() || '';
       
+      if (!name || !email || !message) {
+        throw new Error('Please fill in your name, email address, and feedback message.');
+      }
+      
       const r = await fetch('/api/feedback', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({ name, email, phone, message })
       });
-      const j = await r.json();
-      if (!r.ok) throw new Error(j.error || 'Could not send feedback.');
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok || !j.ok) throw new Error(j.error || `Could not send feedback (${r.status}).`);
       if (st) {
         st.className = 'coord-status ok';
         st.textContent = '✨ Thank you! Your feedback has been received.';
@@ -9048,16 +9055,72 @@ window.closeCompanyModal = function() {
       e.target.reset();
       setTimeout(() => {
         close('feedbackModal');
-        if (st) st.style.display = 'none';
+        if (st) {
+          st.style.display = 'none';
+          st.textContent = '';
+        }
       }, 1600);
     } catch (err) {
       if (st) {
-        st.className = 'coord-status error';
+        st.className = 'coord-status err';
         st.textContent = err.message || 'Failed to send feedback.';
+      }
+    } finally {
+      if (submitBtn) submitBtn.disabled = false;
+    }
+  });
+
+  $('vipForm')?.addEventListener('submit', async e => {
+    e.preventDefault();
+    const st = $('vipStatus');
+    const codeInput = $('vipCodeInput');
+    const code = codeInput ? codeInput.value.trim() : '';
+    if (!code) return;
+    if (st) {
+      st.style.display = 'block';
+      st.className = 'coord-status';
+      st.textContent = 'Checking access code…';
+    }
+    try {
+      const r = await fetch('/api/vip/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code })
+      });
+      const j = await r.json();
+      if (!r.ok || !j.valid) throw new Error(j.error || 'Invalid or inactive VIP code.');
+      window.enableVipAccess();
+      if (st) {
+        st.className = 'coord-status ok';
+        st.textContent = '✨ VIP access unlocked successfully!';
+      }
+      setTimeout(() => {
+        close('accessModal');
+        if (st) { st.style.display = 'none'; st.textContent = ''; }
+      }, 1000);
+    } catch (err) {
+      if (st) {
+        st.className = 'coord-status err';
+        st.textContent = err.message || 'Verification failed.';
       }
     }
   });
-  $('vipForm')?.addEventListener('submit',async e=>{e.preventDefault();const st=$('vipStatus');st.style.display='block';st.textContent='Checking code…';try{const r=await fetch('/api/vip/verify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:$('vipCodeInput').value})});const j=await r.json();if(!r.ok||!j.valid)throw new Error(j.error||'Invalid VIP code.');window.enableVipAccess();st.className='coord-status ok';st.textContent='VIP access unlocked for this session.';setTimeout(()=>close('accessModal'),700);}catch(err){st.className='coord-status error';st.textContent=err.message;}});
+
+  window.enableVipAccess = function() {
+    window.vipAccess = true;
+    document.body.classList.add('vip-active');
+    const genBtn = $('genBtn');
+    if (genBtn) genBtn.textContent = 'Cast this chart (VIP Unlocked)';
+    const matchBtn = $('matchBtn');
+    if (matchBtn) matchBtn.textContent = 'Match charts (VIP Unlocked)';
+    const accessBtn = $('accessBtn');
+    if (accessBtn) accessBtn.innerHTML = '<span>✦</span> VIP Active';
+    const payBtns = document.querySelectorAll('#paymentBtn, #paymentBtnFixed, #paymentBtnHeader');
+    payBtns.forEach(b => { b.textContent = 'VIP Active'; b.style.opacity = '0.8'; });
+    const matchGate = $('matchPremiumGate');
+    if (matchGate) matchGate.style.display = 'none';
+  };
+
   let adminToken='';
   async function adminFetch(url,opts={}){
     opts.credentials = 'include';
@@ -9099,7 +9162,7 @@ window.closeCompanyModal = function() {
       $('adminPasswordInput').value='';
       await loadAdmin();
     }catch(err){
-      st.className='coord-status error';
+      st.className='coord-status err';
       st.textContent=err.message;
     }
   });
@@ -9208,18 +9271,131 @@ window.closeCompanyModal = function() {
   function renderOverview(reports, feedback, vips, s, payments){
     const verifiedPayments = payments.filter(x => x.status === 'verified' || x.status === 'captured');
     const totalRevenueINR = verifiedPayments.reduce((acc, x) => acc + (x.amount ? Math.round(x.amount / 100) : 0), 0);
+    const activeVips = (vips || []).filter(v => v.active);
     $('adminOverview').innerHTML = `
       <div class="admin-stats">
         <div class="admin-stat"><b style="color:#f2d792">${reports.length}</b><span>Stored reports</span></div>
         <div class="admin-stat"><b style="color:#7fc5c0">${feedback.length}</b><span>Feedback entries</span></div>
-        <div class="admin-stat"><b style="color:#d69b45">${vips.filter(x => x.active).length}</b><span>Active VIP codes</span></div>
+        <div class="admin-stat"><b style="color:#a8e6cf">${activeVips.length} / ${(vips||[]).length}</b><span>Active VIP Codes</span></div>
         <div class="admin-stat"><b style="color:#75b68a">₹${totalRevenueINR || (reports.length * Number(s.reveal_price||59))}</b><span>Total Verified Revenue</span></div>
         <div class="admin-stat"><b style="color:#e8c274">₹${s.reveal_price||59} / ₹${s.match_price||99} / ₹${s.question_price||29}</b><span>Active Base Prices</span></div>
       </div>
       <div class="admin-notice" style="margin-top:16px">
-        Admin actions are server-authorized. Pricing, feature availability and VIP code status are enforced by the backend, not merely hidden in the interface. All monetary transactions are calculated in Indian Rupees (₹).
+        Admin actions are server-authorized. Pricing, feature availability, and VIP access are enforced by the backend. All monetary transactions are calculated in Indian Rupees (₹).
       </div>
     `;
+  }
+
+  function renderVip(rows){
+    const container = $('adminVip');
+    if (!container) return;
+    const renderTable = (items) => `
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr><th>Code</th><th>Status</th><th>Uses</th><th>Max Allowed</th><th>Created</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            ${items.length ? items.map(r => {
+              const code = esc(r.display_code || r.code);
+              return `
+                <tr>
+                  <td><code style="color:#f2d792;font-size:13.5px;font-weight:bold;letter-spacing:0.04em;">${code}</code></td>
+                  <td><span class="admin-status-pill ${r.active ? 'ok' : 'err'}">${r.active ? 'Active' : 'Disabled'}</span></td>
+                  <td>${r.uses || 0}</td>
+                  <td>${r.max_uses}</td>
+                  <td style="white-space:nowrap;font-size:12px;color:var(--muted);">${esc(new Date(r.created_at).toLocaleString())}</td>
+                  <td style="white-space:nowrap;">
+                    <button class="small secondary copy-code-btn" data-code="${code}" style="margin-right:4px;">Copy</button>
+                    <button class="small" data-vip-id="${r.id}" style="margin-right:4px;">${r.active ? 'Disable' : 'Enable'}</button>
+                    <button class="small danger" data-delete-vip-id="${r.id}" data-vip-code="${code}">Delete</button>
+                  </td>
+                </tr>
+              `;
+            }).join('') : '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px;">No VIP access codes found. Generate codes above.</td></tr>'}
+          </tbody>
+        </table>
+      </div>
+    `;
+    
+    container.innerHTML = `
+      <div class="admin-setting-card">
+        <h3>Create &amp; Manage VIP Access Codes</h3>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">Generate random batches or custom named codes. You can enable, disable, copy or delete any code anytime.</p>
+        <div class="admin-form" style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
+          <label>Custom Code <span class="muted">(optional)</span><input id="vipCustomCodeAdmin" placeholder="e.g. JYOTISH2026" style="width:160px;text-transform:uppercase;"></label>
+          <label>Batch Count<input id="vipCountAdmin" type="number" min="1" max="100" value="5" style="width:80px;"></label>
+          <label>Max Uses / Code<input id="vipMaxUsesAdmin" type="number" min="1" max="1000" value="1" style="width:90px;"></label>
+          <button id="generateVipAdmin" type="button" style="height:42px;">Generate VIP Code(s)</button>
+          ${rows.length ? '<button id="clearAllVipAdmin" type="button" class="small secondary" style="height:42px;margin-left:auto;background:rgba(235,87,87,0.12);border:1px solid rgba(235,87,87,0.3);color:#ff9b9b;">Clear All VIP Codes</button>' : ''}
+        </div>
+        <div id="newVipCodes" class="admin-notice" style="display:none;margin-top:12px"></div>
+      </div>
+      <div id="vipTableArea">${renderTable(rows)}</div>
+    `;
+    
+    $('generateVipAdmin').onclick = async () => {
+      try {
+        const customCode = $('vipCustomCodeAdmin')?.value?.trim();
+        const count = $('vipCountAdmin').value;
+        const maxUses = $('vipMaxUsesAdmin').value;
+        const j = await adminFetch('/api/admin/vip', { method: 'POST', body: JSON.stringify({ customCode, count, maxUses }) });
+        $('newVipCodes').style.display = 'block';
+        $('newVipCodes').innerHTML = '<strong>Generated ' + j.codes.length + ' code(s):</strong><br><code style="color:#ffe099;display:block;margin-top:6px;font-size:14px;">' + j.codes.join(', ') + '</code>';
+        if ($('vipCustomCodeAdmin')) $('vipCustomCodeAdmin').value = '';
+        await loadAdmin();
+      } catch (e) {
+        alert(e.message);
+      }
+    };
+
+    if($('clearAllVipAdmin')){
+      $('clearAllVipAdmin').onclick = async () => {
+        if(!confirm('Are you sure you want to delete ALL VIP codes? This cannot be undone.')) return;
+        try {
+          await adminFetch('/api/admin/vip', { method: 'DELETE' });
+          await loadAdmin();
+        } catch (e) {
+          alert(e.message);
+        }
+      };
+    }
+
+    const attachVipEvents = () => {
+      document.querySelectorAll('.copy-code-btn').forEach(btn => {
+        btn.onclick = () => {
+          const code = btn.getAttribute('data-code');
+          navigator.clipboard.writeText(code).then(() => {
+            const orig = btn.textContent;
+            btn.textContent = 'Copied!';
+            setTimeout(() => { btn.textContent = orig; }, 1500);
+          });
+        };
+      });
+      document.querySelectorAll('[data-vip-id]').forEach(b => {
+        b.onclick = async () => {
+          try {
+            await adminFetch('/api/admin/vip/' + b.dataset.vipId + '/toggle', { method: 'POST' });
+            await loadAdmin();
+          } catch (e) {
+            alert(e.message);
+          }
+        };
+      });
+      document.querySelectorAll('[data-delete-vip-id]').forEach(b => {
+        b.onclick = async () => {
+          const code = b.getAttribute('data-vip-code') || 'this code';
+          if(!confirm('Delete VIP code ' + code + '?')) return;
+          try {
+            await adminFetch('/api/admin/vip/' + b.dataset.deleteVipId, { method: 'DELETE' });
+            await loadAdmin();
+          } catch (e) {
+            alert(e.message);
+          }
+        };
+      });
+    };
+    attachVipEvents();
   }
 
   function renderReports(rows){
@@ -9231,7 +9407,7 @@ window.closeCompanyModal = function() {
       <div class="admin-table-wrap">
         <table class="admin-table">
           <thead>
-            <tr><th>Name</th><th>Mode</th><th>Email</th><th>Created</th><th>Access</th><th>Action</th></tr>
+            <tr><th>Name</th><th>Mode</th><th>Email</th><th>Created</th><th>Status</th><th>Action</th></tr>
           </thead>
           <tbody>
             ${items.length ? items.map(r => `
@@ -9240,7 +9416,7 @@ window.closeCompanyModal = function() {
                 <td><span class="admin-badge">${esc(r.mode)}</span></td>
                 <td>${esc(r.email || '—')}</td>
                 <td>${esc(new Date(r.created_at).toLocaleString())}</td>
-                <td>${r.vip ? '<span class="admin-badge vip">VIP</span>' : '<span class="admin-badge paid">Paid</span>'}</td>
+                <td><span class="admin-badge paid">Verified</span></td>
                 <td><button class="small" data-report-id="${r.id}">Open</button></td>
               </tr>
             `).join('') : '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px;">No reports found matching criteria</td></tr>'}
@@ -9255,7 +9431,7 @@ window.closeCompanyModal = function() {
         const r = rows.find(x => x.id == b.dataset.reportId);
         if(!r) return;
         $('reportReaderTitle').textContent = r.name + ' — ' + r.mode;
-        $('reportReaderMeta').textContent = `${r.email || 'No email'} · ${new Date(r.created_at).toLocaleString()} · ${r.vip ? 'VIP access' : 'Paid access'}`;
+        $('reportReaderMeta').textContent = `${r.email || 'No email'} · ${new Date(r.created_at).toLocaleString()} · Verified access`;
         $('reportReaderBody').textContent = r.report;
         open('reportReaderModal');
       });
@@ -9388,113 +9564,6 @@ window.closeCompanyModal = function() {
       }
     };
     attachEvents();
-  }
-
-  function renderVip(rows){
-    const container = $('adminVip');
-    const renderTable = (items) => `
-      <div class="admin-table-wrap">
-        <table class="admin-table">
-          <thead>
-            <tr><th>Code</th><th>Status</th><th>Uses</th><th>Max</th><th>Created</th><th>Actions</th></tr>
-          </thead>
-          <tbody>
-            ${items.length ? items.map(r => {
-              const code = esc(r.display_code || r.code);
-              return `
-                <tr>
-                  <td><code style="color:#f2d792;font-size:14px;font-weight:bold;">${code}</code></td>
-                  <td><span class="admin-status-pill ${r.active ? 'ok' : 'err'}">${r.active ? 'Active' : 'Disabled'}</span></td>
-                  <td>${r.uses}</td>
-                  <td>${r.max_uses}</td>
-                  <td>${esc(new Date(r.created_at).toLocaleString())}</td>
-                  <td>
-                    <button class="small secondary copy-code-btn" data-code="${code}" style="margin-right:4px;">Copy</button>
-                    <button class="small" data-vip-id="${r.id}" style="margin-right:4px;">${r.active ? 'Disable' : 'Enable'}</button>
-                    <button class="small" data-delete-vip-id="${r.id}" data-vip-code="${code}" style="background:rgba(235,87,87,0.15);border:1px solid rgba(235,87,87,0.4);color:#ff9b9b;">Delete</button>
-                  </td>
-                </tr>
-              `;
-            }).join('') : '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px;">No VIP codes created</td></tr>'}
-          </tbody>
-        </table>
-      </div>
-    `;
-    
-    container.innerHTML = `
-      <div class="admin-setting-card">
-        <h3>Generate VIP codes</h3>
-        <div class="admin-form" style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
-          <label>How many<input id="vipCountAdmin" type="number" min="1" max="100" value="5" style="width:90px;"></label>
-          <label>Uses per code<input id="vipMaxUsesAdmin" type="number" min="1" max="1000" value="1" style="width:90px;"></label>
-          <button id="generateVipAdmin" type="button" style="height:42px;">Generate codes</button>
-          ${rows.length ? '<button id="clearAllVipAdmin" type="button" class="small secondary" style="height:42px;margin-left:auto;background:rgba(235,87,87,0.12);border:1px solid rgba(235,87,87,0.3);color:#ff9b9b;">Clear All VIP Codes</button>' : ''}
-        </div>
-        <div id="newVipCodes" class="admin-notice" style="display:none;margin-top:12px"></div>
-      </div>
-      <div id="vipTableArea">${renderTable(rows)}</div>
-    `;
-    
-    $('generateVipAdmin').onclick = async () => {
-      try {
-        const count = $('vipCountAdmin').value;
-        const maxUses = $('vipMaxUsesAdmin').value;
-        const j = await adminFetch('/api/admin/vip', { method: 'POST', body: JSON.stringify({ count, maxUses }) });
-        $('newVipCodes').style.display = 'block';
-        $('newVipCodes').innerHTML = '<strong>Generated ' + j.codes.length + ' codes:</strong><br><code style="color:#ffe099;display:block;margin-top:6px;">' + j.codes.join(', ') + '</code>';
-        await loadAdmin();
-      } catch (e) {
-        alert(e.message);
-      }
-    };
-
-    if($('clearAllVipAdmin')){
-      $('clearAllVipAdmin').onclick = async () => {
-        if(!confirm('Are you sure you want to delete ALL VIP codes? This action cannot be undone.')) return;
-        try {
-          await adminFetch('/api/admin/vip', { method: 'DELETE' });
-          await loadAdmin();
-        } catch (e) {
-          alert(e.message);
-        }
-      };
-    }
-
-    const attachVipEvents = () => {
-      document.querySelectorAll('.copy-code-btn').forEach(btn => {
-        btn.onclick = () => {
-          const code = btn.getAttribute('data-code');
-          navigator.clipboard.writeText(code).then(() => {
-            const orig = btn.textContent;
-            btn.textContent = 'Copied!';
-            setTimeout(() => { btn.textContent = orig; }, 1500);
-          });
-        };
-      });
-      document.querySelectorAll('[data-vip-id]').forEach(b => {
-        b.onclick = async () => {
-          try {
-            await adminFetch('/api/admin/vip/' + b.dataset.vipId + '/toggle', { method: 'POST' });
-            await loadAdmin();
-          } catch (e) {
-            alert(e.message);
-          }
-        };
-      });
-      document.querySelectorAll('[data-delete-vip-id]').forEach(b => {
-        b.onclick = async () => {
-          const code = b.getAttribute('data-vip-code') || 'this code';
-          if(!confirm('Delete VIP code ' + code + '?')) return;
-          try {
-            await adminFetch('/api/admin/vip/' + b.dataset.deleteVipId, { method: 'DELETE' });
-            await loadAdmin();
-          } catch (e) {
-            alert(e.message);
-          }
-        };
-      });
-    };
-    attachVipEvents();
   }
 
   function renderSettings(s){
