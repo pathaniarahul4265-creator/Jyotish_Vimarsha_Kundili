@@ -8256,6 +8256,7 @@ function cleanAstroText(text){
     .replace(/\r/g, '')
     .replace(/[ \t]+\n/g, '\n')
     .replace(/^[ \t]*[\*\-_#]{3,}[ \t]*$/gm, '') // Remove horizontal rules like ***, ---, ###
+    .replace(/^#{1,6}\s*(.*?)\s*#{1,6}$/gm, '### $1') // Normalize closed headers like ### Title ###
     .trim();
 }
 
@@ -8392,12 +8393,24 @@ function formatReportSectionHtml(text){
 
     // Bullet List: - item or * item or • item or + item
     if(/^[-*•+]\s+/.test(line)){
+      const itemText = line.replace(/^[-*•+]\s+/, '');
+      // Check if the bullet item is actually a structured callout: - **Core Takeaway:** ...
+      const bulletCalloutMatch = itemText.match(/^[\*\s]*([\w\s\u0900-\u097F\/\-\&]{3,45})[\*\s]*:\s*(.+)$/);
+      if(bulletCalloutMatch && bulletCalloutMatch[1].length <= 40 && !bulletCalloutMatch[2].startsWith('http') && itemText.length < 700 && (bulletCalloutMatch[1].includes(' ') || itemText.startsWith('**') || bulletCalloutMatch[1].length > 7)){
+        flushList();
+        const rawLabel = bulletCalloutMatch[1].replace(/[\*\#\_]/g, '').trim();
+        const content = bulletCalloutMatch[2].trim();
+        const theme = getCardThemeClass(rawLabel);
+        const icon = getCardIcon(rawLabel);
+        html += `<div class="report-insight-card ${theme}"><div class="insight-card-head"><span class="insight-icon">${icon}</span><span class="insight-label">${escapeHtml(rawLabel)}</span></div><div class="insight-card-body">${formatInlineMarkdown(content)}</div></div>`;
+        continue;
+      }
+
       if(!inList){
         flushList();
         html += '<ul class="report-list">';
         inList = true;
       }
-      const itemText = line.replace(/^[-*•+]\s+/, '');
       html += `<li class="report-list-item"><span class="list-bullet">✦</span><div class="list-text">${formatInlineMarkdown(itemText)}</div></li>`;
       continue;
     }
@@ -8963,7 +8976,7 @@ async function generateSection(index, reportBody, stepListEl, progressErrorEl){
   let isAiEnriched = false;
 
   try {
-    const userText = `Birth data:\n${birthContext}\n\nLocal Classical Baseline Analysis (Calculated via Lahiri Ephemeris):\n${localBaseline}\n\nTASK:\nRefine, deepen, and synthesize the "${section.title}" section of this reading.\n${section.instruction}\nProvide an insightful, comprehensive astrological reading on lived impact, behavior, career, wealth, and relationships. Deepen and bridge the astrological mechanism from the baseline into concrete psychological and practical lived reality.\n\nSTRUCTURAL FORMATTING RULES:\n1. Organize your analysis with clear, descriptive subheadings using ### (e.g., "### 1. Core Psychological Blueprint" or "### Career Trajectory & Wealth Capacity").\n2. Highlight key takeaways with structured callout lines, such as:\n- **Core Takeaway:** Summary of the primary insight\n- **Astrological Mechanism:** Planets, bhavas, rashis, and yogas causing this effect\n- **Practical Impact:** Concrete consequences in daily life, work, or relationships\n- **Timing Window:** Key planetary period or transit when this effect manifests\n3. Use clear bullet points (- item) or numbered lists (1. item) for sequential factors.\n4. Write in rich, fluid paragraphs without repetitive filler or stray asterisks.\n5. Do not include the main section title at the very beginning of your response.`;
+    const userText = `Birth data:\n${birthContext}\n\nLocal Classical Baseline Analysis (Calculated via Lahiri Ephemeris):\n${localBaseline}\n\nTASK:\nProvide a master-level, deeply accurate, and personalized Vedic astrology reading for the "${section.title}" chapter.\n${section.instruction}\n\nCORE QUALITY & ACCURACY REQUIREMENTS:\n- Ground every single insight directly in the verified sidereal chart placements, houses, rashis, nakshatras, and planetary dignities provided above.\n- Bridge astrological mechanisms into lived psychological, career, financial, and relational reality. Do not output dummy reports, generic horoscope clichés, or placeholder text.\n- Never recommend gemstones, mantras, rituals, poojas, fasting, donations, or remedies. Never make a fatalistic marriage verdict.\n- Always include both English and Hindi/Sanskrit Rashi names with Devanagari script (e.g. "Aries / Mesha (मेष)", "Taurus / Vrishabha (वृषभ)", etc.).\n\nPRESENTATION & FORMATTING GUIDELINES:\n- Structure with elegant subheadings using ### (e.g., "### 1. Psychological Blueprint & Core Temperament").\n- Use structured callouts for key insights:\n  - Core Takeaway: Primary actionable life insight\n  - Astrological Mechanism: Exact planetary combinations driving this pattern\n  - Practical Impact: How it manifests in real-world decisions and daily life\n  - Timing Window: Associated Dasha or transit timeframe\n- Write in fluent, refined paragraphs with bullet points for specific factors.\n- Do not output raw markdown hashes or unclosed asterisks in the middle of sentences.\n- Do not repeat the chapter title at the very start.`;
 
     const rawText = await callGemini(activeRules, userText, 3200);
     const cleaned = cleanAstroText(rawText);

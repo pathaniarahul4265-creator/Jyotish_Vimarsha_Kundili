@@ -767,6 +767,15 @@
     };
   }
 
+  // Helper for bilingual Rashi name
+  function formatRashiBilingual(signName) {
+    if (!signName) return '—';
+    const cleanStr = String(signName).trim().toLowerCase();
+    const r = RASHIS.find(item => item.name.toLowerCase() === cleanStr || item.sanskrit.toLowerCase() === cleanStr || item.hindi === signName);
+    if (r) return `${r.name} / ${r.sanskrit} (${r.hindi})`;
+    return String(signName);
+  }
+
   // Generate 100% Deterministic Classical Baseline Text for any Section
   function generateSectionBaseline(sectionId, chart, lang = 'en') {
     const isHi = lang === 'hi';
@@ -776,42 +785,50 @@
     const pMap = {};
     (chart.planets || []).forEach(p => { pMap[p.name] = p; });
 
+    const lagnaLord = RASHIS.find(r => r.name === lagna)?.lord || 'Mars';
+    const moonLord = RASHIS.find(r => r.name === moon)?.lord || 'Moon';
+    const lagnaInfo = RASHIS.find(r => r.name === lagna) || RASHIS[0];
+    const moonInfo = RASHIS.find(r => r.name === moon) || RASHIS[0];
+
     const formatP = (pName) => {
       const p = pMap[pName];
       if (!p) return `${pName} in chart`;
-      return `**${p.name} in ${p.sign} (House ${p.house}, ${p.dignity})**`;
+      return `${p.name} in ${formatRashiBilingual(p.sign)} (House ${p.house}, ${p.dignity})`;
     };
 
-    const yogaListText = (chart.yogas || []).map(y => `- **${y.name}** (${y.status}): ${y.formation}. *Impact:* ${y.impact}`).join('\n');
+    const yogaListText = (chart.yogas || []).length > 0
+      ? (chart.yogas || []).map(y => `- **${y.name}** (${y.status}): ${y.formation}. Practical Impact: ${y.impact}`).join('\n')
+      : `- **Pancha Mahapurusha Potential:** Evaluated based on angular kendra strength of major grahas.\n- **Dharma-Karmadhipati Alignment:** Mutual relationship between trinal wisdom and tenth-house vocational actions.`;
 
     switch (sectionId) {
       case 'overview':
         return `### 1. Core Psychological Blueprint & Ascendant Energy
-The foundational architecture of your Vedic horoscope is anchored by **${lagna} Lagna (Ascendant)**, giving your personality an innate resonance with ${RASHIS.find(r=>r.name===lagna)?.modality || 'dynamic'} enterprise and ${RASHIS.find(r=>r.name===lagna)?.element || 'focused'} temperament. Your emotional compass is guided by **Moon in ${moon}** (${chart.moonNakshatra || 'auspicious Nakshatra'}), shaping your instinctive responses, internal sanctuary, and mental processing speed. The vital solar core sits with **Sun in ${sun}**, governing your sovereign confidence, career ambition, and inner authority.
+The foundational architecture of your Vedic horoscope is anchored by **${formatRashiBilingual(lagna)} Lagna (Ascendant)**, endowing your physical constitution and personality with ${lagnaInfo.modality || 'dynamic'} enterprise, ${lagnaInfo.element || 'focused'} temperament, and innate leadership potential. Your emotional sanctuary and subconscious instincts are guided by **Moon in ${formatRashiBilingual(moon)}** (${chart.moonNakshatra || 'auspicious Nakshatra'}), shaping your intuitive responses, mental resilience, and processing style. Your vital solar core resides with **Sun in ${formatRashiBilingual(sun)}**, governing sovereign willpower, vocational authority, and self-confidence.
 
-- **Core Takeaway:** A balanced synthesis of ${lagna} rising vitality coupled with ${moon} emotional sensitivity creates high intuitive intelligence and strategic stamina.
-- **Astrological Mechanism:** ${formatP('Sun')}, ${formatP('Moon')}, and ${formatP('Jupiter')} establish the primary trinal pillars of intellect, emotional resilience, and purposeful drive.
-- **Practical Impact:** You approach critical decisions with pragmatic foresight, preferring sustainable long-term accomplishments over fleeting impulsive rewards.
-- **Timing Window:** Planetary activations under the current **${chart.dasha?.activeMahadasha || 'Jupiter'} Mahadasha** highlight pivotal life developments in professional autonomy and relational balance.
+- **Core Takeaway:** The union of ${formatRashiBilingual(lagna)} vitality with ${formatRashiBilingual(moon)} emotional depth bestows strategic stamina, sharp discernment, and purposeful ambition.
+- **Astrological Mechanism:** Primary trinal houses (1st, 5th, 9th) energized by ${formatP('Sun')}, ${formatP('Moon')}, and ${formatP('Jupiter')} form your sovereign triangle of character, cognitive sharpness, and ethical alignment.
+- **Practical Impact:** You approach critical decisions with pragmatic foresight, preferring sustainable, compounding accomplishments over fleeting emotional impulses.
+- **Timing Window:** Planetary activations under the overarching **${chart.dasha?.activeMahadasha || 'Jupiter'} Mahadasha** highlight key milestones in personal autonomy, vocational authority, and life purpose.
 
 ### 2. Major Life Themes & Dominant Planetary Currents
 Your chart exhibits distinct classical configurations that channel your energies into constructive enterprise:
-1. **Intellectual & Analytical Acumen:** Supported by ${formatP('Mercury')}, bestowing clarity in communication, structured planning, and commercial acumen.
-2. **Endurance & Discipline:** Underpinned by ${formatP('Saturn')}, instilling deep patience, systemic problem-solving, and resistance against temporary setbacks.
-3. **Values & Relational Harmony:** Modulated by ${formatP('Venus')}, guiding your aesthetic discernment, diplomatic negotiation, and commitment in key partnerships.`;
+1. **Intellectual & Analytical Acumen:** Guided by ${formatP('Mercury')}, bestowing clarity in communication, strategic planning, and commercial intellect.
+2. **Endurance & Long-Term Discipline:** Underpinned by ${formatP('Saturn')}, instilling deep patience, systemic problem-solving, and resilience against temporary setbacks.
+3. **Values & Relational Harmony:** Modulated by ${formatP('Venus')}, guiding aesthetic discernment, diplomatic negotiation, and devotion in key partnerships.`;
 
       case 'panchang': {
         const pLines = (chart.planets || []).map(p => `${p.name} | ${p.sign} | ${p.house} | ${p.dignity}`).join('\n');
         return `### 1. Classical Panchang & Celestial Almanac
 Your birth occurs under sacred planetary rhythms calculated via authoritative **Lahiri Sidereal Ephemeris (Ayanamsha ${chart.ayanamsha}°)**:
-- **Lagna (Ascendant):** ${lagna} (${chart.ascDegree}° - ${RASHIS.find(r=>r.name===lagna)?.hindi || lagna})
-- **Chandra Rashi (Moon Sign):** ${moon} (${chart.moonNakshatra})
-- **Surya Rashi (Sun Sign):** ${sun}
+- **Lagna (Ascendant):** ${formatRashiBilingual(lagna)} at ${chart.ascDegree || 0}°
+- **Chandra Rashi (Moon Sign):** ${formatRashiBilingual(moon)} (${chart.moonNakshatra})
+- **Surya Rashi (Sun Sign):** ${formatRashiBilingual(sun)}
+- **Lagna Lord:** ${lagnaLord} (Governing vitality, physical health, and self-direction)
 - **Vimshottari Dasha Balance:** ${chart.dasha?.balanceLord} Mahadasha (${chart.dasha?.balanceYears} years remaining at birth)
 - **Current Active Period:** **${chart.dasha?.activeMahadasha} Mahadasha / ${chart.dasha?.activeAntardasha} Antardasha** (${chart.dasha?.activeYears})
 
-### 2. Comprehensive Graha Positions Table
-${(chart.planets || []).map(p => `- **${p.name}:** ${p.sign} at ${p.degree}°, placed in **House ${p.house}** (${p.nakshatra}, Pada ${p.pada}) — *Status:* ${p.dignity}`).join('\n')}
+### 2. Comprehensive Sidereal Planetary Placements
+${(chart.planets || []).map(p => `- **${p.name}:** ${formatRashiBilingual(p.sign)} at ${p.degree}°, placed in **House ${p.house}** (${p.nakshatra}, Pada ${p.pada}) — Status: ${p.dignity}${p.retrograde ? ', Retrograde' : ''}${p.combust ? ', Combust' : ''}`).join('\n')}
 
 <!-- Machine-readable placement tags for UI table rendering -->
 ${pLines}
@@ -821,53 +838,53 @@ MOON SIGN | ${moon}`;
 
       case 'identity':
         return `### 1. Temperament, Mental Architecture & Behavioral Patterns
-With **${lagna}** rising, your behavioral expression combines clarity of purpose with measured execution. The Lagna lord's position indicates that you thrive in environments where you can maintain autonomy, demonstrate competence, and exercise intellectual independence.
+With **${formatRashiBilingual(lagna)}** rising, your behavioral expression combines clarity of purpose with measured execution. The Lagna lord (**${lagnaLord}**) directs your focus toward competence, personal sovereignty, and intellectual integrity. You possess a dignified demeanor that commands natural respect without need for ostentation.
 
-- **Core Takeaway:** You possess a naturally dignified demeanor, combining analytical precision with thoughtful introspection.
-- **Astrological Mechanism:** ${formatP('Mercury')} and ${formatP('Moon')} shape the cognitive loop, while ${formatP('Mars')} provides the kinetic follow-through.
-- **Practical Impact:** Under pressure, you tend to step back to analyze root causes rather than reacting emotionally, ensuring thoughtful problem resolution.
-- **Timing Window:** Periods ruled by your Lagna lord and Moon lord consistently mark phases of heightened personal clarity and renewed self-confidence.
+- **Core Takeaway:** You embody a disciplined balance of high standards, thoughtful reflection, and steady determination.
+- **Astrological Mechanism:** Cognitive processing is shaped by ${formatP('Mercury')} and ${formatP('Moon')}, while ${formatP('Mars')} provides kinetic drive and goal execution.
+- **Practical Impact:** When encountering adversity, you step back to analyze root causes methodically rather than reacting impulsively, ensuring resilient, well-calibrated outcomes.
+- **Timing Window:** Planetary cycles ruled by your Lagna lord (${lagnaLord}) and Moon lord (${moonLord}) consistently activate phases of heightened mental clarity and personal breakthrough.
 
 ### 2. Communication Style, Stress Response & Inner Drive
-- **Communication:** Articulate, deliberate, and evidence-focused. You value truthfulness and concise dialogue over vague generalities.
-- **Stress Response:** Over-analysis or excessive responsibility can occasionally create mental fatigue; grounding routines and nature connectivity restore your equilibrium.
-- **Inner Drive:** Motivated by mastery, enduring contributions, and ethical self-reliance.`;
+- **Communication:** Articulate, deliberate, and evidence-focused. You value authenticity and structured reasoning over ambiguous pleasantries.
+- **Stress Response:** Intense workload or emotional friction can occasionally cause mental fatigue; structured grounding routines, quiet reflection, and restorative pacing swiftly restore your equilibrium.
+- **Inner Drive:** Inspired by genuine mastery, lasting contribution, and self-reliant accomplishment.`;
 
       case 'relationships':
         return `### 1. Relational Dynamics, Attachment Style & Partnership
-The 7th house and its planetary influences govern your interpersonal orientation. With **${pMap.Venus ? pMap.Venus.sign : 'Venus'}** influencing partnership aesthetics and **${pMap.Jupiter ? pMap.Jupiter.sign : 'Jupiter'}** providing relational wisdom, your approach to romantic and business partnerships is grounded in mutual respect, intellectual synergy, and emotional fidelity.
+In classical Jyotish, the 7th house (Kalatra Bhava), along with **${formatP('Venus')}** (natural karaka of romance) and **${formatP('Jupiter')}** (karaka of wisdom and commitment), defines your relationship orientation. Your approach to love, marriage, and long-term companionship is rooted in mutual respect, intellectual rapport, and emotional sincerity.
 
-- **Core Takeaway:** You seek a partner who is both an intellectual confidant and an emotional anchor, valuing shared life values and transparent communication.
-- **Astrological Mechanism:** The 7th house, along with ${formatP('Venus')} and ${formatP('Jupiter')}, establishes a durable foundation for long-term domestic stability.
-- **Practical Impact:** Relationships flourish when clear expectations and mutual autonomy are maintained without emotional ambiguity.
-- **Timing Window:** Sub-periods of the 7th lord and Venus highlight constructive windows for deepening commitments, shared domestic expansion, and relationship harmony.
+- **Core Takeaway:** You flourish alongside a partner who is both an intellectual equal and an emotional confidant, cherishing transparent communication and shared life philosophy.
+- **Astrological Mechanism:** The 7th house axis, supported by benefic aspects from Venus and Jupiter, establishes a sturdy foundation for durable partnership and domestic harmony.
+- **Practical Impact:** Partnerships thrive when mutual autonomy, clear expectations, and affectionate emotional safety are honored consistently.
+- **Timing Window:** Sub-periods of the 7th lord and Venus highlight favorable windows for relationship commitments, domestic expansion, and shared milestones.
 
-### 2. Family Harmony & Social Belonging
-- **Domestic Sphere:** You value a peaceful, well-ordered sanctuary at home where you can recharge and nurture meaningful connections.
-- **Friendships:** You maintain a curated circle of trustworthy, high-integrity companions rather than superficial acquaintances.`;
+### 2. Domestic Harmony, Family Life & Social Belonging
+- **Domestic Sanctuary:** You cherish a calm, well-ordered domestic environment where you can recharge and nurture meaningful familial bonds.
+- **Friendships & Social Circle:** You maintain a curated circle of trustworthy, high-integrity companions, valuing depth and loyalty over superficial acquaintance.`;
 
       case 'career':
         return `### 1. Vocation, Leadership Trajectory & Professional Acumen
-Your 10th house of career, supported by **${formatP('Saturn')}** and **${formatP('Sun')}**, reveals an organic capacity for strategic responsibility, organizational leadership, and specialized expertise. You excel in vocations requiring methodical planning, technical or commercial acumen, and reliable execution.
+The 10th house of career and karma, harmonized by **${formatP('Saturn')}** and **${formatP('Sun')}**, reveals natural capacity for strategic responsibility, organizational leadership, and specialized competence. You excel in vocations requiring methodical planning, analytical precision, and executive reliability.
 
-- **Core Takeaway:** Your professional trajectory is characterized by steady compounding gains, where diligence and specialized competence earn long-term authority.
-- **Astrological Mechanism:** The 10th and 6th house dynamics, reinforced by ${formatP('Mercury')} and ${formatP('Mars')}, foster executive ability and competitive excellence.
-- **Practical Impact:** You thrive in roles that grant ownership over outcomes and reward merit, analytical innovation, and strategic foresight.
-- **Timing Window:** Major professional milestones, promotions, and entrepreneurial expansions manifest prominently during **${chart.dasha?.activeMahadasha}** cycles.
+- **Core Takeaway:** Your professional trajectory is characterized by steady, compounding advancement where diligence, ethical integrity, and specialized expertise earn long-term authority.
+- **Astrological Mechanism:** The 10th and 6th houses, reinforced by ${formatP('Mercury')} and ${formatP('Mars')}, foster keen problem-solving, operational stamina, and competitive excellence.
+- **Practical Impact:** You thrive in environments that grant autonomy over deliverables and reward merit, analytical innovation, and strategic leadership.
+- **Timing Window:** Key promotions, organizational milestones, and enterprise expansions manifest prominently during **${chart.dasha?.activeMahadasha}** cycles.
 
 ### 2. Wealth Accumulation, Financial Instincts & Asset Building
-- **Income Channels:** Supported by the 2nd and 11th houses, indicating multiple avenues of revenue through professional expertise, investments, and enterprise.
-- **Financial Style:** Prudent, structured, and growth-oriented. You favor tangible assets, disciplined capital allocation, and long-term security over speculative volatility.`;
+- **Income Channels:** The 2nd (Dhana Bhava) and 11th (Labha Bhava) houses indicate multiple revenue avenues through professional excellence, calculated investments, and disciplined enterprise.
+- **Financial Style:** Prudent, structured, and long-term focused. You prioritize capital preservation, tangible asset accumulation, and compounding security over speculative volatility.`;
 
       case 'yogas':
         return `### 1. Classical Planetary Combinations (Yogas) & Auspicious Formations
-Ancient Vedic treatises (Brihat Parashara Hora Shastra, Phaladeepika) outline powerful planetary alignments that elevate a chart's potential. Your verified ephemeris placements establish the following major Yogas:
+Classical Vedic treatises (Brihat Parashara Hora Shastra, Phaladeepika, Saravali) outline planetary alignments that elevate a horoscope's potential. Your verified sidereal placements establish the following major classical Yogas:
 
 ${yogaListText}
 
 ### 2. Synthesis of Yoga Strength & Practical Manifestation
-- **Executive Power:** Auspicious combinations between Kendra (Action) and Trikona (Fortune) lords form protective shields against unexpected reversals.
-- **Intellectual & Financial Flourishing:** Benefic placements channel energy toward disciplined wealth retention, moral standing, and intellectual authority.`;
+- **Executive & Material Power:** Auspicious relationships between Kendra (Action) and Trikona (Fortune) lords create protective buffers against life reversals, turning obstacles into stepping stones.
+- **Intellectual & Financial Flourishing:** Benefic planetary alignments channel life energy toward disciplined wealth retention, moral standing, and intellectual authority.`;
 
       case 'health': {
         const yogaRows = (chart.yogas || []).map(y => `${y.name} | ${y.status} | ${y.formation} | ${y.impact}`).join('\n');
@@ -878,13 +895,13 @@ ${yogaListText}
         ].join('\n');
 
         return `### 1. Vitality, Energy Cycles & Stress Management
-Vedic astrology examines vitality through the 1st (Constitution), 6th (Resistance), and 8th (Longevity) houses. Supported by ${formatP('Sun')} and ${formatP('Mars')}, your physical stamina is naturally resilient, benefiting most from regular physical activity, mindful nutritional pacing, and structured restorative rest.
+Vedic astrology examines constitutional vitality through the 1st (Tanu Bhava), 6th (Resistance), and 8th (Longevity) houses. Supported by ${formatP('Sun')} and ${formatP('Mars')}, your physical stamina is resilient, flourishing with regular physical movement, balanced nutrition, and structured restorative rest.
 
-- **Core Takeaway:** Maintaining equilibrium between intense intellectual work and deliberate physical rest preserves your optimal vitality and mental focus.
-- **Astrological Mechanism:** ${formatP('Moon')} and ${formatP('Saturn')} emphasize the importance of nervous system recovery and adequate sleep hygiene.
-- **Practical Guidance:** Prioritize regular hydration, rhythmic breathing, and outdoor grounding during peak workload periods.
+- **Core Takeaway:** Maintaining equilibrium between focused intellectual output and deliberate physical rest preserves optimal vitality, mental clarity, and emotional resilience.
+- **Astrological Mechanism:** ${formatP('Moon')} and ${formatP('Saturn')} emphasize nervous system recovery, consistent sleep hygiene, and stress mitigation.
+- **Practical Guidance:** Prioritize regular hydration, rhythmic breathing, and outdoor grounding during peak workload phases.
 
-### 2. Comprehensive Yoga & Dosha Catalog
+### 2. Comprehensive Classical Yoga & Dosha Catalog
 <!-- Machine-readable Yoga Catalog rows for UI table -->
 ${yogaRows}
 ${doshaRows}`;
@@ -894,34 +911,34 @@ ${doshaRows}`;
         const ak = chart.karakas?.Atmakaraka;
         const amk = chart.karakas?.Amatyakaraka;
         return `### 1. Jaimini Atmakaraka: Soul Purpose & Evolutionary Lesson
-According to Maharishi Jaimini's Sutras, the **Atmakaraka (AK)** is the planet holding the highest degree in its sign among the seven classical grahas, representing the soul's primary evolutionary curriculum:
-- **Atmakaraka Graha:** **${ak?.planet || 'Sun'} in ${ak?.sign} (${ak?.degree}°)**
-- **Core Lesson:** ${ak?.desc || 'Mastery over self-expression, ego transcendence, and conscious alignment with universal truth.'}
-- **Lived Manifestation:** Your life path repeatedly encourages you to cultivate inner sovereignty, integrity, and humility, transforming personal ambition into elevated purpose.
+According to Maharishi Jaimini's Upadesha Sutras, the **Atmakaraka (AK)** is the graha holding the highest longitudinal degree among the seven classical planets, representing the soul's primary evolutionary curriculum:
+- **Atmakaraka Graha:** **${ak?.planet || 'Sun'} in ${formatRashiBilingual(ak?.sign)} (${ak?.degree}°)**
+- **Core Evolutionary Lesson:** ${ak?.desc || 'Mastery over self-expression, ego transcendence, and alignment with universal truth.'}
+- **Lived Manifestation:** Your life path repeatedly invites you to cultivate inner sovereignty, integrity, and humility, transforming personal ambition into elevated purpose.
 
-### 2. Jaimini Amatyakaraka: Vocation & Material Responsibility
-The **Amatyakaraka (AmK)** is the second-highest degree planet, acting as the soul's chief executive and minister for worldly achievement:
-- **Amatyakaraka Graha:** **${amk?.planet || 'Jupiter'} in ${amk?.sign} (${amk?.degree}°)**
+### 2. Jaimini Amatyakaraka: Vocation & Worldly Action
+The **Amatyakaraka (AmK)** is the second-highest degree planet, acting as the soul's chief minister and counselor for material achievement:
+- **Amatyakaraka Graha:** **${amk?.planet || 'Jupiter'} in ${formatRashiBilingual(amk?.sign)} (${amk?.degree}°)**
 - **Vocational Expression:** ${amk?.desc || 'Advisory leadership, intellectual stewardship, and constructive material impact.'}
-- **Lived Manifestation:** You achieve your greatest professional success when taking on roles of trust, strategic mentorship, and ethical stewardship.`;
+- **Lived Manifestation:** You achieve your greatest professional fulfillment in roles involving trust, strategic mentorship, and ethical organizational guidance.`;
       }
 
       case 'vargas':
         return `### 1. Navamsa (D9): The Fruit of Dharma & Inner Maturity
 The Navamsa chart reveals the subconscious potential, spiritual fruitfulness, and evolutionary unfolding of planetary placements in the second half of life and within marriage:
-- **Navamsa Lagna:** **${chart.vargas?.D9?.Lagna || lagna}**
-- **Sun in Navamsa:** ${chart.vargas?.D9?.Sun || sun}
-- **Moon in Navamsa:** ${chart.vargas?.D9?.Moon || moon}
-- **Interpretive Significance:** The D9 confirms that your inherent qualities mature gracefully over time, strengthening your emotional resilience, spiritual understanding, and capacity for enduring commitment.
+- **Navamsa Lagna:** **${formatRashiBilingual(chart.vargas?.D9?.Lagna || lagna)}**
+- **Sun in Navamsa:** ${formatRashiBilingual(chart.vargas?.D9?.Sun || sun)}
+- **Moon in Navamsa:** ${formatRashiBilingual(chart.vargas?.D9?.Moon || moon)}
+- **Interpretive Significance:** The D9 confirms that your inherent qualities mature gracefully over time, strengthening emotional poise, spiritual discernment, and capacity for enduring commitment.
 
 ### 2. Dashamsa (D10): Professional Eminence & Public Impact
 The Dashamsa chart analyzes vocational destiny, societal status, and professional achievements:
-- **Dashamsa Lagna:** **${chart.vargas?.D10?.Lagna || lagna}**
+- **Dashamsa Lagna:** **${formatRashiBilingual(chart.vargas?.D10?.Lagna || lagna)}**
 - **Interpretive Significance:** Key planets placed in Kendra and Trikona in D10 highlight steady vocational elevation, professional respect, and the ability to execute complex projects effectively.`;
 
       case 'transits':
         return `### 1. Saturn's Transit & Sade Sati Assessment
-Saturn's slow, structural transit relative to your natal Moon sign (**${moon}**) serves as the master clock for major reality checks, maturity milestones, and structural reorganization:
+Saturn's slow, structural transit relative to your natal Moon sign (**${formatRashiBilingual(moon)}**) serves as the master clock for major reality checks, maturity milestones, and structural reorganization:
 - **Sade Sati Status:** **${chart.doshas?.sadeSati?.status || 'Not currently under major Sade Sati pressure'}**
 - **Lived Experience:** Saturn transits reward patience, methodical discipline, and honest self-assessment, clearing out obsolete habits and establishing sturdy foundations for future growth.
 
@@ -961,7 +978,7 @@ ${seq}
         ].join('\n');
 
         return `### 1. Purpose, Core Strengths & Central Life Synthesis
-Your Vedic horoscope presents the blueprint of a purposeful, resilient, and discerning individual. By harmonizing your **${lagna} Lagna** vitality with the intuitive wisdom of **Moon in ${moon}** and the sovereign ambition of **Sun in ${sun}**, you are equipped to navigate life's challenges with poise and build an enduring legacy of contribution.
+Your Vedic horoscope presents the blueprint of a purposeful, resilient, and discerning individual. By harmonizing your **${formatRashiBilingual(lagna)} Lagna** vitality with the intuitive wisdom of **Moon in ${formatRashiBilingual(moon)}** and the sovereign ambition of **Sun in ${formatRashiBilingual(sun)}**, you are equipped to navigate life's challenges with poise and build an enduring legacy of contribution.
 
 - **Greatest Strength:** Unflinching strategic patience combined with refined intellectual competence.
 - **Central Life Purpose:** Cultivating inner mastery, leading with ethical clarity, and building lasting value for your family and community.
@@ -971,9 +988,30 @@ Your Vedic horoscope presents the blueprint of a purposeful, resilient, and disc
 ${lifeRows}`;
       }
 
+      // Kundli matching sections
+      case 'ashtakoot':
+        return `### 1. Ashtakoot Guna Milan: 36-Point Compatibility Analysis
+The classical Ashtakoot system from Brihat Parashara Hora Shastra evaluates marital synastry across eight fundamental dimensions of life, comparing the Moon signs (Rashis), Nakshatras, and lords of both partners.
+
+1. **Varna (Spiritual & Ego Resonance - 1 Pt):** Evaluates spiritual compatibility, mutual respect, and work temperament between both partners.
+2. **Vashya (Mutual Attraction & Harmony - 2 Pts):** Analyzes the natural gravitational balance, emotional magnetism, and mutual influence in the bond.
+3. **Tara (Birth-Star Wellbeing & Destiny - 3 Pts):** Assesses health, auspiciousness, mutual fortune, and longevity of the relationship.
+4. **Yoni (Instinctive & Physical Compatibility - 4 Pts):** Evaluates biological harmony, natural affection, and instinctual empathy.
+5. **Graha Maitri (Mental Rapport & Friendship - 5 Pts):** Compares planetary lords of both Moon signs to assess intellectual wavelength and communication ease.
+6. **Gana (Temperamental Alignment - 6 Pts):** Examines fundamental behavioral nature (Deva, Manushya, or Rakshasa) for day-to-day lifestyle harmony.
+7. **Bhakoot (Emotional & Family Prosperity - 7 Pts):** Analyzes relative Moon sign positions for domestic happiness, progeny, and financial prosperity.
+8. **Nadi (Physiological & Genetic Balance - 8 Pts):** Assesses subtle bio-energetic and health harmony across generations.`;
+
+      case 'doshas':
+        return `### 1. Mangal (Kuja) Dosha & Special Astrological Considerations
+In Vedic synastry, the placement of Mars is evaluated from the Lagna, Moon, and Venus to assess energetic dynamism, assertiveness, and domestic balance:
+- **Mangal Dosha Analysis:** Evaluated across the 1st, 2nd, 4th, 7th, 8th, and 12th houses for both charts.
+- **Classical Cancellations (Dosha Bhanga):** Checks whether natural cancellations exist—such as reciprocal Mars placements, benefic planetary aspects, or exalted/own-sign placements.
+- **Nadi & Bhakoot Exceptions:** Assesses classical mitigating factors if any individual koota scored below maximum.`;
+
       default:
         return `### 1. Comprehensive Vedic Analysis
-This section analyzes your natal chart's foundational placements with reverence to classical Jyotish principles. With ${lagna} Lagna and Moon in ${moon}, your planetary configuration supports meaningful growth, balanced partnerships, and resilient accomplishment across all major endeavors.`;
+This section analyzes your horoscope's foundational placements with reverence to classical Jyotish principles. With ${formatRashiBilingual(lagna)} Lagna and Moon in ${formatRashiBilingual(moon)}, your planetary configuration supports meaningful growth, balanced partnerships, and resilient accomplishment across all major endeavors.`;
     }
   }
 
