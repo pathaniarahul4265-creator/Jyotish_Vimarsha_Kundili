@@ -9363,10 +9363,15 @@ window.closeCompanyModal = function() {
         if(!confirm('Are you sure you want to delete ALL VIP codes? This cannot be undone.')) return;
         try {
           await adminFetch('/api/admin/vip', { method: 'DELETE' });
-          await loadAdmin();
         } catch (e) {
-          alert(e.message);
+          try {
+            await adminFetch('/api/admin/vip/clear', { method: 'POST' });
+          } catch (err2) {
+            alert(err2.message || e.message);
+            return;
+          }
         }
+        await loadAdmin();
       };
     }
 
@@ -9416,10 +9421,18 @@ window.closeCompanyModal = function() {
           if(!confirm('Delete VIP code ' + code + '?')) return;
           try {
             await adminFetch('/api/admin/vip/' + encodeURIComponent(id), { method: 'DELETE' });
-            await loadAdmin();
           } catch (e) {
-            alert('Failed to delete VIP code: ' + e.message);
+            try {
+              await adminFetch('/api/admin/vip/delete', {
+                method: 'POST',
+                body: JSON.stringify({ id, code })
+              });
+            } catch (err2) {
+              alert('Failed to delete VIP code: ' + (err2.message || e.message));
+              return;
+            }
           }
+          await loadAdmin();
         };
       });
     };

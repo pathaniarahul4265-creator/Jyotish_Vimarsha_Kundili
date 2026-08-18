@@ -118,9 +118,7 @@ function adminOk(req){
 const inMemoryReports = loadJsonFile('reports.json', []);
 const inMemoryFeedback = loadJsonFile('feedback.json', []);
 const inMemoryPayments = loadJsonFile('payments.json', []);
-const inMemoryVipCodes = loadJsonFile('vip_codes.json', [
-  { id: 'vip_default_1', code_hash: hashCode('VIP2026'), display_code: 'VIP2026', active: true, uses: 0, max_uses: 100, created_at: new Date().toISOString() }
-]);
+const inMemoryVipCodes = loadJsonFile('vip_codes.json', []);
 const inMemorySettings = loadJsonFile('settings.json', {
   reveal_price: '59',
   match_price: '99',
@@ -791,38 +789,68 @@ export default async function handler(req,res){
       }
       const vdm=path.match(/^\/admin\/vip\/([^/]+)$/);
       if(req.method==='DELETE'&&vdm){
-        const targetId = decodeURIComponent(vdm[1]);
-        const idx = inMemoryVipCodes.findIndex(x => x.id === targetId || x.id == targetId || x.display_code === targetId || (x.code_hash && x.code_hash === targetId));
+        const targetId = decodeURIComponent(vdm[1]).trim();
+        const thash = hashCode(targetId);
         let deletedCode = targetId;
-        if (idx >= 0) {
-          deletedCode = inMemoryVipCodes[idx].display_code || inMemoryVipCodes[idx].id;
-          inMemoryVipCodes.splice(idx, 1);
-          saveJsonFile('vip_codes.json', inMemoryVipCodes);
+        for (let i = inMemoryVipCodes.length - 1; i >= 0; i--) {
+          const item = inMemoryVipCodes[i];
+          if (
+            item.id == targetId ||
+            item.display_code == targetId ||
+            (item.display_code && item.display_code.toUpperCase() === targetId.toUpperCase()) ||
+            item.code_hash === targetId ||
+            item.code_hash === thash
+          ) {
+            deletedCode = item.display_code || item.id;
+            inMemoryVipCodes.splice(i, 1);
+          }
         }
-        try {
-          await db.delete('vip_codes', `id=eq.${encodeURIComponent(targetId)}`);
-        } catch (err) {
-          console.warn('[Supabase VIP Delete ID]', err.message);
-        }
-        try {
-          await db.delete('vip_codes', `display_code=eq.${encodeURIComponent(targetId)}`);
-        } catch (err) {
-          console.warn('[Supabase VIP Delete Code]', err.message);
-        }
+        saveJsonFile('vip_codes.json', inMemoryVipCodes);
+        try { await db.delete('vip_codes', `id=eq.${encodeURIComponent(targetId)}`); } catch {}
+        try { await db.delete('vip_codes', `display_code=eq.${encodeURIComponent(targetId)}`); } catch {}
+        try { await db.delete('vip_codes', `display_code=eq.${encodeURIComponent(targetId.toUpperCase())}`); } catch {}
+        try { await db.delete('vip_codes', `code_hash=eq.${encodeURIComponent(thash)}`); } catch {}
         logAudit(clientIp, 'VIP_DELETE', `Deleted VIP code ${deletedCode} (ID: ${targetId})`, 'SUCCESS');
         return json(res, 200, { ok: true, deleted: targetId });
       }
-      if (req.method === 'DELETE' && path === '/admin/vip') {
+      if ((req.method === 'DELETE' && path === '/admin/vip') || (req.method === 'POST' && path === '/admin/vip/clear')) {
         const count = inMemoryVipCodes.length;
         inMemoryVipCodes.length = 0;
         saveJsonFile('vip_codes.json', inMemoryVipCodes);
-        try {
-          await db.delete('vip_codes', 'id=neq.placeholder_none');
-        } catch (err) {
-          console.warn('[Supabase VIP Clear All]', err.message);
-        }
+        try { await db.delete('vip_codes', 'id=gt.0'); } catch {}
+        try { await db.delete('vip_codes', 'active=in.(true,false)'); } catch {}
+        try { await db.delete('vip_codes', 'display_code=neq.NONE_PLACEHOLDER'); } catch {}
         logAudit(clientIp, 'VIP_CLEAR', `Cleared all ${count} VIP codes`, 'SUCCESS');
         return json(res, 200, { ok: true, count });
+      }
+      if (req.method === 'POST' && path === '/admin/vip/delete') {
+        const b = await readBody(req);
+        const targetId = String(b.id || b.code || '').trim();
+        if (targetId) {
+          const thash = hashCode(targetId);
+          let deletedCode = targetId;
+          for (let i = inMemoryVipCodes.length - 1; i >= 0; i--) {
+            const item = inMemoryVipCodes[i];
+            if (
+              item.id == targetId ||
+              item.display_code == targetId ||
+              (item.display_code && item.display_code.toUpperCase() === targetId.toUpperCase()) ||
+              item.code_hash === targetId ||
+              item.code_hash === thash
+            ) {
+              deletedCode = item.display_code || item.id;
+              inMemoryVipCodes.splice(i, 1);
+            }
+          }
+          saveJsonFile('vip_codes.json', inMemoryVipCodes);
+          try { await db.delete('vip_codes', `id=eq.${encodeURIComponent(targetId)}`); } catch {}
+          try { await db.delete('vip_codes', `display_code=eq.${encodeURIComponent(targetId)}`); } catch {}
+          try { await db.delete('vip_codes', `display_code=eq.${encodeURIComponent(targetId.toUpperCase())}`); } catch {}
+          try { await db.delete('vip_codes', `code_hash=eq.${encodeURIComponent(thash)}`); } catch {}
+          logAudit(clientIp, 'VIP_DELETE', `Deleted VIP code ${deletedCode} (POST: ${targetId})`, 'SUCCESS');
+          return json(res, 200, { ok: true, deleted: targetId });
+        }
+        return json(res, 400, { error: 'No VIP code or ID specified to delete.' });
       }
       if(req.method==='GET'&&path==='/admin/settings'){
         try {
