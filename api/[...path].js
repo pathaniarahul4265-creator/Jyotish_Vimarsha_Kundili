@@ -668,23 +668,31 @@ export default async function handler(req,res){
       }
       const fdm = path.match(/^\/admin\/feedback\/([^/]+)$/);
       if (req.method === 'DELETE' && fdm) {
-        const targetId = fdm[1];
+        const targetId = decodeURIComponent(fdm[1]);
         const idx = inMemoryFeedback.findIndex(x => x.id === targetId || x.id == targetId);
         if (idx >= 0) {
           inMemoryFeedback.splice(idx, 1);
           saveJsonFile('feedback.json', inMemoryFeedback);
         }
         try {
-          await db.update('feedback', { deleted: true }, `id=eq.${encodeURIComponent(targetId)}`);
-        } catch {}
+          await db.delete('feedback', `id=eq.${encodeURIComponent(targetId)}`);
+        } catch (err) {
+          console.warn('[Supabase Feedback Delete]', err.message);
+        }
         logAudit(clientIp, 'FEEDBACK_DELETE', `Deleted feedback item ${targetId}`, 'SUCCESS');
-        return json(res, 200, { ok: true });
+        return json(res, 200, { ok: true, deleted: targetId });
       }
       if (req.method === 'DELETE' && path === '/admin/feedback') {
+        const count = inMemoryFeedback.length;
         inMemoryFeedback.length = 0;
         saveJsonFile('feedback.json', inMemoryFeedback);
-        logAudit(clientIp, 'FEEDBACK_CLEAR', 'Cleared all feedback entries', 'SUCCESS');
-        return json(res, 200, { ok: true });
+        try {
+          await db.delete('feedback', 'id=neq.placeholder_none');
+        } catch (err) {
+          console.warn('[Supabase Clear Feedback]', err.message);
+        }
+        logAudit(clientIp, 'FEEDBACK_CLEAR', `Cleared all ${count} feedback entries`, 'SUCCESS');
+        return json(res, 200, { ok: true, count });
       }
       if(req.method==='GET'&&path==='/admin/payments'){
         try {
@@ -696,7 +704,7 @@ export default async function handler(req,res){
       }
       if(req.method==='GET'&&path==='/admin/vip'){
         try {
-          const data=await db.select('vip_codes','select=id,display_code,active,uses,max_uses,created_at&order=created_at.desc&limit=1000');
+          const data=await db.select('vip_codes','select=*&order=created_at.desc&limit=1000');
           return json(res,200,{codes:data || inMemoryVipCodes});
         } catch {
           return json(res,200,{codes:inMemoryVipCodes});
@@ -705,44 +713,70 @@ export default async function handler(req,res){
       if(req.method==='POST'&&path==='/admin/vip'){
         const b=await readBody(req);
         const maxUses=Math.min(1000,Math.max(1,Number(b.maxUses)||1));
+        const assignedTo = clean(b.assignedTo || b.assigned_to || b.name || '', 100);
         const codes=[];
         
         if (b.customCode && typeof b.customCode === 'string' && b.customCode.trim().length > 0) {
           const plain = b.customCode.trim().toUpperCase().replace(/[^A-Z0-9_-]/g, '');
-          if (!plain) return json(res, 400, { error: 'Invalid custom code format.' });
+          if (!plain) return json(res, 400, { error: 'Invalid custom code format. Use letters, numbers, hyphens.' });
           const item = { 
             id: 'vip_' + Date.now() + '_custom', 
             code_hash: hashCode(plain), 
             display_code: plain, 
+            assigned_to: assignedTo,
             active: true, 
             uses: 0, 
             max_uses: maxUses, 
             created_at: new Date().toISOString() 
           };
           inMemoryVipCodes.unshift(item);
-          try { await db.insert('vip_codes',{code_hash:item.code_hash,display_code:plain,max_uses:maxUses}); } catch {}
+          try { await db.insert('vip_codes',{code_hash:item.code_hash,display_code:plain,assigned_to:assignedTo,max_uses:maxUses}); } catch {}
           codes.push(plain);
           saveJsonFile('vip_codes.json', inMemoryVipCodes);
-          logAudit(clientIp, 'VIP_GENERATE', `Generated custom VIP code ${plain} with max uses ${maxUses}`, 'SUCCESS');
-          return json(res, 200, { codes, maxUses });
+          logAudit(clientIp, 'VIP_GENERATE', `Generated custom VIP code ${plain} (Assigned to: ${assignedTo || 'Unassigned'}) with max uses ${maxUses}`, 'SUCCESS');
+          return json(res, 200, { codes, maxUses, assigned_to: assignedTo });
         }
 
         const count=Math.min(100,Math.max(1,Number(b.count)||1));
         for(let i=0;i<count;i++){
           let plain = 'JV-'+crypto.randomBytes(5).toString('hex').toUpperCase();
-          const item = { id: 'vip_' + Date.now() + '_' + i, code_hash: hashCode(plain), display_code: plain, active: true, uses: 0, max_uses: maxUses, created_at: new Date().toISOString() };
+          const item = { 
+            id: 'vip_' + Date.now() + '_' + i, 
+            code_hash: hashCode(plain), 
+            display_code: plain, 
+            assigned_to: assignedTo,
+            active: true, 
+            uses: 0, 
+            max_uses: maxUses, 
+            created_at: new Date().toISOString() 
+          };
           inMemoryVipCodes.unshift(item);
-          try { await db.insert('vip_codes',{code_hash:item.code_hash,display_code:plain,max_uses:maxUses}); } catch {}
+          try { await db.insert('vip_codes',{code_hash:item.code_hash,display_code:plain,assigned_to:assignedTo,max_uses:maxUses}); } catch {}
           codes.push(plain);
         }
         saveJsonFile('vip_codes.json', inMemoryVipCodes);
-        logAudit(clientIp, 'VIP_GENERATE', `Generated ${count} VIP code(s) with max uses ${maxUses}`, 'SUCCESS');
-        return json(res,200,{codes,maxUses});
+        logAudit(clientIp, 'VIP_GENERATE', `Generated ${count} VIP code(s) (Assigned to: ${assignedTo || 'Unassigned'}) with max uses ${maxUses}`, 'SUCCESS');
+        return json(res,200,{codes,maxUses,assigned_to:assignedTo});
+      }
+      const vam=path.match(/^\/admin\/vip\/([^/]+)\/assign$/);
+      if(req.method==='POST'&&vam){
+        const targetId = decodeURIComponent(vam[1]);
+        const b = await readBody(req);
+        const assignedTo = clean(b.assignedTo || b.assigned_to || b.name || '', 100);
+        const item = inMemoryVipCodes.find(x => x.id === targetId || x.id == targetId || x.display_code === targetId);
+        if (item) {
+          item.assigned_to = assignedTo;
+          saveJsonFile('vip_codes.json', inMemoryVipCodes);
+        }
+        try { await db.update('vip_codes', { assigned_to: assignedTo }, `id=eq.${encodeURIComponent(targetId)}`); } catch {}
+        try { await db.update('vip_codes', { assigned_to: assignedTo }, `display_code=eq.${encodeURIComponent(targetId)}`); } catch {}
+        logAudit(clientIp, 'VIP_ASSIGN', `Updated assignee for VIP code ID ${targetId} to "${assignedTo}"`, 'SUCCESS');
+        return json(res, 200, { ok: true, assigned_to: assignedTo });
       }
       const vm=path.match(/^\/admin\/vip\/([^/]+)\/toggle$/);
       if(req.method==='POST'&&vm){
-        const targetId = vm[1];
-        const memCode = inMemoryVipCodes.find(x => x.id == targetId || x.display_code == targetId);
+        const targetId = decodeURIComponent(vm[1]);
+        const memCode = inMemoryVipCodes.find(x => x.id === targetId || x.id == targetId || x.display_code === targetId);
         if (memCode) {
           memCode.active = !memCode.active;
           saveJsonFile('vip_codes.json', inMemoryVipCodes);
@@ -757,8 +791,8 @@ export default async function handler(req,res){
       }
       const vdm=path.match(/^\/admin\/vip\/([^/]+)$/);
       if(req.method==='DELETE'&&vdm){
-        const targetId = vdm[1];
-        const idx = inMemoryVipCodes.findIndex(x => x.id == targetId || x.display_code == targetId);
+        const targetId = decodeURIComponent(vdm[1]);
+        const idx = inMemoryVipCodes.findIndex(x => x.id === targetId || x.id == targetId || x.display_code === targetId || (x.code_hash && x.code_hash === targetId));
         let deletedCode = targetId;
         if (idx >= 0) {
           deletedCode = inMemoryVipCodes[idx].display_code || inMemoryVipCodes[idx].id;
@@ -767,10 +801,13 @@ export default async function handler(req,res){
         }
         try {
           await db.delete('vip_codes', `id=eq.${encodeURIComponent(targetId)}`);
-        } catch {
-          try {
-            await db.update('vip_codes', { active: false, max_uses: 0 }, `id=eq.${encodeURIComponent(targetId)}`);
-          } catch {}
+        } catch (err) {
+          console.warn('[Supabase VIP Delete ID]', err.message);
+        }
+        try {
+          await db.delete('vip_codes', `display_code=eq.${encodeURIComponent(targetId)}`);
+        } catch (err) {
+          console.warn('[Supabase VIP Delete Code]', err.message);
         }
         logAudit(clientIp, 'VIP_DELETE', `Deleted VIP code ${deletedCode} (ID: ${targetId})`, 'SUCCESS');
         return json(res, 200, { ok: true, deleted: targetId });
@@ -780,8 +817,10 @@ export default async function handler(req,res){
         inMemoryVipCodes.length = 0;
         saveJsonFile('vip_codes.json', inMemoryVipCodes);
         try {
-          await db.delete('vip_codes', 'id=neq.placeholder');
-        } catch {}
+          await db.delete('vip_codes', 'id=neq.placeholder_none');
+        } catch (err) {
+          console.warn('[Supabase VIP Clear All]', err.message);
+        }
         logAudit(clientIp, 'VIP_CLEAR', `Cleared all ${count} VIP codes`, 'SUCCESS');
         return json(res, 200, { ok: true, count });
       }

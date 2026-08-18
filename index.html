@@ -9293,26 +9293,32 @@ window.closeCompanyModal = function() {
       <div class="admin-table-wrap">
         <table class="admin-table">
           <thead>
-            <tr><th>Code</th><th>Status</th><th>Uses</th><th>Max Allowed</th><th>Created</th><th>Actions</th></tr>
+            <tr><th>Code</th><th>Status</th><th>Assigned To</th><th>Uses</th><th>Max Allowed</th><th>Created</th><th>Actions</th></tr>
           </thead>
           <tbody>
             ${items.length ? items.map(r => {
               const code = esc(r.display_code || r.code);
+              const id = esc(r.id || r.display_code || r.code);
+              const assigned = esc(r.assigned_to || '—');
               return `
-                <tr>
+                <tr id="vip_row_${id}">
                   <td><code style="color:#f2d792;font-size:13.5px;font-weight:bold;letter-spacing:0.04em;">${code}</code></td>
                   <td><span class="admin-status-pill ${r.active ? 'ok' : 'err'}">${r.active ? 'Active' : 'Disabled'}</span></td>
+                  <td>
+                    <span id="assignee_text_${id}" style="color:${r.assigned_to ? '#e0f2fe' : 'var(--muted)'};font-weight:${r.assigned_to ? '500' : 'normal'};">${assigned}</span>
+                    <button type="button" class="small secondary edit-assignee-btn" data-vip-id="${id}" data-current-name="${esc(r.assigned_to || '')}" style="padding:2px 6px;margin-left:6px;font-size:11px;" title="Edit or assign name">✎ Edit</button>
+                  </td>
                   <td>${r.uses || 0}</td>
                   <td>${r.max_uses}</td>
                   <td style="white-space:nowrap;font-size:12px;color:var(--muted);">${esc(new Date(r.created_at).toLocaleString())}</td>
                   <td style="white-space:nowrap;">
-                    <button class="small secondary copy-code-btn" data-code="${code}" style="margin-right:4px;">Copy</button>
-                    <button class="small" data-vip-id="${r.id}" style="margin-right:4px;">${r.active ? 'Disable' : 'Enable'}</button>
-                    <button class="small danger" data-delete-vip-id="${r.id}" data-vip-code="${code}">Delete</button>
+                    <button type="button" class="small secondary copy-code-btn" data-code="${code}" style="margin-right:4px;">Copy</button>
+                    <button type="button" class="small" data-vip-id="${id}" style="margin-right:4px;">${r.active ? 'Disable' : 'Enable'}</button>
+                    <button type="button" class="small danger" data-delete-vip-id="${id}" data-vip-code="${code}">Delete</button>
                   </td>
                 </tr>
               `;
-            }).join('') : '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px;">No VIP access codes found. Generate codes above.</td></tr>'}
+            }).join('') : '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px;">No VIP access codes found. Generate codes above.</td></tr>'}
           </tbody>
         </table>
       </div>
@@ -9321,11 +9327,12 @@ window.closeCompanyModal = function() {
     container.innerHTML = `
       <div class="admin-setting-card">
         <h3>Create &amp; Manage VIP Access Codes</h3>
-        <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">Generate random batches or custom named codes. You can enable, disable, copy or delete any code anytime.</p>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">Generate random batches or custom named codes, assign recipient names, and manage access anytime.</p>
         <div class="admin-form" style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
-          <label>Custom Code <span class="muted">(optional)</span><input id="vipCustomCodeAdmin" placeholder="e.g. JYOTISH2026" style="width:160px;text-transform:uppercase;"></label>
-          <label>Batch Count<input id="vipCountAdmin" type="number" min="1" max="100" value="5" style="width:80px;"></label>
-          <label>Max Uses / Code<input id="vipMaxUsesAdmin" type="number" min="1" max="1000" value="1" style="width:90px;"></label>
+          <label>Custom Code <span class="muted">(optional)</span><input id="vipCustomCodeAdmin" placeholder="e.g. JYOTISH2026" style="width:140px;text-transform:uppercase;"></label>
+          <label>Assignee Name <span class="muted">(optional)</span><input id="vipAssignedToAdmin" placeholder="e.g. Rahul Pathania / Client" style="width:170px;"></label>
+          <label>Batch Count<input id="vipCountAdmin" type="number" min="1" max="100" value="5" style="width:70px;"></label>
+          <label>Max Uses<input id="vipMaxUsesAdmin" type="number" min="1" max="1000" value="1" style="width:75px;"></label>
           <button id="generateVipAdmin" type="button" style="height:42px;">Generate VIP Code(s)</button>
           ${rows.length ? '<button id="clearAllVipAdmin" type="button" class="small secondary" style="height:42px;margin-left:auto;background:rgba(235,87,87,0.12);border:1px solid rgba(235,87,87,0.3);color:#ff9b9b;">Clear All VIP Codes</button>' : ''}
         </div>
@@ -9337,12 +9344,14 @@ window.closeCompanyModal = function() {
     $('generateVipAdmin').onclick = async () => {
       try {
         const customCode = $('vipCustomCodeAdmin')?.value?.trim();
+        const assignedTo = $('vipAssignedToAdmin')?.value?.trim();
         const count = $('vipCountAdmin').value;
         const maxUses = $('vipMaxUsesAdmin').value;
-        const j = await adminFetch('/api/admin/vip', { method: 'POST', body: JSON.stringify({ customCode, count, maxUses }) });
+        const j = await adminFetch('/api/admin/vip', { method: 'POST', body: JSON.stringify({ customCode, assignedTo, count, maxUses }) });
         $('newVipCodes').style.display = 'block';
-        $('newVipCodes').innerHTML = '<strong>Generated ' + j.codes.length + ' code(s):</strong><br><code style="color:#ffe099;display:block;margin-top:6px;font-size:14px;">' + j.codes.join(', ') + '</code>';
+        $('newVipCodes').innerHTML = '<strong>Generated ' + j.codes.length + ' code(s)' + (assignedTo ? ' for ' + esc(assignedTo) : '') + ':</strong><br><code style="color:#ffe099;display:block;margin-top:6px;font-size:14px;">' + j.codes.join(', ') + '</code>';
         if ($('vipCustomCodeAdmin')) $('vipCustomCodeAdmin').value = '';
+        if ($('vipAssignedToAdmin')) $('vipAssignedToAdmin').value = '';
         await loadAdmin();
       } catch (e) {
         alert(e.message);
@@ -9372,10 +9381,28 @@ window.closeCompanyModal = function() {
           });
         };
       });
-      document.querySelectorAll('[data-vip-id]').forEach(b => {
+      document.querySelectorAll('.edit-assignee-btn').forEach(b => {
+        b.onclick = async () => {
+          const id = b.getAttribute('data-vip-id');
+          const current = b.getAttribute('data-current-name') || '';
+          const newName = prompt('Enter the person or client name assigned to this VIP code:', current);
+          if (newName === null) return;
+          try {
+            await adminFetch('/api/admin/vip/' + encodeURIComponent(id) + '/assign', {
+              method: 'POST',
+              body: JSON.stringify({ assignedTo: newName.trim() })
+            });
+            await loadAdmin();
+          } catch (e) {
+            alert('Failed to update assignee: ' + e.message);
+          }
+        };
+      });
+      document.querySelectorAll('[data-vip-id]:not(.edit-assignee-btn)').forEach(b => {
         b.onclick = async () => {
           try {
-            await adminFetch('/api/admin/vip/' + b.dataset.vipId + '/toggle', { method: 'POST' });
+            const id = b.dataset.vipId;
+            await adminFetch('/api/admin/vip/' + encodeURIComponent(id) + '/toggle', { method: 'POST' });
             await loadAdmin();
           } catch (e) {
             alert(e.message);
@@ -9384,13 +9411,14 @@ window.closeCompanyModal = function() {
       });
       document.querySelectorAll('[data-delete-vip-id]').forEach(b => {
         b.onclick = async () => {
-          const code = b.getAttribute('data-vip-code') || 'this code';
+          const id = b.getAttribute('data-delete-vip-id');
+          const code = b.getAttribute('data-vip-code') || id;
           if(!confirm('Delete VIP code ' + code + '?')) return;
           try {
-            await adminFetch('/api/admin/vip/' + b.dataset.deleteVipId, { method: 'DELETE' });
+            await adminFetch('/api/admin/vip/' + encodeURIComponent(id), { method: 'DELETE' });
             await loadAdmin();
           } catch (e) {
-            alert(e.message);
+            alert('Failed to delete VIP code: ' + e.message);
           }
         };
       });
@@ -9464,6 +9492,7 @@ window.closeCompanyModal = function() {
       </div>
       <div class="admin-filter-bar" style="margin-bottom:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
         <input type="text" id="feedbackSearch" placeholder="🔍 Search feedback by name, email or message…" value="${esc($('feedbackSearch')?.value || '')}" style="max-width:380px;font-size:13px;padding:8px 12px;flex:1;">
+        ${rows.length ? '<button id="clearAllFeedbackAdmin" type="button" class="small secondary" style="height:36px;margin-left:auto;background:rgba(235,87,87,0.12);border:1px solid rgba(235,87,87,0.3);color:#ff9b9b;">Clear All Feedback</button>' : ''}
       </div>
       <div class="admin-table-wrap">
         <table class="admin-table">
@@ -9481,8 +9510,8 @@ window.closeCompanyModal = function() {
                 </td>
                 <td style="white-space:nowrap;font-size:12px;color:var(--muted);">${esc(new Date(r.created_at).toLocaleString())}</td>
                 <td style="text-align:right;white-space:nowrap;">
-                  <button class="small secondary" onclick="window.viewFeedbackDetail('${esc(r.id)}')" style="margin-right:6px;" title="View complete feedback message">Read</button>
-                  <button class="small danger" onclick="window.deleteFeedbackItem('${esc(r.id)}')" title="Delete this feedback entry">Delete</button>
+                  <button type="button" class="small secondary view-feedback-btn" data-fb-id="${esc(r.id)}" style="margin-right:6px;" title="View complete feedback message">Read</button>
+                  <button type="button" class="small danger delete-feedback-btn" data-fb-id="${esc(r.id)}" data-fb-name="${esc(r.name)}" title="Delete this feedback entry">Delete</button>
                 </td>
               </tr>
             `).join('') : '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px;">No feedback entries found</td></tr>'}
@@ -9493,34 +9522,55 @@ window.closeCompanyModal = function() {
     container.innerHTML = `<div id="feedbackTableArea">${renderTable(rows)}</div>`;
     
     window._currentFeedbackRows = rows;
-    window.viewFeedbackDetail = (id) => {
-      const item = (window._currentFeedbackRows || []).find(x => x.id === id || x.id == id);
-      if (!item) return;
-      alert(`✦ FEEDBACK DETAILS ✦\n\nName: ${item.name}\nEmail: ${item.email}\nPhone: ${item.phone || 'N/A'}\nDate: ${new Date(item.created_at).toLocaleString()}\n\nMessage:\n${item.message}`);
-    };
-    window.deleteFeedbackItem = async (id) => {
-      if (!confirm('Are you sure you want to delete this feedback entry?')) return;
-      try {
-        await adminFetch('/api/admin/feedback/' + encodeURIComponent(id), { method: 'DELETE' });
-        await loadAdmin();
-      } catch (err) {
-        alert('Failed to delete feedback: ' + err.message);
-      }
-    };
+    
+    const attachFeedbackEvents = () => {
+      document.querySelectorAll('.view-feedback-btn').forEach(btn => {
+        btn.onclick = () => {
+          const id = btn.getAttribute('data-fb-id');
+          const item = (window._currentFeedbackRows || []).find(x => x.id === id || x.id == id);
+          if (!item) return;
+          alert(`✦ FEEDBACK DETAILS ✦\n\nName: ${item.name}\nEmail: ${item.email}\nPhone: ${item.phone || 'N/A'}\nDate: ${new Date(item.created_at).toLocaleString()}\n\nMessage:\n${item.message}`);
+        };
+      });
 
-    const attachEvents = () => {
+      document.querySelectorAll('.delete-feedback-btn').forEach(btn => {
+        btn.onclick = async () => {
+          const id = btn.getAttribute('data-fb-id');
+          const name = btn.getAttribute('data-fb-name') || 'this user';
+          if (!confirm(`Are you sure you want to delete feedback from ${name}?`)) return;
+          try {
+            await adminFetch('/api/admin/feedback/' + encodeURIComponent(id), { method: 'DELETE' });
+            await loadAdmin();
+          } catch (err) {
+            alert('Failed to delete feedback: ' + err.message);
+          }
+        };
+      });
+
+      if ($('clearAllFeedbackAdmin')) {
+        $('clearAllFeedbackAdmin').onclick = async () => {
+          if (!confirm('Are you sure you want to delete ALL feedback entries? This cannot be undone.')) return;
+          try {
+            await adminFetch('/api/admin/feedback', { method: 'DELETE' });
+            await loadAdmin();
+          } catch (err) {
+            alert('Failed to clear feedback: ' + err.message);
+          }
+        };
+      }
+
       const search = $('feedbackSearch');
       if (search) {
         search.oninput = (e) => {
           const q = e.target.value.toLowerCase().trim();
           const filtered = rows.filter(x => (x.name||'').toLowerCase().includes(q) || (x.email||'').toLowerCase().includes(q) || (x.message||'').toLowerCase().includes(q));
           $('feedbackTableArea').innerHTML = renderTable(filtered);
-          attachEvents();
+          attachFeedbackEvents();
           $('feedbackSearch').focus();
         };
       }
     };
-    attachEvents();
+    attachFeedbackEvents();
   }
 
   function renderPayments(rows){

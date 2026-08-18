@@ -12,6 +12,7 @@ export const db={
   async select(table, query='select=*'){ return request(`${table}?${query}`,{method:'GET'}); },
   async insert(table,row,returning=false){ return request(table,{method:'POST',headers:returning?{'Prefer':'return=representation'}:{},body:JSON.stringify(row)}); },
   async update(table,patch,query){ return request(`${table}?${query}`,{method:'PATCH',headers:{'Prefer':'return=minimal'},body:JSON.stringify(patch)}); },
+  async delete(table,query){ return request(`${table}?${query}`,{method:'DELETE',headers:{'Prefer':'return=minimal'}}); },
   async rpc(fn,body){ return request(`rpc/${fn}`,{method:'POST',body:JSON.stringify(body)}); }
 };
 export async function getSettings(){ try { const rows=await db.select('settings','select=*&id=eq.1&limit=1'); if(rows?.[0]) return rows[0]; } catch(err){ console.warn('[AI Studio] Supabase not configured or unreachable, using default settings'); } return { id:1, reveal_price:59, match_price:99, question_price:29, reveal_enabled:true, match_enabled:true, chat_enabled:true, offer_enabled:false, offer_percent:0, offer_label:'' }; }
