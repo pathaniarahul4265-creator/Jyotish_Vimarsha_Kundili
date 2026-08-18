@@ -4729,6 +4729,37 @@ body input, body select, body textarea {
     font-size: 12px !important;
   }
 }
+
+.report-chapter-tag.baseline {
+  background: rgba(216, 160, 76, 0.16);
+  border-color: rgba(216, 160, 76, 0.45);
+  color: #fce7b0;
+}
+.report-chapter-tag.ai-enriched {
+  background: rgba(127, 197, 192, 0.18);
+  border-color: rgba(127, 197, 192, 0.45);
+  color: #a3e8e2;
+}
+.report-chapter-tag.verified {
+  background: rgba(56, 189, 248, 0.16);
+  border-color: rgba(56, 189, 248, 0.45);
+  color: #bae6fd;
+}
+.section-enrich-btn {
+  background: rgba(127, 197, 192, 0.15);
+  border: 1px solid rgba(127, 197, 192, 0.4);
+  color: #a3e8e2;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 12px;
+  cursor: pointer;
+  margin-left: 8px;
+  transition: all 0.2s ease;
+}
+.section-enrich-btn:hover {
+  background: rgba(127, 197, 192, 0.25);
+  border-color: #7fc5c0;
+}
 </style>
 </head>
 <body>
@@ -5933,6 +5964,7 @@ window.PAYWALL_CONFIG = {
   }
 })();
 </script>
+<script src="/vedic-engine.js"></script>
 <script>
 (function(){
   const petals = document.getElementById('petals');
@@ -7847,23 +7879,30 @@ function apiPlanetRows(chart){
     nakshatra:x.nakshatra || x.star || ''
   })).filter(x=>EPHEMERIS_PLANETS.includes(x.name));
 }
-async function fetchEphemerisChart({date,time,lat,lon,name='',timeoutMs=6500}){
-  const url=new URL(`${EPHEMERIS_API_BASE}/chart`);
-  url.searchParams.set('date',date); url.searchParams.set('time',time);
-  url.searchParams.set('lat',String(lat)); url.searchParams.set('lon',String(lon));
-  if(name) url.searchParams.set('name',name);
-  const controller=new AbortController();
-  const timer=setTimeout(()=>controller.abort(),timeoutMs);
-  let res;
-  try{ res=await fetch(url.toString(),{method:'GET',cache:'no-store',signal:controller.signal}); }
-  catch(e){
-    if(e?.name==='AbortError') throw new Error('The ephemeris service timed out.');
-    throw new Error('The ephemeris service could not be reached.');
-  } finally { clearTimeout(timer); }
-  let data=null; try{data=await res.json();}catch(e){}
-  if(!res.ok) throw new Error(data?.message || `Ephemeris service returned HTTP ${res.status}.`);
-  if(!data || !Array.isArray(data.planets)) throw new Error('The ephemeris service returned an incomplete chart.');
-  return data;
+async function fetchEphemerisChart({date,time,lat,lon,name='',timeoutMs=5000}){
+  try {
+    const url=new URL(`${EPHEMERIS_API_BASE}/chart`);
+    url.searchParams.set('date',date); url.searchParams.set('time',time);
+    url.searchParams.set('lat',String(lat)); url.searchParams.set('lon',String(lon));
+    if(name) url.searchParams.set('name',name);
+    const controller=new AbortController();
+    const timer=setTimeout(()=>controller.abort(),timeoutMs);
+    let res;
+    try{ res=await fetch(url.toString(),{method:'GET',cache:'no-store',signal:controller.signal}); }
+    finally { clearTimeout(timer); }
+    if(res && res.ok){
+      let data=null; try{data=await res.json();}catch(e){}
+      if(data && Array.isArray(data.planets) && data.planets.length > 0) {
+        return data;
+      }
+    }
+  } catch(e) {
+    console.warn('External ephemeris service offline/timed out, using local Vedic Engine:', e?.message);
+  }
+  if(window.VedicEngine && typeof window.VedicEngine.calculateNatalChart === 'function'){
+    return window.VedicEngine.calculateNatalChart(date, time, lat, lon, name);
+  }
+  throw new Error('Ephemeris calculations could not be performed.');
 }
 function getZodiacSignKey(signStr) {
   if (!signStr) return 'aries';
@@ -8832,96 +8871,140 @@ function renderClassicalModules(){
 async function generateSection(index, reportBody, stepListEl, progressErrorEl){
   const section = activeSections[index];
   const li = document.getElementById('step-' + section.id);
-  li.classList.remove('failed');
-  li.classList.add('active');
+  if(li){
+    li.classList.remove('failed');
+    li.classList.add('active');
+  }
   progressErrorEl.innerHTML = '';
-  try{
-    const userText = `Birth data:\n${birthContext}\n\nWrite the "${section.title}" section of this reading.\n${section.instruction}\nProvide an insightful, comprehensive astrological reading on lived impact, behavior, career, wealth, and relationships. Write directly to the person reading the report in a dignified, compassionate, and precise tone.\n\nSTRUCTURAL FORMATTING RULES:\n1. Organize your analysis with clear, descriptive subheadings using ### (e.g., "### 1. Core Psychological Blueprint" or "### Career Trajectory & Wealth Capacity").\n2. Highlight key takeaways with structured callout lines, such as:\n- **Core Takeaway:** Summary of the primary insight\n- **Astrological Mechanism:** Planets, bhavas, rashis, and yogas causing this effect\n- **Practical Impact:** Concrete consequences in daily life, work, or relationships\n- **Vedic Remedy / उपाय:** Authentic remedial measure or practical guidance\n- **Timing Window:** Key planetary period or transit when this effect manifests\n3. Use clear bullet points (- item) or numbered lists (1. item) for sequential factors.\n4. Write in rich, fluid paragraphs without repetitive filler or stray asterisks.\n5. Do not include the main section title at the very beginning of your response.`;
-    const rawText = await callGemini(activeRules, userText, 3200);
-    const text = cleanAstroText(rawText);
-    fullReportText += `\n\n## ${section.title}\n\n${text}`;
+
+  // 1. Resolve or compute local classical chart
+  let currentChart = verifiedChart;
+  if(!currentChart && window.VedicEngine && typeof window.VedicEngine.calculateNatalChart === 'function'){
+    try{
+      const dobVal = document.getElementById('f_dob')?.value || '2000-01-01';
+      const tobVal = document.getElementById('f_tob')?.value || '12:00';
+      const {date,time} = birthDateTimeParts(dobVal, tobVal);
+      const lat = Number(document.getElementById('f_lat')?.value) || 28.6139;
+      const lon = Number(document.getElementById('f_lon')?.value) || 77.2090;
+      const name = document.getElementById('f_name')?.value || 'Native';
+      currentChart = window.VedicEngine.calculateNatalChart(date, time, lat, lon, name);
+      verifiedChart = currentChart;
+    }catch(e){}
+  }
+
+  // 2. Generate deterministic local baseline prediction
+  const localBaseline = (window.VedicEngine && typeof window.VedicEngine.generateSectionBaseline === 'function' && currentChart)
+    ? window.VedicEngine.generateSectionBaseline(section.id, currentChart, window.currentVedicLang)
+    : '';
+
+  // 3. Immediately render the baseline section in the UI
+  let block = document.getElementById('section-block-' + section.id);
+  const isHi = window.currentVedicLang === 'hi';
+  const chapterLabel = isHi ? `अध्याय ${index + 1}` : `CHAPTER ${String(index + 1).padStart(2, '0')}`;
+
+  if(!block){
+    block = document.createElement('div');
+    block.className = 'report-section-block';
+    block.id = 'section-block-' + section.id;
     
-    let block = document.getElementById('section-block-' + section.id);
-    if(!block){
-      block = document.createElement('div');
-      block.className = 'report-section-block';
-      block.id = 'section-block-' + section.id;
-      
-      const isHi = window.currentVedicLang === 'hi';
-      const chapterLabel = isHi ? `अध्याय ${index + 1}` : `CHAPTER ${String(index + 1).padStart(2, '0')}`;
-      const tagLabel = isHi ? 'विस्तृत फलकथन' : 'Vedic Analysis';
-      
-      const header = document.createElement('div');
-      header.className = 'report-section-header';
-      header.setAttribute('role', 'button');
-      header.setAttribute('tabindex', '0');
-      header.setAttribute('aria-expanded', 'true');
-      header.setAttribute('aria-controls', 'content-' + section.id);
-      header.title = 'Click to collapse or expand section';
-      header.innerHTML = `
-        <div class="report-section-header-left">
-          <span class="report-chapter-badge">${chapterLabel}</span>
-          <h3 id="h3-${section.id}" class="report-section-title">${escapeHtml(section.title)}</h3>
-        </div>
-        <div class="report-section-header-right">
-          <span class="report-chapter-tag">${tagLabel}</span>
-          <div class="report-section-toggle-icon" aria-hidden="true">▼</div>
-        </div>
-      `;
-      header.onclick = () => {
-        block.classList.toggle('collapsed');
-        const isExp = !block.classList.contains('collapsed');
-        header.setAttribute('aria-expanded', String(isExp));
-      };
-      header.onkeydown = (e) => {
-        if(e.key === 'Enter' || e.key === ' '){
-          e.preventDefault();
-          header.click();
-        }
-      };
-      
-      const contentDiv = document.createElement('div');
-      contentDiv.id = 'content-' + section.id;
-      contentDiv.className = 'report-section-content';
-      contentDiv.innerHTML = formatReportSectionHtml(text);
-      
-      block.appendChild(header);
-      block.appendChild(contentDiv);
-      reportBody.appendChild(block);
-    }else{
-      const contentDiv = document.getElementById('content-' + section.id);
-      if(contentDiv) contentDiv.innerHTML = formatReportSectionHtml(text);
+    const header = document.createElement('div');
+    header.className = 'report-section-header';
+    header.setAttribute('role', 'button');
+    header.setAttribute('tabindex', '0');
+    header.setAttribute('aria-expanded', 'true');
+    header.setAttribute('aria-controls', 'content-' + section.id);
+    header.title = 'Click to collapse or expand section';
+    header.innerHTML = `
+      <div class="report-section-header-left">
+        <span class="report-chapter-badge">${chapterLabel}</span>
+        <h3 id="h3-${section.id}" class="report-section-title">${escapeHtml(section.title)}</h3>
+      </div>
+      <div class="report-section-header-right">
+        <span class="report-chapter-tag baseline" id="tag-${section.id}">✦ Classical Engine Baseline</span>
+        <div class="report-section-toggle-icon" aria-hidden="true">▼</div>
+      </div>
+    `;
+    header.onclick = () => {
+      block.classList.toggle('collapsed');
+      const isExp = !block.classList.contains('collapsed');
+      header.setAttribute('aria-expanded', String(isExp));
+    };
+    header.onkeydown = (e) => {
+      if(e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        header.click();
+      }
+    };
+    
+    const contentDiv = document.createElement('div');
+    contentDiv.id = 'content-' + section.id;
+    contentDiv.className = 'report-section-content';
+    contentDiv.innerHTML = formatReportSectionHtml(localBaseline || 'Calculating chart factors…');
+    
+    block.appendChild(header);
+    block.appendChild(contentDiv);
+    reportBody.appendChild(block);
+  } else {
+    const contentDiv = document.getElementById('content-' + section.id);
+    if(contentDiv && localBaseline) contentDiv.innerHTML = formatReportSectionHtml(localBaseline);
+  }
+
+  // Update visual models and tables with local verified data immediately
+  renderKundliVisuals();
+  renderPanchangReportCard();
+  renderPlacementTable();
+  renderInterpretationTable();
+  buildAtAGlance();
+  renderClassicalModules();
+  if(section.id === 'timeline') renderDashaTimeline();
+
+  // 4. Synthesize and refine via API
+  let generatedText = localBaseline;
+  let isAiEnriched = false;
+
+  try {
+    const userText = `Birth data:\n${birthContext}\n\nLocal Classical Baseline Analysis (Calculated via Lahiri Ephemeris):\n${localBaseline}\n\nTASK:\nRefine, deepen, and synthesize the "${section.title}" section of this reading.\n${section.instruction}\nProvide an insightful, comprehensive astrological reading on lived impact, behavior, career, wealth, and relationships. Deepen and bridge the astrological mechanism from the baseline into concrete psychological and practical lived reality.\n\nSTRUCTURAL FORMATTING RULES:\n1. Organize your analysis with clear, descriptive subheadings using ### (e.g., "### 1. Core Psychological Blueprint" or "### Career Trajectory & Wealth Capacity").\n2. Highlight key takeaways with structured callout lines, such as:\n- **Core Takeaway:** Summary of the primary insight\n- **Astrological Mechanism:** Planets, bhavas, rashis, and yogas causing this effect\n- **Practical Impact:** Concrete consequences in daily life, work, or relationships\n- **Timing Window:** Key planetary period or transit when this effect manifests\n3. Use clear bullet points (- item) or numbered lists (1. item) for sequential factors.\n4. Write in rich, fluid paragraphs without repetitive filler or stray asterisks.\n5. Do not include the main section title at the very beginning of your response.`;
+
+    const rawText = await callGemini(activeRules, userText, 3200);
+    const cleaned = cleanAstroText(rawText);
+    if(cleaned && cleaned.length > 200){
+      generatedText = cleaned;
+      isAiEnriched = true;
     }
-    renderKundliVisuals();
-    renderPanchangReportCard();
-    renderPlacementTable();
-    renderInterpretationTable();
-    buildAtAGlance();
-    renderClassicalModules();
-    if(section.id === 'timeline') renderDashaTimeline();
+  } catch(err) {
+    console.warn(`AI refinement for ${section.title} fell back to local classical engine:`, err.message);
+  }
+
+  // 5. Update section UI with final text & badge
+  fullReportText += `\n\n## ${section.title}\n\n${generatedText}`;
+  const finalContentDiv = document.getElementById('content-' + section.id);
+  if(finalContentDiv) finalContentDiv.innerHTML = formatReportSectionHtml(generatedText);
+
+  const tagEl = document.getElementById('tag-' + section.id);
+  if(tagEl){
+    if(isAiEnriched){
+      tagEl.className = 'report-chapter-tag ai-enriched';
+      tagEl.textContent = isHi ? '✨ शास्त्रीय + AI परिष्कृत' : '✨ Classical + AI Enriched';
+    } else {
+      tagEl.className = 'report-chapter-tag verified';
+      tagEl.textContent = isHi ? '✦ शास्त्रीय गणना सत्यापित' : '✦ Classical Engine Verified';
+    }
+  }
+
+  renderKundliVisuals();
+  renderPanchangReportCard();
+  renderPlacementTable();
+  renderInterpretationTable();
+  buildAtAGlance();
+  renderClassicalModules();
+  if(section.id === 'timeline') renderDashaTimeline();
+
+  if(li){
     li.classList.remove('active');
     li.classList.add('done');
-    unlockChat();
-    return true;
-  }catch(err){
-    li.classList.remove('active');
-    li.classList.add('failed');
-    const errDiv = document.createElement('div');
-    errDiv.className = 'error';
-    errDiv.textContent = `Paused at "${section.title}": ${err.message}`;
-    progressErrorEl.appendChild(errDiv);
-    if(err.isAuth){
-      showKeyRecovery(progressErrorEl, () => runFrom(index, reportBody, stepListEl, progressErrorEl));
-    }else{
-      const retryBtn = document.createElement('button');
-      retryBtn.className = 'secondary small';
-      retryBtn.textContent = 'Retry this section';
-      retryBtn.style.marginTop = '8px';
-      retryBtn.onclick = () => runFrom(index, reportBody, stepListEl, progressErrorEl);
-      progressErrorEl.appendChild(retryBtn);
-    }
-    return false;
   }
+  unlockChat();
+  return true;
 }
 
 async function runFrom(startIndex, reportBody, stepListEl, progressErrorEl, endIndex=null){
@@ -9648,12 +9731,28 @@ document.getElementById('chatSend').onclick = async () => {
     window.consumeQuestionCredit();
   }catch(err){
     pendingDiv.remove();
-    chatQuestionsUsed=Math.max(0,chatQuestionsUsed-1);
-    updateChatCount();
-    if(err.isAuth){
-      appendChat('model', 'The connected key is not authorizing requests. Scroll up to the chart-casting panel to reconnect a valid key, then ask again.');
+    let currentChart = verifiedChart;
+    if(!currentChart && window.VedicEngine && typeof window.VedicEngine.calculateNatalChart === 'function'){
+      try{
+        const {date,time} = birthDateTimeParts(document.getElementById('f_dob')?.value||'2000-01-01', document.getElementById('f_tob')?.value||'12:00');
+        const lat = Number(document.getElementById('f_lat')?.value) || 28.6139;
+        const lon = Number(document.getElementById('f_lon')?.value) || 77.2090;
+        currentChart = window.VedicEngine.calculateNatalChart(date, time, lat, lon, document.getElementById('f_name')?.value||'Native');
+      }catch(e){}
+    }
+    if(window.VedicEngine && typeof window.VedicEngine.answerChatLocally === 'function' && currentChart){
+      const localAnswer = window.VedicEngine.answerChatLocally(q, currentChart, reportContext, window.currentVedicLang);
+      appendChat('model', 'Answer (Classical Engine Consultation)\n\n' + localAnswer);
+      chatHistory.push({role:'model', text:localAnswer});
+      window.consumeQuestionCredit();
     }else{
-      appendChat('model', 'The chart could not be consulted just now: ' + err.message);
+      chatQuestionsUsed=Math.max(0,chatQuestionsUsed-1);
+      updateChatCount();
+      if(err.isAuth){
+        appendChat('model', 'The connected key is not authorizing requests. Scroll up to the chart-casting panel to reconnect a valid key, then ask again.');
+      }else{
+        appendChat('model', 'The chart could not be consulted just now: ' + err.message);
+      }
     }
   }
   sendBtn.disabled = (chatQuestionsUsed >= MAX_CHAT_QUESTIONS);
@@ -9980,13 +10079,14 @@ window.closeCompanyModal = function() {
   $('adminRefreshBtn')?.addEventListener('click',loadAdmin);
   async function loadAdmin(){
     try{
-      const [r,f,v,s,p,a]=await Promise.all([
+      const [r,f,v,s,p,a,gq]=await Promise.all([
         adminFetch('/api/admin/reports'),
         adminFetch('/api/admin/feedback'),
         adminFetch('/api/admin/vip'),
         adminFetch('/api/admin/settings'),
         adminFetch('/api/admin/payments').catch(()=>({payments:[]})),
-        adminFetch('/api/admin/audit-logs').catch(()=>({logs:[]}))
+        adminFetch('/api/admin/audit-logs').catch(()=>({logs:[]})),
+        adminFetch('/api/admin/gemini-quota').catch(()=>({totalConfiguredKeys:1,keys:[]}))
       ]);
       const reports = r.reports || [];
       const feedback = f.feedback || [];
@@ -9994,8 +10094,9 @@ window.closeCompanyModal = function() {
       const settings = s.settings || {};
       const payments = p.payments || [];
       const logs = a.logs || [];
+      const geminiQuota = gq || {};
       
-      renderOverview(reports, feedback, vips, settings, payments);
+      renderOverview(reports, feedback, vips, settings, payments, geminiQuota);
       renderReports(reports);
       renderFeedback(feedback);
       renderPayments(payments);
@@ -10072,10 +10173,48 @@ window.closeCompanyModal = function() {
     filterAndDraw();
   }
 
-  function renderOverview(reports, feedback, vips, s, payments){
+  function renderOverview(reports, feedback, vips, s, payments, geminiQuota = {}){
     const verifiedPayments = payments.filter(x => x.status === 'verified' || x.status === 'captured');
     const totalRevenueINR = verifiedPayments.reduce((acc, x) => acc + (x.amount ? Math.round(x.amount / 100) : 0), 0);
     const activeVips = (vips || []).filter(v => v.active);
+    const configuredKeys = geminiQuota?.keys || [];
+    const activeIdx = geminiQuota?.activeKeyIndex || 1;
+
+    let keyCardsHtml = '';
+    if (configuredKeys.length > 0) {
+      keyCardsHtml = `
+        <div style="margin-top:20px;padding:16px;background:rgba(23,42,58,0.7);border:1px solid rgba(242,215,146,0.3);border-radius:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span style="color:#f2d792;font-size:15px;font-weight:600;">✦ Gemini Multi-Key Failover & Quota Engine</span>
+              <span class="admin-status-pill ok" style="font-size:11px;">${configuredKeys.length} Key(s) Configured</span>
+            </div>
+            <button id="adminResetQuotaBtn" class="small secondary" style="font-size:11px;padding:3px 10px;border-color:rgba(127,197,192,0.4);color:#7fc5c0;">Reset Rate Limits</button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:12px;">
+            ${configuredKeys.map(k => {
+              const isCurrent = k.index === activeIdx;
+              const statusPill = k.status === 'HEALTHY' ? '<span class="admin-status-pill ok">Healthy</span>' : k.status === 'COOLING_DOWN' ? `<span class="admin-status-pill err">Cooling Down (${k.remainingCooldownSec}s)</span>` : `<span class="admin-status-pill warn">${k.status}</span>`;
+              return `
+                <div style="background:rgba(10,24,37,0.8);padding:12px 14px;border-radius:8px;border:1px solid ${isCurrent ? 'rgba(242,215,146,0.6)' : 'rgba(255,255,255,0.08)'};position:relative;">
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                    <b style="color:${isCurrent ? '#f2d792' : '#e0e8eb'};font-size:13px;">${esc(k.label)} ${isCurrent ? '<span style="color:#a8e6cf;font-size:11px;font-weight:normal;">(Active)</span>' : ''}</b>
+                    ${statusPill}
+                  </div>
+                  <div style="font-size:11.5px;color:#a3b6be;margin-bottom:4px;">Key: <code style="color:#7fc5c0;">${esc(k.masked)}</code></div>
+                  <div style="display:flex;justify-content:space-between;font-size:11.5px;margin-top:6px;color:#d1e1e6;">
+                    <span>RPM: <b>${k.rpmCurrent}/${k.rpmLimit}</b></span>
+                    <span>Today: <b>${k.requestsToday}/${k.rpdLimit}</b></span>
+                  </div>
+                  <div style="font-size:11px;color:#7e939d;margin-top:4px;">Est. Tokens: ${k.estimatedTokensToday.toLocaleString()} · Success: ${k.totalSuccess}</div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }
+
     $('adminOverview').innerHTML = `
       <div class="admin-stats">
         <div class="admin-stat"><b style="color:#f2d792">${reports.length}</b><span>Stored reports</span></div>
@@ -10084,10 +10223,20 @@ window.closeCompanyModal = function() {
         <div class="admin-stat"><b style="color:#75b68a">₹${totalRevenueINR || (reports.length * Number(s.reveal_price||59))}</b><span>Total Verified Revenue</span></div>
         <div class="admin-stat"><b style="color:#e8c274">₹${s.reveal_price||59} / ₹${s.match_price||99} / ₹${s.question_price||29}</b><span>Active Base Prices</span></div>
       </div>
+      ${keyCardsHtml}
       <div class="admin-notice" style="margin-top:16px">
         Admin actions are server-authorized. Pricing, feature availability, and VIP access are enforced by the backend. All monetary transactions are calculated in Indian Rupees (₹).
       </div>
     `;
+
+    $('adminResetQuotaBtn')?.addEventListener('click', async () => {
+      try {
+        await adminFetch('/api/admin/gemini-quota/reset', { method: 'POST' });
+        loadAdmin();
+      } catch (err) {
+        alert('Could not reset quota: ' + err.message);
+      }
+    });
   }
 
   let lastVipNoticeHtml = '';

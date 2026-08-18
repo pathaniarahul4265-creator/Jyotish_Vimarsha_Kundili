@@ -161,7 +161,163 @@ async function createOrder(amount, plan, receiptCustom){
     throw errorObj;
   }
 }
-async function aiCall({model,systemText,userText,maxTokens}){
+// ==========================================
+// Gemini Multi-Key Pool & Quota Manager
+// Supports GEMINI_API_KEY, GEMINI_API_KEY_2, GEMINI_API_KEY_3, GEMINI_API_KEYS
+// Automatically calculates RPM, RPD, tokens, detects quota exhaustion,
+// and rotates seamlessly: Key 1 -> Key 2 -> Key 3 -> Key 1
+// ==========================================
+
+const QUOTA_STORAGE_FILE = 'gemini_quota.json';
+const geminiQuotaStore = loadJsonFile(QUOTA_STORAGE_FILE, {});
+
+function getTodayUtcKey() {
+  return new Date().toISOString().split('T')[0];
+}
+
+function getGeminiKeyPool() {
+  const pool = [];
+  const addKey = (k) => {
+    if (!k) return;
+    const str = String(k).trim();
+    if (str && !pool.includes(str)) pool.push(str);
+  };
+  addKey(process.env.GEMINI_API_KEY);
+  addKey(process.env.GEMINI_API_KEY_1);
+  addKey(process.env.GEMINI_API_KEY_2);
+  addKey(process.env.GEMINI_API_KEY_3);
+  if (process.env.GEMINI_API_KEYS) {
+    process.env.GEMINI_API_KEYS.split(',').forEach(addKey);
+  }
+  return pool;
+}
+
+function maskApiKey(key) {
+  if (!key || key.length < 8) return '****';
+  return key.slice(0, 6) + '...' + key.slice(-4);
+}
+
+function getKeyStats(key, index) {
+  const today = getTodayUtcKey();
+  const keyId = `key_${index + 1}_${key.slice(0, 6)}`;
+  
+  if (!geminiQuotaStore[keyId]) {
+    geminiQuotaStore[keyId] = {
+      index,
+      label: index === 0 ? 'Primary (Key 1)' : index === 1 ? 'Secondary (Key 2)' : index === 2 ? 'Tertiary (Key 3)' : `Key ${index + 1}`,
+      masked: maskApiKey(key),
+      day: today,
+      requestsToday: 0,
+      recentTimestamps: [],
+      estimatedTokensToday: 0,
+      totalSuccess: 0,
+      totalFailures: 0,
+      exhaustedUntil: 0,
+      exhaustionReason: '',
+      lastUsed: null
+    };
+  }
+
+  const stats = geminiQuotaStore[keyId];
+  if (stats.day !== today) {
+    stats.day = today;
+    stats.requestsToday = 0;
+    stats.estimatedTokensToday = 0;
+    stats.exhaustedUntil = 0;
+    stats.exhaustionReason = '';
+  }
+
+  // Prune timestamps older than 60 seconds
+  const now = Date.now();
+  stats.recentTimestamps = (stats.recentTimestamps || []).filter(t => (now - t) < 60000);
+  return stats;
+}
+
+function saveQuotaStats() {
+  saveJsonFile(QUOTA_STORAGE_FILE, geminiQuotaStore);
+}
+
+let activeKeyPoolIndex = 0;
+
+function selectNextAvailableKeyIndex(pool) {
+  if (!pool || pool.length === 0) return 0;
+  if (pool.length === 1) return 0;
+
+  const now = Date.now();
+  const candidates = pool.map((key, idx) => {
+    const stats = getKeyStats(key, idx);
+    const rpm = stats.recentTimestamps.length;
+    const isCoolingDown = stats.exhaustedUntil > now;
+    const isRpmNearLimit = rpm >= 14; // Gemini standard ~15 RPM limit
+    const isRpdNearLimit = stats.requestsToday >= 1480; // Gemini standard ~1500 RPD limit
+    const isHealthy = !isCoolingDown && !isRpmNearLimit && !isRpdNearLimit;
+    return { idx, key, stats, rpm, isCoolingDown, isHealthy, exhaustedUntil: stats.exhaustedUntil };
+  });
+
+  // 1. Try currently active key if healthy
+  if (candidates[activeKeyPoolIndex] && candidates[activeKeyPoolIndex].isHealthy) {
+    return activeKeyPoolIndex;
+  }
+
+  // 2. Shift to next available key in sequence (Key 1 -> Key 2 -> Key 3 -> Key 1)
+  for (let step = 1; step < pool.length; step++) {
+    const nextIdx = (activeKeyPoolIndex + step) % pool.length;
+    if (candidates[nextIdx] && candidates[nextIdx].isHealthy) {
+      activeKeyPoolIndex = nextIdx;
+      return nextIdx;
+    }
+  }
+
+  // 3. If all are in cooldown/near limit, pick the one with earliest cooldown expiration
+  candidates.sort((a, b) => a.exhaustedUntil - b.exhaustedUntil || a.rpm - b.rpm);
+  activeKeyPoolIndex = candidates[0].idx;
+  return activeKeyPoolIndex;
+}
+
+function recordKeyRequest(key, index, promptChars) {
+  const stats = getKeyStats(key, index);
+  const now = Date.now();
+  stats.recentTimestamps.push(now);
+  stats.requestsToday = (stats.requestsToday || 0) + 1;
+  stats.lastUsed = new Date().toISOString();
+  stats.estimatedTokensToday = (stats.estimatedTokensToday || 0) + Math.ceil((promptChars || 0) / 4);
+  saveQuotaStats();
+}
+
+function recordKeySuccess(key, index, responseChars) {
+  const stats = getKeyStats(key, index);
+  stats.totalSuccess = (stats.totalSuccess || 0) + 1;
+  stats.estimatedTokensToday = (stats.estimatedTokensToday || 0) + Math.ceil((responseChars || 0) / 4);
+  // If previously marked exhausted and call succeeded, clear cooldown
+  if (stats.exhaustedUntil <= Date.now()) {
+    stats.exhaustionReason = '';
+  }
+  saveQuotaStats();
+}
+
+function recordKeyFailure(key, index, status, errorMessage) {
+  const stats = getKeyStats(key, index);
+  const now = Date.now();
+  stats.totalFailures = (stats.totalFailures || 0) + 1;
+
+  const msg = String(errorMessage || '').toLowerCase();
+  const is429 = status === 429 || msg.includes('quota') || msg.includes('resource_exhausted') || msg.includes('rate limit') || msg.includes('too many requests');
+  const isAuth = status === 400 || status === 401 || status === 403 || msg.includes('api key') || msg.includes('permission');
+
+  if (is429) {
+    stats.exhaustedUntil = now + (msg.includes('daily') || stats.requestsToday >= 1450 ? 24 * 60 * 60 * 1000 : 65 * 1000);
+    stats.exhaustionReason = 'Rate limit (429) / Quota threshold reached';
+  } else if (isAuth) {
+    stats.exhaustedUntil = now + 60 * 60 * 1000;
+    stats.exhaustionReason = 'Authentication / Permission error';
+  } else if (status === 504 || status === 503) {
+    stats.exhaustedUntil = now + 15 * 1000;
+    stats.exhaustionReason = `Gateway / Server timeout (${status})`;
+  }
+  saveQuotaStats();
+}
+
+async function aiCall({model, systemText, userText, maxTokens}){
   function normalizeModel(m) {
     if (!m) return 'gemini-2.5-flash';
     const cleanStr = String(m).trim().toLowerCase();
@@ -173,64 +329,107 @@ async function aiCall({model,systemText,userText,maxTokens}){
     return m;
   }
 
-  const primaryChoice = normalizeModel(process.env.GEMINI_PRIMARY_MODEL || model || 'gemini-2.5-flash');
-  
-  async function invokeGemini(targetModel, tokens) {
+  const pool = getGeminiKeyPool();
+  if (pool.length === 0) {
+    const err = new Error('AI service is not configured on the server. Please provide GEMINI_API_KEY.');
+    err.status = 503;
+    throw err;
+  }
+
+  const primaryModel = normalizeModel(process.env.GEMINI_PRIMARY_MODEL || model || 'gemini-2.5-flash');
+  const fallbackModel = normalizeModel(process.env.GEMINI_FALLBACK_MODEL || 'gemini-2.5-flash');
+  const promptChars = (systemText?.length || 0) + (userText?.length || 0);
+
+  // Attempt generation with automatic multi-key rotation and model fallback
+  let lastErr = null;
+  const attemptsMax = Math.max(pool.length * 2, 3);
+  let attemptCount = 0;
+
+  while (attemptCount < attemptsMax) {
+    attemptCount++;
+    const keyIdx = selectNextAvailableKeyIndex(pool);
+    const chosenKey = pool[keyIdx];
+    const targetModel = (attemptCount > pool.length && primaryModel !== fallbackModel) ? fallbackModel : primaryModel;
+    const tokensLimit = (targetModel === fallbackModel) ? Math.min(2500, Number(maxTokens) || 2500) : Math.min(4096, Math.max(256, Number(maxTokens) || 3000));
+
+    recordKeyRequest(chosenKey, keyIdx, promptChars);
+
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(targetModel)}:generateContent`;
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 26000);
+
     try {
       const r = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-goog-api-key': process.env.GEMINI_API_KEY
+          'x-goog-api-key': chosenKey
         },
         signal: controller.signal,
         body: JSON.stringify({
           systemInstruction: { parts: [{ text: systemText }] },
           contents: [{ role: 'user', parts: [{ text: userText }] }],
           generationConfig: {
-            maxOutputTokens: Math.min(4096, Math.max(256, Number(tokens) || 2800)),
+            maxOutputTokens: tokensLimit,
             temperature: 0.8
           }
         })
       });
       clearTimeout(timeout);
+
       const j = await r.json().catch(() => ({}));
       if (!r.ok) {
-        const errMsg = j?.error?.message || `Gemini request failed (${r.status})`;
+        const errMsg = j?.error?.message || `Gemini API returned HTTP ${r.status}`;
+        recordKeyFailure(chosenKey, keyIdx, r.status, errMsg);
+        
+        // Shift active index to next key for next attempt
+        activeKeyPoolIndex = (keyIdx + 1) % pool.length;
+
+        const isRotatable = r.status === 429 || r.status === 400 || r.status === 401 || r.status === 403 || r.status === 503 || r.status === 504 || r.status === 404;
+        if (isRotatable && pool.length > 1 && attemptCount < attemptsMax) {
+          continue; // Seamlessly rotate to next key in pool
+        }
+
         const e = new Error(errMsg);
         e.status = r.status;
         throw e;
       }
+
       const text = j?.candidates?.[0]?.content?.parts?.map(x => x.text || '').join('') || '';
-      if (!text) throw new Error('No response returned by the AI service.');
+      if (!text) {
+        recordKeyFailure(chosenKey, keyIdx, 500, 'Empty response from Gemini');
+        if (pool.length > 1 && attemptCount < attemptsMax) {
+          activeKeyPoolIndex = (keyIdx + 1) % pool.length;
+          continue;
+        }
+        throw new Error('No text generated by AI service.');
+      }
+
+      recordKeySuccess(chosenKey, keyIdx, text.length);
       return text;
     } catch (err) {
       clearTimeout(timeout);
-      if (err.name === 'AbortError') {
-        const e = new Error('AI generation timed out upstream.');
-        e.status = 504;
-        throw e;
+      lastErr = err;
+      const status = err.name === 'AbortError' ? 504 : (err.status || 500);
+      recordKeyFailure(chosenKey, keyIdx, status, err.message);
+
+      if (pool.length > 1 && attemptCount < attemptsMax) {
+        activeKeyPoolIndex = (keyIdx + 1) % pool.length;
+        continue;
       }
-      throw err;
     }
   }
 
-  try {
-    return await invokeGemini(primaryChoice, maxTokens);
-  } catch (err) {
-    // If primary failed with 404, 504, 503, 500, or 429, attempt immediate fallback to gemini-2.5-flash with compact token budget
-    if (primaryChoice !== 'gemini-2.5-flash') {
-      try {
-        return await invokeGemini('gemini-2.5-flash', Math.min(2500, Number(maxTokens) || 2500));
-      } catch (fallbackErr) {
-        throw fallbackErr;
-      }
+  if (lastErr) {
+    if (lastErr.name === 'AbortError') {
+      const e = new Error('AI generation timed out upstream.');
+      e.status = 504;
+      throw e;
     }
-    throw err;
+    throw lastErr;
   }
+
+  throw new Error('AI request could not be completed after rotating key pool.');
 }
 
 export default async function handler(req,res){
@@ -442,7 +641,8 @@ export default async function handler(req,res){
     }
 
     if(req.method==='POST'&&path==='/ai'){
-      if(!process.env.GEMINI_API_KEY) return json(res,503,{error:'AI service is not configured on the server. Please ensure GEMINI_API_KEY is provided.'});
+      const pool = getGeminiKeyPool();
+      if(pool.length === 0) return json(res,503,{error:'AI service is not configured on the server. Please ensure GEMINI_API_KEY is provided.'});
       const b = await readBody(req);
       if(!b.systemText || !b.userText) return json(res,400,{error:'AI request is incomplete.'});
       try {
@@ -711,10 +911,50 @@ export default async function handler(req,res){
         return json(res, 200, { logs: auditLogs });
       }
 
-      if (req.method === 'DELETE' && path === '/admin/audit-logs') {
-        auditLogs.length = 0;
-        logAudit(clientIp, 'AUDIT_CLEAR', 'Admin cleared security audit history', 'SUCCESS');
-        return json(res, 200, { ok: true });
+      if (req.method === 'GET' && path === '/admin/gemini-quota') {
+        const pool = getGeminiKeyPool();
+        const now = Date.now();
+        const keysSummary = pool.map((key, idx) => {
+          const stats = getKeyStats(key, idx);
+          const rpm = (stats.recentTimestamps || []).length;
+          const isCoolingDown = stats.exhaustedUntil > now;
+          const remainingCooldownSec = isCoolingDown ? Math.ceil((stats.exhaustedUntil - now) / 1000) : 0;
+          return {
+            index: idx + 1,
+            label: stats.label,
+            masked: stats.masked,
+            isActive: idx === activeKeyPoolIndex,
+            status: isCoolingDown ? 'COOLING_DOWN' : (rpm >= 14 ? 'NEAR_RPM_LIMIT' : (stats.requestsToday >= 1450 ? 'NEAR_RPD_LIMIT' : 'HEALTHY')),
+            rpmCurrent: rpm,
+            rpmLimit: 15,
+            requestsToday: stats.requestsToday || 0,
+            rpdLimit: 1500,
+            estimatedTokensToday: stats.estimatedTokensToday || 0,
+            totalSuccess: stats.totalSuccess || 0,
+            totalFailures: stats.totalFailures || 0,
+            remainingCooldownSec,
+            exhaustionReason: stats.exhaustionReason || null,
+            lastUsed: stats.lastUsed
+          };
+        });
+        return json(res, 200, {
+          totalConfiguredKeys: pool.length,
+          activeKeyIndex: activeKeyPoolIndex + 1,
+          keys: keysSummary
+        });
+      }
+
+      if (req.method === 'POST' && path === '/admin/gemini-quota/reset') {
+        const pool = getGeminiKeyPool();
+        pool.forEach((key, idx) => {
+          const stats = getKeyStats(key, idx);
+          stats.exhaustedUntil = 0;
+          stats.exhaustionReason = '';
+          stats.recentTimestamps = [];
+        });
+        saveQuotaStats();
+        logAudit(clientIp, 'GEMINI_QUOTA_RESET', 'Admin manually reset Gemini rate limit/cooldown flags', 'SUCCESS');
+        return json(res, 200, { ok: true, message: 'All Gemini API key cooldowns and RPM counters reset.' });
       }
 
       if(req.method==='GET'&&path==='/admin/reports'){
