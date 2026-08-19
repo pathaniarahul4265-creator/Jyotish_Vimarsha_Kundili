@@ -344,14 +344,14 @@ function recordKeyFailure(key, index, status, errorMessage) {
 
 async function aiCall({model, systemText, userText, maxTokens, purpose='general'}){
   function normalizeModel(m) {
-    if (!m) return 'gemini-3.7-flash';
+    if (!m) return 'gemini-3.6-flash';
     let cleanStr = String(m).trim().toLowerCase();
     if (cleanStr.startsWith('models/')) cleanStr = cleanStr.replace('models/', '');
-    if (cleanStr.includes('3.7') || cleanStr.includes('3.6') || cleanStr.includes('3.5')) return 'gemini-3.7-flash';
+    if (cleanStr.includes('3.7') || cleanStr.includes('3.6') || cleanStr.includes('3.5')) return 'gemini-3.6-flash';
     if (cleanStr.includes('3.1-flash-lite') || cleanStr.includes('flash-lite')) return 'gemini-3.1-flash-lite';
     if (cleanStr.includes('2.5-pro') || cleanStr.includes('pro')) return 'gemini-2.5-pro';
-    if (cleanStr.includes('2.5-flash') || cleanStr.includes('2.5') || cleanStr.includes('flash')) return 'gemini-3.7-flash';
-    return cleanStr || 'gemini-3.7-flash';
+    if (cleanStr.includes('2.5-flash') || cleanStr.includes('2.5') || cleanStr.includes('flash')) return 'gemini-3.6-flash';
+    return cleanStr || 'gemini-3.6-flash';
   }
 
   const pool = getGeminiKeyPool();
@@ -361,8 +361,8 @@ async function aiCall({model, systemText, userText, maxTokens, purpose='general'
     throw err;
   }
 
-  const primaryModel = normalizeModel(getEnv('GEMINI_PRIMARY_MODEL', model || 'gemini-3.7-flash'));
-  const fallbackModel = normalizeModel(getEnv('GEMINI_FALLBACK_MODEL', 'gemini-3.1-flash-lite'));
+  const primaryModel = normalizeModel(getEnv('GEMINI_PRIMARY_MODEL', model || 'gemini-3.6-flash'));
+  const fallbackModel = normalizeModel(getEnv('GEMINI_FALLBACK_MODEL', 'gemini-3.5-flash'));
   const promptChars = (systemText?.length || 0) + (userText?.length || 0);
 
   // Attempt generation with automatic multi-key rotation, gentle backoff, and model fallback
@@ -378,11 +378,11 @@ async function aiCall({model, systemText, userText, maxTokens, purpose='general'
     // Switch to fast fallback model if retry or under high load
     let targetModel = (attemptCount > 1 && primaryModel !== fallbackModel) ? fallbackModel : primaryModel;
     if (lastErr && (String(lastErr.message).includes('not available') || String(lastErr.message).includes('404') || String(lastErr.message).includes('not found'))) {
-      targetModel = 'gemini-3.7-flash';
+      targetModel = 'gemini-3.6-flash';
     }
     const requestedTokens = Number(maxTokens) || (purpose === 'report' ? 3000 : 2500);
     const tokensLimit = purpose === 'report'
-      ? Math.min(3000, Math.max(1200, requestedTokens))
+      ? Math.min(5200, Math.max(1800, requestedTokens))
       : ((targetModel === fallbackModel)
           ? Math.min(2048, requestedTokens)
           : Math.min(3072, Math.max(256, requestedTokens)));
@@ -391,7 +391,7 @@ async function aiCall({model, systemText, userText, maxTokens, purpose='general'
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(targetModel)}:generateContent`;
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 35000);
+    const timeout = setTimeout(() => controller.abort(), purpose === 'report' ? 70000 : 30000);
 
     try {
       const r = await fetch(url, {
@@ -981,8 +981,8 @@ export default async function handler(req,res){
       if (req.method === 'GET' && path === '/admin/gemini-quota') {
         const pool = getGeminiKeyPool();
         const now = Date.now();
-        const primaryModel = normalizeModel(getEnv('GEMINI_PRIMARY_MODEL', 'gemini-3.7-flash'));
-        const fallbackModel = normalizeModel(getEnv('GEMINI_FALLBACK_MODEL', 'gemini-3.1-flash-lite'));
+        const primaryModel = normalizeModel(getEnv('GEMINI_PRIMARY_MODEL', 'gemini-3.6-flash'));
+        const fallbackModel = normalizeModel(getEnv('GEMINI_FALLBACK_MODEL', 'gemini-3.5-flash'));
 
         const slotDefs = [
           { slot: 1, name: 'Gemini Key 1 (Primary)', envVar: 'GEMINI_API_KEY', val: getEnv('GEMINI_API_KEY') || getEnv('GEMINI_API_KEY_1') },
