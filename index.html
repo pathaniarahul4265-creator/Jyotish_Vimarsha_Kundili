@@ -5391,6 +5391,21 @@ body input, body select, body textarea {
   color: #ffffff !important;
 }
 </style>
+
+<style id="live-writing-ui-fix">
+.generation-live-panel{margin:18px 0;padding:18px;border:1px solid rgba(255,255,255,.12);border-radius:16px;background:rgba(255,255,255,.035);display:none}
+.generation-live-panel.active{display:block}
+.generation-live-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:10px}
+.generation-live-title{font-weight:700}
+.generation-live-meta{font-size:12px;opacity:.7}
+.generation-live-text{max-height:420px;overflow:auto;white-space:pre-wrap;line-height:1.7;font-size:14px;padding:14px;border-radius:12px;background:rgba(0,0,0,.16)}
+.generation-live-caret{display:inline-block;width:7px;height:16px;vertical-align:-2px;margin-left:3px;background:currentColor;animation:liveCaret .9s steps(1) infinite}
+@keyframes liveCaret{50%{opacity:0}}
+.report-chapter-tile,.chapter-tile,[data-chapter-tile]{cursor:pointer}
+.report-chapter-tile:hover,.chapter-tile:hover,[data-chapter-tile]:hover{transform:translateY(-1px)}
+.report-chapter-tile.live-selected,.chapter-tile.live-selected,[data-chapter-tile].live-selected{outline:2px solid rgba(255,255,255,.28)}
+</style>
+
 </head>
 <body>
 <div class="cosmic-bg"></div>
