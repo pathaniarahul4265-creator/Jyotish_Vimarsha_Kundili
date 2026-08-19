@@ -518,4 +518,338 @@ async function streamGeminiOnce({ key, keyIdx, model, systemText, userText, maxT
     return { text: fullText, completed: true };
   } catch (err) {
     const status = err?.name === 'AbortError' ? 504 : Number(err?.status) || 500;
-    recordKeyFailure(key, keyIdx, status, err?.
+    recordKeyFailure(key, keyIdx, status, err?.message || 'stream failure');
+    err.status = status;
+    err.partialText = fullText;
+    throw err;
+  } finally {
+    clearTimeout(timeout);
+    try { if (reader) await reader.cancel(); } catch {}
+  }
+}
+
+async function streamAiCall({ model, systemText, userText, maxTokens, purpose = 'general', res }) {
+  const pool = getGeminiKeyPool();
+  if (!pool.length) { const e = new Error('AI service is not configured.'); e.status = 503; throw e; }
+
+  let currentModel = normalizeModel(model || getEnv('GEMINI_PRIMARY_MODEL', 'gemini-3.6-flash'));
+  let modelWaterfallIdx = 0;
+  let lastError = null;
+  let continuation = '';
+
+  for (let attempt = 0; attempt < Math.max(3, pool.length); attempt++) {
+    const idx = selectNextAvailableKeyIndex(pool);
+    const key = pool[idx];
+
+    try {
+      writeSse(res, 'status', { state: 'connecting', keyIndex: idx + 1, attempt: attempt + 1, model: currentModel });
+      const result = await streamGeminiOnce({ key, keyIdx: idx, model: currentModel, systemText, userText, maxTokens, purpose, res, continuationText: continuation });
+      writeSse(res, 'complete', { text: result.text, keyIndex: idx + 1 });
+      return result.text;
+    } catch (err) {
+      lastError = err;
+      if (err.partialText) continuation = err.partialText;
+      
+      if (err.isModelNotFound || err.status === 404 || String(err.message).includes('not found')) {
+        modelWaterfallIdx++;
+        currentModel = SUPPORTED_MODELS_WATERFALL[modelWaterfallIdx % SUPPORTED_MODELS_WATERFALL.length];
+        writeSse(res, 'retry', { message: `Model updated to ${currentModel}. Retrying…` });
+        await new Promise(r => setTimeout(r, 400));
+        continue;
+      }
+
+      const status = Number(err.status) || 500;
+      const retryable = status === 429 || status === 408 || status === 500 || status === 502 || status === 503 || status === 504;
+      if (!retryable || attempt + 1 >= Math.max(3, pool.length)) break;
+      activeKeyPoolIndex = (idx + 1) % pool.length;
+      await new Promise(r => setTimeout(r, Math.min(1000 * (attempt + 1), 2500)));
+    }
+  }
+  writeSse(res, 'error', { message: lastError?.message || 'AI streaming failed.', status: Number(lastError?.status) || 500 });
+  throw lastError || new Error('AI streaming failed.');
+}
+
+export const maxDuration = 300;
+
+export default async function handler(req, res) {
+  let rawPath = req.path || (req.url ? req.url.split('?')[0] : '');
+  rawPath = rawPath.replace(/^\/api\/?/, '').replace(/^\/+/, '');
+  const pathParts = Array.isArray(req.query?.path) ? req.query.path : (rawPath ? rawPath.split('/').filter(Boolean) : []);
+  const path = '/' + pathParts.join('/');
+
+  try {
+    if (req.method === 'GET' && path === '/health') {
+      return json(res, 200, { ok: true, service: 'jyotish-vimarsha', time: new Date().toISOString() });
+    }
+
+    if (req.method === 'GET' && path === '/config') {
+      const s = await getSettings();
+      return json(res, 200, pricing(s));
+    }
+
+    if (req.method === 'POST' && path === '/ai-stream') {
+      const b = await readBody(req);
+      const pool = getGeminiKeyPool(b?.key);
+      if (pool.length === 0) return json(res, 503, { error: 'AI service is not configured on the server.' });
+      if (!b.systemText || !b.userText) return json(res, 400, { error: 'AI request is incomplete.' });
+      res.status(200);
+      res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Connection', 'keep-alive');
+      if (typeof res.flushHeaders === 'function') res.flushHeaders();
+      try {
+        await streamAiCall({ model: b.model, systemText: b.systemText, userText: b.userText, maxTokens: b.maxTokens, purpose: b.purpose || 'general', res });
+      } catch (e) {} finally {
+        try { res.end(); } catch {}
+      }
+      return;
+    }
+
+    if (req.method === 'POST' && path === '/ai') {
+      const b = await readBody(req);
+      const pool = getGeminiKeyPool(b?.key);
+      if (pool.length === 0) return json(res, 503, { error: 'AI service is not configured on the server.' });
+      if (!b.systemText || !b.userText) return json(res, 400, { error: 'AI request is incomplete.' });
+      try {
+        const text = await aiCall(b);
+        return json(res, 200, { text });
+      } catch (e) {
+        const status = Number(e.status) || 500;
+        return json(res, status, { error: e.message || 'AI request failed' });
+      }
+    }
+
+    if (req.method === 'POST' && path === '/create-order') {
+      try {
+        const b = await readBody(req);
+        let plan = b.plan ? clean(b.plan, 20) : 'reveal';
+        let amount = b.amount ? Number(b.amount) : 0;
+        const receipt = b.receipt ? clean(b.receipt, 40) : '';
+
+        if (!amount) {
+          const map = { reveal: ['reveal_price', 'reveal_enabled'], match: ['match_price', 'match_enabled'], question: ['question_price', 'chat_enabled'], dakshina: ['reveal_price', 'reveal_enabled'] };
+          if (!map[plan]) return json(res, 400, { error: 'Invalid plan specified.' });
+          const s = await getSettings();
+          
+          const isFeatureEnabled = s[map[plan]] === '1' || s[map[plan]] === true;
+          if (map[plan] && !isFeatureEnabled) {
+            return json(res, 403, { error: 'This feature is currently unavailable.' });
+          }
+          const cfg = pricing(s);
+          amount = Math.max(100, Math.round((cfg.prices[plan] || 59) * 100));
+        }
+
+        const order = await createOrder(amount, plan, receipt);
+        const sessionToken = crypto.randomBytes(32).toString('hex');
+        const payRecord = {
+          session_token: sessionToken,
+          order_id: order.order_id || order.id,
+          plan,
+          amount: order.amount || amount,
+          status: 'created'
+        };
+        inMemoryPayments.unshift(payRecord);
+        saveJsonFile('payments.json', inMemoryPayments);
+        try { await db.insert('payments', payRecord); } catch {}
+
+        const activeKeyId = getRazorpayKeyId();
+        return json(res, 200, {
+          order_id: order.order_id || order.id,
+          orderId: order.order_id || order.id,
+          amount: order.amount || amount,
+          currency: order.currency || 'INR',
+          receipt: order.receipt || receipt,
+          key_id: activeKeyId,
+          keyId: activeKeyId,
+          sessionToken,
+          isDemo: Boolean(order.isDemo)
+        });
+      } catch (err) {
+        return json(res, err.statusCode || 500, { error: err.message || 'Could not create payment order.' });
+      }
+    }
+
+    if (req.method === 'POST' && path === '/verify-payment') {
+      const b = await readBody(req);
+      const razorpay_order_id = b.razorpay_order_id || b.order_id;
+      const razorpay_payment_id = b.razorpay_payment_id || b.payment_id;
+      const razorpay_signature = b.razorpay_signature || b.signature;
+      const plan = b.plan || 'reveal';
+      const sessionToken = b.sessionToken;
+      const activeSecret = getRazorpayKeySecret();
+
+      if (!razorpay_order_id || !razorpay_payment_id) {
+        return json(res, 400, { success: false, verified: false, error: 'Missing required payment verification fields.' });
+      }
+
+      let row = inMemoryPayments.find(p => p.order_id === razorpay_order_id || (sessionToken && p.session_token === sessionToken));
+      try {
+        const rows = await db.select('payments', `select=*&order_id=eq.${encodeURIComponent(razorpay_order_id)}&limit=1`);
+        if (rows?.[0]) row = rows[0];
+      } catch {}
+
+      if (razorpay_order_id.startsWith('order_mock_') || !activeSecret) {
+        if (row) {
+          row.status = 'verified';
+          row.payment_id = razorpay_payment_id;
+          saveJsonFile('payments.json', inMemoryPayments);
+        }
+        return json(res, 200, { success: true, verified: true, plan, order_id: razorpay_order_id, payment_id: razorpay_payment_id, isDemo: true });
+      }
+
+      if (!razorpay_signature) {
+        return json(res, 400, { success: false, verified: false, error: 'Missing razorpay_signature field.' });
+      }
+
+      const expectedSignature = crypto
+        .createHmac('sha256', activeSecret)
+        .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+        .digest('hex');
+
+      const expectedBuf = Buffer.from(expectedSignature, 'utf8');
+      const receivedBuf = Buffer.from(String(razorpay_signature), 'utf8');
+
+      if (expectedBuf.length !== receivedBuf.length || !crypto.timingSafeEqual(expectedBuf, receivedBuf)) {
+        return json(res, 400, { success: false, verified: false, error: 'Payment signature verification mismatch.' });
+      }
+
+      if (row) {
+        row.status = 'verified';
+        row.payment_id = razorpay_payment_id;
+        row.signature = razorpay_signature;
+        row.verified_at = new Date().toISOString();
+        saveJsonFile('payments.json', inMemoryPayments);
+      }
+      try {
+        await db.update('payments', {
+          payment_id: razorpay_payment_id,
+          signature: razorpay_signature,
+          status: 'verified',
+          verified_at: new Date().toISOString()
+        }, `order_id=eq.${encodeURIComponent(razorpay_order_id)}`);
+      } catch {}
+
+      return json(res, 200, { success: true, verified: true, plan, order_id: razorpay_order_id, payment_id: razorpay_payment_id });
+    }
+
+    if (req.method === 'POST' && path === '/vip/verify') {
+      const b = await readBody(req);
+      const h = hashCode(b.code || '');
+      try {
+        const data = await db.rpc('consume_vip_code', { p_hash: h });
+        if (data?.[0]?.valid) return json(res, 200, { valid: true, access: 'all' });
+      } catch {}
+      const memCode = inMemoryVipCodes.find(x => x.code_hash === h && x.active && x.uses < x.max_uses);
+      if (memCode) {
+        memCode.uses += 1;
+        saveJsonFile('vip_codes.json', inMemoryVipCodes);
+        return json(res, 200, { valid: true, access: 'all' });
+      }
+      return json(res, 403, { valid: false, error: 'Invalid or inactive VIP code.' });
+    }
+
+    if (req.method === 'POST' && path === '/feedback') {
+      const b = await readBody(req);
+      const name = clean(b.name || '');
+      const email = clean(b.email || '');
+      const message = clean(b.message || '', 5000);
+      const phone = clean(b.phone || '', 60);
+
+      if (!name || !email || !message) {
+        return json(res, 400, { error: 'Please provide your name, email, and message.' });
+      }
+      const fb = { id: 'fb_' + Date.now(), name, email, phone, message, created_at: new Date().toISOString() };
+      inMemoryFeedback.unshift(fb);
+      saveJsonFile('feedback.json', inMemoryFeedback);
+      try { await db.insert('feedback', { name: fb.name, email: fb.email, phone: fb.phone, message: fb.message }); } catch {}
+      return json(res, 200, { ok: true, success: true, id: fb.id });
+    }
+
+    if (req.method === 'POST' && path === '/admin/login') {
+      const clientIp = getClientIp(req);
+      const b = await readBody(req);
+      const inputPass = String(b.password ?? '').trim();
+      const adminPass = process.env.ADMIN_PASSWORD || 'JyotishAdmin2026';
+
+      if (inputPass !== adminPass) {
+        logAudit(clientIp, 'LOGIN_FAILED', 'Invalid password attempt', 'FAILED');
+        return json(res, 401, { error: 'Invalid admin credentials.' });
+      }
+
+      const token = makeAdminToken();
+      logAudit(clientIp, 'LOGIN_SUCCESS', 'Admin authenticated', 'SUCCESS');
+      res.setHeader('Set-Cookie', `admin_session=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=14400`);
+      return json(res, 200, { ok: true, token, expiresIn: 14400 });
+    }
+
+    if (path.startsWith('/admin/')) {
+      if (!adminOk(req)) return json(res, 401, { error: 'Unauthorized admin session' });
+      const clientIp = getClientIp(req);
+
+      if (req.method === 'GET' && path === '/admin/gemini-quota') {
+        const pool = getGeminiKeyPool();
+        const primaryModel = normalizeModel(getEnv('GEMINI_PRIMARY_MODEL', 'gemini-3.6-flash'));
+        const fallbackModel = normalizeModel(getEnv('GEMINI_FALLBACK_MODEL', 'gemini-3.5-flash'));
+
+        const keysSummary = pool.map((key, idx) => {
+          const stats = getKeyStats(key, idx);
+          return {
+            index: idx + 1,
+            label: stats.label,
+            masked: stats.masked,
+            isActive: idx === activeKeyPoolIndex,
+            rpmCurrent: (stats.recentTimestamps || []).length,
+            requestsToday: stats.requestsToday || 0,
+            status: stats.exhaustedUntil > Date.now() ? 'COOLING_DOWN' : 'HEALTHY'
+          };
+        });
+
+        return json(res, 200, {
+          totalConfiguredKeys: pool.length,
+          activeKeyIndex: activeKeyPoolIndex + 1,
+          primaryModel,
+          fallbackModel,
+          keys: keysSummary
+        });
+      }
+
+      if (req.method === 'GET' && path === '/admin/reports') return json(res, 200, { reports: inMemoryReports });
+      if (req.method === 'GET' && path === '/admin/feedback') return json(res, 200, { feedback: inMemoryFeedback });
+      if (req.method === 'GET' && path === '/admin/payments') return json(res, 200, { payments: inMemoryPayments });
+      if (req.method === 'GET' && path === '/admin/vip') return json(res, 200, { codes: inMemoryVipCodes });
+
+      if (req.method === 'POST' && path === '/admin/vip') {
+        const b = await readBody(req);
+        const maxUses = Number(b.maxUses) || 1;
+        const assignedTo = clean(b.assignedTo || '', 100);
+        const count = Math.min(100, Math.max(1, Number(b.count) || 1));
+        const codes = [];
+
+        for (let i = 0; i < count; i++) {
+          const plain = b.customCode ? clean(b.customCode, 30).toUpperCase() : 'JV-' + crypto.randomBytes(4).toString('hex').toUpperCase();
+          const item = { id: 'vip_' + Date.now() + '_' + i, code_hash: hashCode(plain), display_code: plain, assigned_to: assignedTo, active: true, uses: 0, max_uses: maxUses, created_at: new Date().toISOString() };
+          inMemoryVipCodes.unshift(item);
+          codes.push(plain);
+        }
+        saveJsonFile('vip_codes.json', inMemoryVipCodes);
+        return json(res, 200, { ok: true, codes });
+      }
+
+      if (req.method === 'GET' && path === '/admin/settings') {
+        const s = await getSettings();
+        return json(res, 200, { settings: s });
+      }
+
+      if (req.method === 'POST' && path === '/admin/settings') {
+        const b = await readBody(req);
+        for (const k of Object.keys(b)) inMemorySettings[k] = String(b[k]);
+        saveJsonFile('settings.json', inMemorySettings);
+        return json(res, 200, { ok: true });
+      }
+    }
+
+    return json(res, 404, { error: 'API route not found' });
+  } catch (e) {
+    return json(res, e.status || 500, { error: e.message || 'Unexpected server error.' });
+  }
+}
