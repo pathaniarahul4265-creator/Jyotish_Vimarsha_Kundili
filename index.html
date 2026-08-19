@@ -11636,16 +11636,17 @@ window.closeCompanyModal = function() {
     try{
       if(location.protocol==='file:')throw new Error('Open this website through the Node server, not as a local HTML file.');
       const base=window.location.origin;
+      const pwdVal = ($('adminPasswordInput')?.value || '').trim();
       const r=await fetch(base+'/api/admin/login',{
         method:'POST',
         headers:{'Content-Type':'application/json','Accept':'application/json'},
         credentials: 'include',
-        body:JSON.stringify({password:$('adminPasswordInput').value}),
+        body:JSON.stringify({password: pwdVal}),
         cache:'no-store'
       });
       const raw=await r.text();
       let j={};
-      try{j=JSON.parse(raw)}catch{throw new Error('The administrator service did not return a valid response.');}
+      try{j=JSON.parse(raw)}catch{throw new Error('The administrator service did not return a valid response. Please ensure server has redeployed on Vercel.');}
       if(!r.ok)throw new Error(j.error||`Administration login failed (${r.status}).`);
       if(!j.token)throw new Error('The server did not return an admin session.');
       adminToken=j.token;

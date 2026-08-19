@@ -37,19 +37,34 @@ function saveJsonFile(filename, data) {
   }
 }
 
-const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID || 'rzp_test_TPZiHx64oNNQzA';
-const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || '4fm5V6mqZr2XORsOag4swdLf';
+function getEnv(name, fallback = '') {
+  const val = process.env[name];
+  if (val === undefined || val === null || val === '') return fallback;
+  return String(val).trim().replace(/^["']|["']$/g, '');
+}
 
-let razorpayInstance = null;
+function getRazorpayKeyId() {
+  return getEnv('RAZORPAY_KEY_ID', 'rzp_test_TPZiHx64oNNQzA');
+}
+
+function getRazorpayKeySecret() {
+  return getEnv('RAZORPAY_KEY_SECRET', '4fm5V6mqZr2XORsOag4swdLf');
+}
+
+function getRazorpayWebhookSecret() {
+  return getEnv('RAZORPAY_WEBHOOK_SECRET', '');
+}
+
 function getRazorpay() {
-  if (!RAZORPAY_KEY_ID || !RAZORPAY_KEY_SECRET) return null;
-  if (!razorpayInstance) {
-    razorpayInstance = new Razorpay({
-      key_id: RAZORPAY_KEY_ID,
-      key_secret: RAZORPAY_KEY_SECRET
-    });
+  const key_id = getRazorpayKeyId();
+  const key_secret = getRazorpayKeySecret();
+  if (!key_id || !key_secret) return null;
+  try {
+    return new Razorpay({ key_id, key_secret });
+  } catch (err) {
+    console.error('[Razorpay Init Error]', err);
+    return null;
   }
-  return razorpayInstance;
 }
 
 function json(res, status, body) {
@@ -72,7 +87,11 @@ function rawBody(req) {
 }
 function hashCode(code){ return crypto.createHash('sha256').update(String(code).trim().toUpperCase()).digest('hex'); }
 function b64(v){ return Buffer.from(v).toString('base64url'); }
-function signSession(payload){ return crypto.createHmac('sha256', process.env.ADMIN_SESSION_SECRET || 'jyotish-vimarsha-secret-key-2026').update(payload).digest('base64url'); }
+function signSession(payload){
+  const rawSecret = process.env.ADMIN_SESSION_SECRET || 'jyotish-vimarsha-secret-key-2026';
+  const cleanSecret = String(rawSecret).trim().replace(/^["']|["']$/g, '');
+  return crypto.createHmac('sha256', cleanSecret || 'jyotish-vimarsha-secret-key-2026').update(payload).digest('base64url');
+}
 function makeAdminToken(){ const payload=b64(JSON.stringify({exp:Date.now()+4*60*60*1000,iat:Date.now()})); return `${payload}.${signSession(payload)}`; }
 
 function getClientIp(req) {
@@ -179,19 +198,20 @@ function getGeminiKeyPool(extraKey) {
   const pool = [];
   const addKey = (k) => {
     if (!k) return;
-    const str = String(k).trim();
+    const str = String(k).trim().replace(/^["']|["']$/g, '');
     if (str && !pool.includes(str)) pool.push(str);
   };
   addKey(extraKey);
-  addKey(process.env.GEMINI_API_KEY);
-  addKey(process.env.API_KEY);
-  addKey(process.env.GOOGLE_API_KEY);
-  addKey(process.env.GOOGLE_GENAI_API_KEY);
-  addKey(process.env.GEMINI_API_KEY_1);
-  addKey(process.env.GEMINI_API_KEY_2);
-  addKey(process.env.GEMINI_API_KEY_3);
-  if (process.env.GEMINI_API_KEYS) {
-    process.env.GEMINI_API_KEYS.split(',').forEach(addKey);
+  addKey(getEnv('GEMINI_API_KEY'));
+  addKey(getEnv('GEMINI_API_KEY_1'));
+  addKey(getEnv('GEMINI_API_KEY_2'));
+  addKey(getEnv('GEMINI_API_KEY_3'));
+  addKey(getEnv('API_KEY'));
+  addKey(getEnv('GOOGLE_API_KEY'));
+  addKey(getEnv('GOOGLE_GENAI_API_KEY'));
+  const multiKeys = getEnv('GEMINI_API_KEYS');
+  if (multiKeys) {
+    multiKeys.split(',').forEach(addKey);
   }
   return pool;
 }
@@ -340,8 +360,8 @@ async function aiCall({model, systemText, userText, maxTokens}){
     throw err;
   }
 
-  const primaryModel = normalizeModel(process.env.GEMINI_PRIMARY_MODEL || model || 'gemini-2.5-flash');
-  const fallbackModel = normalizeModel(process.env.GEMINI_FALLBACK_MODEL || 'gemini-2.5-flash');
+  const primaryModel = normalizeModel(getEnv('GEMINI_PRIMARY_MODEL', model || 'gemini-2.5-flash'));
+  const fallbackModel = normalizeModel(getEnv('GEMINI_FALLBACK_MODEL', 'gemini-2.5-flash'));
   const promptChars = (systemText?.length || 0) + (userText?.length || 0);
 
   // Attempt generation with automatic multi-key rotation and model fallback
@@ -692,6 +712,7 @@ export default async function handler(req,res){
         saveJsonFile('payments.json', inMemoryPayments);
         try { await db.insert('payments', payRecord); } catch {}
 
+        const activeKeyId = getRazorpayKeyId();
         return json(res, 200, {
           order_id: order.order_id || order.id,
           orderId: order.order_id || order.id,
@@ -699,8 +720,8 @@ export default async function handler(req,res){
           amount: order.amount || amount,
           currency: order.currency || 'INR',
           receipt: order.receipt || receipt,
-          key_id: RAZORPAY_KEY_ID,
-          keyId: RAZORPAY_KEY_ID,
+          key_id: activeKeyId,
+          keyId: activeKeyId,
           sessionToken,
           isDemo: Boolean(order.isDemo)
         });
@@ -717,6 +738,7 @@ export default async function handler(req,res){
       const razorpay_signature = b.razorpay_signature || b.signature;
       const plan = b.plan || 'reveal';
       const sessionToken = b.sessionToken;
+      const activeSecret = getRazorpayKeySecret();
 
       if (!razorpay_order_id || !razorpay_payment_id) {
         return json(res, 400, {
@@ -733,7 +755,7 @@ export default async function handler(req,res){
       } catch {}
 
       // If demo order or no secret configured
-      if (razorpay_order_id.startsWith('order_demo_') || !RAZORPAY_KEY_SECRET) {
+      if (razorpay_order_id.startsWith('order_demo_') || !activeSecret) {
         if (row) {
           row.status = 'verified';
           row.payment_id = razorpay_payment_id;
@@ -767,7 +789,7 @@ export default async function handler(req,res){
 
       // Algorithm: HMAC-SHA256(order_id + "|" + payment_id, KEY_SECRET)
       const expectedSignature = crypto
-        .createHmac('sha256', RAZORPAY_KEY_SECRET)
+        .createHmac('sha256', activeSecret)
         .update(`${razorpay_order_id}|${razorpay_payment_id}`)
         .digest('hex');
 
@@ -809,8 +831,12 @@ export default async function handler(req,res){
     }
 
     if(req.method==='POST'&&path==='/razorpay/webhook'){
-      const raw=await rawBody(req), sig=req.headers['x-razorpay-signature']; if(!process.env.RAZORPAY_WEBHOOK_SECRET||!sig)return json(res,400,{error:'Webhook not configured.'});
-      const expected=crypto.createHmac('sha256',process.env.RAZORPAY_WEBHOOK_SECRET).update(raw).digest('hex'); const a=Buffer.from(expected,'hex'),bb=Buffer.from(String(sig),'hex'); if(a.length!==bb.length||!crypto.timingSafeEqual(a,bb))return json(res,400,{error:'Invalid webhook signature.'});
+      const webhookSecret = getRazorpayWebhookSecret();
+      const raw=await rawBody(req), sig=req.headers['x-razorpay-signature']; 
+      if(!webhookSecret || !sig) return json(res,400,{error:'Webhook not configured.'});
+      const expected=crypto.createHmac('sha256', webhookSecret).update(raw).digest('hex'); 
+      const a=Buffer.from(expected,'hex'),bb=Buffer.from(String(sig),'hex'); 
+      if(a.length!==bb.length||!crypto.timingSafeEqual(a,bb))return json(res,400,{error:'Invalid webhook signature.'});
       const payload=JSON.parse(raw), event=payload.event, orderId=payload?.payload?.payment?.entity?.order_id||payload?.payload?.order?.entity?.id, paymentId=payload?.payload?.payment?.entity?.id; const eventKey=`${event}:${paymentId||orderId||crypto.createHash('sha256').update(raw).digest('hex')}`;
       try{await db.insert('webhook_events',{event_key:eventKey,event_name:event});}catch(e){if(e.status!==409)throw e;}
       if(orderId){const patch={webhook_event:event,webhook_at:new Date().toISOString()};if(paymentId)patch.payment_id=paymentId;if(event==='payment.captured'||event==='order.paid')patch.status='captured';if(event==='payment.failed')patch.status='failed';await db.update('payments',patch,`order_id=eq.${encodeURIComponent(orderId)}`);}
@@ -878,28 +904,48 @@ export default async function handler(req,res){
         attemptData.resetAt = now + 15 * 60 * 1000;
       }
 
-      if (attemptData.count >= 5) {
+      if (attemptData.count >= 10) {
         const waitMins = Math.ceil((attemptData.resetAt - now) / 60000);
-        logAudit(clientIp, 'LOGIN_BLOCKED', `Rate limit exceeded (5 failed attempts). Blocked for ${waitMins} min.`, 'BLOCKED');
+        logAudit(clientIp, 'LOGIN_BLOCKED', `Rate limit exceeded (10 failed attempts). Blocked for ${waitMins} min.`, 'BLOCKED');
         return json(res, 429, { error: `Too many failed login attempts. Security lock active. Please try again in ${waitMins} minute(s).` });
       }
 
       const b = await readBody(req);
-      const expectedPass = process.env.ADMIN_PASSWORD || 'admin123';
+      const inputPass = String(b.password ?? '');
+      const inputTrimmed = inputPass.trim();
+      const inputUnquoted = inputTrimmed.replace(/^["']|["']$/g, '');
+
+      const envPassRaw = process.env.ADMIN_PASSWORD || process.env.ADMIN_PASS || process.env.ADMIN_SECRET || '';
+      const envPassTrimmed = envPassRaw.trim();
+      const envPassUnquoted = envPassTrimmed.replace(/^["']|["']$/g, '');
+
+      const allowedPasswords = new Set();
+      if (envPassRaw) allowedPasswords.add(envPassRaw);
+      if (envPassTrimmed) allowedPasswords.add(envPassTrimmed);
+      if (envPassUnquoted) allowedPasswords.add(envPassUnquoted);
+      // Fallback if environment variable is unset or empty
+      if (!envPassRaw || allowedPasswords.size === 0) {
+        allowedPasswords.add('admin123');
+      }
+
+      const isMatch = allowedPasswords.has(inputPass) || 
+                      allowedPasswords.has(inputTrimmed) || 
+                      allowedPasswords.has(inputUnquoted);
       
-      if (String(b.password || '') !== expectedPass) {
+      if (!isMatch) {
         attemptData.count += 1;
         loginAttempts.set(clientIp, attemptData);
-        logAudit(clientIp, 'LOGIN_FAILED', `Invalid password attempt (${attemptData.count}/5)`, 'FAILED');
-        return json(res, 401, { error: `Invalid admin password. ${5 - attemptData.count} attempt(s) remaining before lock.` });
+        logAudit(clientIp, 'LOGIN_FAILED', `Invalid password attempt (${attemptData.count}/10)`, 'FAILED');
+        const remaining = Math.max(0, 10 - attemptData.count);
+        return json(res, 401, { error: `Invalid admin password.${remaining > 0 ? ` ${remaining} attempt(s) remaining.` : ' Locked for 15 minutes.'}` });
       }
 
       loginAttempts.delete(clientIp);
       const token = makeAdminToken();
       logAudit(clientIp, 'LOGIN_SUCCESS', 'Admin authenticated successfully', 'SUCCESS');
       
-      res.setHeader('Set-Cookie', `admin_session=${token}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=14400`);
-      return json(res, 200, { token, expiresIn: 14400 });
+      res.setHeader('Set-Cookie', `admin_session=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=14400`);
+      return json(res, 200, { ok: true, token, expiresIn: 14400 });
     }
     if(path.startsWith('/admin/')){
       if(!adminOk(req)) return json(res, 401, { error: 'Unauthorized session' });

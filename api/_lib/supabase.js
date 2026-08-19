@@ -1,12 +1,22 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-const base = (process.env.SUPABASE_URL || '').replace(/\/$/, '');
-const key = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
-function headers(extra={}) { return { apikey:key, Authorization:`Bearer ${key}`, 'Content-Type':'application/json', ...extra }; }
+function getSupabaseConfig() {
+  const rawBase = process.env.SUPABASE_URL || '';
+  const rawKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY || process.env.SUPABASE_ANON_KEY || '';
+  const base = String(rawBase).trim().replace(/^["']|["']$/g, '').replace(/\/+$/, '');
+  const key = String(rawKey).trim().replace(/^["']|["']$/g, '');
+  return { base, key };
+}
+
+function headers(key, extra={}) {
+  return { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json', ...extra };
+}
+
 async function request(path, opts={}) {
+  const { base, key } = getSupabaseConfig();
   if(!base || !key) throw new Error('Supabase is not configured on the server.');
-  const r=await fetch(`${base}/rest/v1/${path}`, { ...opts, headers:headers(opts.headers||{}) });
+  const r=await fetch(`${base}/rest/v1/${path}`, { ...opts, headers: headers(key, opts.headers||{}) });
   const text=await r.text(); let data=null; try{data=text?JSON.parse(text):null;}catch{}
   if(!r.ok){const e=new Error(data?.message||data?.error_description||`Supabase request failed (${r.status})`);e.status=r.status;throw e;}
   return data;
@@ -70,8 +80,11 @@ export function pricing(settings){
   const isOfferOn = settings.offer_enabled === true || settings.offer_enabled === '1';
   const discount = isOfferOn ? Math.max(0, Math.min(90, Number(settings.offer_percent) || 0)) : 0; 
   const p = k => Math.max(1, Math.round(Number(settings[k] || 0) * (1 - discount / 100))); 
+  const rawRzpKey = process.env.RAZORPAY_KEY_ID || 'rzp_test_TPZiHx64oNNQzA';
+  const cleanRzpKey = String(rawRzpKey).trim().replace(/^["']|["']$/g, '');
   return {
     currency: 'INR',
+    razorpay_key_id: cleanRzpKey,
     prices: {
       reveal: p('reveal_price'),
       match: p('match_price'),
