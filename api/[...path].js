@@ -694,56 +694,191 @@ export default async function handler(req,res){
         if(clean.includes('2.5-pro')||clean.includes('pro')) return 'gemini-2.5-pro';
         return clean||'gemini-3.6-flash';
       }
+
       const model=streamModel(getEnv('GEMINI_PRIMARY_MODEL')||b.model);
       const maxTokens=Math.min(4200,Math.max(1600,Number(b.maxTokens)||3400));
       let lastErr=null;
+
+      // Important: report chapters can legitimately take more than one minute.
+      // Keep the upstream request alive long enough for a full streamed chapter.
+      const STREAM_TIMEOUT_MS = Math.min(
+        Math.max(Number(getEnv('GEMINI_STREAM_TIMEOUT_MS')) || 180000, 60000),
+        300000
+      );
+
       for(let attempt=0;attempt<pool.length;attempt++){
-        const keyIdx=selectNextAvailableKeyIndex(pool); const key=pool[keyIdx];
+        const keyIdx=selectNextAvailableKeyIndex(pool);
+        const key=pool[keyIdx];
         recordKeyRequest(key,keyIdx,(b.systemText.length||0)+(b.userText.length||0));
-        const controller=new AbortController(); const timeout=setTimeout(()=>controller.abort(),55000);
+
+        const controller=new AbortController();
+        const timeout=setTimeout(()=>controller.abort(),STREAM_TIMEOUT_MS);
+        let headersSent=false;
+        let totalChars=0;
+        let sawMaxTokens=false;
+
+        const sendSse=(payload)=>{
+          if(!headersSent) return;
+          try{ res.write(`data: ${JSON.stringify(payload)}\n\n`); }catch{}
+        };
+
         try{
-          const upstream=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:streamGenerateContent?alt=sse`,{
-            method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},signal:controller.signal,
-            body:JSON.stringify({systemInstruction:{parts:[{text:b.systemText}]},contents:[{role:'user',parts:[{text:b.userText}]}],generationConfig:{maxOutputTokens:maxTokens,temperature:b.purpose==='report'?0.82:0.7}})
-          });
+          const upstream=await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:streamGenerateContent?alt=sse`,
+            {
+              method:'POST',
+              headers:{'Content-Type':'application/json','x-goog-api-key':key},
+              signal:controller.signal,
+              body:JSON.stringify({
+                systemInstruction:{parts:[{text:b.systemText}]},
+                contents:[{role:'user',parts:[{text:b.userText}]}],
+                generationConfig:{
+                  maxOutputTokens:maxTokens,
+                  temperature:b.purpose==='report'?0.82:0.7
+                }
+              })
+            }
+          );
+
           if(!upstream.ok){
-            const body=await upstream.json().catch(()=>({})); const msg=body?.error?.message||`Gemini API returned HTTP ${upstream.status}`;
-            recordKeyFailure(key,keyIdx,upstream.status,msg); activeKeyPoolIndex=(keyIdx+1)%pool.length; lastErr=new Error(msg); lastErr.status=upstream.status;
-            if([429,500,502,503,504].includes(upstream.status)){await new Promise(r=>setTimeout(r,Math.min(1200*(attempt+1),2500)));continue;}
+            const body=await upstream.json().catch(()=>({}));
+            const msg=body?.error?.message||`Gemini API returned HTTP ${upstream.status}`;
+            recordKeyFailure(key,keyIdx,upstream.status,msg);
+            activeKeyPoolIndex=(keyIdx+1)%pool.length;
+            lastErr=new Error(msg);
+            lastErr.status=upstream.status;
+            if([429,500,502,503,504].includes(upstream.status)){
+              await new Promise(r=>setTimeout(r,Math.min(1200*(attempt+1),2500)));
+            }
             continue;
           }
+
           clearTimeout(timeout);
-          res.writeHead(200,{'Content-Type':'text/event-stream; charset=utf-8','Cache-Control':'no-cache, no-transform','Connection':'keep-alive','X-Accel-Buffering':'no'});
-          let buffer=''; let totalChars=0; const reader=upstream.body.getReader(); const decoder=new TextDecoder();
-          while(true){
-            const {value,done}=await reader.read(); if(done) break;
-            buffer+=decoder.decode(value,{stream:true});
-            const events=buffer.split(/\n\n/); buffer=events.pop()||'';
-            for(const evt of events){
+
+          res.writeHead(200,{
+            'Content-Type':'text/event-stream; charset=utf-8',
+            'Cache-Control':'no-cache, no-transform',
+            'Connection':'keep-alive',
+            'X-Accel-Buffering':'no'
+          });
+          headersSent=true;
+
+          // Flush headers immediately so the browser knows streaming has begun.
+          try{ if(typeof res.flushHeaders==='function') res.flushHeaders(); }catch{}
+
+          let buffer='';
+          const reader=upstream.body.getReader();
+          const decoder=new TextDecoder();
+
+          // Gemini's SSE stream is normally CRLF-delimited. Normalize line endings
+          // before parsing. The previous parser only split on \\n\\n, which could
+          // leave the whole stream in one buffer and expose only the first event.
+          const processSseText=async(chunk)=>{
+            buffer += chunk.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
+
+            let boundary;
+            while((boundary=buffer.indexOf('\n\n')) !== -1){
+              const evt=buffer.slice(0,boundary);
+              buffer=buffer.slice(boundary+2);
+
               for(const line of evt.split('\n')){
                 if(!line.startsWith('data:')) continue;
-                const payload=line.slice(5).trim(); if(!payload||payload==='[DONE]') continue;
+                const payload=line.slice(5).trim();
+                if(!payload || payload==='[DONE]') continue;
+
                 try{
-                  const j=JSON.parse(payload); const text=(j?.candidates?.[0]?.content?.parts||[]).map(x=>x.text||'').join('');
-                  if(text){ totalChars+=text.length; res.write(`data: ${JSON.stringify({text})}\n\n`); }
+                  const j=JSON.parse(payload);
+                  const parts=j?.candidates?.[0]?.content?.parts || [];
+                  const text=parts.map(x=>x?.text||'').join('');
+
+                  if(text){
+                    totalChars += text.length;
+                    sendSse({text});
+                  }
+
                   const finish=j?.candidates?.[0]?.finishReason;
-                  if(finish==='MAX_TOKENS') res.write(`data: ${JSON.stringify({warning:'MAX_TOKENS'})}\n\n`);
-                }catch{}
+                  if(finish==='MAX_TOKENS'){
+                    sawMaxTokens=true;
+                    sendSse({warning:'MAX_TOKENS'});
+                  }
+                }catch(parseErr){
+                  // Ignore malformed individual SSE events; keep the stream alive.
+                }
               }
             }
+          };
+
+          while(true){
+            const {value,done}=await reader.read();
+            if(done) break;
+            await processSseText(decoder.decode(value,{stream:true}));
           }
-          if(buffer.trim()){
-            const line=buffer.split('\n').find(x=>x.startsWith('data:'));
-            if(line){try{const j=JSON.parse(line.slice(5).trim());const text=(j?.candidates?.[0]?.content?.parts||[]).map(x=>x.text||'').join('');if(text){totalChars+=text.length;res.write(`data: ${JSON.stringify({text})}\n\n`);}}catch{}}
+
+          // Flush any final UTF-8 bytes and any final SSE event without \\n\\n.
+          await processSseText(decoder.decode());
+          const tail=buffer.trim();
+          if(tail){
+            for(const line of tail.split('\n')){
+              if(!line.startsWith('data:')) continue;
+              const payload=line.slice(5).trim();
+              if(!payload || payload==='[DONE]') continue;
+              try{
+                const j=JSON.parse(payload);
+                const parts=j?.candidates?.[0]?.content?.parts || [];
+                const text=parts.map(x=>x?.text||'').join('');
+                if(text){
+                  totalChars += text.length;
+                  sendSse({text});
+                }
+                if(j?.candidates?.[0]?.finishReason==='MAX_TOKENS'){
+                  sawMaxTokens=true;
+                  sendSse({warning:'MAX_TOKENS'});
+                }
+              }catch{}
+            }
           }
-          if(totalChars<200){ res.write(`data: ${JSON.stringify({error:'The AI response was too short or incomplete.'})}\n\n`); }
-          else { recordKeySuccess(key,keyIdx,totalChars); res.write('data: [DONE]\n\n'); }
-          res.end(); return;
+
+          if(sawMaxTokens){
+            sendSse({error:'The chapter reached the AI output limit before completion.'});
+            recordKeyFailure(key,keyIdx,206,'MAX_TOKENS / incomplete streamed chapter');
+            activeKeyPoolIndex=(keyIdx+1)%pool.length;
+            res.end();
+            return;
+          }
+
+          if(totalChars<200){
+            sendSse({error:'The AI response was too short or incomplete.'});
+            recordKeyFailure(key,keyIdx,502,'Too-short streamed response');
+            activeKeyPoolIndex=(keyIdx+1)%pool.length;
+            res.end();
+            return;
+          }
+
+          recordKeySuccess(key,keyIdx,totalChars);
+          sendSse({done:true});
+          res.write('data: [DONE]\n\n');
+          res.end();
+          return;
+
         }catch(err){
-          clearTimeout(timeout); const status=err.name==='AbortError'?504:(err.status||500); recordKeyFailure(key,keyIdx,status,err.message||'stream error'); activeKeyPoolIndex=(keyIdx+1)%pool.length; lastErr=err;
+          clearTimeout(timeout);
+          const status=err.name==='AbortError'?504:(err.status||500);
+          recordKeyFailure(key,keyIdx,status,err.message||'stream error');
+          activeKeyPoolIndex=(keyIdx+1)%pool.length;
+          lastErr=err;
+
+          // If the response has already started, do not attempt to send JSON
+          // headers. Tell the browser through SSE and close cleanly.
+          if(headersSent){
+            sendSse({error: status===504 ? 'Streaming timed out before the chapter completed.' : (err.message||'Streaming AI generation failed.')});
+            try{ res.end(); }catch{}
+            return;
+          }
+
           if(attempt<pool.length-1) continue;
         }
       }
+
       return json(res,Number(lastErr?.status)||500,{error:lastErr?.message||'Streaming AI generation failed.'});
     }
 
