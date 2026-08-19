@@ -1,10 +1,9 @@
 /**
- * Standalone Local/VPS Server for Jyotish Vimarsha
+ * Master Express Server & Entrypoint for Jyotish Vimarsha
+ * Compatible with Vercel Serverless Builds and Local Development
  */
 
-import http from 'node:http';
-import url from 'node:url';
-import fs from 'node:fs';
+import express from 'express';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import handler from './api/[...path].js';
@@ -12,57 +11,52 @@ import handler from './api/[...path].js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const server = http.createServer(async (req, res) => {
+const app = express();
+
+// Parse JSON and form payloads
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// CORS headers
+app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-
   if (req.method === 'OPTIONS') {
-    res.writeHead(204);
-    res.end();
-    return;
+    return res.sendStatus(204);
   }
+  next();
+});
 
-  const parsedUrl = url.parse(req.url, true);
-  const pathname = parsedUrl.pathname;
+// Serve static assets from public/ and root directory
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(__dirname));
 
-  // Route /api/* requests to the master handler
-  if (pathname.startsWith('/api/')) {
-    req.path = pathname;
-    req.query = parsedUrl.query;
-    res.status = (code) => { res.statusCode = code; return res; };
-    res.json = (data) => {
-      res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify(data));
-    };
-    return handler(req, res);
+// Mount serverless API handler
+app.all('/api/*', async (req, res) => {
+  try {
+    await handler(req, res);
+  } catch (err) {
+    console.error('[API Handler Error]', err);
+    if (!res.headersSent) {
+      res.status(500).json({ error: err.message || 'Internal Server Error' });
+    }
   }
+});
 
-  // Static File Server
-  let filePath = path.join(__dirname, pathname === '/' ? 'index.html' : pathname);
-  if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
-    const ext = path.extname(filePath);
-    const mimeTypes = {
-      '.html': 'text/html',
-      '.js': 'application/javascript',
-      '.css': 'text/css',
-      '.json': 'application/json',
-      '.svg': 'image/svg+xml',
-      '.png': 'image/png'
-    };
-    res.writeHead(200, { 'Content-Type': mimeTypes[ext] || 'text/plain' });
-    fs.createReadStream(filePath).pipe(res);
-    return;
-  }
-
-  res.writeHead(404, { 'Content-Type': 'application/json' });
-  res.end(JSON.stringify({ error: 'Not Found' }));
+// Root frontend routing fallback
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-  console.log(`====================================================`);
-  console.log(`  JYOTISH VIMARSHA SERVER ACTIVE ON PORT ${PORT}`);
-  console.log(`  http://localhost:${PORT}`);
-  console.log(`====================================================`);
-});
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`====================================================`);
+    console.log(`  JYOTISH VIMARSHA SERVER RUNNING ON PORT ${PORT}`);
+    console.log(`  http://localhost:${PORT}`);
+    console.log(`====================================================`);
+  });
+}
+
+export default app;
