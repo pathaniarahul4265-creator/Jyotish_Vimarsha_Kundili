@@ -9318,41 +9318,130 @@ async function callGemini(systemText, userText, maxTokens = 3200, purpose='gener
 async function streamGemini(systemText, userText, maxTokens = 3200, purpose='general', sectionId=''){
   let res;
   try{
-    res = await fetch('/api/ai-stream', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:activeModel,systemText,userText,maxTokens,purpose})});
-  }catch(e){ const err=new Error('The secure astrology service could not be reached.'); err.status=0; throw err; }
+    res = await fetch('/api/ai-stream', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:activeModel,systemText,userText,maxTokens,purpose})
+    });
+  }catch(e){
+    const err=new Error('The secure astrology service could not be reached.');
+    err.status=0;
+    throw err;
+  }
+
   if(!res.ok){
     let msg='AI generation failed.';
     try{ const j=await res.json(); msg=j.error||msg; }catch{}
-    const err=new Error(msg); err.status=res.status; throw err;
+    const err=new Error(msg);
+    err.status=res.status;
+    throw err;
   }
+
   if(!res.body) throw new Error('Streaming is not supported by the current connection.');
-  const reader=res.body.getReader(); const decoder=new TextDecoder(); let buffer=''; let full=''; let truncated=false;
+
+  const reader=res.body.getReader();
+  const decoder=new TextDecoder();
+  let buffer='';
+  let full='';
+  let truncated=false;
+
   const contentDiv=document.getElementById('content-'+sectionId);
   const loading=document.getElementById('loading-'+sectionId);
+
   if(contentDiv){
     contentDiv.innerHTML='<div class="report-streaming-text" aria-live="polite"></div>';
   }
+
   const target=contentDiv?.querySelector('.report-streaming-text');
+
+  // Tell the clickable live-writing panel which chapter is active.
+  try{
+    window.dispatchEvent(new CustomEvent('jyotish:chapter-start',{
+      detail:{chapter:(activeSections.findIndex(s=>s.id===sectionId)+1),meta:'Text is being written live…'}
+    }));
+  }catch{}
+
+  const processEvent=(payload)=>{
+    if(!payload || payload==='[DONE]') return;
+
+    let obj;
+    try{ obj=JSON.parse(payload); }catch{ return; }
+
+    if(obj.warning==='MAX_TOKENS') truncated=true;
+    if(obj.error) throw new Error(obj.error);
+
+    const chunk=String(obj.text||'');
+    if(!chunk) return;
+
+    full += chunk;
+
+    // Main chapter content: visible immediately.
+    if(target){
+      target.textContent=full;
+      target.scrollIntoView({block:'nearest'});
+    }
+
+    // Clickable live-writing tile/panel: same live stream.
+    try{
+      window.dispatchEvent(new CustomEvent('jyotish:chapter-chunk',{
+        detail:{
+          chapter:(activeSections.findIndex(s=>s.id===sectionId)+1),
+          text:chunk,
+          meta:`${Math.round(full.length/5)}+ characters written`
+        }
+      }));
+    }catch{}
+
+    updateGenerationStatus(sectionId, full.length);
+  };
+
   while(true){
-    const {value,done}=await reader.read(); if(done) break;
-    buffer += decoder.decode(value,{stream:true});
-    const events=buffer.split(/\n\n/); buffer=events.pop()||'';
-    for(const evt of events){
-      const line=evt.split('\n').find(x=>x.startsWith('data:'));
-      if(!line) continue;
-      const payload=line.slice(5).trim(); if(!payload) continue;
-      if(payload==='[DONE]') continue;
-      let obj; try{obj=JSON.parse(payload);}catch{continue;}
-      if(obj.warning==='MAX_TOKENS') truncated=true;
-      if(obj.error) throw new Error(obj.error);
-      const chunk=String(obj.text||''); if(!chunk) continue;
-      full += chunk;
-      if(target){ target.textContent=full; target.scrollIntoView({block:'nearest'}); }
-      updateGenerationStatus(sectionId, full.length);
+    const {value,done}=await reader.read();
+    if(done) break;
+
+    // Normalize CRLF because SSE framing can arrive with Windows-style line endings.
+    buffer += decoder.decode(value,{stream:true}).replace(/\r\n/g,'\n').replace(/\r/g,'\n');
+
+    let boundary;
+    while((boundary=buffer.indexOf('\n\n')) !== -1){
+      const evt=buffer.slice(0,boundary);
+      buffer=buffer.slice(boundary+2);
+
+      for(const line of evt.split('\n')){
+        if(!line.startsWith('data:')) continue;
+        processEvent(line.slice(5).trim());
+      }
     }
   }
+
+  // Flush final decoder bytes and any final SSE event.
+  buffer += decoder.decode().replace(/\r\n/g,'\n').replace(/\r/g,'\n');
+  const tail=buffer.trim();
+  if(tail){
+    for(const line of tail.split('\n')){
+      if(line.startsWith('data:')) processEvent(line.slice(5).trim());
+    }
+  }
+
   if(loading) loading.remove();
-  if(truncated) throw new Error('The chapter reached the AI output limit before completion. It was not marked complete.');
+
+  if(truncated){
+    throw new Error('The chapter reached the AI output limit before completion. It was not marked complete.');
+  }
+
+  if(full.trim().length < 300){
+    throw new Error('The astrology service returned an incomplete reading.');
+  }
+
+  try{
+    window.dispatchEvent(new CustomEvent('jyotish:chapter-complete',{
+      detail:{
+        chapter:(activeSections.findIndex(s=>s.id===sectionId)+1),
+        meta:`${Math.round(full.length/5)}+ characters generated`
+      }
+    }));
+  }catch{}
+
   return full;
 }
 
@@ -10184,7 +10273,9 @@ async function generateSection(index, reportBody, stepListEl, progressErrorEl){
 
   if(!block){
     block = document.createElement('div');
-    block.className = 'report-section-block';
+    block.className = 'report-section-block report-chapter-tile';
+    block.dataset.chapterTile = 'true';
+    block.dataset.chapter = String(index + 1);
     block.id = 'section-block-' + section.id;
     
     const header = document.createElement('div');
