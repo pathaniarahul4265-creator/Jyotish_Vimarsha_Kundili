@@ -287,7 +287,7 @@ body h1, body h2, body h3, body h4, body label, body button, .subtitle, .intro-e
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 16px;}
   .full{grid-column:1/-1;}
   @media (max-width:680px){ .how-grid{grid-template-columns:1fr;} .intro-card{padding:25px 20px;} }
-  @media (max-width:560px){ .grid{grid-template-columns:1fr;} h1{font-size:30px;} .card{padding:22px 18px;} .picker-popup{left:50%;transform:translateX(-50%);} }
+  @media (max-width:560px){ .grid{grid-template-columns:1fr;} h1{font-size:30px;} .card{padding:22px 18px;} .picker-popup{left:0 !important;right:auto !important;transform:none !important;width:min(290px,calc(100vw - 32px)) !important;max-width:calc(100vw - 32px) !important;box-sizing:border-box !important;padding:12px 10px !important;} }
   input,select,textarea{width:100%;background:#160f22;border:1px solid var(--line);color:var(--ivory);padding:11px 13px;border-radius:7px;font-family:'Cormorant Garamond',serif;font-size:16px;margin-bottom:16px;}
   input::placeholder{color:#6a5c80;}
   input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold);}
@@ -545,7 +545,7 @@ footer{text-align:center;color:var(--muted);font-size:13px;margin-top:44px;lette
   .picker-display:hover, .picker-display:focus{outline:none;border-color:var(--gold);}
   .picker-display .ph{color:#6a5c80;}
   .picker-display .picker-icon{color:var(--marigold);font-size:15px;flex-shrink:0;}
-  .picker-popup{display:none;position:absolute;top:calc(100% - 10px);left:0;z-index:1000;background:#1b1228;border:1px solid var(--line);border-radius:10px;padding:16px;box-shadow:0 14px 34px rgba(0,0,0,0.5);width:290px;}
+  .picker-popup{display:none;position:absolute;top:calc(100% - 10px);left:0;z-index:1000;background:#1b1228;border:1px solid var(--line);border-radius:10px;padding:16px;box-shadow:0 14px 34px rgba(0,0,0,0.5);width:290px;max-width:calc(100vw - 32px);box-sizing:border-box;}
   .picker-popup.open{display:block;}
 
   .cal-head{display:flex;align-items:center;gap:6px;margin-bottom:12px;}
@@ -2223,17 +2223,17 @@ body{font-family:var(--ui-font),Manrope,Arial,sans-serif;padding-bottom:72px;}
 
 <style>
 /* =========================================================
-   1. FULL TEXT JUSTIFICATION ACROSS ENTIRE APP
+   1. REFINED TYPOGRAPHY & NATURAL ALIGNMENT
    ========================================================= */
-body, p, span, small, li, td, th, label, div, section, article,
-.intro-lead, .secondary-lead, .report, .report p, .guide-card p, .how-step span, .disclaimer, .msg, .current-sky-card p,
-.astrology-pillars small, .cosmic-facts small, .card p, .at-a-glance p, .chat-msg p, .faq-answer, .modal-body p,
-.stored-report, .ask-index-copy span, .rashi-detail small, .recovery p, .intro-note, .empty-hint, .summary-text,
-.koota-card, .chart-analysis, .astrology-intro p, .how-step p, .access-card p, .admin-notice, .report-card,
-.module-copy, .module-copy p, .glance-item span, .glance-synthesis, .rashi-detail, .astrology-intro, .intro-card,
-.chart-caption, .placement-table td, .glossary-grid small {
-  text-align: justify !important;
-  text-justify: inter-word !important;
+body {
+  text-align: left;
+}
+
+.report-paragraph, .disclaimer, .modal-box p, .guide-card p, .faq-answer {
+  text-align: left !important;
+  text-wrap: pretty !important;
+  word-break: break-word !important;
+  line-height: 1.8 !important;
 }
 
 /* Maintain proper title / badge / control alignment */
@@ -2248,45 +2248,132 @@ body input, body select, body textarea {
 }
 
 /* =========================================================
-   2. FULL SCREEN CANVAS & WIDE OBSERVATORY LAYOUT
+   2. OBSERVATORY LAYOUT & FULL MOBILE OPTIMIZATION
    ========================================================= */
 .wrap {
-  max-width: 100% !important;
+  max-width: 1200px !important;
   width: 100% !important;
-  padding: 0 44px 110px !important;
+  padding: 0 28px 100px !important;
   margin: 0 auto !important;
   box-sizing: border-box !important;
+  overflow-x: hidden !important;
 }
 
 .astrology-intro, .current-sky-card, .card, .report, .at-a-glance, .disclaimer, .mode-tabs {
   max-width: 100% !important;
   width: 100% !important;
-}
-
-@media (min-width: 1200px) {
-  .current-sky-grid {
-    grid-template-columns: repeat(9, 1fr) !important;
-  }
-  .astrology-pillars {
-    max-width: 100% !important;
-    grid-template-columns: repeat(4, 1fr) !important;
-  }
-  .how-grid {
-    max-width: 100% !important;
-    grid-template-columns: repeat(4, 1fr) !important;
-  }
-  .cosmic-facts {
-    max-width: 100% !important;
-    grid-template-columns: repeat(4, 1fr) !important;
-  }
-  .grid {
-    grid-template-columns: repeat(4, 1fr) !important;
-  }
+  box-sizing: border-box !important;
 }
 
 @media (max-width: 768px) {
   .wrap {
-    padding: 0 16px 80px !important;
+    padding: 0 12px 90px !important;
+    overflow-x: hidden !important;
+  }
+  .card, .current-sky-card, .astrology-intro, .panchang-bar, .daily-rashifal-section, .report-section-block, .visual-card, .placement-table-card, .timeline-card, .glossary-card, .at-a-glance {
+    padding: 16px 14px !important;
+    margin-bottom: 18px !important;
+    border-radius: 12px !important;
+    box-sizing: border-box !important;
+  }
+  .grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+  .current-sky-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+  .astrology-pillars {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+  .how-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+  .panchang-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+  .facts-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .report-section-content {
+    padding: 16px 14px !important;
+  }
+  .report-section-header {
+    padding: 12px 14px !important;
+  }
+  .report-section-header-left {
+    gap: 8px !important;
+  }
+  .report-section-title {
+    font-size: 16px !important;
+  }
+  .report-chapter-badge {
+    font-size: 9.5px !important;
+    padding: 2px 7px !important;
+  }
+  .report-chapter-tag {
+    font-size: 10px !important;
+    padding: 2px 6px !important;
+  }
+  .report-insight-card {
+    padding: 12px 14px !important;
+    margin: 12px 0 !important;
+  }
+  .insight-card-body, .report-paragraph, .list-text {
+    font-size: 14.5px !important;
+    line-height: 1.7 !important;
+  }
+  .report-subhead-banner {
+    margin: 18px 0 10px !important;
+    padding: 8px 12px !important;
+  }
+  .report-subhead {
+    font-size: 14px !important;
+  }
+  .msg.user, .msg.model {
+    max-width: 100% !important;
+    padding: 12px 14px !important;
+    font-size: 14.5px !important;
+  }
+  .chatinput {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+  .chatinput button {
+    width: 100% !important;
+  }
+  .fixed-utility-bar {
+    left: 8px !important;
+    right: 8px !important;
+    bottom: 8px !important;
+    transform: none !important;
+    max-width: calc(100% - 16px) !important;
+    overflow-x: auto !important;
+    justify-content: flex-start !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  .utility-btn {
+    padding: 7px 9px !important;
+    font-size: 10px !important;
+    flex-shrink: 0 !important;
+  }
+}
+
+@media (max-width: 440px) {
+  .current-sky-grid, .panchang-grid, .astrology-pillars {
+    grid-template-columns: 1fr !important;
+  }
+  .hero h1 {
+    font-size: 26px !important;
+  }
+  .hero .subtitle {
+    font-size: 10px !important;
+    letter-spacing: 0.15em !important;
   }
 }
 
@@ -4760,6 +4847,466 @@ body input, body select, body textarea {
   background: rgba(127, 197, 192, 0.25);
   border-color: #7fc5c0;
 }
+
+/* === READING MASTER NAVIGATOR & QUESTION LOG INDEX STYLES === */
+.reading-navigator-card {
+  background: linear-gradient(145deg, rgba(16, 26, 42, 0.92), rgba(8, 14, 24, 0.98)) !important;
+  border: 1.5px solid rgba(242, 215, 146, 0.4) !important;
+  border-radius: 16px !important;
+  padding: 18px 20px !important;
+  margin: 0 0 24px !important;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(242, 215, 146, 0.04) !important;
+}
+
+.reading-nav-head {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: wrap !important;
+  gap: 12px !important;
+  margin-bottom: 16px !important;
+  border-bottom: 1px dashed rgba(242, 215, 146, 0.22) !important;
+  padding-bottom: 14px !important;
+}
+
+.reading-nav-title-group {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+.reading-nav-badge {
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 50% !important;
+  background: radial-gradient(circle, rgba(242, 215, 146, 0.25) 0%, rgba(8, 16, 26, 0.8) 100%) !important;
+  border: 1.2px solid #fce7b0 !important;
+  display: grid !important;
+  place-items: center !important;
+  font-size: 18px !important;
+  color: #fce7b0 !important;
+  box-shadow: 0 0 14px rgba(242, 215, 146, 0.35) !important;
+  flex-shrink: 0 !important;
+}
+
+.reading-nav-title {
+  font-family: 'Cinzel', 'Bodoni Moda', serif !important;
+  font-size: 16px !important;
+  color: #fce7b0 !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.04em !important;
+  margin: 0 !important;
+}
+
+.reading-nav-sub {
+  font-size: 11.5px !important;
+  color: #9fc9c2 !important;
+  margin: 2px 0 0 !important;
+}
+
+.reading-nav-tabs {
+  display: flex !important;
+  gap: 8px !important;
+  background: rgba(0, 0, 0, 0.4) !important;
+  border: 1px solid rgba(242, 215, 146, 0.25) !important;
+  padding: 4px !important;
+  border-radius: 24px !important;
+}
+
+.reading-nav-tab {
+  background: transparent !important;
+  border: none !important;
+  color: #d6c3a0 !important;
+  font-family: 'Cinzel', serif !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  padding: 6px 14px !important;
+  border-radius: 20px !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  transition: all 0.2s ease !important;
+  white-space: nowrap !important;
+}
+
+.reading-nav-tab.active {
+  background: linear-gradient(135deg, rgba(216, 160, 76, 0.4), rgba(180, 120, 40, 0.6)) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 0 12px rgba(216, 160, 76, 0.35) !important;
+}
+
+.nav-question-pill {
+  background: rgba(127, 197, 192, 0.25) !important;
+  border: 1px solid rgba(127, 197, 192, 0.5) !important;
+  color: #a3e8e2 !important;
+  font-size: 10px !important;
+  padding: 1px 7px !important;
+  border-radius: 10px !important;
+  font-weight: 700 !important;
+}
+
+.reading-nav-panel {
+  display: none !important;
+}
+
+.reading-nav-panel.active {
+  display: block !important;
+}
+
+/* Chapters Grid */
+.nav-chapters-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)) !important;
+  gap: 10px !important;
+}
+
+.nav-chapter-chip {
+  background: rgba(0, 0, 0, 0.35) !important;
+  border: 1px solid rgba(242, 215, 146, 0.22) !important;
+  border-radius: 10px !important;
+  padding: 10px 12px !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  transition: all 0.22s ease !important;
+}
+
+.nav-chapter-chip:hover {
+  background: rgba(242, 215, 146, 0.12) !important;
+  border-color: #fce7b0 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 14px rgba(242, 215, 146, 0.2) !important;
+}
+
+.nav-chip-left {
+  display: flex !important;
+  align-items: center !important;
+  gap: 9px !important;
+  overflow: hidden !important;
+}
+
+.nav-chip-num {
+  font-family: 'Cinzel', serif !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: #d8a04c !important;
+  background: rgba(216, 160, 76, 0.15) !important;
+  border: 1px solid rgba(216, 160, 76, 0.3) !important;
+  width: 24px !important;
+  height: 24px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  flex-shrink: 0 !important;
+}
+
+.nav-chip-text {
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+.nav-chip-title {
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  color: #fce7b0 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.nav-chip-status {
+  font-size: 10px !important;
+  color: #9fc9c2 !important;
+}
+
+.nav-chip-icon {
+  font-size: 12px !important;
+  color: #d8a04c !important;
+  flex-shrink: 0 !important;
+  transition: transform 0.2s ease !important;
+}
+
+.nav-chapter-chip:hover .nav-chip-icon {
+  transform: translateX(3px) !important;
+  color: #ffffff !important;
+}
+
+/* Questions Log Panel */
+.nav-questions-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+}
+
+.nav-questions-empty {
+  text-align: center !important;
+  padding: 24px 16px !important;
+  background: rgba(0, 0, 0, 0.25) !important;
+  border: 1px dashed rgba(242, 215, 146, 0.25) !important;
+  border-radius: 12px !important;
+}
+
+.empty-sparkle {
+  font-size: 24px !important;
+  color: #d8a04c !important;
+  display: block !important;
+  margin-bottom: 6px !important;
+}
+
+.nav-questions-empty b {
+  font-family: 'Cinzel', serif !important;
+  font-size: 14.5px !important;
+  color: #fce7b0 !important;
+  display: block !important;
+  margin-bottom: 4px !important;
+}
+
+.nav-questions-empty p {
+  font-size: 12px !important;
+  color: #9fc9c2 !important;
+  max-width: 480px !important;
+  margin: 0 auto 14px !important;
+  line-height: 1.5 !important;
+}
+
+.jump-to-ask-btn {
+  background: linear-gradient(135deg, rgba(216, 160, 76, 0.3), rgba(180, 120, 40, 0.5)) !important;
+  border: 1px solid #fce7b0 !important;
+  color: #ffffff !important;
+  font-family: 'Cinzel', serif !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  padding: 6px 18px !important;
+  border-radius: 20px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.jump-to-ask-btn:hover {
+  background: linear-gradient(135deg, #d8a04c, #9a6e2e) !important;
+  color: #080512 !important;
+  box-shadow: 0 0 14px rgba(216, 160, 76, 0.5) !important;
+}
+
+.nav-question-card {
+  background: rgba(0, 0, 0, 0.4) !important;
+  border: 1.2px solid rgba(127, 197, 192, 0.35) !important;
+  border-radius: 12px !important;
+  padding: 14px 16px !important;
+  transition: all 0.2s ease !important;
+}
+
+.nav-question-card:hover {
+  border-color: #7fc5c0 !important;
+  box-shadow: 0 4px 18px rgba(127, 197, 192, 0.2) !important;
+}
+
+.nav-q-head {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  margin-bottom: 8px !important;
+}
+
+.nav-q-badge {
+  font-family: 'Cinzel', serif !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: #a3e8e2 !important;
+  background: rgba(127, 197, 192, 0.15) !important;
+  border: 1px solid rgba(127, 197, 192, 0.4) !important;
+  padding: 2px 8px !important;
+  border-radius: 12px !important;
+}
+
+.nav-q-topic {
+  font-size: 11px !important;
+  color: #fce7b0 !important;
+  font-weight: 600 !important;
+}
+
+.nav-q-time {
+  font-size: 10.5px !important;
+  color: #8fa0b0 !important;
+}
+
+.nav-q-text {
+  font-size: 13.5px !important;
+  color: #f4efe4 !important;
+  font-weight: 600 !important;
+  margin: 0 0 10px !important;
+  line-height: 1.4 !important;
+}
+
+.nav-q-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+}
+
+.nav-q-btn {
+  font-size: 11.5px !important;
+  font-family: 'Cinzel', serif !important;
+  font-weight: 600 !important;
+  padding: 5px 12px !important;
+  border-radius: 16px !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  transition: all 0.2s ease !important;
+}
+
+.nav-q-btn.btn-answer {
+  background: rgba(127, 197, 192, 0.15) !important;
+  border: 1px solid rgba(127, 197, 192, 0.4) !important;
+  color: #a3e8e2 !important;
+}
+
+.nav-q-btn.btn-answer:hover {
+  background: rgba(127, 197, 192, 0.3) !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 10px rgba(127, 197, 192, 0.4) !important;
+}
+
+.nav-q-btn.btn-evidence {
+  background: rgba(242, 215, 146, 0.12) !important;
+  border: 1px solid rgba(242, 215, 146, 0.35) !important;
+  color: #fce7b0 !important;
+}
+
+.nav-q-btn.btn-evidence:hover {
+  background: rgba(242, 215, 146, 0.25) !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 10px rgba(242, 215, 146, 0.4) !important;
+}
+
+/* High-Visibility Luminous Pulse Animations */
+@keyframes highlightPulseGlow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(242, 215, 146, 0.9), 0 0 40px rgba(242, 215, 146, 0.6) !important;
+    border-color: #ffd700 !important;
+    background-color: rgba(242, 215, 146, 0.18) !important;
+  }
+  40% {
+    box-shadow: 0 0 0 8px rgba(242, 215, 146, 0.4), 0 0 60px rgba(242, 215, 146, 0.7) !important;
+    border-color: #fce7b0 !important;
+    background-color: rgba(242, 215, 146, 0.24) !important;
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(242, 215, 146, 0), 0 0 15px rgba(242, 215, 146, 0.15) !important;
+    border-color: rgba(242, 215, 146, 0.35) !important;
+    background-color: transparent !important;
+  }
+}
+
+.report-target-highlight {
+  animation: highlightPulseGlow 3.5s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
+  border-width: 2px !important;
+  position: relative !important;
+}
+
+@keyframes chatPulseGlow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(127, 197, 192, 0.9), 0 0 35px rgba(127, 197, 192, 0.6) !important;
+    border-color: #7fc5c0 !important;
+    background: rgba(127, 197, 192, 0.22) !important;
+  }
+  40% {
+    box-shadow: 0 0 0 7px rgba(127, 197, 192, 0.4), 0 0 50px rgba(127, 197, 192, 0.7) !important;
+    border-color: #a3e8e2 !important;
+    background: rgba(127, 197, 192, 0.3) !important;
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(127, 197, 192, 0) !important;
+    border-color: rgba(127, 197, 192, 0.35) !important;
+  }
+}
+
+.chat-msg-highlight {
+  animation: chatPulseGlow 3.5s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
+  border-width: 2px !important;
+}
+
+/* Chat In-Message Evidence Callout */
+.chat-evidence-callout {
+  margin-top: 14px !important;
+  background: rgba(0, 0, 0, 0.35) !important;
+  border: 1px solid rgba(242, 215, 146, 0.3) !important;
+  border-radius: 10px !important;
+  padding: 8px 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  flex-wrap: wrap !important;
+}
+
+.chat-evidence-left {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  font-size: 12px !important;
+  color: #fce7b0 !important;
+}
+
+.chat-evidence-jump-btn {
+  background: rgba(242, 215, 146, 0.15) !important;
+  border: 1px solid rgba(242, 215, 146, 0.45) !important;
+  color: #fce7b0 !important;
+  font-family: 'Cinzel', serif !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  padding: 4px 10px !important;
+  border-radius: 14px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.chat-evidence-jump-btn:hover {
+  background: #d8a04c !important;
+  color: #080512 !important;
+  box-shadow: 0 0 10px rgba(216, 160, 76, 0.45) !important;
+}
+
+/* Chat Quick Questions Ribbon */
+.chat-questions-ribbon {
+  display: flex !important;
+  gap: 8px !important;
+  overflow-x: auto !important;
+  padding: 6px 0 12px !important;
+  margin-bottom: 12px !important;
+  scrollbar-width: thin !important;
+}
+
+.chat-q-chip {
+  background: rgba(0, 0, 0, 0.35) !important;
+  border: 1px solid rgba(127, 197, 192, 0.3) !important;
+  border-radius: 16px !important;
+  padding: 4px 12px !important;
+  font-size: 11.5px !important;
+  color: #a3e8e2 !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  transition: all 0.2s ease !important;
+  flex-shrink: 0 !important;
+}
+
+.chat-q-chip:hover {
+  background: rgba(127, 197, 192, 0.2) !important;
+  border-color: #7fc5c0 !important;
+  color: #ffffff !important;
+}
 </style>
 </head>
 <body>
@@ -5376,6 +5923,46 @@ body input, body select, body textarea {
     </div>
   </div>
 
+  <!-- Interactive Reading Chapters & Consultation Questions Navigator -->
+  <div class="reading-navigator-card" id="readingNavigatorCard">
+    <div class="reading-nav-head">
+      <div class="reading-nav-title-group">
+        <div class="reading-nav-badge">☸</div>
+        <div>
+          <h3 class="reading-nav-title" id="readingNavTitle">Interactive Reading Index &amp; Consultation Navigator</h3>
+          <p class="reading-nav-sub" id="readingNavSub">Jump directly to any comprehensive report chapter or review asked consultation questions with connected chart evidence.</p>
+        </div>
+      </div>
+      <div class="reading-nav-tabs">
+        <button type="button" class="reading-nav-tab active" id="navTabChapters" onclick="switchReadingNavTab('chapters')">
+          <span>📜</span> <b id="navTabChaptersText">Report Chapters</b> <small id="navChapterCount">(13 Chapters)</small>
+        </button>
+        <button type="button" class="reading-nav-tab" id="navTabQuestions" onclick="switchReadingNavTab('questions')">
+          <span>💬</span> <b id="navTabQuestionsText">Consultation Questions</b> <span class="nav-question-pill" id="navQuestionsPill">0 / 5</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Panel 1: Chapters Index -->
+    <div class="reading-nav-panel active" id="navPanelChapters">
+      <div class="nav-chapters-grid" id="navChaptersGrid">
+        <!-- Dynamically rendered chapter links -->
+      </div>
+    </div>
+
+    <!-- Panel 2: Questions Asked Index -->
+    <div class="reading-nav-panel" id="navPanelQuestions">
+      <div class="nav-questions-list" id="navQuestionsList">
+        <div class="nav-questions-empty" id="navQuestionsEmpty">
+          <span class="empty-sparkle">✦</span>
+          <b id="emptyQuestionsTitle">No Consultation Questions Asked Yet</b>
+          <p id="emptyQuestionsDesc">When you ask questions in the "Ask the Chart" panel below, they will be indexed here with direct links to both their in-depth answers and the supporting astrological report evidence.</p>
+          <button type="button" class="jump-to-ask-btn" onclick="document.getElementById('chatCard').scrollIntoView({behavior:'smooth'}); const cin=document.getElementById('chatInput'); if(cin) cin.focus();">Go to Ask the Chart ↗</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="visual-card panchang-report-card" id="panchangReportCard" style="display:none;"></div>
   <div class="visual-card at-a-glance" id="atAGlanceCard" style="display:none;">
     <div class="glance-head"><div><span class="glance-kicker">YOUR CHART · AT A GLANCE</span><h3>What this chart is asking you to understand</h3></div><span class="glance-seal">✦</span></div>
@@ -5448,6 +6035,7 @@ body input, body select, body textarea {
 <div class="card" id="chatCard" style="display:none;">
   <h2 id="chatHeading">Ask the chart</h2>
   <div class="chat-status"><span>Ask specific questions about the chart, Dasha, Yogas, relationships, career, or life phases. Each question costs ₹29.</span><span class="chat-count" id="chatCount">5 questions remaining</span></div>
+  <div class="chat-questions-ribbon" id="chatQuestionsRibbon" style="display:none;"></div>
   <div class="chatlog" id="chatLog">
     <div class="empty-hint" id="chatHint">The chart is being cast — you can start asking questions the moment the first section appears above.</div>
   </div>
@@ -5946,6 +6534,88 @@ window.PAYWALL_CONFIG = {
     question: { amountINR: 29, title: 'Ask the Chart', description: 'Ask one detailed, chart-grounded question. Up to 5 paid questions are available per reading.' }
   }
 };
+
+window.applyPricingToUI = function(cfg) {
+  const c = cfg || window.SERVER_CONFIG || {
+    prices: { reveal: 59, match: 99, question: 29 },
+    basePrices: { reveal: 59, match: 99, question: 29 },
+    offer: { enabled: false, percent: 0, label: '' },
+    features: { reveal: true, match: true, chat: true }
+  };
+  
+  const pReveal = Number(c.prices?.reveal ?? 59);
+  const pMatch = Number(c.prices?.match ?? 99);
+  const pQuestion = Number(c.prices?.question ?? 29);
+  const isOffer = Boolean(c.offer?.enabled && Number(c.offer?.percent) > 0);
+  const baseReveal = Number(c.basePrices?.reveal || pReveal);
+  const baseMatch = Number(c.basePrices?.match || pMatch);
+  const baseQuestion = Number(c.basePrices?.question || pQuestion);
+
+  // Update PAYWALL_CONFIG
+  if (window.PAYWALL_CONFIG && window.PAYWALL_CONFIG.plans) {
+    if (window.PAYWALL_CONFIG.plans.reveal) window.PAYWALL_CONFIG.plans.reveal.amountINR = pReveal;
+    if (window.PAYWALL_CONFIG.plans.match) window.PAYWALL_CONFIG.plans.match.amountINR = pMatch;
+    if (window.PAYWALL_CONFIG.plans.question) window.PAYWALL_CONFIG.plans.question.amountINR = pQuestion;
+  }
+
+  // Update Individual Chart Reveal button
+  const genBtn = document.getElementById('genBtn');
+  if (genBtn && !window.isVipUser) {
+    const isCastAgain = genBtn.textContent.includes('again') || genBtn.textContent.includes('पुनः');
+    const isHi = window.currentVedicLang === 'hi';
+    const baseText = isHi ? (isCastAgain ? 'कुंडली पुनः देखें' : 'कुंडली फलकथन प्राप्त करें') : (isCastAgain ? 'Cast this chart again' : 'Reveal the chart');
+    genBtn.textContent = `${baseText} · ₹${pReveal}`;
+  }
+
+  // Update Kundli Match button
+  const matchBtn = document.getElementById('unlockMatchBtn') || document.getElementById('matchBtn');
+  if (matchBtn && !window.isVipUser) {
+    const isHi = window.currentVedicLang === 'hi';
+    const baseText = isHi ? 'विस्तृत गुण मिलान देखें' : 'Unlock detailed match';
+    matchBtn.textContent = `${baseText} · ₹${pMatch}`;
+  }
+
+  // Update Ask the Chart status hint
+  const chatHintSpan = document.querySelector('.chat-status span');
+  if (chatHintSpan) {
+    const isHi = window.currentVedicLang === 'hi';
+    chatHintSpan.textContent = isHi
+      ? `कुंडली, दशा, योग, संबंध, करियर या जीवन के चरणों के बारे में प्रश्न पूछें। प्रत्येक प्रश्न का मूल्य ₹${pQuestion} है।`
+      : `Ask specific questions about the chart, Dasha, Yogas, relationships, career, or life phases. Each question costs ₹${pQuestion}.`;
+  }
+
+  // Update Payment Modal plan cards
+  const planCards = document.querySelectorAll('#paymentPlansGrid .plan-card');
+  planCards.forEach(card => {
+    const plan = card.dataset.plan;
+    let price = 59;
+    let basePrice = 59;
+    if (plan === 'reveal') { price = pReveal; basePrice = baseReveal; }
+    else if (plan === 'match') { price = pMatch; basePrice = baseMatch; }
+    else if (plan === 'question') { price = pQuestion; basePrice = baseQuestion; }
+    else if (plan === 'dakshina') { price = 251; basePrice = 251; }
+
+    card.dataset.amount = price;
+    const priceEl = card.querySelector('.plan-price');
+    if (priceEl && plan !== 'dakshina') {
+      if (isOffer && basePrice > price) {
+        priceEl.innerHTML = `₹${price} <small style="text-decoration:line-through;color:#87959a;font-size:12px;margin-left:4px;">₹${basePrice}</small>`;
+      } else {
+        priceEl.textContent = `₹${price}`;
+      }
+    }
+  });
+
+  // Re-sync Proceed button if payment modal is open
+  if (typeof window.selectPaymentPlan === 'function') {
+    window.selectPaymentPlan(window.activePaymentPlan || 'reveal');
+  }
+
+  // Apply feature visibility
+  if (typeof window.applyFeatureVisibility === 'function') {
+    window.applyFeatureVisibility();
+  }
+};
 </script>
 <script>
 // Load server-controlled pricing and feature availability.
@@ -5955,12 +6625,11 @@ window.PAYWALL_CONFIG = {
     if(!r.ok) throw new Error('config');
     const c=await r.json();
     window.SERVER_CONFIG=c;
-    PAYWALL_CONFIG.plans.reveal.amountINR=c.prices.reveal;
-    PAYWALL_CONFIG.plans.match.amountINR=c.prices.match;
-    PAYWALL_CONFIG.plans.question.amountINR=c.prices.question;
+    window.applyPricingToUI(c);
     window.dispatchEvent(new CustomEvent('server-config-ready',{detail:c}));
   }catch(e){
-    window.SERVER_CONFIG={features:{reveal:true,match:true,chat:true},prices:{reveal:59,match:99,question:29},offer:{enabled:false,percent:0,label:''}};
+    window.SERVER_CONFIG={features:{reveal:true,match:true,chat:true},prices:{reveal:59,match:99,question:29},basePrices:{reveal:59,match:99,question:29},offer:{enabled:false,percent:0,label:''}};
+    window.applyPricingToUI(window.SERVER_CONFIG);
   }
 })();
 </script>
@@ -7625,7 +8294,26 @@ function initCustomPickers() {
       e.stopPropagation();
       if (e.type === 'keydown') e.preventDefault();
       document.querySelectorAll('.picker-popup.open').forEach(p => { if (p !== popup) p.classList.remove('open'); });
-      popup.classList.toggle('open');
+      const willOpen = !popup.classList.contains('open');
+      popup.classList.toggle('open', willOpen);
+      if (willOpen) {
+        requestAnimationFrame(() => {
+          popup.style.left = '0px';
+          popup.style.right = 'auto';
+          const rect = popup.getBoundingClientRect();
+          const pad = 12;
+          const vw = window.innerWidth;
+          if (rect.right > vw - pad) {
+            const shift = rect.right - (vw - pad);
+            popup.style.left = `-${shift}px`;
+          }
+          const updatedRect = popup.getBoundingClientRect();
+          if (updatedRect.left < pad) {
+            const currentLeft = parseFloat(popup.style.left || '0');
+            popup.style.left = `${currentLeft + (pad - updatedRect.left)}px`;
+          }
+        });
+      }
     };
     display.addEventListener('click', togglePicker);
     display.addEventListener('keydown', togglePicker);
@@ -7636,6 +8324,23 @@ function initCustomPickers() {
     if (!e.target.closest('.picker-field')) {
       document.querySelectorAll('.picker-popup.open').forEach(p => p.classList.remove('open'));
     }
+  });
+
+  window.addEventListener('resize', () => {
+    document.querySelectorAll('.picker-popup.open').forEach(popup => {
+      popup.style.left = '0px';
+      const rect = popup.getBoundingClientRect();
+      const pad = 12;
+      const vw = window.innerWidth;
+      if (rect.right > vw - pad) {
+        popup.style.left = `-${rect.right - (vw - pad)}px`;
+      }
+      const updatedRect = popup.getBoundingClientRect();
+      if (updatedRect.left < pad) {
+        const currentLeft = parseFloat(popup.style.left || '0');
+        popup.style.left = `${currentLeft + (pad - updatedRect.left)}px`;
+      }
+    });
   });
 }
 
@@ -8252,32 +8957,64 @@ function unlockChat(){
 
 
 function cleanAstroText(text){
-  return String(text || '')
+  if(!text) return '';
+  return String(text)
     .replace(/\r/g, '')
     .replace(/[ \t]+\n/g, '\n')
     .replace(/^[ \t]*[\*\-_#]{3,}[ \t]*$/gm, '') // Remove horizontal rules like ***, ---, ###
     .replace(/^#{1,6}\s*(.*?)\s*#{1,6}$/gm, '### $1') // Normalize closed headers like ### Title ###
+    .replace(/^([ \t]*[•\-\*+]\s*)\*+([^*\n]+)\*+/gm, '$1**$2**') // Clean messy bullets
     .trim();
 }
 
 function getCardThemeClass(label){
   const l = String(label || '').toLowerCase();
   if(l.includes('remed') || l.includes('upay') || l.includes('उपाय') || l.includes('mantra') || l.includes('gemstone') || l.includes('दान') || l.includes('रत्न')) return 'theme-remedy';
-  if(l.includes('wealth') || l.includes('money') || l.includes('career') || l.includes('finance') || l.includes('job') || l.includes('business') || l.includes('व्यवसाय') || l.includes('धन') || l.includes('आर्थिक') || l.includes('कर्म')) return 'theme-wealth';
-  if(l.includes('relation') || l.includes('marriage') || l.includes('spouse') || l.includes('love') || l.includes('family') || l.includes('विवाह') || l.includes('संबंध') || l.includes('दांपत्य') || l.includes('प्रेम')) return 'theme-relationship';
-  if(l.includes('timing') || l.includes('dasha') || l.includes('period') || l.includes('transit') || l.includes('phase') || l.includes('दशा') || l.includes('कालखंड') || l.includes('समय') || l.includes('गोचर')) return 'theme-timing';
-  if(l.includes('caution') || l.includes('warning') || l.includes('blindspot') || l.includes('dosha') || l.includes('risk') || l.includes('सावधानी') || l.includes('दोष') || l.includes('चुनौती')) return 'theme-caution';
+  if(l.includes('wealth') || l.includes('money') || l.includes('career') || l.includes('finance') || l.includes('job') || l.includes('business') || l.includes('व्यवसाय') || l.includes('धन') || l.includes('आर्थिक') || l.includes('कर्म') || l.includes('vocation')) return 'theme-wealth';
+  if(l.includes('relation') || l.includes('marriage') || l.includes('spouse') || l.includes('love') || l.includes('family') || l.includes('विवाह') || l.includes('संबंध') || l.includes('दांपत्य') || l.includes('प्रेम') || l.includes('partner')) return 'theme-relationship';
+  if(l.includes('timing') || l.includes('dasha') || l.includes('period') || l.includes('transit') || l.includes('phase') || l.includes('दशा') || l.includes('कालखंड') || l.includes('समय') || l.includes('गोचर') || l.includes('cycle')) return 'theme-timing';
+  if(l.includes('caution') || l.includes('warning') || l.includes('blindspot') || l.includes('dosha') || l.includes('risk') || l.includes('सावधानी') || l.includes('दोष') || l.includes('चुनौती') || l.includes('pitfall')) return 'theme-caution';
   return 'theme-insight';
 }
 
 function getCardIcon(label){
   const l = String(label || '').toLowerCase();
   if(l.includes('remed') || l.includes('upay') || l.includes('उपाय') || l.includes('mantra') || l.includes('gemstone') || l.includes('दान') || l.includes('रत्न')) return '🌿';
-  if(l.includes('wealth') || l.includes('money') || l.includes('career') || l.includes('finance') || l.includes('job') || l.includes('business') || l.includes('व्यवसाय') || l.includes('धन') || l.includes('आर्थिक') || l.includes('कर्म')) return '⚡';
-  if(l.includes('relation') || l.includes('marriage') || l.includes('spouse') || l.includes('love') || l.includes('family') || l.includes('विवाह') || l.includes('संबंध') || l.includes('दांपत्य') || l.includes('प्रेम')) return '♥';
-  if(l.includes('timing') || l.includes('dasha') || l.includes('period') || l.includes('transit') || l.includes('phase') || l.includes('दशा') || l.includes('कालखंड') || l.includes('समय') || l.includes('गोचर')) return '⏳';
-  if(l.includes('caution') || l.includes('warning') || l.includes('blindspot') || l.includes('dosha') || l.includes('risk') || l.includes('सावधानी') || l.includes('दोष') || l.includes('चुनौती')) return '▲';
+  if(l.includes('wealth') || l.includes('money') || l.includes('career') || l.includes('finance') || l.includes('job') || l.includes('business') || l.includes('व्यवसाय') || l.includes('धन') || l.includes('आर्थिक') || l.includes('कर्म') || l.includes('vocation')) return '⚡';
+  if(l.includes('relation') || l.includes('marriage') || l.includes('spouse') || l.includes('love') || l.includes('family') || l.includes('विवाह') || l.includes('संबंध') || l.includes('दांपत्य') || l.includes('प्रेम') || l.includes('partner')) return '♥';
+  if(l.includes('timing') || l.includes('dasha') || l.includes('period') || l.includes('transit') || l.includes('phase') || l.includes('दशा') || l.includes('कालखंड') || l.includes('समय') || l.includes('गोचर') || l.includes('cycle')) return '⏳';
+  if(l.includes('caution') || l.includes('warning') || l.includes('blindspot') || l.includes('dosha') || l.includes('risk') || l.includes('सावधानी') || l.includes('दोष') || l.includes('चुनौती') || l.includes('pitfall')) return '▲';
   return '✦';
+}
+
+function formatInlineMarkdown(str){
+  if(!str) return '';
+  let s = String(str).trim();
+  // Strip leading stray bullets/markdown symbols if present
+  s = s.replace(/^[•\-\*#]+\s*/, '');
+  
+  // First escape HTML special chars safely
+  s = escapeHtml(s);
+  
+  // Convert bold italic ***text*** or ___text___
+  s = s.replace(/\*\*\*([^\*]+?)\*\*\*/g, '<strong><em>$1</em></strong>');
+  s = s.replace(/___([^_]+?)___/g, '<strong><em>$1</em></strong>');
+  
+  // Convert bold **text** or __text__
+  s = s.replace(/\*\*([^\*]+?)\*\*/g, '<strong>$1</strong>');
+  s = s.replace(/__([^_]+?)__/g, '<strong>$1</strong>');
+  
+  // Convert italic *text* or _text_
+  s = s.replace(/\*([^\*]+?)\*/g, '<em>$1</em>');
+  s = s.replace(/_([^_]+?)_/g, '<em>$1</em>');
+  
+  // Convert inline backticks
+  s = s.replace(/`([^`]+?)`/g, '<code class="inline-code">$1</code>');
+  
+  // Thoroughly remove ANY remaining raw stray asterisks, hashes, backticks, tildes
+  s = s.replace(/[\*#`~]/g, '');
+  
+  return s.trim();
 }
 
 function formatReportSectionHtml(text){
@@ -8286,6 +9023,7 @@ function formatReportSectionHtml(text){
   const lines = clean.split('\n');
   let html = '';
   let inList = false;
+  let inNumberedList = false;
   let inTable = false;
   let tableRows = [];
 
@@ -8293,6 +9031,10 @@ function formatReportSectionHtml(text){
     if(inList){
       html += `</ul>`;
       inList = false;
+    }
+    if(inNumberedList){
+      html += `</ul>`;
+      inNumberedList = false;
     }
   }
   function flushTable(){
@@ -8308,33 +9050,6 @@ function formatReportSectionHtml(text){
       tableRows = [];
       inTable = false;
     }
-  }
-
-  function formatInlineMarkdown(str){
-    if(!str) return '';
-    let s = String(str).trim();
-    // Strip leading stray bullets/markdown symbols if present
-    s = s.replace(/^[•\-\*#]+\s*/, '');
-    
-    // First escape HTML special chars
-    s = escapeHtml(s);
-    
-    // Convert bold italic ***text*** or ___text___
-    s = s.replace(/\*\*\*([^\*]+?)\*\*\*/g, '<strong><em>$1</em></strong>');
-    s = s.replace(/___([^_]+?)___/g, '<strong><em>$1</em></strong>');
-    
-    // Convert bold **text** or __text__
-    s = s.replace(/\*\*([^\*]+?)\*\*/g, '<strong>$1</strong>');
-    s = s.replace(/__([^_]+?)__/g, '<strong>$1</strong>');
-    
-    // Convert italic *text* or _text_
-    s = s.replace(/\*([^\*]+?)\*/g, '<em>$1</em>');
-    s = s.replace(/_([^_]+?)_/g, '<em>$1</em>');
-    
-    // Thoroughly remove ANY lingering raw asterisks, hashes, backticks or tildes
-    s = s.replace(/[\*#`~]/g, '');
-    
-    return s.trim();
   }
 
   for(let i = 0; i < lines.length; i++){
@@ -8418,10 +9133,10 @@ function formatReportSectionHtml(text){
     // Numbered List: 1. item or 1) item
     const numMatch = line.match(/^(\d+)[\.\)]\s+(.+)$/);
     if(numMatch){
-      if(!inList){
+      if(!inNumberedList){
         flushList();
         html += '<ul class="report-numbered-list">';
-        inList = true;
+        inNumberedList = true;
       }
       const num = numMatch[1];
       const itemText = numMatch[2];
@@ -8455,6 +9170,106 @@ function formatReportSectionHtml(text){
 
   flushList();
   flushTable();
+  return html;
+}
+
+function formatChatResponseHtml(text){
+  if(!text) return '';
+  const clean = cleanAstroText(text);
+  const lines = clean.split('\n');
+  let html = '';
+  let inList = false;
+  let inNumberedList = false;
+
+  function flushList(){
+    if(inList){
+      html += `</ul>`;
+      inList = false;
+    }
+    if(inNumberedList){
+      html += `</ul>`;
+      inNumberedList = false;
+    }
+  }
+
+  for(let i = 0; i < lines.length; i++){
+    const rawLine = lines[i];
+    let line = rawLine.trim();
+
+    if(!line){
+      flushList();
+      continue;
+    }
+
+    // Subheadings with Markdown ###, ##, #, ####
+    if(/^#{1,6}\s+/.test(line)){
+      flushList();
+      const title = line.replace(/^#{1,6}\s+/, '').replace(/[\*\#\_]/g, '').trim();
+      if(!title) continue;
+      html += `<div class="report-subhead-banner chat-subhead-banner"><span class="subhead-gem">✦</span><h4 class="report-subhead">${escapeHtml(title)}</h4></div>`;
+      continue;
+    }
+
+    // Standalone bold header
+    if(/^\*\*([^*]+)\*\*$/.test(line) && line.length < 90 && !line.includes('.')){
+      flushList();
+      const title = line.replace(/[\*\#\_]/g, '').trim();
+      html += `<div class="report-subhead-banner chat-subhead-banner"><span class="subhead-gem">✦</span><h4 class="report-subhead">${escapeHtml(title)}</h4></div>`;
+      continue;
+    }
+
+    // Callout card
+    const calloutMatch = line.match(/^[\*\s]*([\w\s\u0900-\u097F\/\-\&]{3,45})[\*\s]*:\s*(.+)$/);
+    if(calloutMatch && calloutMatch[1].length <= 40 && !calloutMatch[2].startsWith('http') && line.length < 600 && (calloutMatch[1].includes(' ') || line.startsWith('**') || calloutMatch[1].length > 7)){
+      flushList();
+      const rawLabel = calloutMatch[1].replace(/[\*\#\_]/g, '').trim();
+      const content = calloutMatch[2].trim();
+      const theme = getCardThemeClass(rawLabel);
+      const icon = getCardIcon(rawLabel);
+      html += `<div class="report-insight-card ${theme}"><div class="insight-card-head"><span class="insight-icon">${icon}</span><span class="insight-label">${escapeHtml(rawLabel)}</span></div><div class="insight-card-body">${formatInlineMarkdown(content)}</div></div>`;
+      continue;
+    }
+
+    // Bullet List
+    if(/^[-*•+]\s+/.test(line)){
+      const itemText = line.replace(/^[-*•+]\s+/, '');
+      if(!inList){
+        flushList();
+        html += '<ul class="report-list chat-list">';
+        inList = true;
+      }
+      html += `<li class="report-list-item"><span class="list-bullet">✦</span><div class="list-text">${formatInlineMarkdown(itemText)}</div></li>`;
+      continue;
+    }
+
+    // Numbered List
+    const numMatch = line.match(/^(\d+)[\.\)]\s+(.+)$/);
+    if(numMatch){
+      if(!inNumberedList){
+        flushList();
+        html += '<ul class="report-numbered-list chat-numbered-list">';
+        inNumberedList = true;
+      }
+      const num = numMatch[1];
+      const itemText = numMatch[2];
+      html += `<li class="report-num-item"><span class="list-num">${num}</span><div class="list-text">${formatInlineMarkdown(itemText)}</div></li>`;
+      continue;
+    }
+
+    flushList();
+
+    // Blockquote
+    if(/^>\s+/.test(line)){
+      const qText = line.replace(/^>\s+/, '');
+      html += `<blockquote class="report-quote">${formatInlineMarkdown(qText)}</blockquote>`;
+      continue;
+    }
+
+    // Regular paragraph
+    html += `<p class="report-paragraph chat-paragraph">${formatInlineMarkdown(line)}</p>`;
+  }
+
+  flushList();
   return html;
 }
 
@@ -9011,6 +9826,7 @@ async function generateSection(index, reportBody, stepListEl, progressErrorEl){
   buildAtAGlance();
   renderClassicalModules();
   if(section.id === 'timeline') renderDashaTimeline();
+  renderReadingNavigator();
 
   if(li){
     li.classList.remove('active');
@@ -9081,6 +9897,7 @@ document.getElementById('genBtn').onclick = async () => {
   chatHistory = [];
   chatQuestionsUsed = 0;
   chatUnlocked = false;
+  consultationQuestionsLog = [];
   activeKey = EMBEDDED_KEY;
   activeModel = PRIMARY_MODEL;
 
@@ -9100,6 +9917,8 @@ document.getElementById('genBtn').onclick = async () => {
   const chartWrap = document.getElementById('kundliChartWrap');
   if(chartWrap) chartWrap.dataset.chartMode = 'north';
   renderKundliVisuals();
+  renderReadingNavigator();
+  renderChatQuestionsRibbon();
   const chatLog = document.getElementById('chatLog');
   chatLog.innerHTML = '<div class="empty-hint" id="chatHint">The chart is being cast — you can start asking questions the moment the first section appears above.</div>';
 
@@ -9660,6 +10479,233 @@ document.getElementById('unlockMatchBtn')?.addEventListener('click', () => {
   window.unlockDetailedKundliReport();
 });
 
+let consultationQuestionsLog = [];
+
+function classifyQuestionTopic(qStr) {
+  const isHi = window.currentVedicLang === 'hi';
+  const q = String(qStr || '').toLowerCase();
+  
+  if (q.includes('career') || q.includes('job') || q.includes('business') || q.includes('work') || q.includes('profession') || q.includes('office') || q.includes('promotion') || q.includes('money') || q.includes('wealth') || q.includes('finance') || q.includes('salary') || q.includes('income') || q.includes('invest') || q.includes('करियर') || q.includes('नौकरी') || q.includes('व्यापार') || q.includes('धन') || q.includes('पैसा') || q.includes('आर्थिक') || q.includes('रोजगार')) {
+    return {
+      topic: 'Career & Wealth',
+      topicHi: 'करियर एवं धन संपदा',
+      sectionId: 'career',
+      sectionTitle: isHi ? 'करियर, धन एवं भौतिक जीवन' : 'Career, wealth and material life'
+    };
+  }
+  
+  if (q.includes('marriage') || q.includes('spouse') || q.includes('relationship') || q.includes('partner') || q.includes('love') || q.includes('husband') || q.includes('wife') || q.includes('wedding') || q.includes('divorce') || q.includes('compatibility') || q.includes('विवाह') || q.includes('शादी') || q.includes('संबंध') || q.includes('पति') || q.includes('पत्नी') || q.includes('प्रेम') || q.includes('दांपत्य')) {
+    return {
+      topic: 'Marriage & Love',
+      topicHi: 'विवाह एवं संबंध',
+      sectionId: 'relationships',
+      sectionTitle: isHi ? 'संबंध, विवाह एवं सहभागिता' : 'Relationships and marriage'
+    };
+  }
+  
+  if (q.includes('health') || q.includes('disease') || q.includes('vitality') || q.includes('stress') || q.includes('energy') || q.includes('mental') || q.includes('illness') || q.includes('diet') || q.includes('medical') || q.includes('स्वास्थ्य') || q.includes('रोग') || q.includes('बीमारी') || q.includes('तनाव') || q.includes('ऊर्जा')) {
+    return {
+      topic: 'Health & Vitality',
+      topicHi: 'स्वास्थ्य एवं जीवन ऊर्जा',
+      sectionId: 'health',
+      sectionTitle: isHi ? 'शारीरिक ऊर्जा, तनाव प्रबंधन एवं शुभ योग' : 'Vitality, stress patterns, yogas and doshas'
+    };
+  }
+  
+  if (q.includes('dasha') || q.includes('timing') || q.includes('transit') || q.includes('sade sati') || q.includes('when') || q.includes('future') || q.includes('period') || q.includes('time') || q.includes('saturn') || q.includes('jupiter') || q.includes('दशा') || q.includes('समय') || q.includes('कालखंड') || q.includes('कब') || q.includes('भविष्य') || q.includes('गोचर') || q.includes('साढ़े साती')) {
+    return {
+      topic: 'Dasha & Timing',
+      topicHi: 'दशा चक्र एवं समय काल',
+      sectionId: 'timeline',
+      sectionTitle: isHi ? 'विंशोत्तरी दशा समय-सारणी एवं जीवन के आगामी चरण' : 'Dasha timeline and life phases'
+    };
+  }
+  
+  if (q.includes('yoga') || q.includes('raj yoga') || q.includes('dhana yoga') || q.includes('dosha') || q.includes('mangal') || q.includes('kalsarp') || q.includes('gaj kesari') || q.includes('योग') || q.includes('दोष') || q.includes('राजयोग') || q.includes('कालसर्प')) {
+    return {
+      topic: 'Yogas & Combinations',
+      topicHi: 'शुभ योग एवं ग्रहीय संयोजन',
+      sectionId: 'health',
+      sectionTitle: isHi ? 'शुभ राजयोग, धनयोग व दोष विश्लेषण' : 'Vitality, stress patterns, yogas and doshas'
+    };
+  }
+  
+  if (q.includes('lagna') || q.includes('ascendant') || q.includes('moon') || q.includes('sun') || q.includes('nakshatra') || q.includes('sign') || q.includes('personality') || q.includes('nature') || q.includes('mind') || q.includes('soul') || q.includes('लग्न') || q.includes('चंद्र') || q.includes('सूर्य') || q.includes('नक्षत्र') || q.includes('स्वभाव') || q.includes('व्यक्तित्व')) {
+    return {
+      topic: 'Identity & Mind',
+      topicHi: 'लग्न, मन एवं आत्म-स्वरूप',
+      sectionId: 'identity',
+      sectionTitle: isHi ? 'मनोवैज्ञानिक स्वरूप, स्वभाव एवं आत्म-पहचान' : 'Psychological portrait and temperament'
+    };
+  }
+  
+  return {
+    topic: 'General Astrological Inquiry',
+    topicHi: 'सामान्य ज्योतिषीय परामर्श',
+    sectionId: 'overview',
+    sectionTitle: isHi ? 'लग्न, चंद्र राशि एवं पंचांग का सार' : 'Foundations: Lagna, Moon and Panchang'
+  };
+}
+
+function switchReadingNavTab(tabName) {
+  const tabChap = document.getElementById('navTabChapters');
+  const tabQues = document.getElementById('navTabQuestions');
+  const panChap = document.getElementById('navPanelChapters');
+  const panQues = document.getElementById('navPanelQuestions');
+  
+  if (tabName === 'questions') {
+    tabChap?.classList.remove('active');
+    tabQues?.classList.add('active');
+    panChap?.classList.remove('active');
+    panQues?.classList.add('active');
+  } else {
+    tabQues?.classList.remove('active');
+    tabChap?.classList.add('active');
+    panQues?.classList.remove('active');
+    panChap?.classList.add('active');
+  }
+}
+
+function renderReadingNavigator() {
+  const isHi = window.currentVedicLang === 'hi';
+  const navCard = document.getElementById('readingNavigatorCard');
+  if (!navCard) return;
+
+  const countBadge = document.getElementById('navChapterCount');
+  if (countBadge) countBadge.textContent = isHi ? `(${activeSections.length} अध्याय)` : `(${activeSections.length} Chapters)`;
+  
+  const qPill = document.getElementById('navQuestionsPill');
+  if (qPill) qPill.textContent = `${consultationQuestionsLog.length} / ${MAX_CHAT_QUESTIONS}`;
+
+  // 1. Render Chapters Grid
+  const chapGrid = document.getElementById('navChaptersGrid');
+  if (chapGrid) {
+    chapGrid.innerHTML = activeSections.map((sec, idx) => {
+      const block = document.getElementById('section-block-' + sec.id);
+      const isReady = Boolean(block);
+      const numStr = String(idx + 1).padStart(2, '0');
+      const statusText = isReady ? (isHi ? '✓ तैयार (Click to view)' : '✓ Ready (Click to jump)') : (isHi ? 'प्रतीक्षारत' : 'Pending');
+      return `
+        <div class="nav-chapter-chip" onclick="jumpToReportSection('${sec.id}', '${escapeHtml(sec.title)}')" role="button" tabindex="0" title="${escapeHtml(sec.title)}">
+          <div class="nav-chip-left">
+            <div class="nav-chip-num">${numStr}</div>
+            <div class="nav-chip-text">
+              <span class="nav-chip-title">${escapeHtml(sec.title)}</span>
+              <span class="nav-chip-status" style="color:${isReady ? '#7fe3b5' : '#9fc9c2'};">${statusText}</span>
+            </div>
+          </div>
+          <span class="nav-chip-icon">↗</span>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // 2. Render Consultation Questions Log
+  const qList = document.getElementById('navQuestionsList');
+  const qEmpty = document.getElementById('navQuestionsEmpty');
+  if (qList) {
+    if (consultationQuestionsLog.length === 0) {
+      if (qEmpty) qEmpty.style.display = 'block';
+    } else {
+      if (qEmpty) qEmpty.style.display = 'none';
+      const existingCards = qList.querySelectorAll('.nav-question-card');
+      existingCards.forEach(c => c.remove());
+      
+      consultationQuestionsLog.forEach(qItem => {
+        const card = document.createElement('div');
+        card.className = 'nav-question-card';
+        card.innerHTML = `
+          <div class="nav-q-head">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span class="nav-q-badge">Q${qItem.id}</span>
+              <span class="nav-q-topic">✦ ${isHi ? escapeHtml(qItem.topicHi || qItem.topic) : escapeHtml(qItem.topic)}</span>
+            </div>
+            <span class="nav-q-time">${escapeHtml(qItem.timestamp)}</span>
+          </div>
+          <div class="nav-q-text">"${escapeHtml(qItem.question)}"</div>
+          <div class="nav-q-actions">
+            <button type="button" class="nav-q-btn btn-answer" onclick="jumpToChatQuestion(${qItem.id})" title="Jump down to full consultation response">
+              <span>💬</span> ${isHi ? 'परामर्श उत्तर देखें' : 'View In-Depth Answer'} ↗
+            </button>
+            <button type="button" class="nav-q-btn btn-evidence" onclick="jumpToReportSection('${qItem.relatedSectionId}', 'Astrological Evidence for Question #${qItem.id}')" title="Scroll to and highlight the supporting astrological report chapter">
+              <span>📜</span> ${isHi ? 'कुंडली अध्याय हाइलाइट करें:' : 'Highlight Chart Evidence:'} <b>${escapeHtml(qItem.relatedSectionTitle)}</b> 🔍
+            </button>
+          </div>
+        `;
+        qList.appendChild(card);
+      });
+    }
+  }
+}
+
+function renderChatQuestionsRibbon() {
+  const ribbon = document.getElementById('chatQuestionsRibbon');
+  if (!ribbon) return;
+  if (consultationQuestionsLog.length === 0) {
+    ribbon.style.display = 'none';
+    ribbon.innerHTML = '';
+    return;
+  }
+  ribbon.style.display = 'flex';
+  const isHi = window.currentVedicLang === 'hi';
+  ribbon.innerHTML = `<span style="font-size:11.5px;color:#d8a04c;font-family:'Cinzel',serif;font-weight:700;display:inline-flex;align-items:center;gap:4px;padding:4px 6px;white-space:nowrap;"><span>📑</span> ${isHi ? 'पूछे गए प्रश्न:' : 'Asked Questions:'}</span>` +
+    consultationQuestionsLog.map(q => `
+      <button type="button" class="chat-q-chip" onclick="jumpToChatQuestion(${q.id})" title="${escapeHtml(q.question)}">
+        <b>Q${q.id}:</b> ${escapeHtml(q.question.length > 28 ? q.question.slice(0, 26) + '…' : q.question)}
+      </button>
+    `).join('');
+}
+
+function jumpToReportSection(sectionId, customNotice) {
+  let target = document.getElementById('section-block-' + sectionId);
+  if (!target) {
+    target = document.getElementById('section-block-overview') || document.getElementById('reportCard');
+  }
+  if (!target) return;
+
+  // Uncollapse if collapsed
+  if (target.classList.contains('collapsed')) {
+    target.classList.remove('collapsed');
+    const hdr = target.querySelector('.report-section-header');
+    if (hdr) hdr.setAttribute('aria-expanded', 'true');
+  }
+
+  // Clear existing highlights
+  document.querySelectorAll('.report-target-highlight').forEach(el => el.classList.remove('report-target-highlight'));
+
+  // Trigger high-visibility highlight animation
+  target.classList.add('report-target-highlight');
+  
+  // Smooth scroll
+  target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+  // Auto clean highlight after pulse
+  setTimeout(() => {
+    target.classList.remove('report-target-highlight');
+  }, 3600);
+}
+
+function jumpToChatQuestion(qId) {
+  const chatCard = document.getElementById('chatCard');
+  if (chatCard && chatCard.style.display === 'none') {
+    chatCard.style.display = 'block';
+  }
+  
+  const target = document.getElementById('chat-ans-' + qId) || document.getElementById('chat-q-' + qId);
+  if (!target) {
+    chatCard?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    return;
+  }
+
+  document.querySelectorAll('.chat-msg-highlight').forEach(el => el.classList.remove('chat-msg-highlight'));
+  target.classList.add('chat-msg-highlight');
+  target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+  setTimeout(() => {
+    target.classList.remove('chat-msg-highlight');
+  }, 3600);
+}
+
 document.getElementById('endReadingBtn').onclick = () => {
   if(!confirm('End this reading and clear the current chart session?')) return;
   document.getElementById('progressCard').style.display='none';
@@ -9671,8 +10717,11 @@ document.getElementById('endReadingBtn').onclick = () => {
   document.getElementById('reportBody').innerHTML='';
   document.getElementById('chatLog').innerHTML='<div class="empty-hint">Your next reading will begin a fresh paid session.</div>';
   fullReportText=''; birthContext=''; chatHistory=[]; chatQuestionsUsed=0; chatUnlocked=false;
+  consultationQuestionsLog = [];
   if(window.resetPaymentSession) window.resetPaymentSession();
   updateChatCount();
+  renderReadingNavigator();
+  renderChatQuestionsRibbon();
   window.scrollTo({top:0,behavior:'smooth'});
 };
 
@@ -9701,14 +10750,39 @@ document.querySelectorAll('.chart-tab').forEach(btn=>{
   });
 });
 
-
-
-
-function appendChat(role, text){
+function appendChat(role, text, qIndex, topicInfo){
   const log = document.getElementById('chatLog');
   const div = document.createElement('div');
   div.className = 'msg ' + (role === 'user' ? 'user' : role === 'pending' ? 'model pending' : 'model');
-  div.textContent = text;
+  
+  const idx = qIndex || chatQuestionsUsed || 1;
+  if(role === 'user'){
+    div.id = 'chat-q-' + idx;
+    div.textContent = text;
+  } else if(role === 'pending'){
+    div.innerHTML = `<div class="chat-pending-wrap"><span class="pulse-gem">✦</span><span class="chat-pending-text">${escapeHtml(text || 'Consulting the planetary chart…')}</span></div>`;
+  } else if(role === 'model'){
+    div.id = 'chat-ans-' + idx;
+    let mainHtml = formatChatResponseHtml(text);
+    
+    // Add interactive evidence callout at the bottom of the answer
+    if(topicInfo && topicInfo.sectionId){
+      const isHi = window.currentVedicLang === 'hi';
+      mainHtml += `
+        <div class="chat-evidence-callout">
+          <div class="chat-evidence-left">
+            <span style="color:#d8a04c;font-size:14px;">📜</span>
+            <span>${isHi ? 'कुंडली का प्रासंगिक अध्याय:' : 'Supporting Chart Chapter:'} <b>${escapeHtml(topicInfo.sectionTitle)}</b></span>
+          </div>
+          <button type="button" class="chat-evidence-jump-btn" onclick="jumpToReportSection('${topicInfo.sectionId}', 'Highlighting Astrological Basis for Question #${idx}')">
+            ${isHi ? 'अध्याय हाइलाइट करें' : 'Highlight Report Chapter'} 🔍
+          </button>
+        </div>
+      `;
+    }
+    div.innerHTML = mainHtml;
+  }
+  
   log.appendChild(div);
   log.scrollTop = log.scrollHeight;
   return div;
@@ -9721,25 +10795,92 @@ document.getElementById('chatSend').onclick = async () => {
   if(!chatUnlocked){ alert('Wait for the chart to begin revealing before asking a question.'); return; }
   if(chatQuestionsUsed >= MAX_CHAT_QUESTIONS){ alert('You have used all 5 questions for this reading. End the reading to start a new paid reading.'); return; }
   if(!await window.requestPaidAccess('question')) return;
+  
   chatQuestionsUsed++;
   updateChatCount();
   input.value = '';
-  appendChat('user', q);
+  
+  const currentQIndex = chatQuestionsUsed;
+  const topicInfo = classifyQuestionTopic(q);
+  
+  appendChat('user', q, currentQIndex);
   chatHistory.push({role:'user', text:q});
+  
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  
+  consultationQuestionsLog.push({
+    id: currentQIndex,
+    question: q,
+    topic: topicInfo.topic,
+    topicHi: topicInfo.topicHi,
+    relatedSectionId: topicInfo.sectionId,
+    relatedSectionTitle: topicInfo.sectionTitle,
+    timestamp: timeStr
+  });
+  
+  renderReadingNavigator();
+  renderChatQuestionsRibbon();
+
   const sendBtn = document.getElementById('chatSend');
   sendBtn.disabled = true;
-  const pendingDiv = appendChat('pending', 'Consulting the chart…');
+  const pendingDiv = appendChat('pending', 'Consulting the planetary chart…');
 
   const reportContext = fullReportText.trim();
   const historyText = chatHistory.map(m => `${m.role === 'user' ? 'Question' : 'Answer'}: ${m.text}`).join('\n\n');
   const contextLabel = currentMode === 'kundli' ? 'Both partners\' birth data' : 'Birth data';
-  const userText = `${contextLabel}:\n${birthContext}\n\nComplete reading from the beginning through the latest section:\n${reportContext}\n\nConversation so far:\n${historyText}\n\nAnswer the latest question as a detailed continuation of the complete reading. Use the entire supplied reading from the beginning, not only its last section. Start with a direct answer in plain language. Then explain the relevant chart combinations, show the astrological evidence, connect it to the person's lived experience, discuss timing when relevant, distinguish strong indications from estimates, and finish with a clear synthesis. Do not merely define planets or signs. Do not introduce generic astrology that is not grounded in this chart. Aim for 1200-1800 words when the question warrants depth. Begin with the direct answer, then walk through the relevant placements and show how they translate into lived experience, behaviour and likely outcomes. Use the entire supplied reading from the beginning. Never use asterisks.`;
+  
+  // Extract astrological parameters for maximum precision
+  let astroDetails = '';
+  if(verifiedChart){
+    astroDetails = `Ascendant (Lagna): ${verifiedChart.ascSign} at ${verifiedChart.ascDeg?.toFixed(1)}°
+Moon: ${verifiedChart.moonRashi} (${verifiedChart.nakshatra} Nakshatra, Pada ${verifiedChart.pada})
+Sun: ${verifiedChart.sunRashi}
+Active Vimshottari Cycle: ${verifiedChart.dasha?.activeMahadasha || 'Jupiter'} Mahadasha / ${verifiedChart.dasha?.activeAntardasha || 'Saturn'} Antardasha
+Planetary Placements: ${(verifiedChart.planets || []).map(p => `${p.name} in ${p.rashi} (${p.house}th House)`).join(', ')}`;
+  }
+
+  const isHindi = window.currentVedicLang === 'hi';
+  const languageInstruction = isHindi ? 'Respond entirely in pure, refined Hindi (देवनागरी लिपि).' : 'Respond in clear, articulate English.';
+
+  const userText = `[RIGOROUS VEDIC ASTROLOGICAL CONSULTATION]
+${languageInstruction}
+
+${contextLabel}:
+${birthContext}
+
+Key Astrological Parameters:
+${astroDetails || 'Refer to the full reading below'}
+
+Complete reading from the beginning:
+${reportContext}
+
+Consultation History:
+${historyText}
+
+User's Latest Inquiry:
+"${q}"
+
+CRITICAL INSTRUCTIONS FOR IN-DEPTH CONSULTATION:
+1. Provide a comprehensive, mathematically rigorous, and master-level Vedic consultation (1000–1600 words).
+2. Ground every single point in this specific chart's verified planetary placements, house lordships, aspects (Graha Drishti), and planetary states. Avoid generic or dummy statements.
+3. Structure your response into these distinct sections using markdown headers and structured callouts:
+   - ### 1. Direct Conclusion & Executive Synthesis: Give a direct, unambiguous answer to the user's question in the first 2-3 sentences.
+   - ### 2. Classical Planetary Mechanics & Chart Evidence: Detail the exact Bhavas (houses), Rashis (signs), planetary lords, and classical treatise principles (Parashara / Jaimini) governing this query.
+   - ### 3. Psychological & Lived Manifestation: Explain how these astrological combinations translate into real-world behavior, mindset, relationship dynamics, or career patterns.
+   - ### 4. Vimshottari Timing & Planetary Cycles: Analyze the exact current and upcoming Mahadasha / Antardasha periods and major transits (Guru, Shani, Rahu-Ketu) relevant to this life area.
+   - ### 5. Strategic Guidance & Conscious Action: Provide practical, ethical, and high-impact guidance (strictly no gemstone/ritual prescriptions).
+4. Use clean Markdown formatting:
+   - Section headers: "### Title"
+   - Key takeaways: "**Core Takeaway:** ...", "**Timing Window:** ...", "**Key Consideration:** ..."
+   - Numbered or bulleted points with clear bold titles.
+   - Strictly DO NOT leave raw unclosed asterisks, floating hashes, or broken markdown syntax.`;
 
   try{
-    const rawText = await callGemini(activeRules, userText, 2500);
+    const rawText = await callGemini(activeRules, userText, 2800);
     const text = cleanAstroText(rawText);
     pendingDiv.remove();
-    appendChat('model', 'Answer\n\n' + text);
+    appendChat('model', text, currentQIndex, topicInfo);
     chatHistory.push({role:'model', text});
     window.consumeQuestionCredit();
   }catch(err){
@@ -9755,20 +10896,22 @@ document.getElementById('chatSend').onclick = async () => {
     }
     if(window.VedicEngine && typeof window.VedicEngine.answerChatLocally === 'function' && currentChart){
       const localAnswer = window.VedicEngine.answerChatLocally(q, currentChart, reportContext, window.currentVedicLang);
-      appendChat('model', 'Answer (Classical Engine Consultation)\n\n' + localAnswer);
+      appendChat('model', localAnswer, currentQIndex, topicInfo);
       chatHistory.push({role:'model', text:localAnswer});
       window.consumeQuestionCredit();
     }else{
       chatQuestionsUsed=Math.max(0,chatQuestionsUsed-1);
       updateChatCount();
       if(err.isAuth){
-        appendChat('model', 'The connected key is not authorizing requests. Scroll up to the chart-casting panel to reconnect a valid key, then ask again.');
+        appendChat('model', '### Key Notice\nThe connected key is not authorizing requests. Scroll up to the chart-casting panel to reconnect a valid key, then ask again.', currentQIndex, topicInfo);
       }else{
-        appendChat('model', 'The chart could not be consulted just now: ' + err.message);
+        appendChat('model', '### Notice\nThe chart could not be consulted just now: ' + err.message, currentQIndex, topicInfo);
       }
     }
   }
   sendBtn.disabled = (chatQuestionsUsed >= MAX_CHAT_QUESTIONS);
+  renderReadingNavigator();
+  renderChatQuestionsRibbon();
 };
 
 document.getElementById('chatInput').addEventListener('keydown', (e) => {
@@ -10665,12 +11808,12 @@ window.closeCompanyModal = function() {
         window.SERVER_CONFIG = null;
         const r = await fetch('/api/config', { cache: 'no-store' });
         window.SERVER_CONFIG = await r.json();
-        PAYWALL_CONFIG.plans.reveal.amountINR = SERVER_CONFIG.prices.reveal;
-        PAYWALL_CONFIG.plans.match.amountINR = SERVER_CONFIG.prices.match;
-        PAYWALL_CONFIG.plans.question.amountINR = SERVER_CONFIG.prices.question;
+        if (typeof window.applyPricingToUI === 'function') {
+          window.applyPricingToUI(window.SERVER_CONFIG);
+        }
         $('settingsStatus').style.display = 'block';
         $('settingsStatus').className = 'coord-status ok';
-        $('settingsStatus').textContent = 'Settings saved and applied to new sessions.';
+        $('settingsStatus').textContent = 'Settings saved and applied to live site immediately.';
         applyFeatureVisibility();
       } catch (e) {
         $('settingsStatus').style.display = 'block';
@@ -10685,9 +11828,6 @@ window.closeCompanyModal = function() {
   window.addEventListener('server-config-ready',applyFeatureVisibility);
 })();
 </script>
-</body>
-</html>
-```[cite: 1]
 <style>
 /* =========================================================
    PREMIUM EDITORIAL / OBSERVATORY REFINEMENT
@@ -13282,6 +14422,7 @@ window.setVedicLanguage = function(lang) {
   if (typeof renderClassicalModules === 'function') renderClassicalModules();
   if (typeof buildAtAGlance === 'function') buildAtAGlance();
   if (typeof renderDailyRashifal === 'function') renderDailyRashifal(currentPanchangDate);
+  if (typeof window.applyPricingToUI === 'function') window.applyPricingToUI(window.SERVER_CONFIG);
 };
 
 window.toggleVedicLanguage = function() {

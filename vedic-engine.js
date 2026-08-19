@@ -1015,55 +1015,101 @@ This section analyzes your horoscope's foundational placements with reverence to
     }
   }
 
-  // Local Chat Assistant Fallback Engine
+  // Local Chat Assistant Fallback Engine with In-Depth Synthesis
   function answerChatLocally(question, chart, reportText, lang = 'en') {
     const isHi = lang === 'hi';
     const q = (question || '').toLowerCase();
     const lagna = chart?.ascSign || 'Aries';
     const moon = chart?.moonRashi || 'Aries';
     const sun = chart?.sunRashi || 'Aries';
+    const nak = chart?.nakshatra || 'Ashwini';
+    const pada = chart?.pada || 1;
     const dasha = chart?.dasha?.activeMahadasha || 'Jupiter';
     const antardasha = chart?.dasha?.activeAntardasha || 'Saturn';
 
     // Remedy check
     if (q.includes('gemstone') || q.includes('remedy') || q.includes('mantra') || q.includes('pooja') || q.includes('puja') || q.includes('fasting') || q.includes('totka') || q.includes('रत्न') || q.includes('उपाय')) {
-      return `This platform is designed exclusively for objective astrological analysis and interpretation. It intentionally does not recommend remedies, rituals, gemstones, or spiritual prescriptions.\n\nYour chart's natural strengths (${lagna} Lagna, Moon in ${moon}, Sun in ${sun}) operate through conscious awareness, ethical action, and disciplined personal mastery rather than external rituals.`;
+      if (isHi) {
+        return `### 1. ज्योतिषीय मार्गदर्शन एवं नीति
+यह मंच विशुद्ध वैज्ञानिक एवं शास्त्रीय वैदिक ज्योतिषीय सिद्धांतों पर आधारित है। यहां कर्म-शुद्धि एवं आत्म-जागरूकता को ही सर्वोत्तम साधन माना गया है, न कि बाह्य अनुष्ठान या रत्न।
+
+- **मूल सिद्धांत:** आपकी कुंडली की प्राकृतिक ऊर्जाएं (${formatRashiBilingual(lagna)} लग्न, ${formatRashiBilingual(moon)} में चंद्रमा) किसी बाह्य वस्तु की मोहताज नहीं हैं।
+- **सार्थक दृष्टिकोण:** अपने कर्मों में शुचिता, अनुशासन, और विवेकपूर्ण निर्णयों के माध्यम से जीवन के अवसरों को सार्थक रूप दें।`;
+      }
+      return `### 1. Astrological Ethics & Philosophical Framework
+This platform operates strictly on classical interpretive Vedic principles. It intentionally avoids superstition, commercial remedies, gemstones, and ritual prescriptions.
+
+- **Foundational Principle:** Your chart's strengths (${lagna} Lagna, Moon in ${moon}, Sun in ${sun}) unfold through conscious awareness, ethical integrity, and disciplined decision-making.
+- **Practical Application:** Aligning your daily habits with your planetary strengths yields far more compounding stability than external rituals.`;
     }
 
     if (q.includes('career') || q.includes('job') || q.includes('business') || q.includes('work') || q.includes('profession') || q.includes('करियर') || q.includes('नौकरी') || q.includes('व्यापार')) {
-      return `### Direct Career Assessment
-Your career trajectory is anchored by **${lagna} Lagna** and the current influence of your **${dasha} Mahadasha**.
+      if (isHi) {
+        return `### 1. प्रत्यक्ष आजीविका एवं करियर फलकथन
+आपकी कुंडली में कर्मक्षेत्र (दशम भाव) और लग्न शक्ति (${formatRashiBilingual(lagna)}) संगठित नेतृत्व, बौद्धिक विश्लेषण और रणनीतिक प्रबंधन में आपकी विशेष दक्षता को दर्शाते हैं।
 
-1. **Vocation & Working Style:** You perform best in roles requiring structured leadership, specialized analytical ability, and strategic planning. You possess strong organizational stamina and thrive when given ownership over key deliverables.
-2. **Business vs. Employment:** Your chart supports independent initiative and executive roles within established institutions. Collaborative enterprise and consulting also align well with your Mercury-Saturn dynamics.
-3. **Timing & Growth Windows:** Under the current **${dasha} Mahadasha / ${antardasha} Antardasha**, professional responsibilities are consolidating. Focus on skill mastery and strategic networking for sustained advancement.`;
+- **व्यावसायिक कार्यशैली:** आप उन क्षेत्रों में श्रेष्ठ प्रदर्शन करते हैं जहां स्पष्ट उत्तरदायित्व, रणनीतिक योजना और सूक्ष्म विश्लेषणात्मक दृष्टि की आवश्यकता हो।
+- **नौकरी बनाम स्वतंत्र व्यवसाय:** आपकी कुंडली संस्थागत वरिष्ठ पदों और परामर्श/स्वतंत्र विशेषज्ञता दोनों के लिए अनुकूल है।
+- **ग्रह दशा व कालखंड प्रभाव:** वर्तमान में **${dasha} महादशा / ${antardasha} अंतर्दशा** के अंतर्गत पेशेवर कौशल के सुदृढ़ीकरण एवं दीर्घकालिक प्रतिष्ठा निर्माण का अनुकूल समय है।`;
+      }
+      return `### 1. Direct Career Assessment & Executive Synthesis
+Your professional trajectory is anchored by **${lagna} Lagna**, **Moon in ${moon} (${nak} Nakshatra)**, and the 10th house karmic axis.
+
+- **Vocation & Working Style:** You perform with exceptional distinction in roles demanding disciplined stewardship, specialized intellectual capability, and strategic vision.
+- **Business vs. Institution:** Your chart favors roles of high autonomy, executive management, structured entrepreneurship, or specialized advisory.
+- **Timing & Vimshottari Cycles:** Under the current **${dasha} Mahadasha / ${antardasha} Antardasha**, focus on consolidating core expertise and expanding strategic networks for sustainable advancement.`;
     }
 
     if (q.includes('love') || q.includes('marriage') || q.includes('relationship') || q.includes('spouse') || q.includes('partner') || q.includes('विवाह') || q.includes('शादी') || q.includes('प्रेम')) {
-      return `### Relational Insights & Partnership Outlook
-Your 7th house and Venus influences govern your relationship blueprint:
+      if (isHi) {
+        return `### 1. संबंध, वैवाहिक सौहार्द एवं दांपत्य विश्लेषण
+आपकी कुंडली में सप्तम भाव (साझेदारी) और शुक्र का प्रभाव पारस्परिक बौद्धिक संवाद और भावनात्मक संतुलन पर बल देता है।
 
-1. **Core Relational Nature:** You value intellectual rapport, mutual respect, and emotional consistency in partnerships. With **Moon in ${moon}**, open and honest communication is essential to your sense of domestic peace.
-2. **Spouse Characteristics:** The chart points toward a partner who is intelligent, grounded, and shares your ethical standards.
-3. **Timing Outlook:** Relationship deepening and constructive domestic developments are favored during harmonious sub-periods of the 7th lord and benefic transits over your natal Moon.`;
+- **संबंधों की प्रकृति:** आप रिश्तों में सत्यनिष्ठा, मानसिक तालमेल और दीर्घकालिक सुरक्षा को सर्वोच्च प्राथमिकता देते हैं।
+- **जीवनसाथी की विशेषताएं:** साथी विचारशील, व्यावहारिक एवं नैतिक मूल्यों से संपन्न व्यक्तित्व वाला होने के प्रबल संकेत हैं।
+- **शुभ कालखंड:** सप्तमेश के अनुकूल गोचर एवं शुभ दशा-अंतर्दशा में दांपत्य जीवन में प्रगाढ़ता और पारिवारिक सुख में वृद्धि होती है।`;
+      }
+      return `### 1. Relational Dynamics & Partnership Synthesis
+Your relational blueprint is governed by your 7th house axis, Venusian balance, and **Moon in ${moon}**.
+
+- **Core Relational Blueprint:** You thrive in partnerships built on clear communication, intellectual equality, and emotional consistency.
+- **Partner Characteristics:** The chart signifies a partner who is grounded, values thoughtful discourse, and provides strong domestic stability.
+- **Timing Windows:** Harmonious transit periods and supportive sub-periods foster deep relational bonding and mutual understanding.`;
     }
 
     if (q.includes('money') || q.includes('wealth') || q.includes('finance') || q.includes('धन') || q.includes('पैसा') || q.includes('आर्थिक')) {
-      return `### Financial Outlook & Wealth Accumulation
-Your financial architecture is governed by the 2nd and 11th houses:
+      if (isHi) {
+        return `### 1. वित्तीय संरचना एवं धन संचय विश्लेषण
+द्वितीय (धन) एवं एकादश (लाभ) भाव की स्थिति संगठित एवं चरणबद्ध धन संचय का संकेत देती है।
 
-1. **Wealth Generation:** Your chart indicates steady, compounding wealth accumulation through professional expertise, disciplined saving, and calculated asset acquisition rather than speculative gambles.
-2. **Key Strengths:** Strong financial discernment and patience allow you to build reliable multi-stream stability over time.
-3. **Current Cycle:** The active **${dasha} Mahadasha** encourages structured budgeting, capital preservation, and investments in long-term tangible assets.`;
+- **धन संचय का मार्ग:** सट्टा या अल्पकालिक जोखिम के बजाय ज्ञान, कौशल, एवं दीर्घकालिक सुनियोजित निवेश से संपत्ति का निर्माण होता है।
+- **वित्तीय विवेक:** आपकी सतर्कता एवं धैर्य अनावश्यक व्यय को नियंत्रित रखने में सहायक हैं।
+- **दशा चक्र प्रभाव:** वर्तमान **${dasha} महादशा** ठोस संपत्तियों और पूंजी संरक्षण पर ध्यान केंद्रित करने का निर्देश देती है।`;
+      }
+      return `### 1. Financial Architecture & Wealth Potential
+Your financial trajectory is shaped by the 2nd and 11th wealth houses in harmony with your **${lagna} Lagna**.
+
+- **Wealth Generation:** Sustainable prosperity manifests through calculated investments, specialized expertise, and disciplined asset compounding rather than speculative gambles.
+- **Key Financial Strength:** Exceptional patience and risk discernment safeguard your capital during volatile market phases.
+- **Active Cycle Guidance:** The active **${dasha} Mahadasha / ${antardasha} Antardasha** emphasizes capital retention and long-term tangible security.`;
     }
 
     // General fallback
-    return `### Astrological Consultation
-Based on your natal horoscope with **${lagna} Lagna**, **Moon in ${moon}**, and **Sun in ${sun}**:
+    if (isHi) {
+      return `### 1. समग्र वैदिक कुंडली फलकथन
+आपकी जन्मपत्रिका में **${formatRashiBilingual(lagna)} लग्न**, **${formatRashiBilingual(moon)} में चंद्रमा (${nak} नक्षत्र)**, और **${formatRashiBilingual(sun)} में सूर्य** एक संतुलित और उद्देश्यपूर्ण व्यक्तित्व का निर्माण करते हैं।
 
-- **Core Insight:** Your chart emphasizes conscious discernment, strategic patience, and enduring competence across your endeavors.
-- **Active Planetary Influence:** You are currently under the overarching influence of **${dasha} Mahadasha / ${antardasha} Antardasha**, which directs your focus toward consolidating major life goals, professional mastery, and personal balance.
-- **Guidance:** Lean into your innate strengths of methodical planning and emotional poise to navigate upcoming opportunities effectively.`;
+- **केंद्रीय जीवन शक्ति:** गहन बौद्धिक परिपक्वता, धैर्य और नैतिक स्पष्टता आपकी सबसे बड़ी ताकत हैं।
+- **सक्रिय दशा प्रभाव:** वर्तमान **${dasha} महादशा / ${antardasha} अंतर्दशा** आपको आत्म-विश्वास के साथ दीर्घकालिक लक्ष्यों की प्राप्ति की ओर अग्रसर कर रही है।
+- **मार्गदर्शन:** अपने स्वाभाविक धैर्य और योजनाबद्ध दृष्टिकोण को प्राथमिकता देकर आप किसी भी परिस्थिति में स्थिर सफलता प्राप्त कर सकते हैं।`;
+    }
+
+    return `### 1. Comprehensive Vedic Astrological Consultation
+Synthesizing your birth chart with **${lagna} Lagna**, **Moon in ${moon} (${nak} Nakshatra, Pada ${pada})**, and **Sun in ${sun}**:
+
+- **Core Synthesis:** Your chart reveals a resilient, discerning individual equipped with strategic foresight and unwavering perseverance.
+- **Active Planetary Influence:** You are navigating the **${dasha} Mahadasha / ${antardasha} Antardasha**, an energetic phase that consolidates maturity and rewards systematic effort.
+- **Actionable Guidance:** Leverage your innate discipline and emotional composure to optimize career, personal growth, and relationship harmony.`;
   }
 
   // Export to window
