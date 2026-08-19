@@ -347,10 +347,13 @@ async function aiCall({model, systemText, userText, maxTokens, purpose='general'
     if (!m) return 'gemini-3.6-flash';
     let cleanStr = String(m).trim().toLowerCase();
     if (cleanStr.startsWith('models/')) cleanStr = cleanStr.replace('models/', '');
-    if (cleanStr.includes('3.7') || cleanStr.includes('3.6') || cleanStr.includes('3.5')) return 'gemini-3.6-flash';
+    if (cleanStr.includes('3.7')) return 'gemini-3.6-flash';
+    if (cleanStr.includes('3.6')) return 'gemini-3.6-flash';
+    if (cleanStr.includes('3.5')) return 'gemini-3.5-flash';
     if (cleanStr.includes('3.1-flash-lite') || cleanStr.includes('flash-lite')) return 'gemini-3.1-flash-lite';
     if (cleanStr.includes('2.5-pro') || cleanStr.includes('pro')) return 'gemini-2.5-pro';
-    if (cleanStr.includes('2.5-flash') || cleanStr.includes('2.5') || cleanStr.includes('flash')) return 'gemini-3.6-flash';
+    if (cleanStr.includes('2.5-flash') || cleanStr.includes('2.5')) return 'gemini-2.5-flash';
+    if (cleanStr.includes('flash')) return 'gemini-3.6-flash';
     return cleanStr || 'gemini-3.6-flash';
   }
 
@@ -382,7 +385,7 @@ async function aiCall({model, systemText, userText, maxTokens, purpose='general'
     }
     const requestedTokens = Number(maxTokens) || (purpose === 'report' ? 3000 : 2500);
     const tokensLimit = purpose === 'report'
-      ? Math.min(5200, Math.max(1800, requestedTokens))
+      ? Math.min(3400, Math.max(1600, requestedTokens))
       : ((targetModel === fallbackModel)
           ? Math.min(2048, requestedTokens)
           : Math.min(3072, Math.max(256, requestedTokens)));
@@ -391,7 +394,7 @@ async function aiCall({model, systemText, userText, maxTokens, purpose='general'
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(targetModel)}:generateContent`;
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), purpose === 'report' ? 70000 : 30000);
+    const timeout = setTimeout(() => controller.abort(), purpose === 'report' ? 40000 : 30000);
 
     try {
       const r = await fetch(url, {
@@ -434,7 +437,22 @@ async function aiCall({model, systemText, userText, maxTokens, purpose='general'
         throw e;
       }
 
-      const text = j?.candidates?.[0]?.content?.parts?.map(x => x.text || '').join('') || '';
+      const candidate = j?.candidates?.[0];
+      const finishReason = candidate?.finishReason || '';
+      const text = candidate?.content?.parts?.map(x => x.text || '').join('') || '';
+      if (finishReason === 'MAX_TOKENS') {
+        const e = new Error('AI chapter reached the output limit before completing.');
+        e.status = 422;
+        e.incomplete = true;
+        e.finishReason = finishReason;
+        recordKeyFailure(chosenKey, keyIdx, 422, e.message);
+        if (attemptCount < attemptsMax) {
+          activeKeyPoolIndex = (keyIdx + 1) % pool.length;
+          await new Promise(res => setTimeout(res, Math.min(attemptCount * 500, 1500)));
+          continue;
+        }
+        throw e;
+      }
       if (!text) {
         recordKeyFailure(chosenKey, keyIdx, 500, 'Empty response from Gemini');
         if (attemptCount < attemptsMax) {
@@ -446,7 +464,7 @@ async function aiCall({model, systemText, userText, maxTokens, purpose='general'
       }
 
       recordKeySuccess(chosenKey, keyIdx, text.length);
-      return text;
+      return { text, finishReason, truncated: finishReason === 'MAX_TOKENS' };
     } catch (err) {
       clearTimeout(timeout);
       lastErr = err;
@@ -687,8 +705,9 @@ export default async function handler(req,res){
       if(pool.length === 0) return json(res,503,{error:'AI service is not configured on the server. Please ensure GEMINI_API_KEY is provided.'});
       if(!b.systemText || !b.userText) return json(res,400,{error:'AI request is incomplete.'});
       try {
-        const text = await aiCall(b);
-        return json(res, 200, { text });
+        const result = await aiCall(b);
+        const payload = typeof result === 'string' ? { text: result } : result;
+        return json(res, 200, payload);
       } catch (e) {
         console.error('[AI Handler Error]', e);
         const status = Number(e.status) || 500;
