@@ -175,14 +175,18 @@ function getTodayUtcKey() {
   return new Date().toISOString().split('T')[0];
 }
 
-function getGeminiKeyPool() {
+function getGeminiKeyPool(extraKey) {
   const pool = [];
   const addKey = (k) => {
     if (!k) return;
     const str = String(k).trim();
     if (str && !pool.includes(str)) pool.push(str);
   };
+  addKey(extraKey);
   addKey(process.env.GEMINI_API_KEY);
+  addKey(process.env.API_KEY);
+  addKey(process.env.GOOGLE_API_KEY);
+  addKey(process.env.GOOGLE_GENAI_API_KEY);
   addKey(process.env.GEMINI_API_KEY_1);
   addKey(process.env.GEMINI_API_KEY_2);
   addKey(process.env.GEMINI_API_KEY_3);
@@ -641,9 +645,9 @@ export default async function handler(req,res){
     }
 
     if(req.method==='POST'&&path==='/ai'){
-      const pool = getGeminiKeyPool();
-      if(pool.length === 0) return json(res,503,{error:'AI service is not configured on the server. Please ensure GEMINI_API_KEY is provided.'});
       const b = await readBody(req);
+      const pool = getGeminiKeyPool(b?.key);
+      if(pool.length === 0) return json(res,503,{error:'AI service is not configured on the server. Please ensure GEMINI_API_KEY is provided.'});
       if(!b.systemText || !b.userText) return json(res,400,{error:'AI request is incomplete.'});
       try {
         const text = await aiCall(b);
