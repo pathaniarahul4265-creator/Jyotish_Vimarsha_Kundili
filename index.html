@@ -8809,8 +8809,8 @@ setupPlaceAutocomplete('k1');
 setupPlaceAutocomplete('k2');
 
 const EMBEDDED_KEY = "";
-const PRIMARY_MODEL = "gemini-2.5-flash";
-const FALLBACK_MODEL = "gemini-2.5-flash";
+const PRIMARY_MODEL = "gemini-3.7-flash";
+const FALLBACK_MODEL = "gemini-3.1-flash-lite";
 let activeKey = EMBEDDED_KEY;
 let activeModel = PRIMARY_MODEL;
 
@@ -11767,43 +11767,55 @@ window.closeCompanyModal = function() {
     const verifiedPayments = payments.filter(x => x.status === 'verified' || x.status === 'captured');
     const totalRevenueINR = verifiedPayments.reduce((acc, x) => acc + (x.amount ? Math.round(x.amount / 100) : 0), 0);
     const activeVips = (vips || []).filter(v => v.active);
-    const configuredKeys = geminiQuota?.keys || [];
-    const activeIdx = geminiQuota?.activeKeyIndex || 1;
+    const configuredKeysCount = geminiQuota?.totalConfiguredKeys || (geminiQuota?.keys || []).length || 0;
+    const activeModelName = geminiQuota?.primaryModel || 'gemini-3.7-flash';
+    const displaySlots = geminiQuota?.slots && geminiQuota.slots.length > 0 ? geminiQuota.slots : (geminiQuota?.keys || []);
 
-    let keyCardsHtml = '';
-    if (configuredKeys.length > 0) {
-      keyCardsHtml = `
-        <div style="margin-top:20px;padding:16px;background:rgba(23,42,58,0.7);border:1px solid rgba(242,215,146,0.3);border-radius:12px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
-            <div style="display:flex;align-items:center;gap:10px;">
-              <span style="color:#f2d792;font-size:15px;font-weight:600;">✦ Gemini Multi-Key Failover & Quota Engine</span>
-              <span class="admin-status-pill ok" style="font-size:11px;">${configuredKeys.length} Key(s) Configured</span>
-            </div>
-            <button id="adminResetQuotaBtn" class="small secondary" style="font-size:11px;padding:3px 10px;border-color:rgba(127,197,192,0.4);color:#7fc5c0;">Reset Rate Limits</button>
+    const keyCardsHtml = `
+      <div style="margin-top:20px;padding:18px;background:rgba(23,42,58,0.75);border:1px solid rgba(242,215,146,0.35);border-radius:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <span style="color:#f2d792;font-size:15px;font-weight:600;">✦ Gemini Multi-Key Pool & Model Engine</span>
+            <span class="admin-status-pill ${configuredKeysCount > 0 ? 'ok' : 'err'}" style="font-size:11px;">${configuredKeysCount} of 3 Key(s) Configured</span>
+            <span class="admin-status-pill ok" style="font-size:11px;background:rgba(127,197,192,0.15);color:#7fc5c0;border-color:rgba(127,197,192,0.4);">Model: ${esc(activeModelName)}</span>
           </div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:12px;">
-            ${configuredKeys.map(k => {
-              const isCurrent = k.index === activeIdx;
-              const statusPill = k.status === 'HEALTHY' ? '<span class="admin-status-pill ok">Healthy</span>' : k.status === 'COOLING_DOWN' ? `<span class="admin-status-pill err">Cooling Down (${k.remainingCooldownSec}s)</span>` : `<span class="admin-status-pill warn">${k.status}</span>`;
-              return `
-                <div style="background:rgba(10,24,37,0.8);padding:12px 14px;border-radius:8px;border:1px solid ${isCurrent ? 'rgba(242,215,146,0.6)' : 'rgba(255,255,255,0.08)'};position:relative;">
-                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-                    <b style="color:${isCurrent ? '#f2d792' : '#e0e8eb'};font-size:13px;">${esc(k.label)} ${isCurrent ? '<span style="color:#a8e6cf;font-size:11px;font-weight:normal;">(Active)</span>' : ''}</b>
-                    ${statusPill}
-                  </div>
-                  <div style="font-size:11.5px;color:#a3b6be;margin-bottom:4px;">Key: <code style="color:#7fc5c0;">${esc(k.masked)}</code></div>
-                  <div style="display:flex;justify-content:space-between;font-size:11.5px;margin-top:6px;color:#d1e1e6;">
-                    <span>RPM: <b>${k.rpmCurrent}/${k.rpmLimit}</b></span>
-                    <span>Today: <b>${k.requestsToday}/${k.rpdLimit}</b></span>
-                  </div>
-                  <div style="font-size:11px;color:#7e939d;margin-top:4px;">Est. Tokens: ${k.estimatedTokensToday.toLocaleString()} · Success: ${k.totalSuccess}</div>
-                </div>
-              `;
-            }).join('')}
-          </div>
+          <button id="adminResetQuotaBtn" class="small secondary" style="font-size:11px;padding:4px 12px;border-color:rgba(127,197,192,0.4);color:#7fc5c0;">Reset Rate Limits</button>
         </div>
-      `;
-    }
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:12px;">
+          ${displaySlots.map(k => {
+            const isConfigured = k.isConfigured !== false;
+            const isCurrent = Boolean(k.isActive);
+            const statusPill = !isConfigured
+              ? '<span class="admin-status-pill" style="background:rgba(255,255,255,0.06);color:#8899a6;border-color:rgba(255,255,255,0.1);">Not Added</span>'
+              : k.status === 'HEALTHY'
+              ? '<span class="admin-status-pill ok">Healthy</span>'
+              : k.status === 'COOLING_DOWN'
+              ? `<span class="admin-status-pill err">Cooling Down (${k.remainingCooldownSec || 0}s)</span>`
+              : `<span class="admin-status-pill warn">${esc(k.status)}</span>`;
+
+            return `
+              <div style="background:rgba(10,24,37,0.85);padding:14px 16px;border-radius:10px;border:1px solid ${isCurrent ? 'rgba(242,215,146,0.65)' : isConfigured ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.05)'};position:relative;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                  <b style="color:${isCurrent ? '#f2d792' : isConfigured ? '#e0e8eb' : '#6b7d87'};font-size:13.5px;">${esc(k.label || `Key ${k.slot || k.index}`)} ${isCurrent ? '<span style="color:#a8e6cf;font-size:11px;font-weight:normal;">(Active)</span>' : ''}</b>
+                  ${statusPill}
+                </div>
+                <div style="font-size:11.5px;color:#8899a6;margin-bottom:4px;">Env: <code style="color:#f2d792;font-size:11px;">${esc(k.envVar || (k.slot === 1 ? 'GEMINI_API_KEY' : `GEMINI_API_KEY_${k.slot || k.index}`))}</code></div>
+                <div style="font-size:11.5px;color:#a3b6be;margin-bottom:8px;">Key: <code style="color:${isConfigured ? '#7fc5c0' : '#5a6e78'};font-size:11.5px;">${esc(k.masked)}</code></div>
+                ${isConfigured ? `
+                  <div style="display:flex;justify-content:space-between;font-size:11.5px;margin-top:6px;color:#d1e1e6;padding-top:6px;border-top:1px solid rgba(255,255,255,0.06);">
+                    <span>RPM: <b>${k.rpmCurrent || 0}/${k.rpmLimit || 15}</b></span>
+                    <span>Today: <b>${k.requestsToday || 0}/${k.rpdLimit || 1500}</b></span>
+                  </div>
+                  <div style="font-size:11px;color:#7e939d;margin-top:4px;">Est. Tokens: ${(k.estimatedTokensToday || 0).toLocaleString()} · Success: ${k.totalSuccess || 0}</div>
+                ` : `
+                  <div style="font-size:11px;color:#5a6e78;margin-top:8px;padding-top:6px;border-top:1px solid rgba(255,255,255,0.04);">Add variable in Vercel to activate key rotation slot.</div>
+                `}
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
 
     $('adminOverview').innerHTML = `
       <div class="admin-stats">

@@ -343,14 +343,14 @@ function recordKeyFailure(key, index, status, errorMessage) {
 
 async function aiCall({model, systemText, userText, maxTokens}){
   function normalizeModel(m) {
-    if (!m) return 'gemini-2.5-flash';
-    const cleanStr = String(m).trim().toLowerCase();
-    if (cleanStr.includes('3.5-flash') || cleanStr.includes('3.5')) return 'gemini-2.5-flash';
+    if (!m) return 'gemini-3.7-flash';
+    let cleanStr = String(m).trim().toLowerCase();
+    if (cleanStr.startsWith('models/')) cleanStr = cleanStr.replace('models/', '');
+    if (cleanStr.includes('3.7') || cleanStr.includes('3.6') || cleanStr.includes('3.5')) return 'gemini-3.7-flash';
     if (cleanStr.includes('3.1-flash-lite') || cleanStr.includes('flash-lite')) return 'gemini-3.1-flash-lite';
-    if (cleanStr.includes('3.7-flash')) return 'gemini-3.7-flash';
-    if (cleanStr.includes('flash')) return 'gemini-2.5-flash';
-    if (cleanStr.includes('pro')) return 'gemini-2.5-pro';
-    return m;
+    if (cleanStr.includes('2.5-pro') || cleanStr.includes('pro')) return 'gemini-2.5-pro';
+    if (cleanStr.includes('2.5-flash') || cleanStr.includes('2.5') || cleanStr.includes('flash')) return 'gemini-3.7-flash';
+    return cleanStr || 'gemini-3.7-flash';
   }
 
   const pool = getGeminiKeyPool();
@@ -360,21 +360,24 @@ async function aiCall({model, systemText, userText, maxTokens}){
     throw err;
   }
 
-  const primaryModel = normalizeModel(getEnv('GEMINI_PRIMARY_MODEL', model || 'gemini-2.5-flash'));
-  const fallbackModel = normalizeModel(getEnv('GEMINI_FALLBACK_MODEL', 'gemini-2.5-flash'));
+  const primaryModel = normalizeModel(getEnv('GEMINI_PRIMARY_MODEL', model || 'gemini-3.7-flash'));
+  const fallbackModel = normalizeModel(getEnv('GEMINI_FALLBACK_MODEL', 'gemini-3.1-flash-lite'));
   const promptChars = (systemText?.length || 0) + (userText?.length || 0);
 
   // Attempt generation with automatic multi-key rotation and model fallback
   let lastErr = null;
-  const attemptsMax = Math.max(pool.length * 2, 3);
+  const attemptsMax = Math.max(pool.length * 2, 4);
   let attemptCount = 0;
 
   while (attemptCount < attemptsMax) {
     attemptCount++;
     const keyIdx = selectNextAvailableKeyIndex(pool);
     const chosenKey = pool[keyIdx];
-    const targetModel = (attemptCount > pool.length && primaryModel !== fallbackModel) ? fallbackModel : primaryModel;
-    const tokensLimit = (targetModel === fallbackModel) ? Math.min(2500, Number(maxTokens) || 2500) : Math.min(4096, Math.max(256, Number(maxTokens) || 3000));
+    let targetModel = (attemptCount > pool.length && primaryModel !== fallbackModel) ? fallbackModel : primaryModel;
+    if (lastErr && (String(lastErr.message).includes('not available') || String(lastErr.message).includes('404') || String(lastErr.message).includes('not found'))) {
+      targetModel = 'gemini-3.7-flash';
+    }
+    const tokensLimit = (targetModel === fallbackModel) ? Math.min(2500, Number(maxTokens) || 2500) : Math.min(4096, Math.max(256, Number(maxTokens) || 3200));
 
     recordKeyRequest(chosenKey, keyIdx, promptChars);
 
@@ -410,7 +413,9 @@ async function aiCall({model, systemText, userText, maxTokens}){
         activeKeyPoolIndex = (keyIdx + 1) % pool.length;
 
         const isRotatable = r.status === 429 || r.status === 400 || r.status === 401 || r.status === 403 || r.status === 503 || r.status === 504 || r.status === 404;
-        if (isRotatable && pool.length > 1 && attemptCount < attemptsMax) {
+        if (isRotatable && attemptCount < attemptsMax) {
+          lastErr = new Error(errMsg);
+          lastErr.status = r.status;
           continue; // Seamlessly rotate to next key in pool
         }
 
@@ -422,7 +427,7 @@ async function aiCall({model, systemText, userText, maxTokens}){
       const text = j?.candidates?.[0]?.content?.parts?.map(x => x.text || '').join('') || '';
       if (!text) {
         recordKeyFailure(chosenKey, keyIdx, 500, 'Empty response from Gemini');
-        if (pool.length > 1 && attemptCount < attemptsMax) {
+        if (attemptCount < attemptsMax) {
           activeKeyPoolIndex = (keyIdx + 1) % pool.length;
           continue;
         }
@@ -437,7 +442,7 @@ async function aiCall({model, systemText, userText, maxTokens}){
       const status = err.name === 'AbortError' ? 504 : (err.status || 500);
       recordKeyFailure(chosenKey, keyIdx, status, err.message);
 
-      if (pool.length > 1 && attemptCount < attemptsMax) {
+      if (attemptCount < attemptsMax) {
         activeKeyPoolIndex = (keyIdx + 1) % pool.length;
         continue;
       }
@@ -964,6 +969,45 @@ export default async function handler(req,res){
       if (req.method === 'GET' && path === '/admin/gemini-quota') {
         const pool = getGeminiKeyPool();
         const now = Date.now();
+        const primaryModel = normalizeModel(getEnv('GEMINI_PRIMARY_MODEL', 'gemini-3.7-flash'));
+        const fallbackModel = normalizeModel(getEnv('GEMINI_FALLBACK_MODEL', 'gemini-3.1-flash-lite'));
+
+        const slotDefs = [
+          { slot: 1, name: 'Gemini Key 1 (Primary)', envVar: 'GEMINI_API_KEY', val: getEnv('GEMINI_API_KEY') || getEnv('GEMINI_API_KEY_1') },
+          { slot: 2, name: 'Gemini Key 2 (Secondary)', envVar: 'GEMINI_API_KEY_2', val: getEnv('GEMINI_API_KEY_2') },
+          { slot: 3, name: 'Gemini Key 3 (Tertiary)', envVar: 'GEMINI_API_KEY_3', val: getEnv('GEMINI_API_KEY_3') }
+        ];
+
+        const slots = slotDefs.map((s, sIdx) => {
+          const isConfigured = Boolean(s.val);
+          const poolIdx = isConfigured ? pool.indexOf(s.val) : -1;
+          const stats = isConfigured ? getKeyStats(s.val, poolIdx >= 0 ? poolIdx : sIdx) : null;
+          const rpm = stats ? (stats.recentTimestamps || []).length : 0;
+          const isCoolingDown = stats ? stats.exhaustedUntil > now : false;
+          const remainingCooldownSec = isCoolingDown ? Math.ceil((stats.exhaustedUntil - now) / 1000) : 0;
+          const isActive = isConfigured && poolIdx === activeKeyPoolIndex;
+
+          return {
+            slot: s.slot,
+            label: s.name,
+            envVar: s.envVar,
+            isConfigured,
+            masked: isConfigured ? maskApiKey(s.val) : 'Not configured in environment',
+            isActive,
+            status: !isConfigured ? 'UNCONFIGURED' : isCoolingDown ? 'COOLING_DOWN' : (rpm >= 14 ? 'NEAR_RPM_LIMIT' : ((stats?.requestsToday || 0) >= 1450 ? 'NEAR_RPD_LIMIT' : 'HEALTHY')),
+            rpmCurrent: rpm,
+            rpmLimit: 15,
+            requestsToday: stats?.requestsToday || 0,
+            rpdLimit: 1500,
+            estimatedTokensToday: stats?.estimatedTokensToday || 0,
+            totalSuccess: stats?.totalSuccess || 0,
+            totalFailures: stats?.totalFailures || 0,
+            remainingCooldownSec,
+            exhaustionReason: stats?.exhaustionReason || null,
+            lastUsed: stats?.lastUsed || null
+          };
+        });
+
         const keysSummary = pool.map((key, idx) => {
           const stats = getKeyStats(key, idx);
           const rpm = (stats.recentTimestamps || []).length;
@@ -987,9 +1031,13 @@ export default async function handler(req,res){
             lastUsed: stats.lastUsed
           };
         });
+
         return json(res, 200, {
           totalConfiguredKeys: pool.length,
           activeKeyIndex: activeKeyPoolIndex + 1,
+          primaryModel,
+          fallbackModel,
+          slots,
           keys: keysSummary
         });
       }
