@@ -473,6 +473,155 @@ async function aiCall({model, systemText, userText, maxTokens, purpose='general'
   throw new Error('AI request could not be completed after rotating key pool.');
 }
 
+
+// ==========================================
+// TRUE GEMINI SSE STREAMING
+// Sends text chunks to the browser as Gemini produces them.
+// ==========================================
+function writeSse(res, event, data) {
+  try {
+    if (res.writableEnded) return false;
+    res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+async function streamGeminiOnce({ key, keyIdx, model, systemText, userText, maxTokens, purpose, res, continuationText='' }) {
+  const prompt = continuationText
+    ? `${userText}\n\nCONTINUATION STATE:\nThe chapter was partially generated before an upstream interruption. Continue from the exact end of the existing draft below. Do not repeat the existing text. Continue naturally and complete the chapter.\n\nEXISTING DRAFT:\n${continuationText.slice(-12000)}`
+    : userText;
+  const requestedTokens = Math.min(8192, Math.max(1600, Number(maxTokens) || 5200));
+  recordKeyRequest(key, keyIdx, (systemText?.length || 0) + prompt.length);
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), purpose === 'report' ? 180000 : 90000);
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:streamGenerateContent?alt=sse`;
+  let reader = null;
+  let buffer = '';
+  let fullText = '';
+
+  try {
+    const r = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-goog-api-key': key
+      },
+      signal: controller.signal,
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: systemText }] },
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        generationConfig: {
+          maxOutputTokens: requestedTokens,
+          temperature: purpose === 'report' ? 0.78 : 0.7
+        }
+      })
+    });
+
+    if (!r.ok) {
+      const raw = await r.text().catch(() => '');
+      let j = {};
+      try { j = JSON.parse(raw); } catch {}
+      const msg = j?.error?.message || raw || `Gemini API returned HTTP ${r.status}`;
+      recordKeyFailure(key, keyIdx, r.status, msg);
+      const e = new Error(msg); e.status = r.status; throw e;
+    }
+    if (!r.body || typeof r.body.getReader !== 'function') {
+      const e = new Error('Streaming is not available from the AI upstream response.');
+      e.status = 502; throw e;
+    }
+
+    reader = r.body.getReader();
+    const decoder = new TextDecoder();
+
+    const processLine = (line) => {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith(':') || !trimmed.startsWith('data:')) return;
+      const payload = trimmed.slice(5).trim();
+      if (!payload || payload === '[DONE]') return;
+      let obj;
+      try { obj = JSON.parse(payload); } catch { return; }
+      const parts = obj?.candidates?.[0]?.content?.parts || [];
+      const chunk = parts.map(p => p?.text || '').join('');
+      if (chunk) {
+        fullText += chunk;
+        writeSse(res, 'chunk', { text: chunk });
+      }
+      const finish = obj?.candidates?.[0]?.finishReason;
+      if (finish) writeSse(res, 'meta', { finishReason: finish });
+    };
+
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      // Normalize both CRLF and LF SSE streams. Keep incomplete final line.
+      const lines = buffer.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
+      buffer = lines.pop() || '';
+      for (const line of lines) processLine(line);
+    }
+    buffer += decoder.decode();
+    if (buffer.trim()) processLine(buffer);
+
+    if (!fullText.trim()) {
+      const e = new Error('Gemini returned an empty streaming response.');
+      e.status = 502; throw e;
+    }
+
+    recordKeySuccess(key, keyIdx, fullText.length);
+    return { text: fullText, completed: true };
+  } catch (err) {
+    const status = err?.name === 'AbortError' ? 504 : Number(err?.status) || 500;
+    recordKeyFailure(key, keyIdx, status, err?.message || 'stream failure');
+    err.status = status;
+    err.partialText = fullText;
+    throw err;
+  } finally {
+    clearTimeout(timeout);
+    try { if (reader) await reader.cancel(); } catch {}
+  }
+}
+
+async function streamAiCall({ model, systemText, userText, maxTokens, purpose='general', res }) {
+  const pool = getGeminiKeyPool();
+  if (!pool.length) { const e = new Error('AI service is not configured on the server.'); e.status = 503; throw e; }
+
+  function normalizeModel(m) {
+    let x = String(m || getEnv('GEMINI_PRIMARY_MODEL', 'gemini-2.5-flash')).trim().replace(/^models\//,'');
+    if (x.includes('gemini-3.6') || x.includes('gemini-3.7')) return 'gemini-2.5-flash';
+    return x || 'gemini-2.5-flash';
+  }
+  const primary = normalizeModel(model);
+  const fallback = normalizeModel(getEnv('GEMINI_FALLBACK_MODEL', 'gemini-2.5-flash'));
+  let lastError = null;
+  let continuation = '';
+
+  for (let attempt=0; attempt<Math.max(2, pool.length); attempt++) {
+    const idx = selectNextAvailableKeyIndex(pool);
+    const key = pool[idx];
+    const targetModel = attempt === 0 ? primary : fallback;
+    try {
+      writeSse(res, 'status', { state:'connecting', keyIndex: idx + 1, attempt: attempt + 1 });
+      const result = await streamGeminiOnce({ key, keyIdx: idx, model: targetModel, systemText, userText, maxTokens, purpose, res, continuation });
+      writeSse(res, 'complete', { text: result.text, keyIndex: idx + 1 });
+      return result.text;
+    } catch (err) {
+      lastError = err;
+      if (err.partialText) continuation = err.partialText;
+      const status = Number(err.status) || 500;
+      const retryable = status === 429 || status === 408 || status === 409 || status === 500 || status === 502 || status === 503 || status === 504;
+      if (!retryable || attempt + 1 >= Math.max(2, pool.length)) break;
+      activeKeyPoolIndex = (idx + 1) % pool.length;
+      writeSse(res, 'retry', { message:'Generation connection interrupted. Automatically resuming…', nextKeyIndex: activeKeyPoolIndex + 1 });
+      await new Promise(r => setTimeout(r, Math.min(1000 * (attempt + 1), 2500)));
+    }
+  }
+  writeSse(res, 'error', { message:lastError?.message || 'AI streaming failed.', status:Number(lastError?.status)||500, recoverable:true });
+  throw lastError || new Error('AI streaming failed.');
+}
+
 export default async function handler(req,res){
   let rawPath = req.path || (req.url ? req.url.split('?')[0] : '');
   rawPath = rawPath.replace(/^\/api\/?/, '').replace(/^\/+/, '');
@@ -682,204 +831,24 @@ export default async function handler(req,res){
     }
 
     if(req.method==='POST'&&path==='/ai-stream'){
-      const b=await readBody(req);
-      const pool=getGeminiKeyPool(b?.key);
-      if(pool.length===0) return json(res,503,{error:'AI service is not configured on the server.'});
-      if(!b.systemText||!b.userText) return json(res,400,{error:'AI request is incomplete.'});
-
-      function streamModel(m){
-        let clean=String(m||'gemini-3.6-flash').trim().toLowerCase().replace(/^models\//,'');
-        if(clean.includes('3.7')||clean.includes('3.6')||clean.includes('3.5')) return 'gemini-3.6-flash';
-        if(clean.includes('3.1-flash-lite')||clean.includes('flash-lite')) return 'gemini-3.1-flash-lite';
-        if(clean.includes('2.5-pro')||clean.includes('pro')) return 'gemini-2.5-pro';
-        return clean||'gemini-3.6-flash';
+      const b = await readBody(req);
+      const pool = getGeminiKeyPool(b?.key);
+      if(pool.length === 0) return json(res,503,{error:'AI service is not configured on the server. Please ensure GEMINI_API_KEY is provided.'});
+      if(!b.systemText || !b.userText) return json(res,400,{error:'AI request is incomplete.'});
+      res.status(200);
+      res.setHeader('Content-Type','text/event-stream; charset=utf-8');
+      res.setHeader('Cache-Control','no-cache, no-store, must-revalidate');
+      res.setHeader('Connection','keep-alive');
+      res.setHeader('X-Accel-Buffering','no');
+      if(typeof res.flushHeaders === 'function') res.flushHeaders();
+      try {
+        await streamAiCall({ model:b.model, systemText:b.systemText, userText:b.userText, maxTokens:b.maxTokens, purpose:b.purpose || 'general', res });
+      } catch(e) {
+        // streamAiCall has already emitted an SSE error; never write a second JSON response.
+      } finally {
+        try { res.end(); } catch {}
       }
-
-      const model=streamModel(getEnv('GEMINI_PRIMARY_MODEL')||b.model);
-      const maxTokens=Math.min(4200,Math.max(1600,Number(b.maxTokens)||3400));
-      let lastErr=null;
-
-      // Important: report chapters can legitimately take more than one minute.
-      // Keep the upstream request alive long enough for a full streamed chapter.
-      const STREAM_TIMEOUT_MS = Math.min(
-        Math.max(Number(getEnv('GEMINI_STREAM_TIMEOUT_MS')) || 180000, 60000),
-        300000
-      );
-
-      for(let attempt=0;attempt<pool.length;attempt++){
-        const keyIdx=selectNextAvailableKeyIndex(pool);
-        const key=pool[keyIdx];
-        recordKeyRequest(key,keyIdx,(b.systemText.length||0)+(b.userText.length||0));
-
-        const controller=new AbortController();
-        const timeout=setTimeout(()=>controller.abort(),STREAM_TIMEOUT_MS);
-        let headersSent=false;
-        let totalChars=0;
-        let sawMaxTokens=false;
-
-        const sendSse=(payload)=>{
-          if(!headersSent) return;
-          try{ res.write(`data: ${JSON.stringify(payload)}\n\n`); }catch{}
-        };
-
-        try{
-          const upstream=await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:streamGenerateContent?alt=sse`,
-            {
-              method:'POST',
-              headers:{'Content-Type':'application/json','x-goog-api-key':key},
-              signal:controller.signal,
-              body:JSON.stringify({
-                systemInstruction:{parts:[{text:b.systemText}]},
-                contents:[{role:'user',parts:[{text:b.userText}]}],
-                generationConfig:{
-                  maxOutputTokens:maxTokens,
-                  temperature:b.purpose==='report'?0.82:0.7
-                }
-              })
-            }
-          );
-
-          if(!upstream.ok){
-            const body=await upstream.json().catch(()=>({}));
-            const msg=body?.error?.message||`Gemini API returned HTTP ${upstream.status}`;
-            recordKeyFailure(key,keyIdx,upstream.status,msg);
-            activeKeyPoolIndex=(keyIdx+1)%pool.length;
-            lastErr=new Error(msg);
-            lastErr.status=upstream.status;
-            if([429,500,502,503,504].includes(upstream.status)){
-              await new Promise(r=>setTimeout(r,Math.min(1200*(attempt+1),2500)));
-            }
-            continue;
-          }
-
-          clearTimeout(timeout);
-
-          res.writeHead(200,{
-            'Content-Type':'text/event-stream; charset=utf-8',
-            'Cache-Control':'no-cache, no-transform',
-            'Connection':'keep-alive',
-            'X-Accel-Buffering':'no'
-          });
-          headersSent=true;
-
-          // Flush headers immediately so the browser knows streaming has begun.
-          try{ if(typeof res.flushHeaders==='function') res.flushHeaders(); }catch{}
-
-          let buffer='';
-          const reader=upstream.body.getReader();
-          const decoder=new TextDecoder();
-
-          // Gemini's SSE stream is normally CRLF-delimited. Normalize line endings
-          // before parsing. The previous parser only split on \\n\\n, which could
-          // leave the whole stream in one buffer and expose only the first event.
-          const processSseText=async(chunk)=>{
-            buffer += chunk.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
-
-            let boundary;
-            while((boundary=buffer.indexOf('\n\n')) !== -1){
-              const evt=buffer.slice(0,boundary);
-              buffer=buffer.slice(boundary+2);
-
-              for(const line of evt.split('\n')){
-                if(!line.startsWith('data:')) continue;
-                const payload=line.slice(5).trim();
-                if(!payload || payload==='[DONE]') continue;
-
-                try{
-                  const j=JSON.parse(payload);
-                  const parts=j?.candidates?.[0]?.content?.parts || [];
-                  const text=parts.map(x=>x?.text||'').join('');
-
-                  if(text){
-                    totalChars += text.length;
-                    sendSse({text});
-                  }
-
-                  const finish=j?.candidates?.[0]?.finishReason;
-                  if(finish==='MAX_TOKENS'){
-                    sawMaxTokens=true;
-                    sendSse({warning:'MAX_TOKENS'});
-                  }
-                }catch(parseErr){
-                  // Ignore malformed individual SSE events; keep the stream alive.
-                }
-              }
-            }
-          };
-
-          while(true){
-            const {value,done}=await reader.read();
-            if(done) break;
-            await processSseText(decoder.decode(value,{stream:true}));
-          }
-
-          // Flush any final UTF-8 bytes and any final SSE event without \\n\\n.
-          await processSseText(decoder.decode());
-          const tail=buffer.trim();
-          if(tail){
-            for(const line of tail.split('\n')){
-              if(!line.startsWith('data:')) continue;
-              const payload=line.slice(5).trim();
-              if(!payload || payload==='[DONE]') continue;
-              try{
-                const j=JSON.parse(payload);
-                const parts=j?.candidates?.[0]?.content?.parts || [];
-                const text=parts.map(x=>x?.text||'').join('');
-                if(text){
-                  totalChars += text.length;
-                  sendSse({text});
-                }
-                if(j?.candidates?.[0]?.finishReason==='MAX_TOKENS'){
-                  sawMaxTokens=true;
-                  sendSse({warning:'MAX_TOKENS'});
-                }
-              }catch{}
-            }
-          }
-
-          if(sawMaxTokens){
-            sendSse({error:'The chapter reached the AI output limit before completion.'});
-            recordKeyFailure(key,keyIdx,206,'MAX_TOKENS / incomplete streamed chapter');
-            activeKeyPoolIndex=(keyIdx+1)%pool.length;
-            res.end();
-            return;
-          }
-
-          if(totalChars<200){
-            sendSse({error:'The AI response was too short or incomplete.'});
-            recordKeyFailure(key,keyIdx,502,'Too-short streamed response');
-            activeKeyPoolIndex=(keyIdx+1)%pool.length;
-            res.end();
-            return;
-          }
-
-          recordKeySuccess(key,keyIdx,totalChars);
-          sendSse({done:true});
-          res.write('data: [DONE]\n\n');
-          res.end();
-          return;
-
-        }catch(err){
-          clearTimeout(timeout);
-          const status=err.name==='AbortError'?504:(err.status||500);
-          recordKeyFailure(key,keyIdx,status,err.message||'stream error');
-          activeKeyPoolIndex=(keyIdx+1)%pool.length;
-          lastErr=err;
-
-          // If the response has already started, do not attempt to send JSON
-          // headers. Tell the browser through SSE and close cleanly.
-          if(headersSent){
-            sendSse({error: status===504 ? 'Streaming timed out before the chapter completed.' : (err.message||'Streaming AI generation failed.')});
-            try{ res.end(); }catch{}
-            return;
-          }
-
-          if(attempt<pool.length-1) continue;
-        }
-      }
-
-      return json(res,Number(lastErr?.status)||500,{error:lastErr?.message||'Streaming AI generation failed.'});
+      return;
     }
 
     if(req.method==='POST'&&path==='/ai'){
