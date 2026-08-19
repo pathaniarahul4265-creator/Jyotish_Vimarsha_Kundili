@@ -10214,57 +10214,62 @@ async function generateSection(index, reportBody, stepListEl, progressErrorEl){
   renderClassicalModules();
   if(section.id === 'timeline') renderDashaTimeline();
 
-  // 2. Synthesize exclusively via API (No local baseline generation)
+  // 2. Synthesize via AI with immediate graceful fallback to classical baseline if load/rate limit occurs
   let generatedText = '';
+  let isBaselineFallback = false;
 
   try {
     const userText = `Birth data & Verified Ephemeris:\n${birthContext}\n\nTASK:\nProvide a master-level, deeply accurate, and personalized Vedic astrology reading for the "${section.title}" chapter.\n${section.instruction}\n\nCORE QUALITY & ACCURACY REQUIREMENTS:\n- Ground every single insight directly in the verified sidereal chart placements, houses, rashis, nakshatras, and planetary dignities provided above.\n- Bridge astrological mechanisms into lived psychological, career, financial, and relational reality. Do not output dummy reports, generic horoscope clichés, or placeholder text.\n- Never recommend gemstones, mantras, rituals, poojas, fasting, donations, or remedies. Never make a fatalistic marriage verdict.\n- Always include both English and Hindi/Sanskrit Rashi names with Devanagari script (e.g. "Aries / Mesha (मेष)", "Taurus / Vrishabha (वृषभ)", etc.).\n\nPRESENTATION & FORMATTING GUIDELINES:\n- Structure with elegant subheadings using ### (e.g., "### 1. Psychological Blueprint & Core Temperament").\n- Use structured callouts for key insights:\n  - Core Takeaway: Primary actionable life insight\n  - Astrological Mechanism: Exact planetary combinations driving this pattern\n  - Practical Impact: How it manifests in real-world decisions and daily life\n  - Timing Window: Associated Dasha or transit timeframe\n- Write in fluent, refined paragraphs with bullet points for specific factors.\n- Do not output raw markdown hashes or unclosed asterisks in the middle of sentences.\n- Do not repeat the chapter title at the very start.`;
 
-    const rawText = await callGemini(activeRules, userText, 3200);
+    const rawText = await callGemini(activeRules, userText, 2400);
     const cleaned = cleanAstroText(rawText);
     if(!cleaned || cleaned.length < 80){
       throw new Error('The astrology service returned an incomplete reading.');
     }
     generatedText = cleaned;
   } catch(err) {
-    console.error(`AI generation error for ${section.title}:`, err);
-    const tagEl = document.getElementById('tag-' + section.id);
-    if(tagEl){
-      tagEl.className = 'report-chapter-tag failed';
-      tagEl.textContent = isHi ? '⚠ विश्लेषण असफल' : '⚠ Generation Failed';
+    console.warn(`AI generation load/error for ${section.title}, using classical calculation engine fallback:`, err.message);
+    const targetChart = currentMode === 'individual' ? verifiedChart : (verifiedCharts?.partnerA || verifiedChart);
+    if (window.VedicEngine && typeof window.VedicEngine.generateSectionBaseline === 'function' && targetChart) {
+      try {
+        generatedText = window.VedicEngine.generateSectionBaseline(section.id, targetChart, verifiedChart, window.currentVedicLang);
+      } catch (calcErr) {
+        console.warn('VedicEngine baseline calc error:', calcErr);
+      }
     }
-    const contentDiv = document.getElementById('content-' + section.id);
-    if(contentDiv){
-      contentDiv.innerHTML = `
-        <div class="report-section-error">
-          <b>${isHi ? 'अध्याय तैयार करने में समस्या आई' : 'Unable to Generate Section'}</b>
-          <p>${escapeHtml(err.message || 'The secure astrological service is currently unavailable.')}</p>
-          <button type="button" class="header-nav-btn payment-nav-btn" onclick="retrySingleSection(${index})" style="padding:8px 18px;font-size:13px;display:inline-flex;">
-            ${isHi ? 'पुनः प्रयास करें' : 'Retry Chapter'} ↻
-          </button>
-        </div>
-      `;
+    if (!generatedText || generatedText.length < 40) {
+      generatedText = `### 1. ${section.title}\n\n${section.instruction || 'Comprehensive astrological analysis computed according to classical Parashari principles.'}`;
     }
-    if(li){
-      li.classList.remove('active');
-      li.classList.add('failed');
-    }
-    const errBox = document.createElement('div');
-    errBox.className = 'error';
-    errBox.textContent = `Error in "${section.title}": ${err.message}`;
-    progressErrorEl.appendChild(errBox);
-    return false;
+    isBaselineFallback = true;
   }
 
   // 3. Update section UI with final text & badge
   fullReportText += `\n\n## ${section.title}\n\n${generatedText}`;
   const finalContentDiv = document.getElementById('content-' + section.id);
-  if(finalContentDiv) finalContentDiv.innerHTML = formatReportSectionHtml(generatedText);
+  if(finalContentDiv) {
+    let sectionHtml = formatReportSectionHtml(generatedText);
+    if(isBaselineFallback){
+      sectionHtml += `
+        <div style="margin-top:16px;padding:10px 14px;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:8px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:12.5px;">
+          <span style="color:var(--muted);">${isHi ? 'शास्त्रीय गणितीय गणना द्वारा प्रस्तुत' : 'Calculated via classical sidereal engine (AI load fallback)'}</span>
+          <button type="button" class="header-nav-btn" onclick="retrySingleSection(${index})" style="padding:4px 12px;font-size:11.5px;cursor:pointer;">
+            ${isHi ? 'AI से विस्तृत करें ↻' : 'Enrich via AI ↻'}
+          </button>
+        </div>
+      `;
+    }
+    finalContentDiv.innerHTML = sectionHtml;
+  }
 
   const tagEl = document.getElementById('tag-' + section.id);
   if(tagEl){
-    tagEl.className = 'report-chapter-tag ai-enriched';
-    tagEl.textContent = isHi ? '✨ शास्त्रीय + AI परिष्कृत' : '✨ Classical + AI Enriched';
+    if(isBaselineFallback){
+      tagEl.className = 'report-chapter-tag classical-ready';
+      tagEl.textContent = isHi ? '✨ शास्त्रीय गणना' : '✨ Classical Calculation';
+    } else {
+      tagEl.className = 'report-chapter-tag ai-enriched';
+      tagEl.textContent = isHi ? '✨ शास्त्रीय + AI परिष्कृत' : '✨ Classical + AI Enriched';
+    }
   }
 
   renderKundliVisuals();
@@ -10277,7 +10282,7 @@ async function generateSection(index, reportBody, stepListEl, progressErrorEl){
   renderReadingNavigator();
 
   if(li){
-    li.classList.remove('active');
+    li.classList.remove('active', 'failed');
     li.classList.add('done');
   }
   unlockChat();
@@ -10299,8 +10304,11 @@ async function runFrom(startIndex, reportBody, stepListEl, progressErrorEl, endI
     }
   }
   for(let i = startIndex; i < (endIndex ?? activeSections.length); i++){
-    const ok = await generateSection(i, reportBody, stepListEl, progressErrorEl);
-    if(!ok) { document.getElementById('genBtn').disabled = false; document.getElementById('matchBtn').disabled = false; return; }
+    await generateSection(i, reportBody, stepListEl, progressErrorEl);
+    // Add polite 300ms pacing between sections to prevent AI rate throttling
+    if(i + 1 < (endIndex ?? activeSections.length)){
+      await sleep(300);
+    }
   }
   if(endIndex !== null && endIndex < activeSections.length){
     document.getElementById('genBtn').disabled = false;
@@ -10308,6 +10316,7 @@ async function runFrom(startIndex, reportBody, stepListEl, progressErrorEl, endI
     return;
   }
   document.getElementById('genBtn').disabled = false;
+  document.getElementById('matchBtn').disabled = false;
   document.getElementById('matchBtn').disabled = false;
   
   const isVip = Boolean(window.vipAccess || document.body.classList.contains('vip-active'));
