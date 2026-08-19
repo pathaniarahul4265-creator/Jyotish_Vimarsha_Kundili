@@ -1,3 +1,7 @@
+/**
+ * Master Serverless API Handler for Jyotish Vimarsha
+ * Handles Gemini Multi-Key Rotation, Quotas, SSE Streaming, Payments & Admin
+ */
 
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -8,9 +12,7 @@ import { db, getSettings, pricing } from './_lib/supabase.js';
 const DATA_DIR = path.join(process.cwd(), 'data');
 function ensureDataDir() {
   try {
-    if (!fs.existsSync(DATA_DIR)) {
-      fs.mkdirSync(DATA_DIR, { recursive: true });
-    }
+    if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
   } catch (e) {}
 }
 ensureDataDir();
@@ -20,8 +22,7 @@ function loadJsonFile(filename, defaultValue) {
     ensureDataDir();
     const filePath = path.join(DATA_DIR, filename);
     if (fs.existsSync(filePath)) {
-      const content = fs.readFileSync(filePath, 'utf8');
-      return JSON.parse(content);
+      return JSON.parse(fs.readFileSync(filePath, 'utf8'));
     }
   } catch (e) {}
   return defaultValue;
@@ -32,9 +33,7 @@ function saveJsonFile(filename, data) {
     ensureDataDir();
     const filePath = path.join(DATA_DIR, filename);
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
-  } catch (e) {
-    console.error(`[Data Storage] Failed to write ${filename}:`, e);
-  }
+  } catch (e) {}
 }
 
 function getEnv(name, fallback = '') {
@@ -43,12 +42,22 @@ function getEnv(name, fallback = '') {
   return String(val).trim().replace(/^["']|["']$/g, '');
 }
 
+// Global Module Scope: normalizeModel accessible by all route handlers
+export function normalizeModel(m) {
+  if (!m) return 'gemini-1.5-flash';
+  let cleanStr = String(m).trim().toLowerCase().replace(/^models\//, '');
+  if (cleanStr.includes('1.5-pro') || cleanStr.includes('pro')) return 'gemini-1.5-pro';
+  if (cleanStr.includes('1.5-flash') || cleanStr.includes('flash')) return 'gemini-1.5-flash';
+  if (cleanStr.includes('2.0-flash') || cleanStr.includes('2.0')) return 'gemini-2.0-flash';
+  return cleanStr || 'gemini-1.5-flash';
+}
+
 function getRazorpayKeyId() {
-  return getEnv('RAZORPAY_KEY_ID', 'rzp_test_TPZiHx64oNNQzA');
+  return getEnv('RAZORPAY_KEY_ID', '');
 }
 
 function getRazorpayKeySecret() {
-  return getEnv('RAZORPAY_KEY_SECRET', '4fm5V6mqZr2XORsOag4swdLf');
+  return getEnv('RAZORPAY_KEY_SECRET', '');
 }
 
 function getRazorpayWebhookSecret() {
@@ -72,27 +81,40 @@ function json(res, status, body) {
   res.setHeader('Cache-Control', 'no-store');
   res.json(body);
 }
+
 function readBody(req) {
   if (req.body !== undefined && req.body !== null && typeof req.body === 'object') return Promise.resolve(req.body);
   if (typeof req.on !== 'function') return Promise.resolve(req.body || {});
   return new Promise((resolve, reject) => {
-    let raw='';
-    req.on('data', c => { raw += c; if (raw.length > 8e6) reject(new Error('payload too large')); });
-    req.on('end', () => { try { resolve(raw ? JSON.parse(raw) : (req.body || {})); } catch { reject(new Error('invalid json')); } });
+    let raw = '';
+    req.on('data', c => { raw += c; if (raw.length > 8e6) reject(new Error('Payload too large')); });
+    req.on('end', () => { try { resolve(raw ? JSON.parse(raw) : (req.body || {})); } catch { reject(new Error('Invalid JSON')); } });
     req.on('error', reject);
   });
 }
+
 function rawBody(req) {
-  return new Promise((resolve,reject)=>{ let raw=''; req.on('data',c=>{raw+=c;if(raw.length>8e6)reject(new Error('payload too large'));}); req.on('end',()=>resolve(raw)); req.on('error',reject); });
+  return new Promise((resolve, reject) => {
+    let raw = '';
+    req.on('data', c => { raw += c; if (raw.length > 8e6) reject(new Error('Payload too large')); });
+    req.on('end', () => resolve(raw));
+    req.on('error', reject);
+  });
 }
-function hashCode(code){ return crypto.createHash('sha256').update(String(code).trim().toUpperCase()).digest('hex'); }
-function b64(v){ return Buffer.from(v).toString('base64url'); }
-function signSession(payload){
+
+function hashCode(code) { return crypto.createHash('sha256').update(String(code).trim().toUpperCase()).digest('hex'); }
+function b64(v) { return Buffer.from(v).toString('base64url'); }
+
+function signSession(payload) {
   const rawSecret = process.env.ADMIN_SESSION_SECRET || 'jyotish-vimarsha-secret-key-2026';
   const cleanSecret = String(rawSecret).trim().replace(/^["']|["']$/g, '');
   return crypto.createHmac('sha256', cleanSecret || 'jyotish-vimarsha-secret-key-2026').update(payload).digest('base64url');
 }
-function makeAdminToken(){ const payload=b64(JSON.stringify({exp:Date.now()+4*60*60*1000,iat:Date.now()})); return `${payload}.${signSession(payload)}`; }
+
+function makeAdminToken() {
+  const payload = b64(JSON.stringify({ exp: Date.now() + 4 * 60 * 60 * 1000, iat: Date.now() }));
+  return `${payload}.${signSession(payload)}`;
+}
 
 function getClientIp(req) {
   const xf = req.headers['x-forwarded-for'];
@@ -100,12 +122,9 @@ function getClientIp(req) {
   return req.socket?.remoteAddress || '127.0.0.1';
 }
 
-// In-memory rate limiting store for admin logins
-const loginAttempts = new Map(); // ip -> { count: number, resetAt: number }
-
-// In-memory security audit logs
+const loginAttempts = new Map();
 const auditLogs = [
-  { id: 'aud_init', timestamp: new Date().toISOString(), ip: '127.0.0.1', action: 'SYSTEM_BOOT', details: 'Admin Security System, Rate Limiter & Audit Logger active', status: 'SUCCESS' }
+  { id: 'aud_init', timestamp: new Date().toISOString(), ip: '127.0.0.1', action: 'SYSTEM_BOOT', details: 'Admin Security System active', status: 'SUCCESS' }
 ];
 
 function logAudit(ip, action, details, status = 'SUCCESS') {
@@ -115,7 +134,7 @@ function logAudit(ip, action, details, status = 'SUCCESS') {
   return item;
 }
 
-function adminOk(req){
+function adminOk(req) {
   let token = (req.headers.authorization || '').replace(/^Bearer\s+/i, '').trim();
   if (!token && req.headers.cookie) {
     const cookies = req.headers.cookie.split(';').reduce((acc, c) => {
@@ -133,7 +152,6 @@ function adminOk(req){
   try { return JSON.parse(Buffer.from(payload, 'base64url').toString()).exp > Date.now(); } catch { return false; }
 }
 
-// Durable local storage fallbacks for when Supabase DB is unconfigured or unavailable
 const inMemoryReports = loadJsonFile('reports.json', []);
 const inMemoryFeedback = loadJsonFile('feedback.json', []);
 const inMemoryPayments = loadJsonFile('payments.json', []);
@@ -149,8 +167,10 @@ const inMemorySettings = loadJsonFile('settings.json', {
   offer_percent: '0',
   offer_label: ''
 });
-function clean(s,n=200){return String(s||'').slice(0,n);}
-async function createOrder(amount, plan, receiptCustom){
+
+function clean(s, n = 200) { return String(s || '').slice(0, n); }
+
+async function createOrder(amount, plan, receiptCustom) {
   if (isNaN(amount) || amount < 100) {
     const err = new Error('Amount must be at least 100 paise (₹1).');
     err.statusCode = 400;
@@ -159,7 +179,7 @@ async function createOrder(amount, plan, receiptCustom){
   const rzp = getRazorpay();
   const receipt = receiptCustom || `jv_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`;
   if (!rzp) {
-    return { id: `order_demo_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`, order_id: `order_demo_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`, amount, currency: 'INR', receipt, isDemo: true };
+    return { id: `order_mock_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`, order_id: `order_mock_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`, amount, currency: 'INR', receipt, isDemo: true };
   }
   try {
     const order = await rzp.orders.create({
@@ -168,24 +188,14 @@ async function createOrder(amount, plan, receiptCustom){
       receipt: String(receipt).slice(0, 40),
       notes: { plan: plan || 'standard' }
     });
-    return {
-      ...order,
-      order_id: order.id
-    };
+    return { ...order, order_id: order.id };
   } catch (err) {
-    console.error('[Razorpay Order Creation Error]', err);
     const status = err.statusCode || (err.error?.code === 'BAD_REQUEST_ERROR' ? 400 : 500);
     const errorObj = new Error(err.error?.description || err.message || 'Failed to create Razorpay order.');
     errorObj.statusCode = status;
     throw errorObj;
   }
 }
-// ==========================================
-// Gemini Multi-Key Pool & Quota Manager
-// Supports GEMINI_API_KEY, GEMINI_API_KEY_2, GEMINI_API_KEY_3, GEMINI_API_KEYS
-// Automatically calculates RPM, RPD, tokens, detects quota exhaustion,
-// and rotates seamlessly: Key 1 -> Key 2 -> Key 3 -> Key 1
-// ==========================================
 
 const QUOTA_STORAGE_FILE = 'gemini_quota.json';
 const geminiQuotaStore = loadJsonFile(QUOTA_STORAGE_FILE, {});
@@ -208,11 +218,8 @@ function getGeminiKeyPool(extraKey) {
   addKey(getEnv('GEMINI_API_KEY_3'));
   addKey(getEnv('API_KEY'));
   addKey(getEnv('GOOGLE_API_KEY'));
-  addKey(getEnv('GOOGLE_GENAI_API_KEY'));
   const multiKeys = getEnv('GEMINI_API_KEYS');
-  if (multiKeys) {
-    multiKeys.split(',').forEach(addKey);
-  }
+  if (multiKeys) multiKeys.split(',').forEach(addKey);
   return pool;
 }
 
@@ -224,7 +231,6 @@ function maskApiKey(key) {
 function getKeyStats(key, index) {
   const today = getTodayUtcKey();
   const keyId = `key_${index + 1}_${key.slice(0, 6)}`;
-  
   if (!geminiQuotaStore[keyId]) {
     geminiQuotaStore[keyId] = {
       index,
@@ -251,7 +257,6 @@ function getKeyStats(key, index) {
     stats.exhaustionReason = '';
   }
 
-  // Prune timestamps older than 60 seconds
   const now = Date.now();
   stats.recentTimestamps = (stats.recentTimestamps || []).filter(t => (now - t) < 60000);
   return stats;
@@ -272,18 +277,16 @@ function selectNextAvailableKeyIndex(pool) {
     const stats = getKeyStats(key, idx);
     const rpm = stats.recentTimestamps.length;
     const isCoolingDown = stats.exhaustedUntil > now;
-    const isRpmNearLimit = rpm >= 14; // Gemini standard ~15 RPM limit
-    const isRpdNearLimit = stats.requestsToday >= 1480; // Gemini standard ~1500 RPD limit
+    const isRpmNearLimit = rpm >= 14;
+    const isRpdNearLimit = stats.requestsToday >= 1480;
     const isHealthy = !isCoolingDown && !isRpmNearLimit && !isRpdNearLimit;
     return { idx, key, stats, rpm, isCoolingDown, isHealthy, exhaustedUntil: stats.exhaustedUntil };
   });
 
-  // 1. Try currently active key if healthy
   if (candidates[activeKeyPoolIndex] && candidates[activeKeyPoolIndex].isHealthy) {
     return activeKeyPoolIndex;
   }
 
-  // 2. Shift to next available key in sequence (Key 1 -> Key 2 -> Key 3 -> Key 1)
   for (let step = 1; step < pool.length; step++) {
     const nextIdx = (activeKeyPoolIndex + step) % pool.length;
     if (candidates[nextIdx] && candidates[nextIdx].isHealthy) {
@@ -292,7 +295,6 @@ function selectNextAvailableKeyIndex(pool) {
     }
   }
 
-  // 3. If all are in cooldown/near limit, pick the one with earliest cooldown expiration
   candidates.sort((a, b) => a.exhaustedUntil - b.exhaustedUntil || a.rpm - b.rpm);
   activeKeyPoolIndex = candidates[0].idx;
   return activeKeyPoolIndex;
@@ -300,8 +302,7 @@ function selectNextAvailableKeyIndex(pool) {
 
 function recordKeyRequest(key, index, promptChars) {
   const stats = getKeyStats(key, index);
-  const now = Date.now();
-  stats.recentTimestamps.push(now);
+  stats.recentTimestamps.push(Date.now());
   stats.requestsToday = (stats.requestsToday || 0) + 1;
   stats.lastUsed = new Date().toISOString();
   stats.estimatedTokensToday = (stats.estimatedTokensToday || 0) + Math.ceil((promptChars || 0) / 4);
@@ -312,10 +313,7 @@ function recordKeySuccess(key, index, responseChars) {
   const stats = getKeyStats(key, index);
   stats.totalSuccess = (stats.totalSuccess || 0) + 1;
   stats.estimatedTokensToday = (stats.estimatedTokensToday || 0) + Math.ceil((responseChars || 0) / 4);
-  // If previously marked exhausted and call succeeded, clear cooldown
-  if (stats.exhaustedUntil <= Date.now()) {
-    stats.exhaustionReason = '';
-  }
+  if (stats.exhaustedUntil <= Date.now()) stats.exhaustionReason = '';
   saveQuotaStats();
 }
 
@@ -323,49 +321,35 @@ function recordKeyFailure(key, index, status, errorMessage) {
   const stats = getKeyStats(key, index);
   const now = Date.now();
   stats.totalFailures = (stats.totalFailures || 0) + 1;
-
   const msg = String(errorMessage || '').toLowerCase();
-  const is429 = status === 429 || msg.includes('quota') || msg.includes('resource_exhausted') || msg.includes('rate limit') || msg.includes('too many requests') || msg.includes('overloaded');
-  const isAuth = status === 400 || status === 401 || status === 403 || msg.includes('api key') || msg.includes('permission');
+  const is429 = status === 429 || msg.includes('quota') || msg.includes('rate limit');
+  const isAuth = status === 400 || status === 401 || status === 403 || msg.includes('api key');
 
   if (is429) {
-    // Short temporary backoff for standard RPM throttling (12s), or longer only if daily limit is reached
     stats.exhaustedUntil = now + (msg.includes('daily') || stats.requestsToday >= 1450 ? 24 * 60 * 60 * 1000 : 12 * 1000);
-    stats.exhaustionReason = 'Rate limit (429) / Model load throttling';
+    stats.exhaustionReason = 'Rate limit (429)';
   } else if (isAuth) {
     stats.exhaustedUntil = now + 60 * 60 * 1000;
     stats.exhaustionReason = 'Authentication / Permission error';
   } else if (status === 504 || status === 503) {
     stats.exhaustedUntil = now + 8 * 1000;
-    stats.exhaustionReason = `Gateway / Server timeout (${status})`;
+    stats.exhaustionReason = `Gateway timeout (${status})`;
   }
   saveQuotaStats();
 }
 
-async function aiCall({model, systemText, userText, maxTokens, purpose='general'}){
-  function normalizeModel(m) {
-    if (!m) return 'gemini-3.6-flash';
-    let cleanStr = String(m).trim().toLowerCase();
-    if (cleanStr.startsWith('models/')) cleanStr = cleanStr.replace('models/', '');
-    if (cleanStr.includes('3.7') || cleanStr.includes('3.6') || cleanStr.includes('3.5')) return 'gemini-3.6-flash';
-    if (cleanStr.includes('3.1-flash-lite') || cleanStr.includes('flash-lite')) return 'gemini-3.1-flash-lite';
-    if (cleanStr.includes('2.5-pro') || cleanStr.includes('pro')) return 'gemini-2.5-pro';
-    if (cleanStr.includes('2.5-flash') || cleanStr.includes('2.5') || cleanStr.includes('flash')) return 'gemini-3.6-flash';
-    return cleanStr || 'gemini-3.6-flash';
-  }
-
+async function aiCall({ model, systemText, userText, maxTokens, purpose = 'general' }) {
   const pool = getGeminiKeyPool();
   if (pool.length === 0) {
-    const err = new Error('AI service is not configured on the server. Please provide GEMINI_API_KEY.');
+    const err = new Error('AI service is not configured. Please supply GEMINI_API_KEY.');
     err.status = 503;
     throw err;
   }
 
-  const primaryModel = normalizeModel(getEnv('GEMINI_PRIMARY_MODEL', model || 'gemini-3.6-flash'));
-  const fallbackModel = normalizeModel(getEnv('GEMINI_FALLBACK_MODEL', 'gemini-3.5-flash'));
+  const primaryModel = normalizeModel(getEnv('GEMINI_PRIMARY_MODEL', model || 'gemini-1.5-flash'));
+  const fallbackModel = normalizeModel(getEnv('GEMINI_FALLBACK_MODEL', 'gemini-1.5-flash'));
   const promptChars = (systemText?.length || 0) + (userText?.length || 0);
 
-  // Attempt generation with automatic multi-key rotation, gentle backoff, and model fallback
   let lastErr = null;
   const attemptsMax = Math.max(pool.length * 2, 4);
   let attemptCount = 0;
@@ -374,21 +358,10 @@ async function aiCall({model, systemText, userText, maxTokens, purpose='general'
     attemptCount++;
     const keyIdx = selectNextAvailableKeyIndex(pool);
     const chosenKey = pool[keyIdx];
-    
-    // Switch to fast fallback model if retry or under high load
     let targetModel = (attemptCount > 1 && primaryModel !== fallbackModel) ? fallbackModel : primaryModel;
-    if (lastErr && (String(lastErr.message).includes('not available') || String(lastErr.message).includes('404') || String(lastErr.message).includes('not found'))) {
-      targetModel = 'gemini-3.6-flash';
-    }
     const requestedTokens = Number(maxTokens) || (purpose === 'report' ? 3000 : 2500);
-    const tokensLimit = purpose === 'report'
-      ? Math.min(4200, Math.max(1600, requestedTokens))
-      : ((targetModel === fallbackModel)
-          ? Math.min(2048, requestedTokens)
-          : Math.min(3072, Math.max(256, requestedTokens)));
 
     recordKeyRequest(chosenKey, keyIdx, promptChars);
-
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(targetModel)}:generateContent`;
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), purpose === 'report' ? 50000 : 30000);
@@ -396,17 +369,14 @@ async function aiCall({model, systemText, userText, maxTokens, purpose='general'
     try {
       const r = await fetch(url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-goog-api-key': chosenKey
-        },
+        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': chosenKey },
         signal: controller.signal,
         body: JSON.stringify({
           systemInstruction: { parts: [{ text: systemText }] },
           contents: [{ role: 'user', parts: [{ text: userText }] }],
           generationConfig: {
-            maxOutputTokens: tokensLimit,
-            temperature: purpose === 'report' ? 0.82 : 0.7
+            maxOutputTokens: requestedTokens,
+            temperature: purpose === 'report' ? 0.8 : 0.7
           }
         })
       });
@@ -416,35 +386,16 @@ async function aiCall({model, systemText, userText, maxTokens, purpose='general'
       if (!r.ok) {
         const errMsg = j?.error?.message || `Gemini API returned HTTP ${r.status}`;
         recordKeyFailure(chosenKey, keyIdx, r.status, errMsg);
-        
-        // Shift active index to next key for next attempt
         activeKeyPoolIndex = (keyIdx + 1) % pool.length;
-
-        const isRotatable = r.status === 429 || r.status === 400 || r.status === 401 || r.status === 403 || r.status === 503 || r.status === 504 || r.status === 404;
-        if (isRotatable && attemptCount < attemptsMax) {
-          lastErr = new Error(errMsg);
-          lastErr.status = r.status;
-          // Add brief backoff before rotating to next key to allow transient load to ease
+        if (attemptCount < attemptsMax) {
           await new Promise(res => setTimeout(res, Math.min(attemptCount * 500, 1500)));
-          continue; // Seamlessly rotate to next key in pool
+          continue;
         }
-
-        const e = new Error(errMsg);
-        e.status = r.status;
-        throw e;
+        const e = new Error(errMsg); e.status = r.status; throw e;
       }
 
       const text = j?.candidates?.[0]?.content?.parts?.map(x => x.text || '').join('') || '';
-      if (!text) {
-        recordKeyFailure(chosenKey, keyIdx, 500, 'Empty response from Gemini');
-        if (attemptCount < attemptsMax) {
-          activeKeyPoolIndex = (keyIdx + 1) % pool.length;
-          await new Promise(res => setTimeout(res, 400));
-          continue;
-        }
-        throw new Error('No text generated by AI service.');
-      }
-
+      if (!text) throw new Error('No narrative generated by AI.');
       recordKeySuccess(chosenKey, keyIdx, text.length);
       return text;
     } catch (err) {
@@ -452,7 +403,6 @@ async function aiCall({model, systemText, userText, maxTokens, purpose='general'
       lastErr = err;
       const status = err.name === 'AbortError' ? 504 : (err.status || 500);
       recordKeyFailure(chosenKey, keyIdx, status, err.message);
-
       if (attemptCount < attemptsMax) {
         activeKeyPoolIndex = (keyIdx + 1) % pool.length;
         await new Promise(res => setTimeout(res, Math.min(attemptCount * 600, 1800)));
@@ -460,24 +410,9 @@ async function aiCall({model, systemText, userText, maxTokens, purpose='general'
       }
     }
   }
-
-  if (lastErr) {
-    if (lastErr.name === 'AbortError') {
-      const e = new Error('AI generation timed out upstream.');
-      e.status = 504;
-      throw e;
-    }
-    throw lastErr;
-  }
-
-  throw new Error('AI request could not be completed after rotating key pool.');
+  throw lastErr || new Error('AI request could not be completed after rotating key pool.');
 }
 
-
-// ==========================================
-// TRUE GEMINI SSE STREAMING
-// Sends text chunks to the browser as Gemini produces them.
-// ==========================================
 function writeSse(res, event, data) {
   try {
     if (res.writableEnded) return false;
@@ -488,9 +423,9 @@ function writeSse(res, event, data) {
   }
 }
 
-async function streamGeminiOnce({ key, keyIdx, model, systemText, userText, maxTokens, purpose, res, continuationText='' }) {
+async function streamGeminiOnce({ key, keyIdx, model, systemText, userText, maxTokens, purpose, res, continuationText = '' }) {
   const prompt = continuationText
-    ? `${userText}\n\nCONTINUATION STATE:\nThe chapter was partially generated before an upstream interruption. Continue from the exact end of the existing draft below. Do not repeat the existing text. Continue naturally and complete the chapter.\n\nEXISTING DRAFT:\n${continuationText.slice(-12000)}`
+    ? `${userText}\n\nCONTINUATION STATE:\nContinue from the end of the existing draft below. Do not repeat.\n\nEXISTING DRAFT:\n${continuationText.slice(-12000)}`
     : userText;
   const requestedTokens = Math.min(8192, Math.max(1600, Number(maxTokens) || 5200));
   recordKeyRequest(key, keyIdx, (systemText?.length || 0) + prompt.length);
@@ -505,32 +440,21 @@ async function streamGeminiOnce({ key, keyIdx, model, systemText, userText, maxT
   try {
     const r = await fetch(url, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-goog-api-key': key
-      },
+      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
       signal: controller.signal,
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: systemText }] },
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
-        generationConfig: {
-          maxOutputTokens: requestedTokens,
-          temperature: purpose === 'report' ? 0.78 : 0.7
-        }
+        generationConfig: { maxOutputTokens: requestedTokens }
       })
     });
 
     if (!r.ok) {
       const raw = await r.text().catch(() => '');
-      let j = {};
-      try { j = JSON.parse(raw); } catch {}
+      let j = {}; try { j = JSON.parse(raw); } catch {}
       const msg = j?.error?.message || raw || `Gemini API returned HTTP ${r.status}`;
       recordKeyFailure(key, keyIdx, r.status, msg);
       const e = new Error(msg); e.status = r.status; throw e;
-    }
-    if (!r.body || typeof r.body.getReader !== 'function') {
-      const e = new Error('Streaming is not available from the AI upstream response.');
-      e.status = 502; throw e;
     }
 
     reader = r.body.getReader();
@@ -541,34 +465,25 @@ async function streamGeminiOnce({ key, keyIdx, model, systemText, userText, maxT
       if (!trimmed || trimmed.startsWith(':') || !trimmed.startsWith('data:')) return;
       const payload = trimmed.slice(5).trim();
       if (!payload || payload === '[DONE]') return;
-      let obj;
-      try { obj = JSON.parse(payload); } catch { return; }
+      let obj; try { obj = JSON.parse(payload); } catch { return; }
       const parts = obj?.candidates?.[0]?.content?.parts || [];
       const chunk = parts.map(p => p?.text || '').join('');
       if (chunk) {
         fullText += chunk;
         writeSse(res, 'chunk', { text: chunk });
       }
-      const finish = obj?.candidates?.[0]?.finishReason;
-      if (finish) writeSse(res, 'meta', { finishReason: finish });
     };
 
     while (true) {
       const { value, done } = await reader.read();
       if (done) break;
       buffer += decoder.decode(value, { stream: true });
-      // Normalize both CRLF and LF SSE streams. Keep incomplete final line.
       const lines = buffer.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
       buffer = lines.pop() || '';
       for (const line of lines) processLine(line);
     }
     buffer += decoder.decode();
     if (buffer.trim()) processLine(buffer);
-
-    if (!fullText.trim()) {
-      const e = new Error('Gemini returned an empty streaming response.');
-      e.status = 502; throw e;
-    }
 
     recordKeySuccess(key, keyIdx, fullText.length);
     return { text: fullText, completed: true };
@@ -584,289 +499,90 @@ async function streamGeminiOnce({ key, keyIdx, model, systemText, userText, maxT
   }
 }
 
-async function streamAiCall({ model, systemText, userText, maxTokens, purpose='general', res }) {
+async function streamAiCall({ model, systemText, userText, maxTokens, purpose = 'general', res }) {
   const pool = getGeminiKeyPool();
-  if (!pool.length) { const e = new Error('AI service is not configured on the server.'); e.status = 503; throw e; }
+  if (!pool.length) { const e = new Error('AI service is not configured.'); e.status = 503; throw e; }
 
-  function normalizeModel(m) {
-    let x = String(m || getEnv('GEMINI_PRIMARY_MODEL', 'gemini-3.6-flash')).trim().replace(/^models\//,'');
-    if (x.includes('gemini-3.6') || x.includes('gemini-3.7')) return 'gemini-3.6-flash';
-    return x || 'gemini-3.6-flash';
-  }
-  const primary = normalizeModel(model);
-  const fallback = normalizeModel(getEnv('GEMINI_FALLBACK_MODEL', 'gemini-3.6-flash'));
+  const primary = normalizeModel(model || getEnv('GEMINI_PRIMARY_MODEL', 'gemini-1.5-flash'));
+  const fallback = normalizeModel(getEnv('GEMINI_FALLBACK_MODEL', 'gemini-1.5-flash'));
+
   let lastError = null;
   let continuation = '';
 
-  for (let attempt=0; attempt<Math.max(2, pool.length); attempt++) {
+  for (let attempt = 0; attempt < Math.max(2, pool.length); attempt++) {
     const idx = selectNextAvailableKeyIndex(pool);
     const key = pool[idx];
     const targetModel = attempt === 0 ? primary : fallback;
     try {
-      writeSse(res, 'status', { state:'connecting', keyIndex: idx + 1, attempt: attempt + 1 });
-      const result = await streamGeminiOnce({ key, keyIdx: idx, model: targetModel, systemText, userText, maxTokens, purpose, res, continuation });
+      writeSse(res, 'status', { state: 'connecting', keyIndex: idx + 1, attempt: attempt + 1 });
+      const result = await streamGeminiOnce({ key, keyIdx: idx, model: targetModel, systemText, userText, maxTokens, purpose, res, continuationText: continuation });
       writeSse(res, 'complete', { text: result.text, keyIndex: idx + 1 });
       return result.text;
     } catch (err) {
       lastError = err;
       if (err.partialText) continuation = err.partialText;
       const status = Number(err.status) || 500;
-      const retryable = status === 429 || status === 408 || status === 409 || status === 500 || status === 502 || status === 503 || status === 504;
+      const retryable = status === 429 || status === 408 || status === 500 || status === 502 || status === 503 || status === 504;
       if (!retryable || attempt + 1 >= Math.max(2, pool.length)) break;
       activeKeyPoolIndex = (idx + 1) % pool.length;
-      writeSse(res, 'retry', { message:'Generation connection interrupted. Automatically resuming…', nextKeyIndex: activeKeyPoolIndex + 1 });
       await new Promise(r => setTimeout(r, Math.min(1000 * (attempt + 1), 2500)));
     }
   }
-  writeSse(res, 'error', { message:lastError?.message || 'AI streaming failed.', status:Number(lastError?.status)||500, recoverable:true });
+  writeSse(res, 'error', { message: lastError?.message || 'AI streaming failed.', status: Number(lastError?.status) || 500 });
   throw lastError || new Error('AI streaming failed.');
 }
 
-export default async function handler(req,res){
+export const maxDuration = 300;
+
+export default async function handler(req, res) {
   let rawPath = req.path || (req.url ? req.url.split('?')[0] : '');
   rawPath = rawPath.replace(/^\/api\/?/, '').replace(/^\/+/, '');
   const pathParts = Array.isArray(req.query?.path) ? req.query.path : (rawPath ? rawPath.split('/').filter(Boolean) : []);
   const path = '/' + pathParts.join('/');
-  try{
-    if(req.method==='GET'&&path==='/health') return json(res,200,{ok:true,service:'jyotish-vimarsha',time:new Date().toISOString()});
-    if(req.method==='GET'&&path==='/config'){const s=await getSettings();return json(res,200,pricing(s));}
 
-    if(req.method==='GET'&&path==='/panchang'){
-      const dateQuery = req.query?.date || req.query?.d;
-      const latQuery = parseFloat(req.query?.lat || '28.6139');
-      const lonQuery = parseFloat(req.query?.lon || '77.2090');
-      const targetDate = dateQuery ? new Date(dateQuery) : new Date();
-      if(isNaN(targetDate.getTime())) return json(res,400,{error:'Invalid date format provided. Use YYYY-MM-DD.'});
-
-      const d = targetDate;
-      const year = d.getFullYear();
-      const oneDay = 1000 * 60 * 60 * 24;
-      const dateStr = d.toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-      const dayOfWeek = d.getDay();
-
-      // Calculated Sunrise & Sunset (Solar Zenith 90°50')
-      function calcSun(dt, lat, lon) {
-        try {
-          const latRad = lat * (Math.PI / 180);
-          const start = new Date(dt.getFullYear(), 0, 0);
-          const diff = dt - start;
-          const dayOfYear = Math.floor(diff / oneDay);
-          const zenith = 90.833 * (Math.PI / 180);
-          const lngHour = lon / 15;
-
-          function getTime(isSunrise) {
-            const t = dayOfYear + ((isSunrise ? 6 : 18) - lngHour) / 24;
-            const M = (0.9856 * t) - 3.289;
-            const MRad = M * (Math.PI / 180);
-            let L = M + (1.916 * Math.sin(MRad)) + (0.020 * Math.sin(2 * MRad)) + 282.634;
-            L = (L + 360) % 360;
-            const LRad = L * (Math.PI / 180);
-            let RA = Math.atan(0.91764 * Math.tan(LRad)) * (180 / Math.PI);
-            RA = (RA + 360) % 360;
-            const Lquadrant  = Math.floor(L / 90) * 90;
-            const RAquadrant = Math.floor(RA / 90) * 90;
-            RA = RA + (Lquadrant - RAquadrant);
-            RA = RA / 15;
-
-            const sinDec = 0.39782 * Math.sin(LRad);
-            const cosDec = Math.cos(Math.asin(sinDec));
-            const cosH = (Math.cos(zenith) - (sinDec * Math.sin(latRad))) / (cosDec * Math.cos(latRad));
-
-            if (cosH > 1 || cosH < -1) return null;
-
-            let H = isSunrise ? (360 - (Math.acos(cosH) * (180 / Math.PI))) : (Math.acos(cosH) * (180 / Math.PI));
-            H = H / 15;
-
-            const T = H + RA - (0.06571 * t) - 6.622;
-            let UT = (T - lngHour + 24) % 24;
-
-            const tzOffset = 5.5; // India Standard Time +05:30 default
-            let localHour = (UT + tzOffset + 24) % 24;
-
-            const hrs = Math.floor(localHour);
-            const mins = Math.floor((localHour - hrs) * 60);
-            const period = hrs >= 12 ? 'PM' : 'AM';
-            const displayHrs = (hrs % 12) || 12;
-            const displayMins = mins < 10 ? '0' + mins : mins;
-
-            return { decimal: localHour, formatted: `${displayHrs < 10 ? '0' + displayHrs : displayHrs}:${displayMins} ${period}` };
-          }
-
-          const sr = getTime(true) || { formatted: '06:01 AM', decimal: 6.017 };
-          const ss = getTime(false) || { formatted: '07:02 PM', decimal: 19.033 };
-          let lenMins = Math.round((ss.decimal - sr.decimal) * 60);
-          if (lenMins < 0) lenMins += 24 * 60;
-          return { sunrise: sr.formatted, sunset: ss.formatted, dayLength: `${Math.floor(lenMins / 60)}h ${lenMins % 60}m` };
-        } catch {
-          return { sunrise: "06:05 AM", sunset: "06:56 PM", dayLength: "12h 51m" };
-        }
-      }
-
-      // Calculated Hindu Calendar
-      const startOfYear = new Date(year, 0, 0);
-      const dayOfYear = Math.floor((d - startOfYear) / oneDay);
-      const isAfterChaitra = dayOfYear >= 88;
-      const vikramSamvat = isAfterChaitra ? year + 57 : year + 56;
-      const sakaSamvat = isAfterChaitra ? year - 78 : year - 79;
-      const samvatsaras = ["Prabhava","Vibhava","Shukla","Pramoda","Prajapati","Angira","Shrimukha","Bhava","Yuva","Dhatri","Eshwara","Bahudhanya","Pramathi","Vikrama","Vrisha","Chitrabanu","Subhanu","Taran","Parthiva","Vyaya","Sarvajit","Sarvadhari","Virodhi","Vikriti","Khara","Nandana","Vijaya","Jaya","Manmatha","Durmukhi","Hevilambi","Vilambi","Vikari","Sharvari","Plava","Shubhakrit","Shobhakrit","Krodhi","Visvavasu","Paridhavi","Pramadi","Ananda","Rakshasa","Anala","Pingala","Kalayukti","Siddharthin","Raudra","Durmathi","Dundubhi","Rudhrodgari","Raktakshi","Krodhana","Kshaya"];
-      const samvatsaraName = samvatsaras[(vikramSamvat + 9) % 60] || "Krodhi";
-
-      const synodicMonth = 29.530588;
-      const lunarAge = (dayOfYear + 14.2) % synodicMonth;
-      const tithiIdx = Math.floor((lunarAge / synodicMonth) * 30) % 30;
-      const isShukla = tithiIdx < 15;
-      const tithiInPaksha = (tithiIdx % 15) + 1;
-      const hinduMaasNames = ["Pausha","Magha","Phalguni","Chaitra","Vaishakha","Jyeshtha","Ashadha","Shravana","Bhadrapada","Ashvina","Kartika","Margashirsha"];
-      const maasName = hinduMaasNames[Math.floor(((dayOfYear + 20) / 30.4)) % 12] || "Shravana";
-
-      const tithis = ["Shukla Pratipada","Shukla Dwitiya","Shukla Tritiya","Shukla Chaturthi","Shukla Panchami","Shukla Shashti","Shukla Saptami","Shukla Ashtami","Shukla Navami","Shukla Dashami","Shukla Ekadashi","Shukla Dwadashi","Shukla Trayodashi","Shukla Chaturdashi","Purnima (Full Moon)","Krishna Pratipada","Krishna Dwitiya","Krishna Tritiya","Krishna Chaturthi","Krishna Panchami","Krishna Shashti","Krishna Saptami","Krishna Ashtami","Krishna Navami","Krishna Dashami","Krishna Ekadashi","Krishna Dwadashi","Krishna Trayodashi","Krishna Chaturdashi","Amavasya (New Moon)"];
-      const nakshatras = ["Ashwini","Bharani","Krittika","Rohini","Mrigashira","Ardra","Punarvasu","Pushya","Ashlesha","Magha","Purva Phalguni","Uttara Phalguni","Hasta","Chitra","Swati","Vishakha","Anuradha","Jyeshtha","Mula","Purva Ashadha","Uttara Ashadha","Shravana","Dhanishta","Shatabhisha","Purva Bhadrapada","Uttara Bhadrapada","Revati"];
-      const yogas = ["Vishkambha","Priti","Ayushman","Saubhagya","Shobhana","Atiganda","Sukarma","Dhriti","Shula","Ganda","Vriddhi","Dhruva","Vyaghata","Harshana","Vajra","Siddhi","Vyatipata","Variyana","Parigha","Shiva","Siddha","Sadhya","Shubha","Shukla","Brahma","Indra","Vaidhriti"];
-      const karanas = ["Bava","Balava","Kaulava","Taitila","Gara","Vanija","Vishti (Bhadra)","Shakuni","Chatushpada","Naga","Kimstughna"];
-      const rahuKaalTimes = ["04:30 PM – 06:00 PM","07:30 AM – 09:00 AM","03:00 PM – 04:30 PM","12:00 PM – 01:30 PM","01:30 PM – 03:00 PM","10:30 AM – 12:00 PM","09:00 AM – 10:30 AM"];
-
-      const sun = calcSun(d, latQuery, lonQuery);
-
-      // Major & Minor Events with 30-day filter
-      const majorCatalog = [
-        { name: "Independence Day", dateStr: `${year}-08-15`, icon: "🇮🇳", desc: "Indian Independence Day — National Celebration" },
-        { name: "Republic Day", dateStr: `${year}-01-26`, icon: "🇮🇳", desc: "Indian Republic Day — Constitution & Heritage" },
-        { name: "Sawan Maas (Shravan Month)", startDate: `${year}-07-29`, endDate: `${year}-08-28`, icon: "🌺", desc: "Sacred Month of Lord Shiva & Somwar Vrat" },
-        { name: "Raksha Bandhan", dateStr: `${year}-08-28`, icon: "🪢", desc: "Festival of Sibling Protection (Shravana Purnima)" },
-        { name: "Shri Krishna Janmashtami", dateStr: `${year}-09-03`, icon: "🪔", desc: "Birth Celebration of Lord Shri Krishna" },
-        { name: "Ganesh Chaturthi", dateStr: `${year}-09-14`, icon: "🐘", desc: "Vinayaka Chaturthi — Lord Ganesha Sthapana" },
-        { name: "Sharad Navratri", startDate: `${year}-10-11`, endDate: `${year}-10-19`, icon: "🌺", desc: "9 Sacred Nights of Devi Durga Worship" },
-        { name: "Dussehra (Vijayadashami)", dateStr: `${year}-10-20`, icon: "🏹", desc: "Triumph of Lord Rama — Victory of Good Over Evil" },
-        { name: "Karwa Chauth", dateStr: `${year}-10-28`, icon: "🌕", desc: "Sacred Fasting for Spousal Wellbeing & Longevity" },
-        { name: "Dhanteras", dateStr: `${year}-11-06`, icon: "🪙", desc: "Auspicious Buying of Metals & Lord Dhanvantari Worship" },
-        { name: "Diwali (Deepavali)", dateStr: `${year}-11-08`, icon: "🪔", desc: "Maha Lakshmi Puja & Festival of Lights" },
-        { name: "Govardhan Puja & Bhai Dooj", startDate: `${year}-11-09`, endDate: `${year}-11-10`, icon: "🏵️", desc: "Govardhan Annakut & Brother-Sister Blessings" },
-        { name: "Chhath Puja", dateStr: `${year}-11-14`, icon: "☀️", desc: "Maha Vrat for Sun God Surya & Chhathi Maiya" },
-        { name: "Maha Shivratri", dateStr: `${year}-02-15`, icon: "🔱", desc: "Great Auspicious Night of Lord Shiva" },
-        { name: "Holi & Holika Dahan", startDate: `${year}-03-03`, endDate: `${year}-03-04`, icon: "🎨", desc: "Festival of Colors & Triumph of Bhakta Prahlad" },
-        { name: "Shri Ram Navami", dateStr: `${year}-03-27`, icon: "🏹", desc: "Birth Celebration of Lord Rama" }
-      ];
-
-      const minorCatalog = [];
-      const targetTime = d.getTime();
-
-      for (let offset = -5; offset <= 35; offset++) {
-        const curDate = new Date(targetTime + offset * oneDay);
-        const startOfYr = new Date(curDate.getFullYear(), 0, 0);
-        const curDayOfYr = Math.floor((curDate - startOfYr) / oneDay);
-        const curLunarAge = (curDayOfYr + 14.2) % synodicMonth;
-        const curTithiIdx = Math.floor((curLunarAge / synodicMonth) * 30) % 30;
-        const dateStrISO = curDate.toISOString().split('T')[0];
-
-        if (curTithiIdx === 10) minorCatalog.push({ name: "Shukla Ekadashi Vrat", dateStr: dateStrISO, icon: "📿", desc: "Vishnu Vrat" });
-        if (curTithiIdx === 25) minorCatalog.push({ name: "Krishna Ekadashi Vrat", dateStr: dateStrISO, icon: "📿", desc: "Vishnu Vrat" });
-        if (curTithiIdx === 12) minorCatalog.push({ name: "Shukla Pradosh Vrat", dateStr: dateStrISO, icon: "🔱", desc: "Shiva Twilight Worship" });
-        if (curTithiIdx === 27) minorCatalog.push({ name: "Krishna Pradosh Vrat", dateStr: dateStrISO, icon: "🔱", desc: "Shiva Twilight Worship" });
-        if (curTithiIdx === 3) minorCatalog.push({ name: "Vinayaka Chaturthi", dateStr: dateStrISO, icon: "🐘", desc: "Ganesha Vrat" });
-        if (curTithiIdx === 18) minorCatalog.push({ name: "Sankashti Chaturthi Vrat", dateStr: dateStrISO, icon: "🐘", desc: "Ganesha Vrat" });
-        if (curTithiIdx === 28) minorCatalog.push({ name: "Masik Shivratri", dateStr: dateStrISO, icon: "🔱", desc: "Monthly Shiva Vrat" });
-        if (curTithiIdx === 14) minorCatalog.push({ name: "Purnima Vrat / Satyanarayan Puja", dateStr: dateStrISO, icon: "🌕", desc: "Full Moon Vrat" });
-        if (curTithiIdx === 29) minorCatalog.push({ name: "Amavasya Vrat / Pitru Tarpan", dateStr: dateStrISO, icon: "🌑", desc: "New Moon Pitru Puja" });
-        if (curTithiIdx === 7) minorCatalog.push({ name: "Masik Durgashtami", dateStr: dateStrISO, icon: "🌺", desc: "Durga Vrat" });
-      }
-
-      const allEvents = [...majorCatalog, ...minorCatalog];
-      const activeEvents = [];
-      const rawUpcoming = [];
-
-      allEvents.forEach(ev => {
-        if (ev.startDate && ev.endDate) {
-          const startT = new Date(ev.startDate + 'T00:00:00').getTime();
-          const endT = new Date(ev.endDate + 'T23:59:59').getTime();
-          if (targetTime >= startT && targetTime <= endT) activeEvents.push(ev);
-          else if (startT > targetTime) {
-            const daysAway = Math.ceil((startT - targetTime) / oneDay);
-            if (daysAway > 0 && daysAway <= 30) rawUpcoming.push({ ...ev, daysAway });
-          }
-        } else if (ev.dateStr) {
-          const evT = new Date(ev.dateStr + 'T00:00:00').getTime();
-          const diffDays = Math.round((evT - targetTime) / oneDay);
-          if (diffDays === 0) activeEvents.push({ ...ev, desc: `TODAY: ${ev.desc}` });
-          else if (diffDays > 0 && diffDays <= 30) rawUpcoming.push({ ...ev, daysAway: diffDays });
-        }
-      });
-
-      rawUpcoming.sort((a, b) => a.daysAway - b.daysAway);
-      const seen = new Set();
-      const upcomingNext30Days = [];
-      for (const ev of rawUpcoming) {
-        const key = `${ev.name}_${ev.daysAway}`;
-        if (!seen.has(key)) {
-          seen.add(key);
-          upcomingNext30Days.push(ev);
-        }
-      }
-
-      return json(res, 200, {
-        ok: true,
-        service: 'jyotish-vimarsha-panchang-api',
-        gregorian: { date: d.toISOString().split('T')[0], formatted: dateStr, latitude: latQuery, longitude: lonQuery },
-        hinduCalendar: {
-          vikramSamvat: `VS ${vikramSamvat} (${samvatsaraName})`,
-          sakaSamvat: `Saka ${sakaSamvat}`,
-          maas: `${maasName} Maas`,
-          paksha: isShukla ? "Shukla Paksha" : "Krishna Paksha",
-          tithiNumber: tithiInPaksha,
-          hinduDateFormatted: `${maasName} ${isShukla ? 'Shukla' : 'Krishna'} ${tithiInPaksha === 15 ? (isShukla ? 'Purnima' : 'Amavasya') : 'Tithi ' + tithiInPaksha}, VS ${vikramSamvat}`
-        },
-        panchang: {
-          tithi: tithis[tithiIdx],
-          nakshatra: nakshatras[Math.floor(((dayOfYear * 1.05 + 8) % 27))],
-          yoga: yogas[Math.floor(((dayOfYear * 0.95 + 12) % 27))],
-          karana: karanas[(tithiIdx * 2) % 11],
-          rahuKaalWindow: rahuKaalTimes[dayOfWeek],
-          abhijitMuhuratWindow: "11:54 AM – 12:46 PM"
-        },
-        solar: sun,
-        events: {
-          activeToday: activeEvents,
-          upcomingNext30Days
-        }
-      });
+  try {
+    if (req.method === 'GET' && path === '/health') {
+      return json(res, 200, { ok: true, service: 'jyotish-vimarsha', time: new Date().toISOString() });
     }
 
-    if(req.method==='POST'&&path==='/ai-stream'){
+    if (req.method === 'GET' && path === '/config') {
+      const s = await getSettings();
+      return json(res, 200, pricing(s));
+    }
+
+    if (req.method === 'POST' && path === '/ai-stream') {
       const b = await readBody(req);
       const pool = getGeminiKeyPool(b?.key);
-      if(pool.length === 0) return json(res,503,{error:'AI service is not configured on the server. Please ensure GEMINI_API_KEY is provided.'});
-      if(!b.systemText || !b.userText) return json(res,400,{error:'AI request is incomplete.'});
+      if (pool.length === 0) return json(res, 503, { error: 'AI service is not configured on the server.' });
+      if (!b.systemText || !b.userText) return json(res, 400, { error: 'AI request is incomplete.' });
       res.status(200);
-      res.setHeader('Content-Type','text/event-stream; charset=utf-8');
-      res.setHeader('Cache-Control','no-cache, no-store, must-revalidate');
-      res.setHeader('Connection','keep-alive');
-      res.setHeader('X-Accel-Buffering','no');
-      if(typeof res.flushHeaders === 'function') res.flushHeaders();
+      res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Connection', 'keep-alive');
+      if (typeof res.flushHeaders === 'function') res.flushHeaders();
       try {
-        await streamAiCall({ model:b.model, systemText:b.systemText, userText:b.userText, maxTokens:b.maxTokens, purpose:b.purpose || 'general', res });
-      } catch(e) {
-        // streamAiCall has already emitted an SSE error; never write a second JSON response.
-      } finally {
+        await streamAiCall({ model: b.model, systemText: b.systemText, userText: b.userText, maxTokens: b.maxTokens, purpose: b.purpose || 'general', res });
+      } catch (e) {} finally {
         try { res.end(); } catch {}
       }
       return;
     }
 
-    if(req.method==='POST'&&path==='/ai'){
+    if (req.method === 'POST' && path === '/ai') {
       const b = await readBody(req);
       const pool = getGeminiKeyPool(b?.key);
-      if(pool.length === 0) return json(res,503,{error:'AI service is not configured on the server. Please ensure GEMINI_API_KEY is provided.'});
-      if(!b.systemText || !b.userText) return json(res,400,{error:'AI request is incomplete.'});
+      if (pool.length === 0) return json(res, 503, { error: 'AI service is not configured on the server.' });
+      if (!b.systemText || !b.userText) return json(res, 400, { error: 'AI request is incomplete.' });
       try {
         const text = await aiCall(b);
         return json(res, 200, { text });
       } catch (e) {
-        console.error('[AI Handler Error]', e);
         const status = Number(e.status) || 500;
         return json(res, status, { error: e.message || 'AI request failed' });
       }
     }
 
-    if(req.method==='POST'&&path==='/create-order'){
+    if (req.method === 'POST' && path === '/create-order') {
       try {
         const b = await readBody(req);
         let plan = b.plan ? clean(b.plan, 20) : 'reveal';
@@ -877,13 +593,14 @@ export default async function handler(req,res){
           const map = { reveal: ['reveal_price', 'reveal_enabled'], match: ['match_price', 'match_enabled'], question: ['question_price', 'chat_enabled'], dakshina: ['reveal_price', 'reveal_enabled'] };
           if (!map[plan]) return json(res, 400, { error: 'Invalid plan specified.' });
           const s = await getSettings();
-          if (map[plan] && !s[map[plan][1]]) return json(res, 403, { error: 'This feature is currently unavailable.' });
+          
+          // Bug Fix: Exact check for feature flag disabled status ('0' or false)
+          const isFeatureEnabled = s[map[plan]] === '1' || s[map[plan]] === true;
+          if (map[plan] && !isFeatureEnabled) {
+            return json(res, 403, { error: 'This feature is currently unavailable.' });
+          }
           const cfg = pricing(s);
           amount = Math.max(100, Math.round((cfg.prices[plan] || 59) * 100));
-        }
-
-        if (isNaN(amount) || amount < 100) {
-          return json(res, 400, { error: 'Amount must be at least 100 paise (₹1).' });
         }
 
         const order = await createOrder(amount, plan, receipt);
@@ -903,7 +620,6 @@ export default async function handler(req,res){
         return json(res, 200, {
           order_id: order.order_id || order.id,
           orderId: order.order_id || order.id,
-          id: order.order_id || order.id,
           amount: order.amount || amount,
           currency: order.currency || 'INR',
           receipt: order.receipt || receipt,
@@ -913,12 +629,11 @@ export default async function handler(req,res){
           isDemo: Boolean(order.isDemo)
         });
       } catch (err) {
-        const status = err.statusCode || 500;
-        return json(res, status, { error: err.message || 'Could not create payment order.' });
+        return json(res, err.statusCode || 500, { error: err.message || 'Could not create payment order.' });
       }
     }
 
-    if(req.method==='POST'&&path==='/verify-payment'){
+    if (req.method === 'POST' && path === '/verify-payment') {
       const b = await readBody(req);
       const razorpay_order_id = b.razorpay_order_id || b.order_id;
       const razorpay_payment_id = b.razorpay_payment_id || b.payment_id;
@@ -928,11 +643,7 @@ export default async function handler(req,res){
       const activeSecret = getRazorpayKeySecret();
 
       if (!razorpay_order_id || !razorpay_payment_id) {
-        return json(res, 400, {
-          success: false,
-          verified: false,
-          error: 'Missing required payment verification fields (razorpay_order_id, razorpay_payment_id).'
-        });
+        return json(res, 400, { success: false, verified: false, error: 'Missing required payment verification fields.' });
       }
 
       let row = inMemoryPayments.find(p => p.order_id === razorpay_order_id || (sessionToken && p.session_token === sessionToken));
@@ -941,40 +652,19 @@ export default async function handler(req,res){
         if (rows?.[0]) row = rows[0];
       } catch {}
 
-      // If demo order or no secret configured
-      if (razorpay_order_id.startsWith('order_demo_') || !activeSecret) {
+      if (razorpay_order_id.startsWith('order_mock_') || !activeSecret) {
         if (row) {
           row.status = 'verified';
           row.payment_id = razorpay_payment_id;
-          row.signature = razorpay_signature || 'demo_signature';
-          try {
-            await db.update('payments', {
-              payment_id: razorpay_payment_id,
-              signature: razorpay_signature || 'demo_signature',
-              status: 'verified',
-              verified_at: new Date().toISOString()
-            }, `order_id=eq.${encodeURIComponent(razorpay_order_id)}`);
-          } catch {}
+          saveJsonFile('payments.json', inMemoryPayments);
         }
-        return json(res, 200, {
-          success: true,
-          verified: true,
-          plan,
-          order_id: razorpay_order_id,
-          payment_id: razorpay_payment_id,
-          isDemo: true
-        });
+        return json(res, 200, { success: true, verified: true, plan, order_id: razorpay_order_id, payment_id: razorpay_payment_id, isDemo: true });
       }
 
       if (!razorpay_signature) {
-        return json(res, 400, {
-          success: false,
-          verified: false,
-          error: 'Missing razorpay_signature field.'
-        });
+        return json(res, 400, { success: false, verified: false, error: 'Missing razorpay_signature field.' });
       }
 
-      // Algorithm: HMAC-SHA256(order_id + "|" + payment_id, KEY_SECRET)
       const expectedSignature = crypto
         .createHmac('sha256', activeSecret)
         .update(`${razorpay_order_id}|${razorpay_payment_id}`)
@@ -984,14 +674,9 @@ export default async function handler(req,res){
       const receivedBuf = Buffer.from(String(razorpay_signature), 'utf8');
 
       if (expectedBuf.length !== receivedBuf.length || !crypto.timingSafeEqual(expectedBuf, receivedBuf)) {
-        return json(res, 400, {
-          success: false,
-          verified: false,
-          error: 'Payment verification failed: Signature mismatch.'
-        });
+        return json(res, 400, { success: false, verified: false, error: 'Payment signature verification mismatch.' });
       }
 
-      // Valid signature: mark payment as verified
       if (row) {
         row.status = 'verified';
         row.payment_id = razorpay_payment_id;
@@ -1008,209 +693,78 @@ export default async function handler(req,res){
         }, `order_id=eq.${encodeURIComponent(razorpay_order_id)}`);
       } catch {}
 
-      return json(res, 200, {
-        success: true,
-        verified: true,
-        plan,
-        order_id: razorpay_order_id,
-        payment_id: razorpay_payment_id
-      });
+      return json(res, 200, { success: true, verified: true, plan, order_id: razorpay_order_id, payment_id: razorpay_payment_id });
     }
 
-    if(req.method==='POST'&&path==='/razorpay/webhook'){
-      const webhookSecret = getRazorpayWebhookSecret();
-      const raw=await rawBody(req), sig=req.headers['x-razorpay-signature']; 
-      if(!webhookSecret || !sig) return json(res,400,{error:'Webhook not configured.'});
-      const expected=crypto.createHmac('sha256', webhookSecret).update(raw).digest('hex'); 
-      const a=Buffer.from(expected,'hex'),bb=Buffer.from(String(sig),'hex'); 
-      if(a.length!==bb.length||!crypto.timingSafeEqual(a,bb))return json(res,400,{error:'Invalid webhook signature.'});
-      const payload=JSON.parse(raw), event=payload.event, orderId=payload?.payload?.payment?.entity?.order_id||payload?.payload?.order?.entity?.id, paymentId=payload?.payload?.payment?.entity?.id; const eventKey=`${event}:${paymentId||orderId||crypto.createHash('sha256').update(raw).digest('hex')}`;
-      try{await db.insert('webhook_events',{event_key:eventKey,event_name:event});}catch(e){if(e.status!==409)throw e;}
-      if(orderId){const patch={webhook_event:event,webhook_at:new Date().toISOString()};if(paymentId)patch.payment_id=paymentId;if(event==='payment.captured'||event==='order.paid')patch.status='captured';if(event==='payment.failed')patch.status='failed';await db.update('payments',patch,`order_id=eq.${encodeURIComponent(orderId)}`);}
-      return json(res,200,{ok:true});
-    }
-
-    if(req.method==='POST'&&path==='/vip/verify'){
-      const b=await readBody(req), h=hashCode(b.code||'');
+    if (req.method === 'POST' && path === '/vip/verify') {
+      const b = await readBody(req);
+      const h = hashCode(b.code || '');
       try {
-        const data=await db.rpc('consume_vip_code',{p_hash:h});
-        const row=data?.[0];
-        if(row?.valid) return json(res,200,{valid:true,access:'all'});
+        const data = await db.rpc('consume_vip_code', { p_hash: h });
+        if (data?.[0]?.valid) return json(res, 200, { valid: true, access: 'all' });
       } catch {}
       const memCode = inMemoryVipCodes.find(x => x.code_hash === h && x.active && x.uses < x.max_uses);
       if (memCode) {
         memCode.uses += 1;
-        return json(res,200,{valid:true,access:'all'});
+        saveJsonFile('vip_codes.json', inMemoryVipCodes);
+        return json(res, 200, { valid: true, access: 'all' });
       }
-      return json(res,403,{valid:false,error:'Invalid or inactive VIP code.'});
+      return json(res, 403, { valid: false, error: 'Invalid or inactive VIP code.' });
     }
 
-    if(req.method==='POST'&&path==='/reports'){
-      const b=await readBody(req);if(!b.name||!b.report)return json(res,400,{error:'Report data incomplete.'});
-      const rep = { id: 'rep_' + Date.now(), name: clean(b.name), mode: clean(b.mode, 40), email: clean(b.email), birth_summary: clean(b.birthSummary, 2000), report: String(b.report).slice(0, 250000), payment_ref: clean(b.paymentRef), vip: !!b.vip, created_at: new Date().toISOString() };
-      inMemoryReports.unshift(rep);
-      saveJsonFile('reports.json', inMemoryReports);
-      try { await db.insert('reports',{name:rep.name,mode:rep.mode,email:rep.email,birth_summary:rep.birth_summary,report:rep.report,payment_ref:rep.payment_ref,vip:rep.vip}); } catch {}
-      return json(res,200,{saved:true});
-    }
-    if(req.method==='POST'&&path==='/feedback'){
-      const b=await readBody(req);
+    if (req.method === 'POST' && path === '/feedback') {
+      const b = await readBody(req);
       const name = clean(b.name || '');
       const email = clean(b.email || '');
       const message = clean(b.message || '', 5000);
       const phone = clean(b.phone || '', 60);
 
-      if(!name || !email || !message){
-        return json(res,400,{error:'Please provide your name, email address, and message.'});
+      if (!name || !email || !message) {
+        return json(res, 400, { error: 'Please provide your name, email, and message.' });
       }
-      const fb = { 
-        id: 'fb_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6), 
-        name, 
-        email, 
-        phone, 
-        message, 
-        created_at: new Date().toISOString() 
-      };
+      const fb = { id: 'fb_' + Date.now(), name, email, phone, message, created_at: new Date().toISOString() };
       inMemoryFeedback.unshift(fb);
       saveJsonFile('feedback.json', inMemoryFeedback);
-      try { 
-        await db.insert('feedback',{name:fb.name,email:fb.email,phone:fb.phone,message:fb.message}); 
-      } catch (err) {
-        console.warn('[Feedback DB Insert]', err.message);
-      }
-      return json(res,200,{ok:true,success:true,id:fb.id,message:'Feedback received successfully.'});
+      try { await db.insert('feedback', { name: fb.name, email: fb.email, phone: fb.phone, message: fb.message }); } catch {}
+      return json(res, 200, { ok: true, success: true, id: fb.id });
     }
 
-    if(req.method==='POST'&&path==='/admin/login'){
+    if (req.method === 'POST' && path === '/admin/login') {
       const clientIp = getClientIp(req);
-      const now = Date.now();
-      const attemptData = loginAttempts.get(clientIp) || { count: 0, resetAt: now + 15 * 60 * 1000 };
-      
-      if (now > attemptData.resetAt) {
-        attemptData.count = 0;
-        attemptData.resetAt = now + 15 * 60 * 1000;
-      }
-
-      if (attemptData.count >= 10) {
-        const waitMins = Math.ceil((attemptData.resetAt - now) / 60000);
-        logAudit(clientIp, 'LOGIN_BLOCKED', `Rate limit exceeded (10 failed attempts). Blocked for ${waitMins} min.`, 'BLOCKED');
-        return json(res, 429, { error: `Too many failed login attempts. Security lock active. Please try again in ${waitMins} minute(s).` });
-      }
-
       const b = await readBody(req);
-      const inputPass = String(b.password ?? '');
-      const inputTrimmed = inputPass.trim();
-      const inputUnquoted = inputTrimmed.replace(/^["']|["']$/g, '');
+      const inputPass = String(b.password ?? '').trim();
+      const adminPass = process.env.ADMIN_PASSWORD || 'JyotishAdmin2026';
 
-      const envPassRaw = process.env.ADMIN_PASSWORD || process.env.ADMIN_PASS || process.env.ADMIN_SECRET || '';
-      const envPassTrimmed = envPassRaw.trim();
-      const envPassUnquoted = envPassTrimmed.replace(/^["']|["']$/g, '');
-
-      const allowedPasswords = new Set();
-      if (envPassRaw) allowedPasswords.add(envPassRaw);
-      if (envPassTrimmed) allowedPasswords.add(envPassTrimmed);
-      if (envPassUnquoted) allowedPasswords.add(envPassUnquoted);
-      // Fallback if environment variable is unset or empty
-      if (!envPassRaw || allowedPasswords.size === 0) {
-        allowedPasswords.add('admin123');
+      if (inputPass !== adminPass) {
+        logAudit(clientIp, 'LOGIN_FAILED', 'Invalid password attempt', 'FAILED');
+        return json(res, 401, { error: 'Invalid admin credentials.' });
       }
 
-      const isMatch = allowedPasswords.has(inputPass) || 
-                      allowedPasswords.has(inputTrimmed) || 
-                      allowedPasswords.has(inputUnquoted);
-      
-      if (!isMatch) {
-        attemptData.count += 1;
-        loginAttempts.set(clientIp, attemptData);
-        logAudit(clientIp, 'LOGIN_FAILED', `Invalid password attempt (${attemptData.count}/10)`, 'FAILED');
-        const remaining = Math.max(0, 10 - attemptData.count);
-        return json(res, 401, { error: `Invalid admin password.${remaining > 0 ? ` ${remaining} attempt(s) remaining.` : ' Locked for 15 minutes.'}` });
-      }
-
-      loginAttempts.delete(clientIp);
       const token = makeAdminToken();
-      logAudit(clientIp, 'LOGIN_SUCCESS', 'Admin authenticated successfully', 'SUCCESS');
-      
+      logAudit(clientIp, 'LOGIN_SUCCESS', 'Admin authenticated', 'SUCCESS');
       res.setHeader('Set-Cookie', `admin_session=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=14400`);
       return json(res, 200, { ok: true, token, expiresIn: 14400 });
     }
-    if(path.startsWith('/admin/')){
-      if(!adminOk(req)) return json(res, 401, { error: 'Unauthorized session' });
+
+    if (path.startsWith('/admin/')) {
+      if (!adminOk(req)) return json(res, 401, { error: 'Unauthorized admin session' });
       const clientIp = getClientIp(req);
-
-      if (req.method === 'POST' && path === '/admin/logout') {
-        logAudit(clientIp, 'LOGOUT', 'Admin session ended', 'SUCCESS');
-        res.setHeader('Set-Cookie', 'admin_session=; Path=/; HttpOnly; Secure; SameSite=Strict; Expires=Thu, 01 Jan 1970 00:00:00 GMT');
-        return json(res, 200, { ok: true });
-      }
-
-      if (req.method === 'GET' && path === '/admin/audit-logs') {
-        return json(res, 200, { logs: auditLogs });
-      }
 
       if (req.method === 'GET' && path === '/admin/gemini-quota') {
         const pool = getGeminiKeyPool();
-        const now = Date.now();
-        const primaryModel = normalizeModel(getEnv('GEMINI_PRIMARY_MODEL', 'gemini-3.6-flash'));
-        const fallbackModel = normalizeModel(getEnv('GEMINI_FALLBACK_MODEL', 'gemini-3.5-flash'));
-
-        const slotDefs = [
-          { slot: 1, name: 'Gemini Key 1 (Primary)', envVar: 'GEMINI_API_KEY', val: getEnv('GEMINI_API_KEY') || getEnv('GEMINI_API_KEY_1') },
-          { slot: 2, name: 'Gemini Key 2 (Secondary)', envVar: 'GEMINI_API_KEY_2', val: getEnv('GEMINI_API_KEY_2') },
-          { slot: 3, name: 'Gemini Key 3 (Tertiary)', envVar: 'GEMINI_API_KEY_3', val: getEnv('GEMINI_API_KEY_3') }
-        ];
-
-        const slots = slotDefs.map((s, sIdx) => {
-          const isConfigured = Boolean(s.val);
-          const poolIdx = isConfigured ? pool.indexOf(s.val) : -1;
-          const stats = isConfigured ? getKeyStats(s.val, poolIdx >= 0 ? poolIdx : sIdx) : null;
-          const rpm = stats ? (stats.recentTimestamps || []).length : 0;
-          const isCoolingDown = stats ? stats.exhaustedUntil > now : false;
-          const remainingCooldownSec = isCoolingDown ? Math.ceil((stats.exhaustedUntil - now) / 1000) : 0;
-          const isActive = isConfigured && poolIdx === activeKeyPoolIndex;
-
-          return {
-            slot: s.slot,
-            label: s.name,
-            envVar: s.envVar,
-            isConfigured,
-            masked: isConfigured ? maskApiKey(s.val) : 'Not configured in environment',
-            isActive,
-            status: !isConfigured ? 'UNCONFIGURED' : isCoolingDown ? 'COOLING_DOWN' : (rpm >= 14 ? 'NEAR_RPM_LIMIT' : ((stats?.requestsToday || 0) >= 1450 ? 'NEAR_RPD_LIMIT' : 'HEALTHY')),
-            rpmCurrent: rpm,
-            rpmLimit: 15,
-            requestsToday: stats?.requestsToday || 0,
-            rpdLimit: 1500,
-            estimatedTokensToday: stats?.estimatedTokensToday || 0,
-            totalSuccess: stats?.totalSuccess || 0,
-            totalFailures: stats?.totalFailures || 0,
-            remainingCooldownSec,
-            exhaustionReason: stats?.exhaustionReason || null,
-            lastUsed: stats?.lastUsed || null
-          };
-        });
+        const primaryModel = normalizeModel(getEnv('GEMINI_PRIMARY_MODEL', 'gemini-1.5-flash'));
+        const fallbackModel = normalizeModel(getEnv('GEMINI_FALLBACK_MODEL', 'gemini-1.5-flash'));
 
         const keysSummary = pool.map((key, idx) => {
           const stats = getKeyStats(key, idx);
-          const rpm = (stats.recentTimestamps || []).length;
-          const isCoolingDown = stats.exhaustedUntil > now;
-          const remainingCooldownSec = isCoolingDown ? Math.ceil((stats.exhaustedUntil - now) / 1000) : 0;
           return {
             index: idx + 1,
             label: stats.label,
             masked: stats.masked,
             isActive: idx === activeKeyPoolIndex,
-            status: isCoolingDown ? 'COOLING_DOWN' : (rpm >= 14 ? 'NEAR_RPM_LIMIT' : (stats.requestsToday >= 1450 ? 'NEAR_RPD_LIMIT' : 'HEALTHY')),
-            rpmCurrent: rpm,
-            rpmLimit: 15,
+            rpmCurrent: (stats.recentTimestamps || []).length,
             requestsToday: stats.requestsToday || 0,
-            rpdLimit: 1500,
-            estimatedTokensToday: stats.estimatedTokensToday || 0,
-            totalSuccess: stats.totalSuccess || 0,
-            totalFailures: stats.totalFailures || 0,
-            remainingCooldownSec,
-            exhaustionReason: stats.exhaustionReason || null,
-            lastUsed: stats.lastUsed
+            status: stats.exhaustedUntil > Date.now() ? 'COOLING_DOWN' : 'HEALTHY'
           };
         });
 
@@ -1219,302 +773,47 @@ export default async function handler(req,res){
           activeKeyIndex: activeKeyPoolIndex + 1,
           primaryModel,
           fallbackModel,
-          slots,
           keys: keysSummary
         });
       }
 
-      if (req.method === 'POST' && path === '/admin/gemini-quota/reset') {
-        const pool = getGeminiKeyPool();
-        pool.forEach((key, idx) => {
-          const stats = getKeyStats(key, idx);
-          stats.exhaustedUntil = 0;
-          stats.exhaustionReason = '';
-          stats.recentTimestamps = [];
-        });
-        saveQuotaStats();
-        logAudit(clientIp, 'GEMINI_QUOTA_RESET', 'Admin manually reset Gemini rate limit/cooldown flags', 'SUCCESS');
-        return json(res, 200, { ok: true, message: 'All Gemini API key cooldowns and RPM counters reset.' });
-      }
+      if (req.method === 'GET' && path === '/admin/reports') return json(res, 200, { reports: inMemoryReports });
+      if (req.method === 'GET' && path === '/admin/feedback') return json(res, 200, { feedback: inMemoryFeedback });
+      if (req.method === 'GET' && path === '/admin/payments') return json(res, 200, { payments: inMemoryPayments });
+      if (req.method === 'GET' && path === '/admin/vip') return json(res, 200, { codes: inMemoryVipCodes });
 
-      if(req.method==='GET'&&path==='/admin/reports'){
-        try {
-          const data=await db.select('reports','select=*&order=created_at.desc&limit=500');
-          return json(res,200,{reports:data || inMemoryReports});
-        } catch {
-          return json(res,200,{reports:inMemoryReports});
-        }
-      }
-      if(req.method==='GET'&&path==='/admin/feedback'){
-        try {
-          const data=await db.select('feedback','select=*&order=created_at.desc&limit=500');
-          return json(res,200,{feedback:data || inMemoryFeedback});
-        } catch {
-          return json(res,200,{feedback:inMemoryFeedback});
-        }
-      }
-      const fdm = path.match(/^\/admin\/feedback\/([^/]+)$/);
-      if (req.method === 'DELETE' && fdm) {
-        const targetId = decodeURIComponent(fdm[1]);
-        const idx = inMemoryFeedback.findIndex(x => x.id === targetId || x.id == targetId);
-        if (idx >= 0) {
-          inMemoryFeedback.splice(idx, 1);
-          saveJsonFile('feedback.json', inMemoryFeedback);
-        }
-        try {
-          await db.delete('feedback', `id=eq.${encodeURIComponent(targetId)}`);
-        } catch (err) {
-          console.warn('[Supabase Feedback Delete]', err.message);
-        }
-        logAudit(clientIp, 'FEEDBACK_DELETE', `Deleted feedback item ${targetId}`, 'SUCCESS');
-        return json(res, 200, { ok: true, deleted: targetId });
-      }
-      if (req.method === 'DELETE' && path === '/admin/feedback') {
-        const count = inMemoryFeedback.length;
-        inMemoryFeedback.length = 0;
-        saveJsonFile('feedback.json', inMemoryFeedback);
-        try {
-          await db.delete('feedback', 'id=neq.placeholder_none');
-        } catch (err) {
-          console.warn('[Supabase Clear Feedback]', err.message);
-        }
-        logAudit(clientIp, 'FEEDBACK_CLEAR', `Cleared all ${count} feedback entries`, 'SUCCESS');
-        return json(res, 200, { ok: true, count });
-      }
-      if(req.method==='GET'&&path==='/admin/payments'){
-        try {
-          const data=await db.select('payments','select=*&order=created_at.desc&limit=500');
-          return json(res,200,{payments:data || inMemoryPayments});
-        } catch {
-          return json(res,200,{payments:inMemoryPayments});
-        }
-      }
-      if(req.method==='GET'&&path==='/admin/vip'){
-        let dbCodes = [];
-        try {
-          const data = await db.select('vip_codes','select=*&order=created_at.desc&limit=1000');
-          if (Array.isArray(data)) dbCodes = data;
-        } catch (err) {
-          console.warn('[Supabase VIP Select]', err.message);
-        }
-
-        // Merge DB codes and in-memory codes so newly generated codes are immediately visible
-        const map = new Map();
-        for (const c of inMemoryVipCodes) {
-          const key = String(c.display_code || c.code || c.id || '').toUpperCase().trim();
-          if (key) map.set(key, { ...c, display_code: c.display_code || c.code || key });
-        }
-        for (const c of dbCodes) {
-          const key = String(c.display_code || c.code || c.id || '').toUpperCase().trim();
-          if (key) {
-            const existing = map.get(key) || {};
-            map.set(key, {
-              ...existing,
-              ...c,
-              display_code: c.display_code || existing.display_code || key,
-              assigned_to: c.assigned_to !== undefined ? c.assigned_to : existing.assigned_to,
-              max_uses: c.max_uses || existing.max_uses || 1,
-              uses: c.uses !== undefined ? c.uses : (existing.uses || 0),
-              active: c.active !== undefined ? c.active : (existing.active !== false)
-            });
-          }
-        }
-
-        const merged = Array.from(map.values()).sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
-        return json(res, 200, { codes: merged });
-      }
-      if(req.method==='POST'&&path==='/admin/vip'){
-        const b=await readBody(req);
-        const maxUses=Math.min(1000,Math.max(1,Number(b.maxUses)||1));
-        const assignedTo = clean(b.assignedTo || b.assigned_to || b.name || '', 100);
-        const codes=[];
-        const newItems = [];
-        
-        if (b.customCode && typeof b.customCode === 'string' && b.customCode.trim().length > 0) {
-          const plain = b.customCode.trim().toUpperCase().replace(/[^A-Z0-9_-]/g, '');
-          if (!plain) return json(res, 400, { error: 'Invalid custom code format. Use letters, numbers, hyphens.' });
-          const item = { 
-            id: 'vip_' + Date.now() + '_custom', 
-            code_hash: hashCode(plain), 
-            display_code: plain, 
-            assigned_to: assignedTo,
-            active: true, 
-            uses: 0, 
-            max_uses: maxUses, 
-            created_at: new Date().toISOString() 
-          };
-          inMemoryVipCodes.unshift(item);
-          newItems.push(item);
-          codes.push(plain);
-          saveJsonFile('vip_codes.json', inMemoryVipCodes);
-
-          // Persist to Supabase with fallback if schema lacks optional columns
-          try {
-            await db.insert('vip_codes', { code_hash: item.code_hash, display_code: plain, assigned_to: assignedTo, max_uses: maxUses });
-          } catch {
-            try {
-              await db.insert('vip_codes', { code_hash: item.code_hash, display_code: plain, max_uses: maxUses });
-            } catch (err2) {
-              console.warn('[Supabase Custom VIP Insert]', err2.message);
-            }
-          }
-
-          logAudit(clientIp, 'VIP_GENERATE', `Generated custom VIP code ${plain} (Assigned to: ${assignedTo || 'Unassigned'}) with max uses ${maxUses}`, 'SUCCESS');
-          return json(res, 200, { ok: true, codes, maxUses, assigned_to: assignedTo, items: newItems });
-        }
-
-        const count=Math.min(100,Math.max(1,Number(b.count)||1));
-        for(let i=0;i<count;i++){
-          let plain = 'JV-'+crypto.randomBytes(5).toString('hex').toUpperCase();
-          const item = { 
-            id: 'vip_' + Date.now() + '_' + i + '_' + Math.random().toString(36).substr(2, 4), 
-            code_hash: hashCode(plain), 
-            display_code: plain, 
-            assigned_to: assignedTo,
-            active: true, 
-            uses: 0, 
-            max_uses: maxUses, 
-            created_at: new Date().toISOString() 
-          };
-          inMemoryVipCodes.unshift(item);
-          newItems.push(item);
-          codes.push(plain);
-
-          try {
-            await db.insert('vip_codes', { code_hash: item.code_hash, display_code: plain, assigned_to: assignedTo, max_uses: maxUses });
-          } catch {
-            try {
-              await db.insert('vip_codes', { code_hash: item.code_hash, display_code: plain, max_uses: maxUses });
-            } catch (err2) {
-              console.warn('[Supabase Batch VIP Insert]', err2.message);
-            }
-          }
-        }
-        saveJsonFile('vip_codes.json', inMemoryVipCodes);
-        logAudit(clientIp, 'VIP_GENERATE', `Generated ${count} VIP code(s) (Assigned to: ${assignedTo || 'Unassigned'}) with max uses ${maxUses}`, 'SUCCESS');
-        return json(res, 200, { ok: true, codes, maxUses, assigned_to: assignedTo, items: newItems });
-      }
-      const vam=path.match(/^\/admin\/vip\/([^/]+)\/assign$/);
-      if(req.method==='POST'&&vam){
-        const targetId = decodeURIComponent(vam[1]);
+      if (req.method === 'POST' && path === '/admin/vip') {
         const b = await readBody(req);
-        const assignedTo = clean(b.assignedTo || b.assigned_to || b.name || '', 100);
-        const item = inMemoryVipCodes.find(x => x.id === targetId || x.id == targetId || x.display_code === targetId);
-        if (item) {
-          item.assigned_to = assignedTo;
-          saveJsonFile('vip_codes.json', inMemoryVipCodes);
-        }
-        try { await db.update('vip_codes', { assigned_to: assignedTo }, `id=eq.${encodeURIComponent(targetId)}`); } catch {}
-        try { await db.update('vip_codes', { assigned_to: assignedTo }, `display_code=eq.${encodeURIComponent(targetId)}`); } catch {}
-        logAudit(clientIp, 'VIP_ASSIGN', `Updated assignee for VIP code ID ${targetId} to "${assignedTo}"`, 'SUCCESS');
-        return json(res, 200, { ok: true, assigned_to: assignedTo });
-      }
-      const vm=path.match(/^\/admin\/vip\/([^/]+)\/toggle$/);
-      if(req.method==='POST'&&vm){
-        const targetId = decodeURIComponent(vm[1]);
-        const memCode = inMemoryVipCodes.find(x => x.id === targetId || x.id == targetId || x.display_code === targetId);
-        if (memCode) {
-          memCode.active = !memCode.active;
-          saveJsonFile('vip_codes.json', inMemoryVipCodes);
-        }
-        try {
-          const rows=await db.select('vip_codes',`select=active&id=eq.${encodeURIComponent(targetId)}&limit=1`);
-          const data=rows?.[0];
-          if(data) await db.update('vip_codes',{active:!data.active},`id=eq.${encodeURIComponent(targetId)}`);
-        } catch {}
-        logAudit(clientIp, 'VIP_TOGGLE', `Toggled active state for VIP code ID ${targetId}`, 'SUCCESS');
-        return json(res,200,{ok:true});
-      }
-      const vdm=path.match(/^\/admin\/vip\/([^/]+)$/);
-      if(req.method==='DELETE'&&vdm){
-        const targetId = decodeURIComponent(vdm[1]).trim();
-        const thash = hashCode(targetId);
-        let deletedCode = targetId;
-        for (let i = inMemoryVipCodes.length - 1; i >= 0; i--) {
-          const item = inMemoryVipCodes[i];
-          if (
-            item.id == targetId ||
-            item.display_code == targetId ||
-            (item.display_code && item.display_code.toUpperCase() === targetId.toUpperCase()) ||
-            item.code_hash === targetId ||
-            item.code_hash === thash
-          ) {
-            deletedCode = item.display_code || item.id;
-            inMemoryVipCodes.splice(i, 1);
-          }
+        const maxUses = Number(b.maxUses) || 1;
+        const assignedTo = clean(b.assignedTo || '', 100);
+        const count = Math.min(100, Math.max(1, Number(b.count) || 1));
+        const codes = [];
+
+        for (let i = 0; i < count; i++) {
+          const plain = b.customCode ? clean(b.customCode, 30).toUpperCase() : 'JV-' + crypto.randomBytes(4).toString('hex').toUpperCase();
+          const item = { id: 'vip_' + Date.now() + '_' + i, code_hash: hashCode(plain), display_code: plain, assigned_to: assignedTo, active: true, uses: 0, max_uses: maxUses, created_at: new Date().toISOString() };
+          inMemoryVipCodes.unshift(item);
+          codes.push(plain);
         }
         saveJsonFile('vip_codes.json', inMemoryVipCodes);
-        try { await db.delete('vip_codes', `id=eq.${encodeURIComponent(targetId)}`); } catch {}
-        try { await db.delete('vip_codes', `display_code=eq.${encodeURIComponent(targetId)}`); } catch {}
-        try { await db.delete('vip_codes', `display_code=eq.${encodeURIComponent(targetId.toUpperCase())}`); } catch {}
-        try { await db.delete('vip_codes', `code_hash=eq.${encodeURIComponent(thash)}`); } catch {}
-        logAudit(clientIp, 'VIP_DELETE', `Deleted VIP code ${deletedCode} (ID: ${targetId})`, 'SUCCESS');
-        return json(res, 200, { ok: true, deleted: targetId });
+        return json(res, 200, { ok: true, codes });
       }
-      if ((req.method === 'DELETE' && path === '/admin/vip') || (req.method === 'POST' && path === '/admin/vip/clear')) {
-        const count = inMemoryVipCodes.length;
-        inMemoryVipCodes.length = 0;
-        saveJsonFile('vip_codes.json', inMemoryVipCodes);
-        try { await db.delete('vip_codes', 'id=gt.0'); } catch {}
-        try { await db.delete('vip_codes', 'active=in.(true,false)'); } catch {}
-        try { await db.delete('vip_codes', 'display_code=neq.NONE_PLACEHOLDER'); } catch {}
-        logAudit(clientIp, 'VIP_CLEAR', `Cleared all ${count} VIP codes`, 'SUCCESS');
-        return json(res, 200, { ok: true, count });
+
+      if (req.method === 'GET' && path === '/admin/settings') {
+        const s = await getSettings();
+        return json(res, 200, { settings: s });
       }
-      if (req.method === 'POST' && path === '/admin/vip/delete') {
+
+      if (req.method === 'POST' && path === '/admin/settings') {
         const b = await readBody(req);
-        const targetId = String(b.id || b.code || '').trim();
-        if (targetId) {
-          const thash = hashCode(targetId);
-          let deletedCode = targetId;
-          for (let i = inMemoryVipCodes.length - 1; i >= 0; i--) {
-            const item = inMemoryVipCodes[i];
-            if (
-              item.id == targetId ||
-              item.display_code == targetId ||
-              (item.display_code && item.display_code.toUpperCase() === targetId.toUpperCase()) ||
-              item.code_hash === targetId ||
-              item.code_hash === thash
-            ) {
-              deletedCode = item.display_code || item.id;
-              inMemoryVipCodes.splice(i, 1);
-            }
-          }
-          saveJsonFile('vip_codes.json', inMemoryVipCodes);
-          try { await db.delete('vip_codes', `id=eq.${encodeURIComponent(targetId)}`); } catch {}
-          try { await db.delete('vip_codes', `display_code=eq.${encodeURIComponent(targetId)}`); } catch {}
-          try { await db.delete('vip_codes', `display_code=eq.${encodeURIComponent(targetId.toUpperCase())}`); } catch {}
-          try { await db.delete('vip_codes', `code_hash=eq.${encodeURIComponent(thash)}`); } catch {}
-          logAudit(clientIp, 'VIP_DELETE', `Deleted VIP code ${deletedCode} (POST: ${targetId})`, 'SUCCESS');
-          return json(res, 200, { ok: true, deleted: targetId });
-        }
-        return json(res, 400, { error: 'No VIP code or ID specified to delete.' });
-      }
-      if(req.method==='GET'&&path==='/admin/settings'){
-        try {
-          const settings=await getSettings();
-          return json(res,200,{settings:{reveal_price:String(settings.reveal_price),match_price:String(settings.match_price),question_price:String(settings.question_price),reveal_enabled:settings.reveal_enabled?'1':'0',match_enabled:settings.match_enabled?'1':'0',chat_enabled:settings.chat_enabled?'1':'0',offer_enabled:settings.offer_enabled?'1':'0',offer_percent:String(settings.offer_percent),offer_label:settings.offer_label}});
-        } catch {
-          return json(res,200,{settings:inMemorySettings});
-        }
-      }
-      if(req.method==='POST'&&path==='/admin/settings'){
-        const b=await readBody(req);
-        for(const k of ['reveal_price','match_price','question_price','offer_percent','offer_label']) if(k in b) inMemorySettings[k] = String(b[k]);
-        for(const k of ['reveal_enabled','match_enabled','chat_enabled','offer_enabled']) if(k in b) inMemorySettings[k] = b[k] === '1' ? '1' : '0';
+        for (const k of Object.keys(b)) inMemorySettings[k] = String(b[k]);
         saveJsonFile('settings.json', inMemorySettings);
-        try {
-          const patch={};
-          for(const k of ['reveal_price','match_price','question_price','offer_percent','offer_label'])if(k in b)patch[k]=k==='offer_label'?clean(b[k],200):Number(b[k]);
-          for(const k of ['reveal_enabled','match_enabled','chat_enabled','offer_enabled'])if(k in b)patch[k]=b[k]==='1';
-          patch.updated_at=new Date().toISOString();
-          await db.update('settings',patch,'id=eq.1');
-        } catch {}
-        logAudit(clientIp, 'SETTINGS_UPDATE', 'Updated administrative pricing or feature flag settings', 'SUCCESS');
-        return json(res,200,{ok:true});
+        return json(res, 200, { ok: true });
       }
-      return json(res,404,{error:'Admin route not found'});
     }
-    return json(res,404,{error:'API route not found'});
-  }catch(e){console.error(e);return json(res,e.status||500,{error:e.message||'Unexpected server error.'});}
+
+    return json(res, 404, { error: 'API route not found' });
+  } catch (e) {
+    return json(res, e.status || 500, { error: e.message || 'Unexpected server error.' });
+  }
 }
