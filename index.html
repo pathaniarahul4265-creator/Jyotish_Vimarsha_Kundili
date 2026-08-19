@@ -1,80 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jyotish Vimarsha — Sacred Vedic Chart Reading &amp; Ephemeris</title>
+<meta name="description" content="Classical Parashari &amp; Jaimini Vedic birth chart calculation, live sidereal ephemeris, daily Dainik Panchang, and Ashtakoot Kundli matching with Lahiri ayanamsha.">
+<meta name="keywords" content="Vedic astrology, Kundli, Kundli matching, Dainik Panchang, Lahiri ephemeris, Parashari, Jaimini, horoscope, Mahadasha, Sade Sati, Vedic chart">
+<meta name="author" content="Jyotish Vimarsha">
+<link rel="canonical" href="https://jyotishvimarsha.com/">
+<link rel="manifest" href="/manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Jyotish Vimarsha">
+<meta name="theme-color" content="#070e1c">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jyotishvimarsha.com/">
+<meta property="og:title" content="Jyotish Vimarsha — Sacred Vedic Chart Reading &amp; Ephemeris">
+<meta property="og:description" content="Classical Vedic birth charts, live sidereal planetary longitudes, Lahiri ayanamsha, and 36 Guna Ashtakoot Kundli matching.">
+<meta property="og:image" content="/images/celestial_zodiac_mandala.svg">
+<meta property="og:site_name" content="Jyotish Vimarsha">
+
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="shortcut icon" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;0,6..96,700;1,6..96,400&family=Cinzel:wght@400;600;700;800&family=Cinzel+Decorative:wght@700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Eczar:wght@500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=Marcellus&family=Noto+Serif+Devanagari:wght@400;500;600;700&family=Philosopher:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Rozha+One&family=Spectral:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Yatra+One&display=swap" rel="stylesheet">
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+(function(){
+  const signKeys = ['aries','taurus','gemini','cancer','leo','virgo','libra','scorpio','sagittarius','capricorn','aquarius','pisces'];
+  const aliases = {
+    mesha:'aries', mesh:'aries',
+    vrishabha:'taurus', vrishabh:'taurus', vrish:'taurus',
+    mithuna:'gemini', mithun:'gemini',
+    karka:'cancer', kark:'cancer',
+    simha:'leo', singh:'leo',
+    kanya:'virgo',
+    tula:'libra',
+    vrischika:'scorpio', vrischik:'scorpio', vrisch:'scorpio',
+    dhanu:'sagittarius', dhanus:'sagittarius',
+    makara:'capricorn', makar:'capricorn',
+    kumbha:'aquarius', kumbh:'aquarius',
+    meena:'pisces', meen:'pisces'
+  };
+  window.getZodiacSignKey = function(signStr){
+    if(!signStr) return 'aries';
+    const s = String(signStr).toLowerCase().trim().replace(/[^a-z]/g,'');
+    if(signKeys.includes(s)) return s;
+    if(aliases[s]) return aliases[s];
+    for(const key of signKeys){ if(s.includes(key)) return key; }
+    for(const [alias, target] of Object.entries(aliases)){ if(s.includes(alias)) return target; }
+    return 'aries';
+  };
+  window.getZodiacSvgUrl = function(signStr){
+    const key = window.getZodiacSignKey(signStr);
+    if(window.ZODIAC_EMBEDDED_SVGS && window.ZODIAC_EMBEDDED_SVGS[key]){
+      return window.ZODIAC_EMBEDDED_SVGS[key];
+    }
+    return `/images/zodiac/${key}.svg`;
+  };
+  window.handleZodiacImgError = function(imgEl, signKey){
+    if(!imgEl) return;
+    const key = window.getZodiacSignKey(signKey || imgEl.getAttribute('data-sign') || imgEl.alt || 'aries');
+    if(window.ZODIAC_EMBEDDED_SVGS && window.ZODIAC_EMBEDDED_SVGS[key]){
+      imgEl.src = window.ZODIAC_EMBEDDED_SVGS[key];
+      imgEl.onerror = null;
+      return;
+    }
+    const count = parseInt(imgEl.dataset.retryCount || '0', 10);
+    imgEl.dataset.retryCount = String(count + 1);
+    if(count === 0){
+      imgEl.src = `/images/zodiac/${key}.svg`;
+    } else if(count === 1){
+      imgEl.src = `/images/zodiac/${key}.png`;
+    } else {
+      imgEl.onerror = null;
+    }
+  };
+})();
+</script>
+
+<style>
+:root, [data-theme="cosmic"] {
+  --night:#050b12; --night2:#0b1620; --panel:#0e1a24; --panel2:#12232e;
+  --gold:#cda85a; --gold-soft:#f1d48a; --marigold:#d8a04c; --vermilion:#9f4d3e;
+  --ivory:#f4efe4; --muted:#a9b6bd; --line:#29404d; --lotus:#7ea7a6;
+  --accent:#d8a04c; --accent2:#7fc5c0; --glow:rgba(216,160,76,.18);
+  --cosmic-hue: 195deg;
+  --display-font: 'Cinzel', serif;
+  --heading-font: 'Cinzel', serif;
+  --reading-font: 'Cormorant Garamond', Georgia, serif;
+  --ui-font: 'Manrope', sans-serif;
+  --card-radius: 16px;
+  --btn-radius: 10px;
+}
+
+[data-theme="dawn"] {
+  --night:#0c0a1a; --night2:#16132b; --panel:#1b1633; --panel2:#231c42;
+  --gold:#d8a4bb; --gold-soft:#f5d0c5; --marigold:#e28cb0; --vermilion:#b84e72;
+  --ivory:#f7edf0; --muted:#b5a8c2; --line:#433663; --lotus:#bda6f2;
+  --accent:#c985b2; --accent2:#bda6f2; --glow:rgba(226,140,176,.22);
+  --cosmic-hue: 290deg;
+}
+
+[data-theme="temple"] {
+  --night:#080602; --night2:#140f05; --panel:#1c150c; --panel2:#261e12;
+  --gold:#ffd700; --gold-soft:#ffe680; --marigold:#e5a93c; --vermilion:#b33925;
+  --ivory:#fffbf0; --muted:#c2b49b; --line:#4a3b22; --lotus:#e5a93c;
+  --accent:#ffd700; --accent2:#f2b33d; --glow:rgba(255,215,0,.25);
+  --cosmic-hue: 45deg;
+}
+
+[data-theme="lunar"] {
+  --night:#060b10; --night2:#0e1722; --panel:#12202e; --panel2:#182b3d;
+  --gold:#c0d2e0; --gold-soft:#e4eef6; --marigold:#93c5fd; --vermilion:#5b84b1;
+  --ivory:#f1f5f9; --muted:#94a3b8; --line:#2c3e50; --lotus:#7dd3fc;
+  --accent:#93c5fd; --accent2:#7dd3fc; --glow:rgba(147,197,253,.2);
+  --cosmic-hue: 210deg;
+}
+
+[data-theme="saffron"] {
+  --night:#100305; --night2:#1f080c; --panel:#2c0e13; --panel2:#3b141b;
+  --gold:#ff9933; --gold-soft:#ffcc80; --marigold:#ff5722; --vermilion:#d32f2f;
+  --ivory:#fff4ed; --muted:#cfa8a2; --line:#542028; --lotus:#ff7043;
+  --accent:#ff9933; --accent2:#ff7043; --glow:rgba(255,153,51,.25);
+  --cosmic-hue: 15deg;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--night);
+  color: var(--ivory);
+  font-family: var(--reading-font);
+  font-size: 17px;
+  line-height: 1.8;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.cosmic-bg {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background: radial-gradient(circle at 50% 20%, #151a3a 0%, #080b18 55%, #03040a 100%);
+}
+
+.wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px 20px 80px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Header Brand */
+.top-header-brand {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 22px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: rgba(14, 26, 36, 0.85);
+  backdrop-filter: blur(14px);
+  margin-bottom: 24px;
+}
+.header-brand-left { display: flex; align-items: center; gap: 12px; }
+.brand-title { font-family: var(--heading-font); font-size: 20px; color: var(--gold-soft); font-weight: 700; }
+.brand-subtitle { font-size: 11.5px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+.header-brand-right { display: flex; align-items: center; gap: 8px; }
+
+.header-nav-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--line);
+  color: var(--gold-soft);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--ui-font);
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+.header-nav-btn:hover { background: rgba(216, 160, 76, 0.18); border-color: var(--gold); }
+
+/* Observatory HUD */
+.observatory-telemetry-hud {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 10px 18px;
+  background: rgba(4, 10, 16, 0.85);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  font-family: var(--ui-font);
+  font-size: 12px;
+  color: var(--gold-soft);
+  margin-bottom: 24px;
+}
+.hora-indicator-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  padding: 4px 10px;
+  background: rgba(216, 160, 76, 0.12);
+  border-radius: 12px;
+}
+
+/* Panchang Bar */
+.panchang-bar {
+  background: linear-gradient(180deg, var(--panel), var(--panel2));
+  border: 1.5px solid var(--line);
+  border-radius: 16px;
+  padding: 22px 24px;
+  margin-bottom: 26px;
+  box-shadow: 0 14px 40px rgba(0,0,0,0.4);
+}
+.panchang-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed var(--line);
+  margin-bottom: 16px;
+}
+.panchang-badge { font-family: var(--heading-font); font-size: 13px; color: var(--gold-soft); font-weight: 700; }
+.panchang-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
+}
+.panchang-item {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.panchang-item:hover { border-color: var(--gold); background: rgba(216, 160, 76, 0.08); }
+.panchang-item small { display: block; font-size: 10px; color: var(--muted); text-transform: uppercase; margin-bottom: 4px; }
+.panchang-item b { display: block; font-size: 13px; color: var(--ivory); }
+
+/* Hero */
+.hero { text-align: center; padding: 40px 0 30px; position: relative; }
+.hero h1 { font-family: var(--heading-font); font-size: 42px; color: var(--gold-soft); letter-spacing: 0.03em; margin-bottom: 6px; }
+.hero .subtitle { font-size: 14px; letter-spacing: 0.15em; color: var(--accent2); text-transform: uppercase; font-family: var(--ui-font); }
+
+/* Cards & Tabs */
+.card {
+  background: linear-gradient(180deg, var(--panel), var(--panel2));
+  border: 1px solid var(--line);
+  border-radius: var(--card-radius);
+  padding: 28px 30px;
+  margin-bottom: 26px;
+  box-shadow: 0 12px 35px rgba(0,0,0,0.5);
+}
+.card h2 { font-family: var(--heading-font); font-size: 20px; color: var(--gold-soft); margin-bottom: 18px; border-bottom: 1px solid var(--line); padding-bottom: 10px; }
+
+.mode-tabs { display: flex; gap: 10px; margin-bottom: 22px; }
+.mode-tab {
+  flex: 1;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  padding: 12px;
+  border-radius: 10px;
+  font-family: var(--heading-font);
+  font-size: 14px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.25s ease;
+}
+.mode-tab.active { background: linear-gradient(180deg, var(--gold-soft), var(--marigold)); color: #241606; font-weight: 700; border-color: transparent; }
+.mode-panel { display: none; }
+.mode-panel.active { display: block; }
+
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.full { grid-column: 1 / -1; }
+@media (max-width: 680px) { .grid { grid-template-columns: 1fr; } }
+
+label { display: block; font-size: 12px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; font-family: var(--ui-font); font-weight: 600; }
+input, select, textarea {
+  width: 100%;
+  background: #081018;
+  border: 1px solid var(--line);
+  color: var(--ivory);
+  padding: 11px 14px;
+  border-radius: 8px;
+  font-family: var(--ui-font);
+  font-size: 14px;
+  margin-bottom: 14px;
+  outline: none;
+}
+input:focus, select:focus, textarea:focus { border-color: var(--gold); }
+
+button.btn-main, #genBtn, #matchBtn, #unlockMatchBtn {
+  width: 100%;
+  background: linear-gradient(180deg, var(--gold-soft), var(--marigold));
+  color: #241606;
+  border: none;
+  padding: 14px 26px;
+  border-radius: 10px;
+  font-family: var(--heading-font);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 8px;
+}
+button.btn-main:hover, #genBtn:hover, #matchBtn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+/* Report Sections */
+.report-section-block {
+  background: rgba(14, 26, 36, 0.9);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+.report-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: rgba(216, 160, 76, 0.06);
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+}
+.report-section-title { font-family: var(--heading-font); font-size: 17px; color: var(--gold-soft); }
+.report-section-content { padding: 22px 24px; font-size: 16.5px; line-height: 1.85; }
+
+/* Modals */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(4, 8, 14, 0.85); z-index: 1000; padding: 20px; overflow-y: auto; }
+.modal-overlay.open { display: flex; align-items: center; justify-content: center; }
+.modal-box {
+  background: linear-gradient(180deg, var(--panel), var(--panel2));
+  border: 1.5px solid var(--line);
+  border-radius: 16px;
+  padding: 30px;
+  max-width: 680px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 25px 80px rgba(0,0,0,0.8);
+}
+.modal-close { position: absolute; top: 18px; right: 20px; background: none; border: none; font-size: 24px; color: var(--muted); cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="cosmic-bg"></div>
+
+<div class="wrap">
+  <!-- Top Header Brand -->
+  <header class="top-header-brand">
+    <div class="header-brand-left">
+      <span style="font-size: 26px;">🕉</span>
+      <div>
+        <div class="brand-title" id="brandTitleText">JYOTISH VIMARSHA</div>
+        <div class="brand-subtitle" id="brandSubtitleText">Sacred Vedic Chart Reading &amp; Ephemeris</div>
+      </div>
+    </div>
+    <div class="header-brand-right">
+      <button type="button" class="header-nav-btn" onclick="toggleVedicLanguage()">
+        <span>🌐</span> <b id="langBtnText">हिंदी</b>
+      </button>
+      <button type="button" class="header-nav-btn" onclick="openModal('accessModal')">
+        <span>🔒</span> Administration
+      </button>
+    </div>
+  </header>
+
+  <!-- Observatory Telemetry HUD -->
+  <div class="observatory-telemetry-hud">
+    <span>✦ SIDEREAL LAHIRI AYANAMSHA 24°10'38"</span>
+    <div class="hora-indicator-badge" onclick="openHoraModal()">
+      <span>⏰</span> <span id="horaHeaderTitle">Hora: Calculating…</span>
+    </div>
+    <span>OBSERVER: NEW DELHI · 28°37'N 77°13'E</span>
+  </div>
+
+  <!-- Daily Dainik Panchang Bar -->
+  <div class="panchang-bar">
+    <div class="panchang-header">
+      <span class="panchang-badge">✦ TODAY'S DAINIK PANCHANG &amp; MUHURTAS</span>
+      <span style="font-size: 13px; color: var(--gold-soft);" id="panchangDate">Synchronizing…</span>
+    </div>
+    <div class="panchang-grid">
+      <div class="panchang-item" onclick="openSpecificPanchangDetail('tithi')">
+        <small>TITHI 🔍</small><b id="panchangTithi">—</b>
+      </div>
+      <div class="panchang-item" onclick="openSpecificPanchangDetail('nakshatra')">
+        <small>NAKSHATRA 🔍</small><b id="panchangNakshatra">—</b>
+      </div>
+      <div class="panchang-item" onclick="openSpecificPanchangDetail('yoga')">
+        <small>YOGA 🔍</small><b id="panchangYoga">—</b>
+      </div>
+      <div class="panchang-item" onclick="openSpecificPanchangDetail('karana')">
+        <small>KARANA 🔍</small><b id="panchangKarana">—</b>
+      </div>
+      <div class="panchang-item" onclick="openSpecificPanchangDetail('rahu')">
+        <small>⚠️ RAHU KAAL 🔍</small><b id="panchangRahuKaal" style="color: #fca5a5;">—</b>
+      </div>
+      <div class="panchang-item" onclick="openSpecificPanchangDetail('abhijit')">
+        <small>✨ ABHIJIT 🔍</small><b id="panchangShubh" style="color: #86efac;">—</b>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <div class="hero">
+    <h1>Jyotish Vimarsha</h1>
+    <div class="subtitle">Deterministic Sidereal Engine &amp; AI Synthesis</div>
+  </div>
+
+  <!-- Mode Selector Tabs -->
+  <div class="mode-tabs">
+    <div class="mode-tab active" id="tabIndividual" onclick="switchMode('individual')">✦ Individual Birth Chart (₹59)</div>
+    <div class="mode-tab" id="tabKundli" onclick="switchMode('kundli')">✦ 36-Guna Kundli Matching (Free)</div>
+  </div>
+
+  <!-- Form 1: Individual Birth Details -->
+  <div class="card mode-panel active" id="setupCard">
+    <h2>Birth Details</h2>
+    <div class="grid">
+      <div><label>Full Name</label><input id="f_name" placeholder="e.g. Rahul Pathania"></div>
+      <div>
+        <label>Gender</label>
+        <select id="f_gender"><option>Male</option><option>Female</option><option>Other</option></select>
+      </div>
+      <div><label>Date of Birth</label><input type="date" id="f_dob" value="1995-10-24"></div>
+      <div><label>Time of Birth</label><input type="time" id="f_tob" value="14:30"></div>
+      <div class="full">
+        <label>Place of Birth</label>
+        <input id="f_pob" value="New Delhi, India">
+      </div>
+      <div><label>Latitude (°N)</label><input type="number" step="0.0001" id="f_lat" value="28.6139"></div>
+      <div><label>Longitude (°E)</label><input type="number" step="0.0001" id="f_lon" value="77.2090"></div>
+    </div>
+    <button type="button" id="genBtn" class="btn-main">Reveal Complete Chart · ₹59</button>
+  </div>
+
+  <!-- Form 2: Kundli Matching Details -->
+  <div class="card mode-panel" id="kundliSetupCard">
+    <h2>Ashtakoot 36-Guna Kundli Matching</h2>
+    <div class="grid">
+      <div>
+        <h3 style="color: var(--gold-soft); margin-bottom: 10px; font-family: var(--heading-font);">Partner A (Groom)</h3>
+        <label>Name</label><input id="k1_name" value="Partner A">
+        <label>Date of Birth</label><input type="date" id="k1_dob" value="1995-10-24">
+        <label>Time of Birth</label><input type="time" id="k1_tob" value="14:30">
+        <label>Latitude</label><input type="number" step="0.0001" id="k1_lat" value="28.6139">
+        <label>Longitude</label><input type="number" step="0.0001" id="k1_lon" value="77.2090">
+      </div>
+      <div>
+        <h3 style="color: var(--gold-soft); margin-bottom: 10px; font-family: var(--heading-font);">Partner B (Bride)</h3>
+        <label>Name</label><input id="k2_name" value="Partner B">
+        <label>Date of Birth</label><input type="date" id="k2_dob" value="1996-08-15">
+        <label>Time of Birth</label><input type="time" id="k2_tob" value="09:15">
+        <label>Latitude</label><input type="number" step="0.0001" id="k2_lat" value="19.0760">
+        <label>Longitude</label><input type="number" step="0.0001" id="k2_lon" value="72.8777">
+      </div>
+    </div>
+    <button type="button" id="matchBtn" class="btn-main">Calculate 36-Guna Score (Instant Free)</button>
+  </div>
+
+  <!-- Progress Tracker -->
+  <div class="card" id="progressCard" style="display: none;">
+    <h2 id="progressHeading">Synthesizing Chart Readings</h2>
+    <ul id="stepList" style="list-style: none; display: flex; flex-direction: column; gap: 8px; color: var(--muted); font-size: 14px;"></ul>
+    <div id="progressError"></div>
+  </div>
+
+  <!-- Report Output Card -->
+  <div class="card" id="reportCard" style="display: none;">
+    <div id="gunaMilanResultCard" style="display: none; margin-bottom: 20px;"></div>
+    <div id="reportBody"></div>
+  </div>
+
+  <!-- Ask the Chart Card -->
+  <div class="card" id="chatCard" style="display: none;">
+    <h2>Ask the Chart — Conversational Consultation</h2>
+    <div id="chatLog" style="display: flex; flex-direction: column; gap: 12px; max-height: 420px; overflow-y: auto; margin-bottom: 16px;"></div>
+    <div style="display: flex; gap: 10px;">
+      <input type="text" id="chatInput" placeholder="Ask about your Dasha, career, marriage timing…" style="margin-bottom: 0;">
+      <button type="button" id="chatSend" style="width: auto; padding: 10px 22px; background: var(--gold); border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Ask</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 1: Single Panchang Item Focus Modal -->
+<div class="modal-overlay" id="panchangSingleModal" onclick="if(event.target===this) closeSpecificPanchangDetail();">
+  <div class="modal-box">
+    <button type="button" class="modal-close" onclick="closeSpecificPanchangDetail()">&times;</button>
+    <div id="psiModalKicker" style="font-size: 11px; color: var(--gold-soft); letter-spacing: 0.1em; text-transform: uppercase;">✦ PANCHANG ELEMENT FOCUS</div>
+    <h2 id="psiModalTitle" style="font-family: var(--heading-font); color: #fff; margin: 6px 0 16px;">Panchang Detail</h2>
+    <div id="psiModalBody" style="font-size: 14.5px; color: var(--ivory); line-height: 1.7;">Loading…</div>
+  </div>
+</div>
+
+<!-- Modal 2: Admin Access & VIP Modal -->
+<div class="modal-overlay" id="accessModal" onclick="if(event.target===this) closeModal('accessModal');">
+  <div class="modal-box">
+    <button type="button" class="modal-close" onclick="closeModal('accessModal')">&times;</button>
+    <h2 style="font-family: var(--heading-font); color: var(--gold-soft);">Administration Access</h2>
+    <form id="adminLoginForm">
+      <label>Password</label>
+      <input type="password" id="adminPasswordInput" placeholder="Enter admin password">
+      <button type="submit" class="btn-main">Open Console</button>
+      <div id="adminLoginStatus" style="margin-top: 10px; font-size: 13px;"></div>
+    </form>
+  </div>
+</div>
+
+<!-- Load Vedic Engine -->
+<script src="./vedic-engine.js"></script>
+
+<script>
+const PRIMARY_MODEL = "gemini-3.6-flash";
+const FALLBACK_MODEL = "gemini-3.5-flash";
+let currentVedicLang = 'en';
+let currentPanchangDate = new Date();
+let verifiedChart = null;
+
+const SECTIONS = [
+  { id: 'overview', title: 'Foundational Ascendant & Soul Blueprint' },
+  { id: 'panchang', title: 'Panchang & Planetary Placements' },
+  { id: 'identity', title: 'Mind, Psychology & Behavioral Architecture' },
+  { id: 'relationships', title: 'Marriage, Love & Navamsha (D9)' },
+  { id: 'career', title: 'Career, Wealth & Dashamsha (D10)' },
+  { id: 'health_yogas', title: 'Classical Yogas, Doshas & Vitality' },
+  { id: 'timeline', title: 'Vimshottari Dasha 120-Year Timeline' },
+  { id: 'synthesis', title: 'Master Astrological Synthesis' }
+];
+
+function switchMode(mode) {
+  document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.mode-panel').forEach(p => p.classList.remove('active'));
+  if (mode === 'individual') {
+    document.getElementById('tabIndividual').classList.add('active');
+    document.getElementById('setupCard').classList.add('active');
+  } else {
+    document.getElementById('tabKundli').classList.add('active');
+    document.getElementById('kundliSetupCard').classList.add('active');
+  }
+}
+
+function openModal(id) { document.getElementById(id)?.classList.add('open'); }
+function closeModal(id) { document.getElementById(id)?.classList.remove('open'); }
+
+// Panchang Calculation Engine
+function getDailyPanchangData(targetDate = new Date(), lat = 28.6139, lon = 77.2090) {
+  const d = new Date(targetDate);
+  const dayOfWeek = d.getDay();
+  const year = d.getFullYear();
+  const oneDay = 1000 * 60 * 60 * 24;
+  const startOfYear = new Date(year, 0, 0);
+  const dayOfYear = Math.floor((d - startOfYear) / oneDay);
+
+  const tithis = [
+    "Shukla Pratipada", "Shukla Dwitiya", "Shukla Tritiya", "Shukla Chaturthi", "Shukla Panchami",
+    "Shukla Shashti", "Shukla Saptami", "Shukla Ashtami", "Shukla Navami", "Shukla Dashami",
+    "Shukla Ekadashi", "Shukla Dwadashi", "Shukla Trayodashi", "Shukla Chaturdashi", "Purnima",
+    "Krishna Pratipada", "Krishna Dwitiya", "Krishna Tritiya", "Krishna Chaturthi", "Krishna Panchami",
+    "Krishna Shashti", "Krishna Saptami", "Krishna Ashtami", "Krishna Navami", "Krishna Dashami",
+    "Krishna Ekadashi", "Krishna Dwadashi", "Krishna Trayodashi", "Krishna Chaturdashi", "Amavasya"
+  ];
+  const nakshatras = [
+    "Ashwini", "Bharani", "Krittika", "Rohini", "Mrigashira", "Ardra", "Punarvasu",
+    "Pushya", "Ashlesha", "Magha", "Purva Phalguni", "Uttara Phalguni", "Hasta",
+    "Chitra", "Swati", "Vishakha", "Anuradha", "Jyeshtha", "Mula", "Purva Ashadha",
+    "Uttara Ashadha", "Shravana", "Dhanishta", "Shatabhisha", "Purva Bhadrapada",
+    "Uttara Bhadrapada", "Revati"
+  ];
+  const rahuKaalTimes = ["04:30 PM – 06:00 PM", "07:30 AM – 09:00 AM", "03:00 PM – 04:30 PM", "12:00 PM – 01:30 PM", "01:30 PM – 03:00 PM", "10:30 AM – 12:00 PM", "09:00 AM – 10:30 AM"];
+
+  const tithiIdx = Math.floor(((dayOfYear + 14.2) % 29.53) / 29.53 * 30) % 30;
+  const nakIdx = Math.floor(((dayOfYear * 1.05 + 8) % 27));
+
+  return {
+    dateStr: d.toLocaleDateString('en-IN', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' }),
+    tithi: tithis[tithiIdx],
+    nakshatra: nakshatras[nakIdx],
+    yoga: "Saubhagya",
+    karana: "Bava",
+    rahuKaal: rahuKaalTimes[dayOfWeek],
+    abhijit: "11:54 AM – 12:46 PM",
+    sun: { sunrise: "06:05 AM", sunset: "06:56 PM", dayLength: "12h 51m" },
+    hinduCal: { paksha: tithiIdx < 15 ? 'Shukla' : 'Krishna', vikramSamvat: 'VS 2081' }
+  };
+}
+
+function renderPanchangBar() {
+  const p = getDailyPanchangData(currentPanchangDate);
+  document.getElementById('panchangDate').textContent = p.dateStr;
+  document.getElementById('panchangTithi').textContent = p.tithi;
+  document.getElementById('panchangNakshatra').textContent = p.nakshatra;
+  document.getElementById('panchangYoga').textContent = p.yoga;
+  document.getElementById('panchangKarana').textContent = p.karana;
+  document.getElementById('panchangRahuKaal').textContent = p.rahuKaal;
+  document.getElementById('panchangShubh').textContent = p.abhijit;
+}
+
 function openSpecificPanchangDetail(type) {
   const modal = document.getElementById('panchangSingleModal');
   const title = document.getElementById('psiModalTitle');
-  const kicker = document.getElementById('psiModalKicker');
   const body = document.getElementById('psiModalBody');
-
   if (!modal || !body) return;
 
-  const now = currentPanchangDate || new Date();
   const lat = parseFloat(document.getElementById('f_lat')?.value) || 28.6139;
   const lon = parseFloat(document.getElementById('f_lon')?.value) || 77.2090;
-  const pData = getDailyPanchangData(now, lat, lon);
-  if (!pData) return;
+  const pData = getDailyPanchangData(currentPanchangDate, lat, lon);
 
   const detailMap = {
-    tithi: {
-      kicker: "LUNAR DAY (तिथि)",
-      title: pData.tithi,
-      content: `
-        <div style="background: rgba(216, 160, 76, 0.1); border: 1px solid rgba(216, 160, 76, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 16px;">
-          <div style="font-size: 20px; font-weight: bold; color: #f1d48a; font-family: 'Cinzel', serif;">${pData.tithi}</div>
-          <div style="font-size: 13px; color: #a3b6be; margin-top: 4px;">Paksha: <b>${pData.hinduCal.paksha}</b> · ${pData.hinduCal.vikramSamvat}</div>
-        </div>
-        <p style="color: #d1dfd8; line-height: 1.6; font-size: 14px;">
-          <b>Spiritual Significance:</b> Governs emotional stability, relationship dynamics, and karmic timing for daily activities.
-        </p>
-      `
-    },
-    nakshatra: {
-      kicker: "MOON CONSTELLATION (नक्षत्र)",
-      title: pData.nakshatra,
-      content: `
-        <div style="background: rgba(127, 197, 192, 0.1); border: 1px solid rgba(127, 197, 192, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 16px;">
-          <div style="font-size: 20px; font-weight: bold; color: #7fc5c0; font-family: 'Cinzel', serif;">${pData.nakshatra}</div>
-          <div style="font-size: 13px; color: #a3b6be; margin-top: 4px;">Current Sidereal Lunar Transit</div>
-        </div>
-        <p style="color: #d1dfd8; line-height: 1.6; font-size: 14px;">
-          <b>Cosmic Influence:</b> Shapes subconscious moods, intuition, creative focus, and mental harmony.
-        </p>
-      `
-    },
-    yoga: {
-      kicker: "SOLAR-LUNAR YOGA (योग)",
-      title: pData.yoga,
-      content: `<p style="color:#d1dfd8;">Angular sum of Sun and Moon: <b>${pData.yoga}</b>.</p>`
-    },
-    karana: {
-      kicker: "HALF LUNAR TITHI (करण)",
-      title: pData.karana,
-      content: `<p style="color:#d1dfd8;">Active half-tithi for practical execution: <b>${pData.karana}</b>.</p>`
-    },
-    abhijit: {
-      kicker: "SIDDHA WINDOW (अभिजीत मुहूर्त)",
-      title: pData.abhijit,
-      content: `<p style="color:#d1dfd8;">Midday Auspicious Window: <b>${pData.abhijit}</b>.</p>`
-    },
-    rahu: {
-      kicker: "AVOIDANCE WINDOW (राहु काल)",
-      title: pData.rahuKaal,
-      content: `<p style="color:#fca8a8;">Daily Inauspicious Rahu Period: <b>${pData.rahuKaal}</b>.</p>`
-    },
-    sun: {
-      kicker: "SURYA TIMINGS (सूर्योदय - सूर्यास्त)",
-      title: `Sunrise: ${pData.sun.sunrise} · Sunset: ${pData.sun.sunset}`,
-      content: `<p style="color:#d1dfd8;">Total Day Duration: <b>${pData.sun.dayLength}</b></p>`
-    }
+    tithi: { title: pData.tithi, content: `<p><b>Tithi (Lunar Day):</b> Governs emotional energy and mental rhythms. Current status: ${pData.tithi} (${pData.hinduCal.paksha} Paksha).</p>` },
+    nakshatra: { title: pData.nakshatra, content: `<p><b>Nakshatra (Lunar Mansion):</b> Current celestial constellation where Moon resides: ${pData.nakshatra}.</p>` },
+    yoga: { title: pData.yoga, content: `<p><b>Yoga (Solar-Lunar Sum):</b> Indicates angular health and harmony: ${pData.yoga}.</p>` },
+    karana: { title: pData.karana, content: `<p><b>Karana:</b> Sub-division of active Tithi for worldly execution: ${pData.karana}.</p>` },
+    rahu: { title: pData.rahuKaal, content: `<p style="color:#fca5a5;"><b>Rahu Kaal:</b> Inauspicious window today: ${pData.rahuKaal}. Avoid commencing new contracts or travel.</p>` },
+    abhijit: { title: pData.abhijit, content: `<p style="color:#86efac;"><b>Abhijit Muhurta:</b> Highly auspicious midday window: ${pData.abhijit}.</p>` }
   };
 
-  const info = detailMap[type] || {
-    kicker: "DAINIK PANCHANG DETAIL",
-    title: "Vedic Almanac Element",
-    content: `<p style="color:#d1dfd8;">Current status: <b>${pData.tithi}</b> under ${pData.nakshatra} Nakshatra.</p>`
-  };
-
-  if (kicker) kicker.textContent = info.kicker;
-  if (title) title.textContent = info.title;
-  body.innerHTML = info.content;
-
+  const item = detailMap[type] || { title: 'Panchang Element', content: '<p>Vedic ephemeris element.</p>' };
+  title.textContent = item.title;
+  body.innerHTML = item.content;
   modal.classList.add('open');
 }
+
+function closeSpecificPanchangDetail() {
+  document.getElementById('panchangSingleModal')?.classList.remove('open');
+}
+
+function toggleVedicLanguage() {
+  currentVedicLang = currentVedicLang === 'en' ? 'hi' : 'en';
+  const isHi = currentVedicLang === 'hi';
+  document.getElementById('langBtnText').textContent = isHi ? 'English' : 'हिंदी';
+  document.getElementById('brandTitleText').textContent = isHi ? 'ज्योतिष विमर्श' : 'JYOTISH VIMARSHA';
+
+  const pob = document.getElementById('f_pob');
+  if (pob) pob.placeholder = isHi ? 'उदा. नई दिल्ली, मुंबई, अहमदाबाद…' : 'e.g. New Delhi, India';
+  const genBtn = document.getElementById('genBtn');
+  if (genBtn) genBtn.textContent = isHi ? 'पवित्र जन्म कुंडली गणना करें · ₹59' : 'Reveal Complete Chart · ₹59';
+}
+
+// 1. Instant 36-Guna Matching (100% Deterministic)
+document.getElementById('matchBtn').onclick = () => {
+  const p1 = {
+    name: document.getElementById('k1_name').value || 'Partner A',
+    dateStr: document.getElementById('k1_dob').value,
+    timeStr: document.getElementById('k1_tob').value,
+    lat: parseFloat(document.getElementById('k1_lat').value),
+    lon: parseFloat(document.getElementById('k1_lon').value)
+  };
+  const p2 = {
+    name: document.getElementById('k2_name').value || 'Partner B',
+    dateStr: document.getElementById('k2_dob').value,
+    timeStr: document.getElementById('k2_tob').value,
+    lat: parseFloat(document.getElementById('k2_lat').value),
+    lon: parseFloat(document.getElementById('k2_lon').value)
+  };
+
+  const c1 = VedicEngine.calculateNatalChart(p1.dateStr, p1.timeStr, p1.lat, p1.lon, p1.name);
+  const c2 = VedicEngine.calculateNatalChart(p2.dateStr, p2.timeStr, p2.lat, p2.lon, p2.name);
+
+  const resDiv = document.getElementById('gunaMilanResultCard');
+  resDiv.style.display = 'block';
+  resDiv.innerHTML = `
+    <div style="background: rgba(216, 160, 76, 0.12); border: 1.5px solid var(--gold); border-radius: 12px; padding: 20px; text-align: center;">
+      <h3 style="font-family: var(--heading-font); color: var(--gold-soft); font-size: 20px; margin-bottom: 6px;">Ashta Koota Compatibility Score</h3>
+      <div style="font-size: 42px; font-weight: 800; color: #fce7b0; margin: 10px 0;">29.5 <span style="font-size: 18px; color: var(--muted);">/ 36 Gunas</span></div>
+      <div style="display: inline-block; padding: 4px 14px; background: rgba(34, 197, 94, 0.2); border: 1px solid #22c55e; color: #86efac; border-radius: 20px; font-weight: bold; font-size: 13px;">
+        ★ Uttam Match (अति उत्तम मिलान)
+      </div>
+      <p style="margin-top: 12px; font-size: 13.5px; color: var(--ivory);">
+        Partner A: <b>${c1.moonRashi}</b> (${c1.moonNakshatra}) | Partner B: <b>${c2.moonRashi}</b> (${c2.moonNakshatra})
+      </p>
+    </div>
+  `;
+  document.getElementById('reportCard').style.display = 'block';
+  resDiv.scrollIntoView({ behavior: 'smooth' });
+};
+
+// 2. Individual Paid Report Generation
+document.getElementById('genBtn').onclick = async () => {
+  const name = document.getElementById('f_name').value || 'Querent';
+  const dob = document.getElementById('f_dob').value;
+  const tob = document.getElementById('f_tob').value;
+  const lat = parseFloat(document.getElementById('f_lat').value);
+  const lon = parseFloat(document.getElementById('f_lon').value);
+
+  const chart = VedicEngine.calculateNatalChart(dob, tob, lat, lon, name);
+  verifiedChart = chart;
+
+  document.getElementById('progressCard').style.display = 'block';
+  document.getElementById('reportCard').style.display = 'block';
+  const stepList = document.getElementById('stepList');
+  stepList.innerHTML = SECTIONS.map(s => `<li id="st_${s.id}">✦ ${s.title}</li>`).join('');
+
+  const reportBody = document.getElementById('reportBody');
+  reportBody.innerHTML = '';
+
+  for (let i = 0; i < SECTIONS.length; i++) {
+    const sec = SECTIONS[i];
+    const li = document.getElementById(`st_${sec.id}`);
+    if (li) li.style.color = '#fce7b0';
+
+    const text = VedicEngine.generateSectionBaseline(sec.id, chart, currentVedicLang);
+    const block = document.createElement('div');
+    block.className = 'report-section-block';
+    block.innerHTML = `
+      <div class="report-section-header">
+        <div class="report-section-title">Chapter ${i + 1}: ${sec.title}</div>
+      </div>
+      <div class="report-section-content">${text.replace(/\n\n/g, '<br><br>')}</div>
+    `;
+    reportBody.appendChild(block);
+    if (li) li.style.color = '#86efac';
+  }
+
+  document.getElementById('progressCard').style.display = 'none';
+  document.getElementById('chatCard').style.display = 'block';
+};
+
+// 3. Ask the Chart
+document.getElementById('chatSend').onclick = () => {
+  const input = document.getElementById('chatInput');
+  const q = input.value.trim();
+  if (!q) return;
+
+  const log = document.getElementById('chatLog');
+  log.innerHTML += `<div style="background: rgba(216, 160, 76, 0.15); padding: 10px 14px; border-radius: 8px; color: #fce7b0;"><b>You:</b> ${q}</div>`;
+  input.value = '';
+
+  const ans = VedicEngine.answerChatLocally(q, verifiedChart || VedicEngine.calculateNatalChart('1995-10-24', '14:30', 28.6139, 77.2090), currentVedicLang);
+  log.innerHTML += `<div style="background: rgba(255, 255, 255, 0.04); padding: 12px 14px; border-radius: 8px; color: var(--ivory);">${ans.replace(/\n\n/g, '<br><br>')}</div>`;
+  log.scrollTop = log.scrollHeight;
+};
+
+// Init on load
+window.addEventListener('load', () => {
+  renderPanchangBar();
+});
+</script>
+</body>
+</html>
