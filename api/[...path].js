@@ -589,12 +589,12 @@ async function streamAiCall({ model, systemText, userText, maxTokens, purpose='g
   if (!pool.length) { const e = new Error('AI service is not configured on the server.'); e.status = 503; throw e; }
 
   function normalizeModel(m) {
-    let x = String(m || getEnv('GEMINI_PRIMARY_MODEL', 'gemini-2.5-flash')).trim().replace(/^models\//,'');
-    if (x.includes('gemini-3.6') || x.includes('gemini-3.7')) return 'gemini-2.5-flash';
-    return x || 'gemini-2.5-flash';
+    let x = String(m || getEnv('GEMINI_PRIMARY_MODEL', 'gemini-3.6-flash')).trim().replace(/^models\//,'');
+    if (x.includes('gemini-3.6') || x.includes('gemini-3.7')) return 'gemini-3.6-flash';
+    return x || 'gemini-3.6-flash';
   }
   const primary = normalizeModel(model);
-  const fallback = normalizeModel(getEnv('GEMINI_FALLBACK_MODEL', 'gemini-2.5-flash'));
+  const fallback = normalizeModel(getEnv('GEMINI_FALLBACK_MODEL', 'gemini-3.6-flash'));
   let lastError = null;
   let continuation = '';
 
