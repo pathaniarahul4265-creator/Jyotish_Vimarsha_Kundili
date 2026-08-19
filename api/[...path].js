@@ -342,7 +342,7 @@ function recordKeyFailure(key, index, status, errorMessage) {
   saveQuotaStats();
 }
 
-async function aiCall({model, systemText, userText, maxTokens}){
+async function aiCall({model, systemText, userText, maxTokens, purpose='general'}){
   function normalizeModel(m) {
     if (!m) return 'gemini-3.7-flash';
     let cleanStr = String(m).trim().toLowerCase();
@@ -380,7 +380,12 @@ async function aiCall({model, systemText, userText, maxTokens}){
     if (lastErr && (String(lastErr.message).includes('not available') || String(lastErr.message).includes('404') || String(lastErr.message).includes('not found'))) {
       targetModel = 'gemini-3.7-flash';
     }
-    const tokensLimit = (targetModel === fallbackModel) ? Math.min(2048, Number(maxTokens) || 2048) : Math.min(3072, Math.max(256, Number(maxTokens) || 2500));
+    const requestedTokens = Number(maxTokens) || (purpose === 'report' ? 3000 : 2500);
+    const tokensLimit = purpose === 'report'
+      ? Math.min(3000, Math.max(1200, requestedTokens))
+      : ((targetModel === fallbackModel)
+          ? Math.min(2048, requestedTokens)
+          : Math.min(3072, Math.max(256, requestedTokens)));
 
     recordKeyRequest(chosenKey, keyIdx, promptChars);
 
@@ -401,7 +406,7 @@ async function aiCall({model, systemText, userText, maxTokens}){
           contents: [{ role: 'user', parts: [{ text: userText }] }],
           generationConfig: {
             maxOutputTokens: tokensLimit,
-            temperature: 0.7
+            temperature: purpose === 'report' ? 0.82 : 0.7
           }
         })
       });
