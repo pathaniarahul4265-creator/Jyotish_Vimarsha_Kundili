@@ -5391,6 +5391,73 @@ body input, body select, body textarea {
   color: #ffffff !important;
 }
 </style>
+<style>
+/* === REPORT RELIABILITY + HEADING ALIGNMENT FIX === */
+.report-section-title{
+  display:flex !important;
+  align-items:center !important;
+  gap:10px !important;
+  line-height:1.2 !important;
+  min-height:28px !important;
+}
+.report h3.report-section-title::before{
+  content:'✦' !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  flex:0 0 auto !important;
+  width:16px !important;
+  height:20px !important;
+  line-height:20px !important;
+  margin:0 !important;
+  padding:0 !important;
+  position:static !important;
+  color:#d8a04c !important;
+  font-family:'Cormorant Garamond',serif !important;
+  font-size:14px !important;
+}
+.report-section-header .report-section-title::before{
+  position:static !important;
+  right:auto !important;
+  bottom:auto !important;
+  height:auto !important;
+  background:none !important;
+  box-shadow:none !important;
+}
+.report-section-header .report-section-title::after{
+  display:none !important;
+}
+.report-section-content .report-subhead-banner{
+  display:flex !important;
+  align-items:center !important;
+  gap:10px !important;
+}
+.report-section-content .subhead-gem,
+.report-section-content .minor-gem{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  flex:0 0 18px !important;
+  width:18px !important;
+  height:18px !important;
+  line-height:18px !important;
+  margin:0 !important;
+  padding:0 !important;
+  position:static !important;
+}
+.report-generation-error{
+  margin:16px 0;
+  padding:14px 16px;
+  border:1px solid rgba(220,120,90,.45);
+  background:rgba(120,40,30,.12);
+  border-radius:10px;
+  color:#f3d4c9;
+}
+.report-generation-error button{
+  margin-top:10px;
+  padding:7px 12px;
+}
+</style>
 </head>
 <body>
 <div class="cosmic-bg"></div>
@@ -8555,40 +8622,36 @@ let activeModel = PRIMARY_MODEL;
 
 const SECTIONS = [
   { id:'panchang', title:'Panchang and foundational placements',
-    instruction:`Write a detailed opening chapter in the style of a traditional written Jyotish consultation.
+    instruction:`Build this as a detailed foundational chapter, following the structure of a traditional written Jyotish consultation.
 
-Use these meaningful subheadings where the supplied data supports them:
+Use these subheadings, in this order where the data supports them:
 ### Opening chart synthesis
 ### The Five Limbs of the Birth Panchang
 ### Vara — the planetary day
-### Tithi — the lunar phase
+### Tithi — lunar phase and psychological tone
 ### Nakshatra and Pada — the lunar mansion
 ### Yoga and Karana
-### The Ascendant (Lagna) and Lagna Lord
-### The Moon Sign and emotional foundation
-### Planetary pattern of the birth chart
-### Foundational themes
+### Rahu Kaal, Abhijit Muhurat and relevant birth-day context
+### The Ascendant (Lagna) and the Lagna Lord
+### The Moon Sign (Chandra Rashi)
+### Comprehensive Planet-by-Planet Placement Summary
+### Foundational chart pattern
 
-Explain the Panchang through connected prose, not a list. Explain what the Vara, Tithi, Nakshatra/Pada, Yoga and Karana contribute to the native's birth pattern.
+Cover the five Panchang limbs — Tithi, Nakshatra with lord and pada, Yoga, Karana and Vara — using supplied calculated values only. Include Rahu Kaal, Abhijit Muhurat and festival/day context only where supplied.
 
-Then explain the Lagna, Lagna lord and Moon sign. Discuss the important planetary placements in prose, focusing on sign, house, lordship, dignity, aspects and relationships between planets.
+Then explain Lagna, Lagna lord, Moon sign and the nine grahas only insofar as they contribute to the interpretation. Do not turn this chapter into a technical degree or placement dump. Exact degrees are already calculated by the website and should remain in the technical chart/table, not in the narrative.
 
-Do NOT make the reader wade through degrees or a technical data dump. Exact degrees are calculation data, not the focus of this chapter. Do not create a large placement table inside the written analysis.
+For each important placement, explain the classical mechanism and then what it means in this native's lived experience. Mention dignity, house and Nakshatra only when they materially change the interpretation.
 
-For every important placement, explain:
-1. what is placed where,
-2. the classical mechanism,
-3. how the combination changes the native's temperament or life pattern.
-
-End with a coherent foundational synthesis, not a machine-readable block.` },
+The planet-by-planet portion must be narrative, not a table. Group related planets when that produces a better consultation. Do not output machine-readable placement rows; the website derives its technical placement table directly from the verified chart.` },
 
   { id:'identity', title:'Identity, temperament and mind',
-    instruction:`Write a full consultation on personality, temperament and mental patterns.
+    instruction:`Write this as a full psychological and behavioural consultation rather than a short personality summary.
 
-Use:
+Use several of these subheadings:
 ### Core psychological blueprint
 ### Ascendant energy and physical presence
-### The Lagna Lord and personal direction
+### The Lagna Lord and the direction of personal energy
 ### Moon, emotional sanctuary and instinctive responses
 ### Mercury, intellect and communication
 ### Sun, confidence and authority
@@ -8596,16 +8659,16 @@ Use:
 ### The 5th House, learning and creative intelligence
 ### Strengths that become assets
 ### Blind spots and recurring patterns
-### How this appears in everyday life
+### How this pattern appears in everyday life
 
-Analyse the actual Lagna, Lagna lord, Moon, Mercury, Sun, Saturn, Jupiter, 5th house and important aspects/interactions.
+Analyse Lagna, Lagna lord, Moon, Mercury, Sun, Saturn, 5th house and Jupiter, plus meaningful aspects and interactions.
 
-Do not explain generic planet meanings. Explain the native-specific mechanism and then translate it into lived experience: decision-making, communication, emotional regulation, confidence, learning, ambition, stress response, self-image and conflict style.
+For every major conclusion: identify the exact chart factor, explain the classical mechanism, then translate it into lived experience. Discuss decision-making, communication, emotional regulation, confidence, learning, ambition, stress response, self-image, conflict style and interpersonal behaviour. Distinguish genuine strengths from tendencies that may create friction.
 
-Write substantial paragraphs. The chapter should feel like an astrologer is explaining the person to them, not describing a chart.` },
+Do not give generic descriptions of what a planet normally means. Keep the discussion specific to this chart.` },
 
   { id:'relationships', title:'Relationships, marriage and family',
-    instruction:`Create a detailed relationship and family consultation.
+    instruction:`Create a detailed relationship and family chapter with multiple meaningful subheadings.
 
 Use:
 ### Relationship pattern at a glance
@@ -8614,21 +8677,18 @@ Use:
 ### Moon and emotional needs
 ### Communication, trust and conflict
 ### Spouse tendencies and partnership environment
-### Marriage and commitment dynamics
-### Home and family foundations
+### Family, home and domestic foundations
 ### Children and the 5th House
 ### Parents, siblings and social belonging
 ### What strengthens relationships
 ### Indicative relationship timing
 
-Analyse the 7th house/lord, Venus, Jupiter, Moon, 5th, 8th, 4th, 9th, 3rd and 11th houses where relevant.
+Analyse the 7th house and lord, Venus, Jupiter, Moon, 5th, 8th, 4th, 9th, 3rd and 11th houses as relevant. Explain attraction, attachment style, emotional needs, communication, trust, commitment, conflict patterns, spouse tendencies, family dynamics, children, siblings, friendships and social belonging.
 
-Explain attraction, attachment, emotional needs, communication, trust, commitment, conflict, spouse tendencies, family dynamics and children.
-
-Do not give a simplistic marriage verdict. Show how supportive and challenging factors interact. If timing is supported, use the supplied Dasha/transit information and explain the mechanism behind the timing.` },
+Where timing is supported, connect it to the supplied Dasha and transit data and explain why the period matters. Do not give a simplistic marriage verdict. Show both supportive and challenging manifestations of the same combinations.` },
 
   { id:'career', title:'Career, wealth and material life',
-    instruction:`Write a substantial practical consultation on professional life and wealth.
+    instruction:`Make this a substantial practical consultation, not a list of professions.
 
 Use:
 ### Career direction and professional identity
@@ -8640,88 +8700,63 @@ Use:
 ### Gains, networks and the 11th House
 ### Wealth accumulation and financial instincts
 ### Property, assets and material security
-### Foreign work and institutional environments
+### Foreign work, institutions and the 12th House
 ### D10 and professional refinement
 ### Career timing and important phases
 
 Analyse the 10th, 6th, 2nd, 11th, 9th and 12th houses, their lords, Saturn, Sun, Mercury, Mars and Rahu, plus reliable D10 information.
 
-Explain what kind of work environment fits the native, how authority is handled, whether employment or enterprise is better supported, how professional friction arises, how income tends to build and what opportunities recur.
+Explain how the native behaves at work, what environments suit them, how authority is handled, whether employment or enterprise is better supported, how professional friction arises, how income tends to build, and what kind of opportunities recur.
 
-If a Raja Yoga, Dharma-Karmadhipati Yoga, Dhana Yoga or Vipreet Raja Yoga genuinely exists, explain its formation and practical effect. Do not merely name it.` },
+Identify supported Raja Yoga, Dhana Yoga, Dharma-Karmadhipati or Vipreet combinations only when actually formed, and explain their practical impact rather than merely naming them.` },
 
-  { id:'yogas', title:'Yogas, doshas and deeper life patterns',
-    instruction:`Make this a dedicated classical Yoga and Dosha chapter. It must be analytical, detailed and calm — never fear-based.
+  { id:'health_yogas', title:'Vitality, yogas, doshas and deeper chart patterns',
+    instruction:`Build a serious classical chapter with clear subheadings and careful language.
 
 Use:
-### The strongest combinations in the chart
-### Raja Yoga and Dharma-Karmadhipati influences
-### Dhana Yoga and wealth-supporting combinations
-### Vipreet Raja Yoga and adversity-to-strength patterns
+### Vitality and constitutional tendencies
+### Stress, recovery and energy management
+### The 1st, 6th, 8th and 12th Houses
+### Major benefic and protective influences
+### Raja and Dharma-Karmadhipati combinations
+### Dhana and Vipreet Raja Yoga
 ### Mahapurusha and other classical Yogas
 ### Neecha Bhanga and strength modifiers
-### Gaja Kesari, Budhaditya and other specific combinations only if actually formed
-### Dosha assessment — present, absent or not reliably assessable
-### Mangal / Kuja Dosha
-### Kaal Sarpa and Grahan considerations
-### How the combinations manifest in real life
+### Dosha assessment — Present, Absent or Not Reliably Assessable
+### Jaimini Karakas
+### Navamsa (D9) and Dashamsa (D10)
+### The deeper pattern beneath the chart
 
-For every Yoga or Dosha:
-- state whether it is genuinely formed,
-- identify the planets/houses involved,
-- explain the classical formation,
-- explain its strength or limitations,
-- explain its practical effect on personality, career, money, relationships or life direction.
+For health-related material, remain non-medical and symbolic. Never diagnose disease.
 
-Never name a Yoga merely because a planet is strong. Never invent a Dosha. If absent, say so plainly. Do not prescribe remedies.
+For every Yoga or Dosha: state its status, exact formation, planets/houses involved, strength or limitation, and practical life impact. Consider Raja Yoga, Dhana Yoga, Dharma-Karmadhipati, Gaja Kesari only if actually formed, Budhaditya, Panch Mahapurusha Yogas, Vipreet Raja Yoga, Neecha Bhanga, Mangal/Kuja, Kaal Sarpa and Grahan where supported.
 
-Do not turn this into a technical table. The value is in the explanation of what the combination actually does in the native's life.` },
+Do not create fear and never prescribe remedies. If a configuration is absent, say so explicitly.` },
 
-  { id:'timeline', title:'Dasha timeline and life phases',
-    instruction:`Write a chronological life-phase consultation based on the supplied Vimshottari Dasha and transit data.
+  { id:'timeline', title:'Dasha, transits and life phases',
+    instruction:`Write this as a chronological life-phase analysis rather than a list of dates.
 
 Use:
 ### How the Dasha framework works in this chart
 ### Birth and early formative periods
 ### Major Mahadasha themes
-### The current Mahadasha and Antardasha
+### Current Mahadasha and Antardasha
 ### The next important sub-periods
 ### Saturn and Jupiter transit influence
 ### Sade Sati or Ashtama Shani where applicable
 ### Career and financial activation periods
 ### Relationship and family activation periods
 ### Pressure, transition and consolidation phases
-### The larger meaning of the timeline
+### The practical meaning of the timeline
 
-Do not produce a bare list of dates. For each important period explain:
-1. the planetary period,
-2. the natal condition and lordships of the relevant planet,
-3. the houses and themes activated,
-4. how that period may manifest in practical life.
+Explain the supplied Vimshottari sequence, current Mahadasha/Antardasha, next important sub-periods and the natal condition/lordships that make each period significant.
 
-Separate opportunity, pressure and transition periods. Never invent dates. Timing is indicative, not guaranteed.` },
+Integrate supplied Saturn and Jupiter transits and Dasha transitions. Separate opportunity, pressure and transition periods. Explain what may change in career, money, relationships, family, confidence, learning and responsibility.
 
-  { id:'health', title:'Vitality, health patterns and inner life',
-    instruction:`Write a careful non-medical analysis of vitality, stress and inner life.
-
-Use:
-### Constitutional vitality
-### The 1st House and physical foundation
-### The 6th House and stress patterns
-### The 8th House and transformation
-### The 12th House, rest and withdrawal
-### Moon, emotional load and recovery
-### Saturn, Mars and pressure patterns
-### Protective influences and resilience
-### Spiritual or introspective tendencies where supported
-### Practical interpretation of the pattern
-
-Do not diagnose illness or predict medical events. Discuss only symbolic astrological tendencies such as energy management, stress, recovery, discipline, rest, emotional burden and resilience.
-
-Connect the analysis to actual houses, lords, planets and aspects. Do not fill the chapter with generic health disclaimers or technical chart data.` },
+Use only supplied calculated timing. Never invent dates. Timing is indicative, not guaranteed.` },
 
   { id:'synthesis', title:'Strengths, purpose and closing synthesis',
-    instruction:`Write the final chapter as a genuine synthesis of the whole consultation.
+    instruction:`Create a genuinely comprehensive closing chapter that synthesizes rather than repeats.
 
 Use:
 ### The strongest forces in the chart
@@ -8735,66 +8770,63 @@ Use:
 ### What this chart asks the native to build
 ### Closing synthesis
 
-Do not simply repeat earlier chapters. Connect them.
+Identify the strongest and weakest planetary influences, dominant houses, core strengths, recurring blind spots, unusual combinations, hidden talents, public reputation, creativity, recognition and spiritual inclination only where supported.
 
-Explain how the Lagna, Moon, key Yogas, career factors, relationship factors and Dasha timing combine into one coherent life pattern.
+Weave together Lagna, Moon, key Yogas, Jaimini Karakas, Vargas, Dasha and transits. Answer in a grounded way: what kind of life does this chart appear to ask the native to build, and why?
 
-End with a warm, specific and grounded synthesis: what kind of life this chart appears to ask the native to build, what strengths can be relied upon, what tensions require maturity, and why.
-
-Do not introduce unsupported new predictions.` }
+Do not introduce unsupported new predictions. End with a warm, specific synthesis anchored to the actual chart.` }
 ];
 
-const RULES = `You are a classically-trained Vedic (Jyotish) astrologer, deeply versed in Brihat Parashara Hora Shastra, Brihat Jataka, Phaladeepika, Saravali, Jaimini Sutras, Uttara Kalamrita, classical Yogas, Vimshottari Dasha, divisional charts, planetary strengths and transit analysis.
+const RULES = `You are acting as a classically-trained Vedic (Jyotish) astrologer, deeply versed in Brihat Parashara Hora Shastra, Brihat Jataka, Phaladeepika, Saravali, Jaimini Sutras, Uttara Kalamrita, classical Yogas, Vimshottari Dasha, divisional charts, planetary strengths and transit analysis. Write with warmth, precision and reverence for the tradition — never sensational, never vague.
 
-Write as a highly experienced astrologer conducting a private written consultation.
-
-CORE REPORT STANDARD:
-- The report must read like the detailed PDF-style written consultation supplied by the user: flowing, explanatory, specific and layered.
-- Do not write a generic horoscope and do not produce a technical data dump.
-- Begin major analytical passages with the practical conclusion, then explain the exact astrological mechanism, then describe how it may appear in lived experience.
-- Target approximately 1,400–2,000 substantive words for a major chapter when the supplied data supports it. Do not pad with repetition.
-- Use 7–11 meaningful ### subheadings per major chapter. Every subheading must add a distinct analytical topic.
-- Under each subheading write substantial paragraphs, normally 2–4 paragraphs where the chart data supports it.
-- The reader should come away understanding WHY a pattern exists, not merely WHAT planets are present.
-- Do not spend paragraphs defining what a planet or house means in general. Explain what THIS configuration means for THIS native.
-- Translate technical astrology into practical life language: behaviour, emotional reactions, decision-making, communication, attachment, ambition, work style, money habits, conflict patterns, family dynamics, resilience and recurring experiences.
-- Avoid short four-card summaries. The report itself is the detailed analysis.
-- Avoid repetitive "in conclusion" language.
+CORE QUALITY STANDARD:
+- The report must read like a private consultation with a highly experienced Jyotish practitioner, not a glossary or generic horoscope.
+- Start major analytical passages with the practical conclusion, then explain the exact astrological mechanism, then describe how it may appear in the native's lived experience.
+- Aim for approximately 1,200–1,800 substantive words for each major chapter when the supplied chart data supports it. Do not artificially pad the report; depth must come from multiple chart factors, combinations, examples of lived impact and timing.
+- Use substantial paragraphs. Do not compress an important topic into one or two sentences.
+- For each major conclusion, explain WHY using the exact planet, sign, house, lordship, dignity, aspect, Yoga, Dasha, Nakshatra, Varga or transit involved.
+- Translate technical astrology into practical life language: behaviour, emotional reactions, decision-making, communication, attachment, ambition, work style, money habits, conflict patterns, resilience, family dynamics and recurring experiences.
+- Do not spend paragraphs explaining what a planet or house means in general. Explain what THIS planet in THIS sign/house/dignity means for THIS native.
+- Use 6–10 clear ### subheadings for meaningful subtopics in each major chapter. The subheadings should follow a logical consultation structure and must not be generic filler. Do not use # or ## top-level headings because the interface supplies the chapter title.
+- Use **bold** sparingly for important placements, Yogas, Dasha periods and conclusions.
+- Never give generic motivational filler.
 
 CALCULATION AUTHORITY:
-- Supplied verified Lahiri sidereal chart data is authoritative.
-- Never recalculate or invent planetary positions, houses, dignities, Yogas, Doshas, Vargas, Karakas or Dasha dates.
-- If something is unavailable, say "Not reliably assessable from the available calculation."
-- Use English plus Sanskrit/Hindi Rashi names with Devanagari where appropriate.
-- Exact planetary degrees are calculation metadata, not the focus of the prose. Do not repeat degrees unless they are specifically relevant to a classical condition.
-- Do not create unnecessary placement tables in the narrative.
-- Do not output machine-readable placement rows.
+- The supplied verified Lahiri sidereal ephemeris/chart data is authoritative.
+- Never recalculate, guess or replace supplied planetary positions, degrees, houses, dignities, Nakshatras, Padas, Yogas, Karakas, Vargas or Dasha dates.
+- If a requested calculation is not reliably present, say "Not reliably assessable from the available calculation" rather than inventing it.
+- Do not infer a D9, D10, Atmakaraka, Amatyakaraka or timing result from prose when structured calculation data is available.
+- Always use both English and Sanskrit/Hindi Rashi names with Devanagari when naming signs.
 
-YOGA & DOSHA STANDARD:
+ANALYSIS STANDARD:
+- Every paragraph should contain a chart-specific reason.
+- Explain interactions, not isolated placements.
+- When several planets reinforce one another, explain the combined effect.
+- When one factor modifies or limits another, explain the tension.
+- Distinguish clearly between strong indication, moderate indication and uncertainty.
+- For timing, use "indicative window", not guaranteed destiny.
+- Discuss favourable and challenging manifestations of the same combination.
+- Never make deterministic marriage, health or financial guarantees.
+
+YOGAS & DOSHAS:
 - Never name a Yoga merely because a planet is strong.
-- For every Yoga: formation → planets/houses → strength/limitation → practical life effect.
-- For every Dosha: Present / Absent / Not reliably assessable → precise reason → practical significance.
+- For each supported Yoga give formation, planets/houses involved, strength/limitations and practical impact.
+- For each Dosha state Present, Absent/Not clearly present, or Not reliably assessable, with the precise configuration behind the status.
 - Never create fear around Doshas.
-- Never prescribe gemstones, mantras, poojas, rituals, fasting, donations or other remedies.
-
-DASHA STANDARD:
-- Never give a bare date list.
-- Explain why each important Dasha period activates particular houses, lordships and natal planetary themes.
-- Separate opportunity, pressure and transition.
-- Timing is indicative, not guaranteed.
+- Never prescribe gemstones, mantras, poojas, rituals, fasting, donations, tantra or other remedies.
+- If asked directly for a remedy, respond only with: "This platform is designed exclusively for objective astrological analysis and interpretation. It intentionally does not recommend remedies, rituals, gemstones, or spiritual prescriptions."
 
 INTERNAL CONSISTENCY:
-- Never contradict earlier chapters.
-- Do not repeat earlier paragraphs. Build on previous findings.
-- When a factor has already been introduced, deepen it with another interaction, practical manifestation or timing implication.
+- Never contradict earlier sections for the same birth data.
+- Do not repeat entire earlier sections. Build on earlier findings and deepen them. Each chapter should add new evidence, new combinations, new lived implications or new timing rather than paraphrasing previous paragraphs.
+- If a topic has already been established, add a new layer of interpretation rather than restating the same sentence.
 
-PRESENTATION:
-- Do not output a chapter title because the interface already displays it.
-- Use ### subheadings only.
-- Use **bold** sparingly for important placements, Yogas, Dasha periods and conclusions.
-- No raw degrees/coordinates tables.
-- No filler.
-- No remedies.`;
+FINAL PRESENTATION:
+- Do not include raw machine-readable placement rows in the narrative report. The interface derives any technical placement table directly from the verified chart.
+- Do not output a chapter title at the very beginning; the interface already displays it.
+- Do not fabricate precision.
+- Do not prescribe remedies.`;
+
 
 const KUNDLI_SECTIONS = [
   { id:'ashtakoot', title:'Ashtakoot Guna Milan (36-Point Compatibility)',
@@ -9298,6 +9330,13 @@ async function rawCall(model, key, systemText, userText, maxTokens, purpose='gen
     e.status = res.status; e.isAuth = false;
     throw e;
   }
+  if(data.truncated){
+    const e = new Error('The AI chapter reached its output limit before completion.');
+    e.status = 422;
+    e.incomplete = true;
+    e.finishReason = data.finishReason || 'MAX_TOKENS';
+    throw e;
+  }
   return data.text;
 }
 
@@ -9314,7 +9353,7 @@ async function callGemini(systemText, userText, maxTokens = 3200, purpose='gener
         activeModel = FALLBACK_MODEL;
         continue;
       }
-      const transient = err?.status === 429 || err?.status === 504 || err?.status === 503 || err?.status === 502 || err?.status === 500 || err?.status === 408 || err?.status === 0;
+      const transient = err?.status === 429 || err?.status === 504 || err?.status === 503 || err?.status === 502 || err?.status === 500 || err?.status === 408 || err?.status === 0 || err?.incomplete;
       if(transient && attempt < maxAttempts){
         await sleep(attempt * 1200);
         continue;
@@ -9927,14 +9966,6 @@ function renderPanchangReportCard(){
 }
 
 function renderPlacementTable(){
-  // The premium written report intentionally does not display a technical
-  // degree/house/dignity table. Those values remain available internally
-  // to the verified chart engine and AI context.
-  const card=document.getElementById('placementTableCard');
-  if(card) card.style.display='none';
-  return;
-}
-function renderPlacementTable_LEGACY_UNUSED(){
   const card=document.getElementById('placementTableCard'); if(!card) return;
   const isHi = window.currentVedicLang === 'hi';
   const h3 = card.querySelector('h3');
@@ -10108,8 +10139,6 @@ function renderClassicalModules(){
   const varga=extractSection('Divisional charts: Navamsa and Dashamsa') || extractSection('वर्ग कुंडली विमर्श: नवांश (D9) व दशमांश (D10) विश्लेषण');
   const trans=extractSection('Sade Sati, Saturn and major transit windows') || extractSection('गोचर विचार, साढ़े साती एवं प्रमुख ग्रहीय कालखंड');
   const health=extractSection('Vitality, stress patterns, yogas and doshas') || extractSection('शारीरिक ऊर्जा, तनाव प्रबंधन, शुभ योग एवं दोष विश्लेषण');
-  // Keep the written report focused; avoid redundant technical chart modules.
-  ['karakaCard','vargaCard'].forEach(id=>{const c=document.getElementById(id); if(c) c.style.display='none';});
   const set=(id,text)=>{const c=document.getElementById(id); if(!c||!text)return; c.style.display='block'; const body=c.querySelector('.module-copy')||c; body.innerHTML='<p>'+escapeHtml(text.slice(0,1800)).replace(/\n\n/g,'</p><p>')+'</p>';};
   set('karakaCard',kar); set('vargaCard',varga); set('transitCard',trans);
   const yogaCard=document.getElementById('yogaCard'), tbody=document.getElementById('yogaTableBody');
@@ -10119,18 +10148,57 @@ function renderClassicalModules(){
   }
 }
 
+function replaceStoredReportSection(title, generatedText){
+  const marker = `## ${title}`;
+  const nextMarkerRe = /\n\n## [^\n]+/g;
+  const current = fullReportText || '';
+  const pos = current.indexOf(marker);
+  const block = `\n\n${marker}\n\n${generatedText}`;
+  if(pos === -1){
+    fullReportText = current + block;
+    return;
+  }
+  const after = current.slice(pos + marker.length);
+  const next = after.search(nextMarkerRe);
+  if(next === -1){
+    fullReportText = current.slice(0,pos) + block;
+  }else{
+    const nextPos = pos + marker.length + next;
+    fullReportText = current.slice(0,pos) + block + current.slice(nextPos);
+  }
+}
+
+function validateReportChapter(text, section){
+  const cleaned = cleanAstroText(text);
+  const words = cleaned.split(/\s+/).filter(Boolean).length;
+  const headings = (cleaned.match(/^#{1,6}\s+.+$/gm) || []).length;
+  const leaked = [
+    'No generic definitions',
+    'TARGET WORD COUNT',
+    'Self-Correction & Fine Tuning',
+    'Write this as a full',
+    'SECTION BRIEF:',
+    'DEPTH REQUIREMENT:',
+    'CRITICAL INSTRUCTIONS'
+  ].some(x => cleaned.toLowerCase().includes(x.toLowerCase()));
+  if(leaked) return {ok:false, reason:'The AI returned internal instructions instead of report prose.'};
+  if(words < 850) return {ok:false, reason:`The chapter is incomplete (${words} words returned).`};
+  if(headings < 4) return {ok:false, reason:'The chapter did not contain enough substantive subheadings.'};
+  return {ok:true, words, headings};
+}
+
 async function retrySingleSection(index){
   const reportBody = document.getElementById('reportBody');
   const stepListEl = document.getElementById('stepList');
   const progressErrorEl = document.getElementById('progressError');
-  await generateSection(index, reportBody, stepListEl, progressErrorEl);
+  await generateSection(index, reportBody, stepListEl, progressErrorEl, {manualRetry:true});
 }
 
-async function generateSection(index, reportBody, stepListEl, progressErrorEl){
+async function generateSection(index, reportBody, stepListEl, progressErrorEl, options={}){
   const section = activeSections[index];
   const li = document.getElementById('step-' + section.id);
   if(li){
-    li.classList.remove('failed');
+    li.classList.remove('failed','done');
     li.classList.add('active');
   }
   progressErrorEl.innerHTML = '';
@@ -10138,20 +10206,18 @@ async function generateSection(index, reportBody, stepListEl, progressErrorEl){
   const isHi = window.currentVedicLang === 'hi';
   const chapterLabel = isHi ? `अध्याय ${index + 1}` : `CHAPTER ${String(index + 1).padStart(2, '0')}`;
 
-  // 1. Create or update the section block with an active AI generation loading state
   let block = document.getElementById('section-block-' + section.id);
-
   if(!block){
     block = document.createElement('div');
     block.className = 'report-section-block';
     block.id = 'section-block-' + section.id;
-    
+
     const header = document.createElement('div');
     header.className = 'report-section-header';
-    header.setAttribute('role', 'button');
-    header.setAttribute('tabindex', '0');
-    header.setAttribute('aria-expanded', 'true');
-    header.setAttribute('aria-controls', 'content-' + section.id);
+    header.setAttribute('role','button');
+    header.setAttribute('tabindex','0');
+    header.setAttribute('aria-expanded','true');
+    header.setAttribute('aria-controls','content-' + section.id);
     header.title = 'Click to collapse or expand section';
     header.innerHTML = `
       <div class="report-section-header-left">
@@ -10159,63 +10225,41 @@ async function generateSection(index, reportBody, stepListEl, progressErrorEl){
         <h3 id="h3-${section.id}" class="report-section-title">${escapeHtml(section.title)}</h3>
       </div>
       <div class="report-section-header-right">
-        <span class="report-chapter-tag ai-generating" id="tag-${section.id}">${isHi ? '✨ AI विश्लेषित किया जा रहा है…' : '✨ Generating chapter via AI…'}</span>
+        <span class="report-chapter-tag ai-generating" id="tag-${section.id}">${isHi ? '✨ AI विश्लेषण जारी है…' : '✨ Generating chapter…'}</span>
         <div class="report-section-toggle-icon" aria-hidden="true">▼</div>
-      </div>
-    `;
+      </div>`;
     header.onclick = () => {
       block.classList.toggle('collapsed');
-      const isExp = !block.classList.contains('collapsed');
-      header.setAttribute('aria-expanded', String(isExp));
+      header.setAttribute('aria-expanded', String(!block.classList.contains('collapsed')));
     };
-    header.onkeydown = (e) => {
-      if(e.key === 'Enter' || e.key === ' '){
-        e.preventDefault();
-        header.click();
-      }
+    header.onkeydown = e => {
+      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); header.click(); }
     };
-    
+
     const contentDiv = document.createElement('div');
     contentDiv.id = 'content-' + section.id;
     contentDiv.className = 'report-section-content';
     contentDiv.innerHTML = `
-      <div class="report-section-loading" id="loading-${section.id}">
+      <div class="report-section-loading">
         <div class="report-loading-shimmer">
           <div class="loading-gem-spinner">✦</div>
           <div class="loading-text-wrap">
             <b>${isHi ? 'ग्रह स्थिति एवं शास्त्रीय सूत्रों का विश्लेषण…' : 'Consulting sidereal ephemeris & classical Jyotish sutras…'}</b>
-            <span>${isHi ? `${section.title} के लिए गहन शास्त्रीय फलकथन तैयार किया जा रहा है।` : `Generating comprehensive astrological reading for ${section.title}.`}</span>
+            <span>${isHi ? `${section.title} के लिए विस्तृत अध्याय तैयार किया जा रहा है।` : `Generating the complete ${section.title} chapter.`}</span>
           </div>
         </div>
-      </div>
-    `;
-    
+      </div>`;
     block.appendChild(header);
     block.appendChild(contentDiv);
     reportBody.appendChild(block);
-  } else {
+  }else{
     const tagEl = document.getElementById('tag-' + section.id);
     if(tagEl){
       tagEl.className = 'report-chapter-tag ai-generating';
-      tagEl.textContent = isHi ? '✨ AI विश्लेषित किया जा रहा है…' : '✨ Generating chapter via AI…';
-    }
-    const contentDiv = document.getElementById('content-' + section.id);
-    if(contentDiv){
-      contentDiv.innerHTML = `
-        <div class="report-section-loading" id="loading-${section.id}">
-          <div class="report-loading-shimmer">
-            <div class="loading-gem-spinner">✦</div>
-            <div class="loading-text-wrap">
-              <b>${isHi ? 'ग्रह स्थिति एवं शास्त्रीय सूत्रों का विश्लेषण…' : 'Consulting sidereal ephemeris & classical Jyotish sutras…'}</b>
-              <span>${isHi ? `${section.title} के लिए गहन शास्त्रीय फलकथन तैयार किया जा रहा है।` : `Generating comprehensive astrological reading for ${section.title}.`}</span>
-            </div>
-          </div>
-        </div>
-      `;
+      tagEl.textContent = isHi ? '✨ AI विश्लेषण जारी है…' : '✨ Generating chapter…';
     }
   }
 
-  // Update visual models and tables with available verified data
   renderKundliVisuals();
   renderPanchangReportCard();
   renderPlacementTable();
@@ -10224,95 +10268,91 @@ async function generateSection(index, reportBody, stepListEl, progressErrorEl){
   renderClassicalModules();
   if(section.id === 'timeline') renderDashaTimeline();
 
-  // 2. Synthesize via AI with immediate graceful fallback to classical baseline if load/rate limit occurs
   let generatedText = '';
-  let isBaselineFallback = false;
+  let lastReason = '';
+  const maxPasses = options.manualRetry ? 2 : 3;
 
-  try {
-    const userText = `Birth data & Verified Ephemeris:
+  for(let pass=1; pass<=maxPasses; pass++){
+    try{
+      const userText = `Birth data & Verified Ephemeris:
 ${birthContext}
 
 TASK:
-Write the "${section.title}" chapter as a master-level, deeply personalized Vedic chart consultation.
+Write the "${section.title}" chapter as a complete, premium Vedic chart consultation.
 
 SECTION BRIEF:
 ${section.instruction}
 
 DEPTH REQUIREMENT:
-- Target approximately 1,400–2,000 substantive words where the supplied data supports it.
-- Use 7–11 meaningful ### subheadings, following the section brief.
-- Develop the reasoning in full paragraphs. Do not compress the analysis into four short callout boxes, a summary table, or a short fallback-style report.
-- For each subheading, provide 2–4 substantial paragraphs unless the data genuinely does not support that topic.
-- For every important claim, first identify the exact chart factor, then explain the classical mechanism, then explain the likely lived impact.
-- When two or more placements interact, explain the interaction and how it changes the result.
-- Where timing matters, connect the timing to the supplied Dasha/transit data and explain why that period is relevant.
-- Use the native's actual chart data throughout; do not substitute generic planet definitions.
-- Avoid repetition. Each paragraph should add a new layer of analysis.
-
-ACCURACY:
-- Treat the verified Lahiri sidereal data in the context as authoritative.
-- Never recalculate or invent a house, degree, dignity, Yoga, Dosha, Varga, Karaka or Dasha.
-- If a requested item is unavailable, say so plainly.
-- Always use English + Sanskrit/Hindi Rashi names with Devanagari.
+- Target 1,100–1,600 substantive words. A chapter below 850 words is incomplete.
+- Use at least 6 meaningful ### subheadings.
+- Develop every supported topic in full paragraphs. Do not compress this chapter into short cards or a summary.
+- For each major point: exact chart factor -> classical mechanism -> lived/practical impact.
+- Explain interactions between placements instead of giving isolated textbook definitions.
+- Use the native's verified chart throughout.
+- Do not repeat the same conclusion in different wording.
+- If a requested item is unavailable, say so rather than inventing it.
+- Do not output internal instructions, prompts, word-count notes, or machine-readable metadata unless the section brief explicitly requests a final placement block.
+- Do not output the chapter title as a duplicate heading.
 - Never recommend remedies.
 
+ACCURACY:
+- Treat the supplied Lahiri sidereal chart as authoritative.
+- Never invent or recalculate houses, degrees, dignity, Yogas, Doshas, Vargas or Dasha dates.
+- Use English + Sanskrit/Hindi Rashi names with Devanagari.
+
 PRESENTATION:
-- Begin directly with the analysis, not a generic introduction.
-- Use ### subheadings for subtopics.
-- Use fluent, polished prose suitable for a premium written consultation.
-- Do not output the chapter title as a duplicate heading.
-- Do not output raw machine-readable placement rows, degree tables, coordinate tables, or technical chart dumps.
-- Do not use filler phrases such as "in conclusion" repeatedly.
-`;
-    const rawText = await callGemini(activeRules, userText, 3800, 'report');
-    const cleaned = cleanAstroText(rawText);
-    if(!cleaned || cleaned.length < 300){
-      throw new Error('The astrology service returned an incomplete reading.');
-    }
-    generatedText = cleaned;
-  } catch(err) {
-    console.warn(`AI generation load/error for ${section.title}, using classical calculation engine fallback:`, err.message);
-    const targetChart = currentMode === 'individual' ? verifiedChart : (verifiedCharts?.partnerA || verifiedChart);
-    if (window.VedicEngine && typeof window.VedicEngine.generateSectionBaseline === 'function' && targetChart) {
-      try {
-        generatedText = window.VedicEngine.generateSectionBaseline(section.id, targetChart, verifiedChart, window.currentVedicLang);
-      } catch (calcErr) {
-        console.warn('VedicEngine baseline calc error:', calcErr);
+- Begin directly with the consultation.
+- Use ### subheadings.
+- Use polished, flowing prose suitable for the detailed reference PDF.
+- Finish the chapter fully before stopping.`;
+
+      const rawText = await callGemini(activeRules, userText, 3200, 'report');
+      const cleaned = cleanAstroText(rawText);
+      const check = validateReportChapter(cleaned, section);
+      if(!check.ok){
+        lastReason = check.reason;
+        // On an incomplete generation, ask again rather than accepting it.
+        continue;
       }
+      generatedText = cleaned;
+      break;
+    }catch(err){
+      lastReason = err?.message || 'The AI service could not complete this chapter.';
+      if(pass < maxPasses) await sleep(1200 * pass);
     }
-    if (!generatedText || generatedText.length < 40) {
-      generatedText = `### 1. ${section.title}\n\n${section.instruction || 'Comprehensive astrological analysis computed according to classical Parashari principles.'}`;
-    }
-    isBaselineFallback = true;
   }
 
-  // 3. Update section UI with final text & badge
-  fullReportText += `\n\n## ${section.title}\n\n${generatedText}`;
-  const finalContentDiv = document.getElementById('content-' + section.id);
-  if(finalContentDiv) {
-    let sectionHtml = formatReportSectionHtml(generatedText);
-    if(isBaselineFallback){
-      sectionHtml += `
-        <div style="margin-top:16px;padding:10px 14px;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:8px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:12.5px;">
-          <span style="color:var(--muted);">${isHi ? 'शास्त्रीय गणितीय गणना द्वारा प्रस्तुत' : 'Calculated via classical sidereal engine (AI load fallback)'}</span>
-          <button type="button" class="header-nav-btn" onclick="retrySingleSection(${index})" style="padding:4px 12px;font-size:11.5px;cursor:pointer;">
-            ${isHi ? 'AI से विस्तृत करें ↻' : 'Enrich via AI ↻'}
-          </button>
-        </div>
-      `;
+  if(!generatedText){
+    const tagEl = document.getElementById('tag-' + section.id);
+    if(tagEl){
+      tagEl.className = 'report-chapter-tag failed';
+      tagEl.textContent = isHi ? '⚠ पुनः प्रयास आवश्यक' : '⚠ Chapter incomplete';
     }
-    finalContentDiv.innerHTML = sectionHtml;
+    const finalContentDiv = document.getElementById('content-' + section.id);
+    if(finalContentDiv){
+      finalContentDiv.innerHTML = `
+        <div class="report-generation-error">
+          <strong>${isHi ? 'यह अध्याय पूरा उत्पन्न नहीं हुआ।' : 'This chapter was not completed.'}</strong>
+          <div style="margin-top:6px;">${escapeHtml(lastReason)}</div>
+          <button type="button" class="header-nav-btn" onclick="retrySingleSection(${index})">
+            ${isHi ? 'अध्याय पुनः उत्पन्न करें ↻' : 'Retry this chapter ↻'}
+          </button>
+        </div>`;
+    }
+    if(li) li.classList.remove('active','done');
+    return false;
   }
+
+  replaceStoredReportSection(section.title, generatedText);
+
+  const finalContentDiv = document.getElementById('content-' + section.id);
+  if(finalContentDiv) finalContentDiv.innerHTML = formatReportSectionHtml(generatedText);
 
   const tagEl = document.getElementById('tag-' + section.id);
   if(tagEl){
-    if(isBaselineFallback){
-      tagEl.className = 'report-chapter-tag classical-ready';
-      tagEl.textContent = isHi ? '✨ शास्त्रीय गणना' : '✨ Classical Calculation';
-    } else {
-      tagEl.className = 'report-chapter-tag ai-enriched';
-      tagEl.textContent = isHi ? '✨ शास्त्रीय + AI परिष्कृत' : '✨ Classical + AI Enriched';
-    }
+    tagEl.className = 'report-chapter-tag ai-enriched';
+    tagEl.textContent = isHi ? '✨ शास्त्रीय + AI परिष्कृत' : '✨ Classical + AI Enriched';
   }
 
   renderKundliVisuals();
@@ -10325,59 +10365,71 @@ PRESENTATION:
   renderReadingNavigator();
 
   if(li){
-    li.classList.remove('active', 'failed');
+    li.classList.remove('active','failed');
     li.classList.add('done');
   }
-  unlockChat();
+  // Only unlock Ask the Chart after the entire reading is complete.
+  if(index === activeSections.length - 1) unlockChat();
   return true;
 }
 
 async function runFrom(startIndex, reportBody, stepListEl, progressErrorEl, endIndex=null){
   document.getElementById('genBtn').disabled = true;
   document.getElementById('matchBtn').disabled = true;
+
   if(startIndex===0){
     try{
       if(currentMode==='individual') await verifyIndividualChart();
       else await verifyKundliCharts();
     }catch(err){
       progressErrorEl.innerHTML='';
-      const e=document.createElement('div'); e.className='error'; e.textContent='Ephemeris calculation stopped: '+err.message; progressErrorEl.appendChild(e);
-      document.getElementById('genBtn').disabled=false; document.getElementById('matchBtn').disabled=false;
+      const e=document.createElement('div'); e.className='error';
+      e.textContent='Ephemeris calculation stopped: '+err.message;
+      progressErrorEl.appendChild(e);
+      document.getElementById('genBtn').disabled=false;
+      document.getElementById('matchBtn').disabled=false;
       return;
     }
   }
-  for(let i = startIndex; i < (endIndex ?? activeSections.length); i++){
-    await generateSection(i, reportBody, stepListEl, progressErrorEl);
-    // Add polite 300ms pacing between sections to prevent AI rate throttling
-    if(i + 1 < (endIndex ?? activeSections.length)){
-      await sleep(300);
+
+  const limit = endIndex ?? activeSections.length;
+  for(let i=startIndex; i<limit; i++){
+    const ok = await generateSection(i, reportBody, stepListEl, progressErrorEl);
+    if(!ok){
+      // HARD STOP: never start the next chapter after an incomplete chapter.
+      progressErrorEl.innerHTML = '';
+      const e = document.createElement('div');
+      e.className = 'error';
+      e.textContent = `Chapter ${String(i+1).padStart(2,'0')} is incomplete. The next chapter has been paused until this chapter is successfully generated.`;
+      progressErrorEl.appendChild(e);
+      break;
     }
+    if(i+1 < limit) await sleep(500);
   }
-  if(endIndex !== null && endIndex < activeSections.length){
-    document.getElementById('genBtn').disabled = false;
-    document.getElementById('matchBtn').disabled = false;
-    return;
-  }
+
   document.getElementById('genBtn').disabled = false;
   document.getElementById('matchBtn').disabled = false;
-  document.getElementById('matchBtn').disabled = false;
-  
-  const isVip = Boolean(window.vipAccess || document.body.classList.contains('vip-active'));
-  if(currentMode === 'individual'){
-    document.getElementById('genBtn').textContent = isVip
-      ? 'Cast this chart again (VIP Unlocked)'
-      : `Cast this chart again · ₹${window.SERVER_CONFIG?.prices?.reveal || 59}`;
-  }else{
-    document.getElementById('matchBtn').textContent = isVip
-      ? 'Match again (VIP Unlocked)'
-      : `Match again · ₹${window.SERVER_CONFIG?.prices?.match || 99}`;
+
+  const completedAll = !document.querySelector('.report-section-block .report-chapter-tag.failed') &&
+                       document.querySelectorAll('.report-section-block .report-chapter-tag.ai-enriched').length >= limit;
+  if(completedAll && limit === activeSections.length){
+    const isVip = Boolean(window.vipAccess || document.body.classList.contains('vip-active'));
+    if(currentMode === 'individual'){
+      document.getElementById('genBtn').textContent = isVip
+        ? 'Cast this chart again (VIP Unlocked)'
+        : `Cast this chart again · ₹${window.SERVER_CONFIG?.prices?.reveal || 59}`;
+    }else{
+      document.getElementById('matchBtn').textContent = isVip
+        ? 'Match again (VIP Unlocked)'
+        : `Match again · ₹${window.SERVER_CONFIG?.prices?.match || 99}`;
+    }
+    if(typeof updateVipUi === 'function') updateVipUi();
+    try{
+      const name=currentMode==='individual'?(document.getElementById('f_name')?.value||'Unnamed reading'):`${document.getElementById('k1_name')?.value||'Male'} & ${document.getElementById('k2_name')?.value||'Female'}`;
+      const email=currentMode==='individual'?(document.getElementById('f_email')?.value||'') : '';
+      await fetch('/api/reports',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,mode:currentMode,email,birthSummary:birthContext,report:fullReportText,paymentRef:(window.lastPaymentRef||''),vip:document.body.classList.contains('vip-active')})});
+    }catch(e){console.warn('Report archival failed',e);}
   }
-  if(typeof updateVipUi === 'function') updateVipUi();
-  try{
-    const name=currentMode==='individual'?(document.getElementById('f_name')?.value||'Unnamed reading'):`${document.getElementById('k1_name')?.value||'Male'} & ${document.getElementById('k2_name')?.value||'Female'}`;
-    const email=currentMode==='individual'?(document.getElementById('f_email')?.value||'') : '';
-    await fetch('/api/reports',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,mode:currentMode,email,birthSummary:birthContext,report:fullReportText,paymentRef:(window.lastPaymentRef||''),vip:document.body.classList.contains('vip-active')})});
-  }catch(e){console.warn('Report archival failed',e);}
 }
 
 document.getElementById('genBtn').onclick = async () => {
