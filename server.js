@@ -1,82 +1,68 @@
-import express from 'express';
-import path from 'node:path';
+/**
+ * Standalone Local/VPS Server for Jyotish Vimarsha
+ */
+
+import http from 'node:http';
+import url from 'node:url';
 import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import handler from './api/[...path].js';
 
-const app = express();
-const PORT = 3000;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+const server = http.createServer(async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
-// Serve static assets with explicit mappings
-app.use('/images', express.static(path.join(process.cwd(), 'public', 'images')));
-app.use('/public/images', express.static(path.join(process.cwd(), 'public', 'images')));
-app.use('/public', express.static(path.join(process.cwd(), 'public')));
-app.use(express.static(path.join(process.cwd(), 'public')));
-app.use(express.static(process.cwd()));
-
-// Direct handler for zodiac images - serve high quality PNG medallions
-app.get(['/images/zodiac/:sign.:ext', '/images/zodiac_gold/:sign.:ext', '/public/images/zodiac/:sign.:ext', '/public/images/zodiac_gold/:sign.:ext'], (req, res, next) => {
-  const sign = req.params.sign.toLowerCase().replace(/[^a-z]/g, '');
-  const candidates = [
-    path.join(process.cwd(), 'public', 'images', 'zodiac', `${sign}.svg`),
-    path.join(process.cwd(), 'public', 'images', 'zodiac', `${sign}.png`),
-    path.join(process.cwd(), 'images', 'zodiac', `${sign}.svg`),
-    path.join(process.cwd(), 'images', 'zodiac', `${sign}.png`),
-    path.join(process.cwd(), 'public', 'images', 'zodiac_gold', `${sign}.png`)
-  ];
-
-  for (const candidate of candidates) {
-    if (fs.existsSync(candidate)) {
-      const mime = candidate.endsWith('.png') ? 'image/png' : candidate.endsWith('.svg') ? 'image/svg+xml' : 'image/jpeg';
-      res.setHeader('Content-Type', mime);
-      res.setHeader('Cache-Control', 'public, max-age=86400');
-      return res.sendFile(candidate);
-    }
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204);
+    res.end();
+    return;
   }
-  next();
-});
 
-// Explicit favicon handler
-app.get(['/favicon.svg', '/public/favicon.svg', '/favicon.ico'], (req, res) => {
-  const p = path.join(process.cwd(), 'public', 'favicon.svg');
-  if (fs.existsSync(p)) {
-    res.setHeader('Content-Type', 'image/svg+xml');
-    return res.sendFile(p);
+  const parsedUrl = url.parse(req.url, true);
+  const pathname = parsedUrl.pathname;
+
+  // Route /api/* requests to the master handler
+  if (pathname.startsWith('/api/')) {
+    req.path = pathname;
+    req.query = parsedUrl.query;
+    res.status = (code) => { res.statusCode = code; return res; };
+    res.json = (data) => {
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify(data));
+    };
+    return handler(req, res);
   }
-  const rootFav = path.join(process.cwd(), 'favicon.svg');
-  if (fs.existsSync(rootFav)) {
-    res.setHeader('Content-Type', 'image/svg+xml');
-    return res.sendFile(rootFav);
+
+  // Static File Server
+  let filePath = path.join(__dirname, pathname === '/' ? 'index.html' : pathname);
+  if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+    const ext = path.extname(filePath);
+    const mimeTypes = {
+      '.html': 'text/html',
+      '.js': 'application/javascript',
+      '.css': 'text/css',
+      '.json': 'application/json',
+      '.svg': 'image/svg+xml',
+      '.png': 'image/png'
+    };
+    res.writeHead(200, { 'Content-Type': mimeTypes[ext] || 'text/plain' });
+    fs.createReadStream(filePath).pipe(res);
+    return;
   }
-  res.status(404).end();
+
+  res.writeHead(404, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({ error: 'Not Found' }));
 });
 
-// Handle API routes
-app.all(/^\/api(\/.*)?$/, async (req, res, next) => {
-  try {
-    await handler(req, res);
-  } catch (err) {
-    next(err);
-  }
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`====================================================`);
+  console.log(`  JYOTISH VIMARSHA SERVER ACTIVE ON PORT ${PORT}`);
+  console.log(`  http://localhost:${PORT}`);
+  console.log(`====================================================`);
 });
-
-// Fallback to index.html for SPA routes
-app.use((req, res, next) => {
-  if (req.method !== 'GET') return next();
-  res.sendFile(path.join(process.cwd(), 'index.html'));
-});
-
-// Global Express error handler
-app.use((err, req, res, _next) => {
-  console.error('[Jyotish Vimarsha Server Error]', err);
-  if (res.headersSent) return;
-  const status = Number(err.status || err.statusCode) || 500;
-  res.status(status).json({ error: err.message || 'Unexpected server error.' });
-});
-
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`[Jyotish Vimarsha] Express server listening on http://0.0.0.0:${PORT}`);
-});
-
