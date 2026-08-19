@@ -837,7 +837,7 @@
         nakshatra: nInfo.nakshatra,
         pada: nInfo.pada,
         nakshatraLord: nInfo.lord,
-        dignity: dignity,
+        dignity: dignity || 'Direct (Mitra/Sama)',
         longitude: Math.round(lonVal * 100) / 100,
         longitudeFormatted: formatDMS(lonVal)
       };
