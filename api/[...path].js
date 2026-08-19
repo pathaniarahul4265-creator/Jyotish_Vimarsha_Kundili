@@ -347,13 +347,10 @@ async function aiCall({model, systemText, userText, maxTokens, purpose='general'
     if (!m) return 'gemini-3.6-flash';
     let cleanStr = String(m).trim().toLowerCase();
     if (cleanStr.startsWith('models/')) cleanStr = cleanStr.replace('models/', '');
-    if (cleanStr.includes('3.7')) return 'gemini-3.6-flash';
-    if (cleanStr.includes('3.6')) return 'gemini-3.6-flash';
-    if (cleanStr.includes('3.5')) return 'gemini-3.5-flash';
+    if (cleanStr.includes('3.7') || cleanStr.includes('3.6') || cleanStr.includes('3.5')) return 'gemini-3.6-flash';
     if (cleanStr.includes('3.1-flash-lite') || cleanStr.includes('flash-lite')) return 'gemini-3.1-flash-lite';
     if (cleanStr.includes('2.5-pro') || cleanStr.includes('pro')) return 'gemini-2.5-pro';
-    if (cleanStr.includes('2.5-flash') || cleanStr.includes('2.5')) return 'gemini-2.5-flash';
-    if (cleanStr.includes('flash')) return 'gemini-3.6-flash';
+    if (cleanStr.includes('2.5-flash') || cleanStr.includes('2.5') || cleanStr.includes('flash')) return 'gemini-3.6-flash';
     return cleanStr || 'gemini-3.6-flash';
   }
 
@@ -385,7 +382,7 @@ async function aiCall({model, systemText, userText, maxTokens, purpose='general'
     }
     const requestedTokens = Number(maxTokens) || (purpose === 'report' ? 3000 : 2500);
     const tokensLimit = purpose === 'report'
-      ? Math.min(3400, Math.max(1600, requestedTokens))
+      ? Math.min(4200, Math.max(1600, requestedTokens))
       : ((targetModel === fallbackModel)
           ? Math.min(2048, requestedTokens)
           : Math.min(3072, Math.max(256, requestedTokens)));
@@ -394,7 +391,7 @@ async function aiCall({model, systemText, userText, maxTokens, purpose='general'
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(targetModel)}:generateContent`;
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), purpose === 'report' ? 40000 : 30000);
+    const timeout = setTimeout(() => controller.abort(), purpose === 'report' ? 50000 : 30000);
 
     try {
       const r = await fetch(url, {
@@ -437,22 +434,7 @@ async function aiCall({model, systemText, userText, maxTokens, purpose='general'
         throw e;
       }
 
-      const candidate = j?.candidates?.[0];
-      const finishReason = candidate?.finishReason || '';
-      const text = candidate?.content?.parts?.map(x => x.text || '').join('') || '';
-      if (finishReason === 'MAX_TOKENS') {
-        const e = new Error('AI chapter reached the output limit before completing.');
-        e.status = 422;
-        e.incomplete = true;
-        e.finishReason = finishReason;
-        recordKeyFailure(chosenKey, keyIdx, 422, e.message);
-        if (attemptCount < attemptsMax) {
-          activeKeyPoolIndex = (keyIdx + 1) % pool.length;
-          await new Promise(res => setTimeout(res, Math.min(attemptCount * 500, 1500)));
-          continue;
-        }
-        throw e;
-      }
+      const text = j?.candidates?.[0]?.content?.parts?.map(x => x.text || '').join('') || '';
       if (!text) {
         recordKeyFailure(chosenKey, keyIdx, 500, 'Empty response from Gemini');
         if (attemptCount < attemptsMax) {
@@ -464,7 +446,7 @@ async function aiCall({model, systemText, userText, maxTokens, purpose='general'
       }
 
       recordKeySuccess(chosenKey, keyIdx, text.length);
-      return { text, finishReason, truncated: finishReason === 'MAX_TOKENS' };
+      return text;
     } catch (err) {
       clearTimeout(timeout);
       lastErr = err;
@@ -699,15 +681,80 @@ export default async function handler(req,res){
       });
     }
 
+    if(req.method==='POST'&&path==='/ai-stream'){
+      const b=await readBody(req);
+      const pool=getGeminiKeyPool(b?.key);
+      if(pool.length===0) return json(res,503,{error:'AI service is not configured on the server.'});
+      if(!b.systemText||!b.userText) return json(res,400,{error:'AI request is incomplete.'});
+
+      function streamModel(m){
+        let clean=String(m||'gemini-3.6-flash').trim().toLowerCase().replace(/^models\//,'');
+        if(clean.includes('3.7')||clean.includes('3.6')||clean.includes('3.5')) return 'gemini-3.6-flash';
+        if(clean.includes('3.1-flash-lite')||clean.includes('flash-lite')) return 'gemini-3.1-flash-lite';
+        if(clean.includes('2.5-pro')||clean.includes('pro')) return 'gemini-2.5-pro';
+        return clean||'gemini-3.6-flash';
+      }
+      const model=streamModel(getEnv('GEMINI_PRIMARY_MODEL')||b.model);
+      const maxTokens=Math.min(4200,Math.max(1600,Number(b.maxTokens)||3400));
+      let lastErr=null;
+      for(let attempt=0;attempt<pool.length;attempt++){
+        const keyIdx=selectNextAvailableKeyIndex(pool); const key=pool[keyIdx];
+        recordKeyRequest(key,keyIdx,(b.systemText.length||0)+(b.userText.length||0));
+        const controller=new AbortController(); const timeout=setTimeout(()=>controller.abort(),55000);
+        try{
+          const upstream=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:streamGenerateContent?alt=sse`,{
+            method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},signal:controller.signal,
+            body:JSON.stringify({systemInstruction:{parts:[{text:b.systemText}]},contents:[{role:'user',parts:[{text:b.userText}]}],generationConfig:{maxOutputTokens:maxTokens,temperature:b.purpose==='report'?0.82:0.7}})
+          });
+          if(!upstream.ok){
+            const body=await upstream.json().catch(()=>({})); const msg=body?.error?.message||`Gemini API returned HTTP ${upstream.status}`;
+            recordKeyFailure(key,keyIdx,upstream.status,msg); activeKeyPoolIndex=(keyIdx+1)%pool.length; lastErr=new Error(msg); lastErr.status=upstream.status;
+            if([429,500,502,503,504].includes(upstream.status)){await new Promise(r=>setTimeout(r,Math.min(1200*(attempt+1),2500)));continue;}
+            continue;
+          }
+          clearTimeout(timeout);
+          res.writeHead(200,{'Content-Type':'text/event-stream; charset=utf-8','Cache-Control':'no-cache, no-transform','Connection':'keep-alive','X-Accel-Buffering':'no'});
+          let buffer=''; let totalChars=0; const reader=upstream.body.getReader(); const decoder=new TextDecoder();
+          while(true){
+            const {value,done}=await reader.read(); if(done) break;
+            buffer+=decoder.decode(value,{stream:true});
+            const events=buffer.split(/\n\n/); buffer=events.pop()||'';
+            for(const evt of events){
+              for(const line of evt.split('\n')){
+                if(!line.startsWith('data:')) continue;
+                const payload=line.slice(5).trim(); if(!payload||payload==='[DONE]') continue;
+                try{
+                  const j=JSON.parse(payload); const text=(j?.candidates?.[0]?.content?.parts||[]).map(x=>x.text||'').join('');
+                  if(text){ totalChars+=text.length; res.write(`data: ${JSON.stringify({text})}\n\n`); }
+                  const finish=j?.candidates?.[0]?.finishReason;
+                  if(finish==='MAX_TOKENS') res.write(`data: ${JSON.stringify({warning:'MAX_TOKENS'})}\n\n`);
+                }catch{}
+              }
+            }
+          }
+          if(buffer.trim()){
+            const line=buffer.split('\n').find(x=>x.startsWith('data:'));
+            if(line){try{const j=JSON.parse(line.slice(5).trim());const text=(j?.candidates?.[0]?.content?.parts||[]).map(x=>x.text||'').join('');if(text){totalChars+=text.length;res.write(`data: ${JSON.stringify({text})}\n\n`);}}catch{}}
+          }
+          if(totalChars<200){ res.write(`data: ${JSON.stringify({error:'The AI response was too short or incomplete.'})}\n\n`); }
+          else { recordKeySuccess(key,keyIdx,totalChars); res.write('data: [DONE]\n\n'); }
+          res.end(); return;
+        }catch(err){
+          clearTimeout(timeout); const status=err.name==='AbortError'?504:(err.status||500); recordKeyFailure(key,keyIdx,status,err.message||'stream error'); activeKeyPoolIndex=(keyIdx+1)%pool.length; lastErr=err;
+          if(attempt<pool.length-1) continue;
+        }
+      }
+      return json(res,Number(lastErr?.status)||500,{error:lastErr?.message||'Streaming AI generation failed.'});
+    }
+
     if(req.method==='POST'&&path==='/ai'){
       const b = await readBody(req);
       const pool = getGeminiKeyPool(b?.key);
       if(pool.length === 0) return json(res,503,{error:'AI service is not configured on the server. Please ensure GEMINI_API_KEY is provided.'});
       if(!b.systemText || !b.userText) return json(res,400,{error:'AI request is incomplete.'});
       try {
-        const result = await aiCall(b);
-        const payload = typeof result === 'string' ? { text: result } : result;
-        return json(res, 200, payload);
+        const text = await aiCall(b);
+        return json(res, 200, { text });
       } catch (e) {
         console.error('[AI Handler Error]', e);
         const status = Number(e.status) || 500;
