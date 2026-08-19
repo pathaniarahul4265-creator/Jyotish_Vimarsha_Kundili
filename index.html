@@ -5392,18 +5392,15 @@ body input, body select, body textarea {
 }
 </style>
 
-<style id="live-writing-ui-fix">
-.generation-live-panel{margin:18px 0;padding:18px;border:1px solid rgba(255,255,255,.12);border-radius:16px;background:rgba(255,255,255,.035);display:none}
-.generation-live-panel.active{display:block}
-.generation-live-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:10px}
-.generation-live-title{font-weight:700}
-.generation-live-meta{font-size:12px;opacity:.7}
-.generation-live-text{max-height:420px;overflow:auto;white-space:pre-wrap;line-height:1.7;font-size:14px;padding:14px;border-radius:12px;background:rgba(0,0,0,.16)}
-.generation-live-caret{display:inline-block;width:7px;height:16px;vertical-align:-2px;margin-left:3px;background:currentColor;animation:liveCaret .9s steps(1) infinite}
-@keyframes liveCaret{50%{opacity:0}}
-.report-chapter-tile,.chapter-tile,[data-chapter-tile]{cursor:pointer}
-.report-chapter-tile:hover,.chapter-tile:hover,[data-chapter-tile]:hover{transform:translateY(-1px)}
-.report-chapter-tile.live-selected,.chapter-tile.live-selected,[data-chapter-tile].live-selected{outline:2px solid rgba(255,255,255,.28)}
+<style id="realtime-report-stream-css">
+.report-live-writing-wrap{border:1px solid rgba(201,168,76,.28);border-radius:14px;padding:18px;background:rgba(7,17,30,.72);box-shadow:inset 0 0 30px rgba(0,0,0,.12)}
+.report-live-writing-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px;color:#e9d59a;font-size:13px;font-weight:700;letter-spacing:.02em}
+.report-live-writing-head span:last-child{font-weight:500;color:#91a0b3;font-size:12px}
+.report-live-writing-text{white-space:pre-wrap;line-height:1.8;font-size:16px;color:#eee;min-height:120px;max-height:620px;overflow:auto;scroll-behavior:smooth}
+.report-live-writing-text::after{content:'▌';display:inline-block;margin-left:2px;animation:jyCaret .8s steps(1) infinite;color:#e9d59a}
+.report-live-interrupted{margin-top:12px;padding:10px 12px;border-radius:9px;background:rgba(160,70,70,.12);border:1px solid rgba(220,100,100,.22);color:#e9b0b0;font-size:12px}
+@keyframes jyCaret{50%{opacity:0}}
+.report-section-block .report-chapter-tag.failed{background:rgba(150,45,45,.25);border-color:rgba(220,100,100,.45);color:#f1b0b0}
 </style>
 
 </head>
@@ -8777,15 +8774,12 @@ FINAL PRESENTATION:
 
 
 const KUNDLI_SECTIONS = [
-  { id:'overall', title:'Overall Relationship Synthesis', instruction:`Build the opening of the paid compatibility consultation as a long-form synthesis. Use the verified Ashtakoota score only as a starting point, not the conclusion. Explain the strongest areas of natural compatibility, the most important areas requiring adjustment, and the overall relationship pattern emerging from both charts. Compare the two Moon signs, Nakshatras, Gana, Nadi, Moon-sign lords, 7th-house factors and other verified chart combinations. Keep factual score/chart material to roughly 10% of the chapter and devote roughly 90% to explanation, mechanism and lived relationship implications.` },
-  { id:'ashtakoot', title:'Ashtakoota Guna Milan — What the Scores Actually Mean', instruction:`Explain all eight Kootas in prose, using the deterministic verified score already supplied. Cover Varna, Vashya, Tara, Yoni, Graha Maitri, Gana, Bhakoot and Nadi in order. For each, explain the score, the two partners' relevant values, what the Koota traditionally represents, why this particular result occurred, and how it may manifest in communication, affection, temperament, family life or adjustment. Do not merely reproduce the table. The table is the factual 10% layer; the narrative explanation should be the dominant 90%. Do not issue a marriage verdict.` },
-  { id:'emotional', title:'Emotional, Mental & Temperamental Compatibility', instruction:`Compare Moon signs, Moon Nakshatras, Gana, Graha Maitri, Mercury and relevant 4th/5th-house factors from both verified charts. Explain emotional needs, conflict processing, communication style, intellectual friendship, attachment patterns and domestic rhythm. Identify both natural ease and potential friction, always naming the chart configuration behind each conclusion. Build on the Ashtakoota findings without repeating them.` },
-  { id:'attraction', title:'Attraction, Chemistry & Intimate Compatibility', instruction:`Analyze Yoni, Venus, Mars, Moon, relevant 5th/7th/8th-house factors and any clearly supported mutual planetary interactions. Explain attraction, affection, instinctive bonding, romantic expression, boundaries and possible mismatches with sensitivity and without sensationalism. Where the chart data does not support a precise conclusion, say so. Do not turn technical placements into a scorecard; use them to produce detailed narrative interpretation.` },
-  { id:'marriage', title:'Marriage, Family & Long-Term Stability', instruction:`Compare both 7th houses and 7th lords, Venus and Jupiter, relevant 4th and 8th-house factors, and verified D9/Navamsha information where available. Discuss partnership roles, family integration, domestic stability, shared responsibilities, commitment style and long-term durability. Explain protective combinations as well as pressure points. Use chart facts sparingly and devote most of the chapter to their practical relationship meaning.` },
-  { id:'doshas', title:'Manglik, Nadi, Bhakoot & Classical Compatibility Conditions', instruction:`Give a careful narrative treatment of Mangal/Kuja Dosha for each partner using verified Lagna/Moon/Venus-relative Mars positions, then discuss Nadi and Bhakoot conditions and any supported classical cancellation/mitigation logic. Do not merely label a Dosha. Explain what the condition means, how strong or limited the indication is, whether both charts share a comparable factor, and why it should or should not materially dominate the overall reading. Never recommend remedies.` },
-  { id:'navamsha', title:'Navamsha & Deeper Marriage Compatibility', instruction:`Use verified D9/Navamsha information for both partners to examine marriage maturity, commitment, spouse dynamics, Venus/Jupiter themes, D9 Lagna and 7th-house factors where available. Explain how the Navamsha confirms, qualifies or deepens the D1/Ashtakoota picture. Do not dump D9 placements; translate them into relationship meaning.` },
-  { id:'dasha', title:'Dasha, Timing & Relationship Life Phases', instruction:`Compare the current and upcoming Vimshottari Dasha/Antardasha periods of both partners where verified data is available. Explain periods that may support commitment, career pressure, family changes, emotional growth or relationship testing. Use timing as indicative windows, not guarantees. Explain why each window matters from the supplied Dasha and transit data.` },
-  { id:'synthesis', title:'Strengths, Challenges & Final Compatibility Synthesis', instruction:`Bring the entire compatibility reading together. Identify the relationship's strongest natural assets, its most important adjustment areas, the qualities each partner may bring out in the other, and the practical themes that deserve conscious attention. Refer back to the strongest evidence from Ashtakoota, D1, D9, Doshas and Dasha without repeating entire sections. End with a warm, balanced synthesis that explicitly avoids telling the couple whether they should or should not marry.` }
+  { id:'ashtakoot', title:'Ashtakoot Guna Milan (36-Point Compatibility)',
+    instruction:`Estimate both partners' Moon sign and Nakshatra from their birth data, then work through the classical eight-fold (Ashtakoot) matching system in this exact order, naming the specific signs, nakshatras, and planetary lords compared in each: Varna (spiritual/ego compatibility, max 1 point), Vashya (mutual attraction and control, max 2 points), Tara (birth-star compatibility and wellbeing, max 3 points), Yoni (physical and instinctive compatibility, max 4 points), Graha Maitri (compatibility between the Moon-sign lords, max 5 points), Gana (temperament grouping — deva, manushya, or rakshasa, max 6 points), Bhakoot (Moon-sign relationship governing family welfare and prosperity, max 7 points), and Nadi (health and genetic compatibility, max 8 points). For each koota, state the points scored out of its maximum with the precise reasoning, then a running subtotal. Close with the clearly stated final Total Guna Score out of 36, and note the traditional reference bands (below 18 traditionally invites closer consideration, 18-24 traditionally considered acceptable, 24+ traditionally considered very favorable) strictly as classical reference points, not as a personal verdict on the couple.` },
+  { id:'doshas', title:'Mangal Dosha and Compatibility Doshas',
+    instruction:`Assess Mangal (Kuja) Dosha separately for each partner: Mars's placement counted from the Lagna, the Moon, and Venus, checking the 1st, 2nd, 4th, 7th, 8th, and 12th houses in each case, and state plainly whether each partner's chart shows Mangal Dosha and why. Then explain whether any classical cancellation (Mangal Dosha Bhanga) conditions apply — such as both partners carrying comparable Mangal Dosha, or Mars's placement in its own or exalted sign — describing the classical logic only, never a remedy. Revisit the Nadi koota result from the Ashtakoot section and note whether Nadi Dosha applies and whether any classical exception (such as differing Nakshatra padas or Rashi) is relevant. Note Bhakoot Dosha status similarly if the Bhakoot koota scored zero. Describe every finding factually and reverently, and never suggest a remedy for any dosha found.` },
+  { id:'synthesis', title:'Compatibility Outlook and Synthesis',
+    instruction:`Cover, comparing both charts directly against each other: emotional and temperamental compatibility (both Moon signs and Gana results), intellectual rapport and communication style (both Mercury placements), domestic and family harmony (both 7th houses and their lords, and both 4th houses), long-term stability indicators (both 7th and 8th house conditions, and relevant current Dasha periods for each partner if they bear on the relationship), shared strengths the combination brings out, and specific points of friction or difference to be mindful of, named with the specific placements behind them. Frame this section reflectively, as material for the couple's own understanding — never as a final pronouncement on whether they should marry. Close with one warm, balanced synthesis paragraph weaving the whole match together.` }
 ];
 
 const KUNDLI_RULES = `You are acting as a classically-trained Vedic (Jyotish) astrologer specializing in marriage compatibility (Kundli Milan), deeply versed in the Ashtakoot Guna Milan system from Brihat Parashara Hora Shastra and Muhurta texts, Mangal (Kuja) Dosha analysis and its classical cancellations, and general synastry between two natal charts. Write with warmth and reverence for the tradition, as a wise, grounded consultant would — never sensational, never vague, and never delivering a blunt "should marry / should not marry" verdict.
@@ -8804,6 +8798,7 @@ Strict rules you always follow:
 
 let birthContext = '';
 let fullReportText = '';
+let reportChapterMemory = [];
 let chatHistory = [];
 let chatUnlocked = false;
 let chatQuestionsUsed = 0;
@@ -8814,10 +8809,6 @@ let activeRules = RULES;
 const EPHEMERIS_API_BASE = 'https://openkundali.com/api/v1';
 let verifiedChart = null;
 let verifiedCharts = { partnerA:null, partnerB:null };
-let lastMilanResult = null;
-let chapterMemories = [];
-let chapterTimings = [];
-let reportGenerationStartedAt = 0;
 let currentSkyData = null;
 
 const EPHEMERIS_PLANETS = ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'];
@@ -9244,9 +9235,6 @@ function buildKundliContext(){
       s += `\n- Upcoming Festivals / National Events: ${pData.upcomingEvents.map(e => e.name + ' (' + e.daysAway + 'd)').join(', ')}`;
     }
   }
-  if (lastMilanResult) {
-    s += `\n\nVERIFIED ASHTAKOOTA RESULT (DETERMINISTIC CLIENT CALCULATION — DO NOT RECALCULATE):\n- Total: ${lastMilanResult.totalScore}/${lastMilanResult.maxScore}\n- Kootas: ${lastMilanResult.kootas.map(k => `${k.name}: ${k.score}/${k.max} (${k.groomVal} vs ${k.brideVal})`).join(' | ')}`;
-  }
   if (window.currentVedicLang === 'hi') {
     s += `\n\nLANGUAGE INSTRUCTION: Write the entire Guna Milan and compatibility reading in pure, fluent Hindi (हिंदी / देवनागरी लिपि) with traditional Ashta Koota terminology.`;
   }
@@ -9315,153 +9303,69 @@ async function callGemini(systemText, userText, maxTokens = 3200, purpose='gener
   throw lastErr;
 }
 
-async function streamGemini(systemText, userText, maxTokens = 3200, purpose='general', sectionId=''){
-  let res;
-  try{
-    res = await fetch('/api/ai-stream', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:activeModel,systemText,userText,maxTokens,purpose})
-    });
-  }catch(e){
-    const err=new Error('The secure astrology service could not be reached.');
-    err.status=0;
-    throw err;
+
+async function callGeminiStream(systemText, userText, maxTokens = 5200, purpose='report', onChunk=()=>{}, onStatus=()=>{}){
+  const response = await fetch('/api/ai-stream', {
+    method:'POST',
+    headers:{'Content-Type':'application/json','Accept':'text/event-stream'},
+    body: JSON.stringify({ model: activeModel, systemText, userText, maxTokens, purpose })
+  });
+  if(!response.ok){
+    let data=null; try{data=await response.json();}catch{}
+    const e=new Error(data?.error || `Streaming request failed (HTTP ${response.status})`);
+    e.status=response.status; throw e;
   }
-
-  if(!res.ok){
-    let msg='AI generation failed.';
-    try{ const j=await res.json(); msg=j.error||msg; }catch{}
-    const err=new Error(msg);
-    err.status=res.status;
-    throw err;
+  if(!response.body || !response.body.getReader){
+    throw new Error('The browser did not receive a streaming response from the AI service.');
   }
-
-  if(!res.body) throw new Error('Streaming is not supported by the current connection.');
-
-  const reader=res.body.getReader();
+  const reader=response.body.getReader();
   const decoder=new TextDecoder();
   let buffer='';
   let full='';
-  let truncated=false;
+  let currentEvent='message';
 
-  const contentDiv=document.getElementById('content-'+sectionId);
-  const loading=document.getElementById('loading-'+sectionId);
-
-  if(contentDiv){
-    contentDiv.innerHTML='<div class="report-streaming-text" aria-live="polite"></div>';
-  }
-
-  const target=contentDiv?.querySelector('.report-streaming-text');
-
-  // Tell the clickable live-writing panel which chapter is active.
-  try{
-    window.dispatchEvent(new CustomEvent('jyotish:chapter-start',{
-      detail:{chapter:(activeSections.findIndex(s=>s.id===sectionId)+1),meta:'Text is being written live…'}
-    }));
-  }catch{}
-
-  const processEvent=(payload)=>{
-    if(!payload || payload==='[DONE]') return;
-
-    let obj;
-    try{ obj=JSON.parse(payload); }catch{ return; }
-
-    if(obj.warning==='MAX_TOKENS') truncated=true;
-    if(obj.error) throw new Error(obj.error);
-
-    const chunk=String(obj.text||'');
-    if(!chunk) return;
-
-    full += chunk;
-
-    // Main chapter content: visible immediately.
-    if(target){
-      target.textContent=full;
-      target.scrollIntoView({block:'nearest'});
+  const handleLine=(line)=>{
+    const l=line.replace(/\r$/,'');
+    if(!l){ currentEvent='message'; return; }
+    if(l.startsWith('event:')){ currentEvent=l.slice(6).trim(); return; }
+    if(!l.startsWith('data:')) return;
+    const raw=l.slice(5).trim(); if(!raw) return;
+    let data; try{data=JSON.parse(raw);}catch{return;}
+    if(currentEvent==='chunk'){
+      const chunk=String(data.text||'');
+      if(chunk){ full+=chunk; onChunk(chunk, full); }
+    }else if(currentEvent==='status' || currentEvent==='meta' || currentEvent==='retry'){
+      onStatus(data);
+    }else if(currentEvent==='error'){
+      const e=new Error(data.message || 'AI streaming failed.'); e.status=data.status || 500; e.recoverable=data.recoverable!==false; throw e;
     }
-
-    // Clickable live-writing tile/panel: same live stream.
-    try{
-      window.dispatchEvent(new CustomEvent('jyotish:chapter-chunk',{
-        detail:{
-          chapter:(activeSections.findIndex(s=>s.id===sectionId)+1),
-          text:chunk,
-          meta:`${Math.round(full.length/5)}+ characters written`
-        }
-      }));
-    }catch{}
-
-    updateGenerationStatus(sectionId, full.length);
   };
 
   while(true){
     const {value,done}=await reader.read();
     if(done) break;
-
-    // Normalize CRLF because SSE framing can arrive with Windows-style line endings.
-    buffer += decoder.decode(value,{stream:true}).replace(/\r\n/g,'\n').replace(/\r/g,'\n');
-
-    let boundary;
-    while((boundary=buffer.indexOf('\n\n')) !== -1){
-      const evt=buffer.slice(0,boundary);
-      buffer=buffer.slice(boundary+2);
-
-      for(const line of evt.split('\n')){
-        if(!line.startsWith('data:')) continue;
-        processEvent(line.slice(5).trim());
-      }
-    }
+    buffer += decoder.decode(value,{stream:true});
+    const lines=buffer.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n');
+    buffer=lines.pop()||'';
+    for(const line of lines) handleLine(line);
   }
-
-  // Flush final decoder bytes and any final SSE event.
-  buffer += decoder.decode().replace(/\r\n/g,'\n').replace(/\r/g,'\n');
-  const tail=buffer.trim();
-  if(tail){
-    for(const line of tail.split('\n')){
-      if(line.startsWith('data:')) processEvent(line.slice(5).trim());
-    }
+  buffer += decoder.decode();
+  if(buffer.trim()){
+    for(const line of buffer.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n')) handleLine(line);
   }
-
-  if(loading) loading.remove();
-
-  if(truncated){
-    throw new Error('The chapter reached the AI output limit before completion. It was not marked complete.');
-  }
-
-  if(full.trim().length < 300){
-    throw new Error('The astrology service returned an incomplete reading.');
-  }
-
-  try{
-    window.dispatchEvent(new CustomEvent('jyotish:chapter-complete',{
-      detail:{
-        chapter:(activeSections.findIndex(s=>s.id===sectionId)+1),
-        meta:`${Math.round(full.length/5)}+ characters generated`
-      }
-    }));
-  }catch{}
-
+  if(full.trim().length<100) throw new Error('The AI stream ended before a usable chapter was generated.');
   return full;
 }
 
-function playChapterCompleteSound(){
-  try{
-    const C=window.AudioContext||window.webkitAudioContext; if(!C) return;
-    const ctx=new C(); const o=ctx.createOscillator(); const g=ctx.createGain();
-    o.type='sine'; o.frequency.setValueAtTime(660,ctx.currentTime); o.frequency.exponentialRampToValueAtTime(880,ctx.currentTime+0.12);
-    g.gain.setValueAtTime(0.0001,ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.06,ctx.currentTime+0.02); g.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+0.28);
-    o.connect(g); g.connect(ctx.destination); o.start(); o.stop(ctx.currentTime+0.3); setTimeout(()=>ctx.close(),500);
-  }catch{}
+function buildChapterMemory(){
+  return reportChapterMemory.slice(-4).map((m,i)=>`CHAPTER MEMORY ${reportChapterMemory.length-3+i}:\n${m}`).join('\n\n');
 }
-
-function updateGenerationStatus(sectionId, chars){
-  const el=document.getElementById('generationStatus'); if(!el) return;
-  const avg=chapterTimings.length ? chapterTimings.reduce((a,b)=>a+b.seconds,0)/chapterTimings.length : 35;
-  const done=chapterTimings.length; const total=activeSections.length; const remain=Math.max(0,total-done-1);
-  const eta=Math.max(0,Math.round((remain*avg)/60));
-  const etaText=eta<1?'under 1 min':`~${eta} min`;
-  el.innerHTML=`<b>✦ Sit back and relax</b><span>Writing ${escapeHtml(activeSections.find(s=>s.id===sectionId)?.title||'your chapter')} in real time… ${eta?`Estimated remaining: ${etaText}`:'Finishing this chapter…'}</span>`;
+function makeChapterMemory(title,text){
+  const headings=(String(text).match(/^###\s+.+$/gm)||[]).slice(0,8).join('\n');
+  const clean=cleanAstroText(text).replace(/\s+/g,' ').trim();
+  const opening=clean.slice(0,1100);
+  const closing=clean.slice(-700);
+  return `Title: ${title}\nKey subheadings:\n${headings}\nCore analysis: ${opening}\nClosing synthesis: ${closing}`.slice(0,2600);
 }
 
 function showKeyRecovery(container, onRetry){
@@ -10264,7 +10168,6 @@ async function generateSection(index, reportBody, stepListEl, progressErrorEl){
   }
   progressErrorEl.innerHTML = '';
 
-  const sectionStartedAt = Date.now();
   const isHi = window.currentVedicLang === 'hi';
   const chapterLabel = isHi ? `अध्याय ${index + 1}` : `CHAPTER ${String(index + 1).padStart(2, '0')}`;
 
@@ -10273,9 +10176,7 @@ async function generateSection(index, reportBody, stepListEl, progressErrorEl){
 
   if(!block){
     block = document.createElement('div');
-    block.className = 'report-section-block report-chapter-tile';
-    block.dataset.chapterTile = 'true';
-    block.dataset.chapter = String(index + 1);
+    block.className = 'report-section-block';
     block.id = 'section-block-' + section.id;
     
     const header = document.createElement('div');
@@ -10315,8 +10216,8 @@ async function generateSection(index, reportBody, stepListEl, progressErrorEl){
         <div class="report-loading-shimmer">
           <div class="loading-gem-spinner">✦</div>
           <div class="loading-text-wrap">
-            <b>${isHi ? 'ग्रह स्थिति एवं शास्त्रीय सूत्रों का विश्लेषण…' : 'Consulting sidereal ephemeris & classical Jyotish sutras…'}</b>
-            <span>${isHi ? `${section.title} के लिए गहन शास्त्रीय फलकथन तैयार किया जा रहा है।` : `Generating comprehensive astrological reading for ${section.title}.`}</span>
+            <b>${isHi ? 'ग्रह स्थिति एवं शास्त्रीय सूत्रों का विश्लेषण…' : 'Writing this chapter in real time…'}</b>
+            <span>${isHi ? `${section.title} के लिए गहन शास्त्रीय फलकथन तैयार किया जा रहा है।` : `The detailed interpretation will appear here as it is written.`}</span>
           </div>
         </div>
       </div>
@@ -10359,11 +10260,28 @@ async function generateSection(index, reportBody, stepListEl, progressErrorEl){
   // 2. Synthesize via AI with immediate graceful fallback to classical baseline if load/rate limit occurs
   let generatedText = '';
   let isBaselineFallback = false;
+  let streamFailed = false;
+
+  const contentDiv = document.getElementById('content-' + section.id);
+  const liveTextEl = document.createElement('div');
+  liveTextEl.className = 'report-live-writing-text';
+  liveTextEl.setAttribute('aria-live','polite');
+  liveTextEl.textContent = '';
+  if(contentDiv){
+    contentDiv.innerHTML = '';
+    const liveWrap=document.createElement('div');
+    liveWrap.className='report-live-writing-wrap';
+    liveWrap.innerHTML=`<div class="report-live-writing-head"><span>✦ ${isHi?'लेखन जारी है…':'Writing in real time…'}</span><span id="live-meta-${section.id}">Connecting to AI…</span></div>`;
+    liveWrap.appendChild(liveTextEl);
+    contentDiv.appendChild(liveWrap);
+  }
 
   try {
+    const previousMemory = buildChapterMemory();
     const userText = `Birth data & Verified Ephemeris:
 ${birthContext}
 
+${previousMemory ? `CONTINUITY MEMORY FROM COMPLETED CHAPTERS:\n${previousMemory}\n` : ''}
 TASK:
 Write the "${section.title}" chapter as a master-level, deeply personalized Vedic chart consultation.
 
@@ -10396,20 +10314,41 @@ PRESENTATION:
 - Do not output raw machine-readable rows except where the Panchang section explicitly requests them.
 - Do not use filler phrases such as "in conclusion" repeatedly.
 `;
-    const memoryText = chapterMemories.length ? `\n\nPRIOR CHAPTER MEMORY (compact continuity notes; verified chart data always overrides memory):\n${chapterMemories.slice(-4).map((m,i)=>`Chapter ${Math.max(1, chapterMemories.length-3+i)}: ${m}`).join('\n')}` : '';
-    const rawText = await streamGemini(activeRules, userText + memoryText, 3800, 'report', section.id);
+    const rawText = await callGeminiStream(activeRules, userText, 5200, 'report', (chunk, full)=>{
+      generatedText=full;
+      if(liveTextEl){ liveTextEl.textContent=full; liveTextEl.scrollTop=liveTextEl.scrollHeight; }
+      const meta=document.getElementById('live-meta-'+section.id);
+      if(meta) meta.textContent=`${full.length.toLocaleString()} characters written`;
+      window.dispatchEvent(new CustomEvent('jyotish:chapter-chunk',{detail:{chapter:index+1,text:chunk}}));
+    }, (status)=>{
+      const meta=document.getElementById('live-meta-'+section.id);
+      if(meta && status?.state==='connecting') meta.textContent='Connected — writing…';
+      if(meta && status?.message) meta.textContent=status.message;
+    });
     const cleaned = cleanAstroText(rawText);
     if(!cleaned || cleaned.length < 300){
       throw new Error('The astrology service returned an incomplete reading.');
     }
     generatedText = cleaned;
   } catch(err) {
-    const tagEl = document.getElementById('tag-' + section.id);
-    if(tagEl){ tagEl.className='report-chapter-tag failed'; tagEl.textContent=isHi ? '⚠ अध्याय अधूरा — पुनः प्रयास आवश्यक' : '⚠ Chapter incomplete — retry required'; }
+    streamFailed=true;
+    console.error(`AI streaming failed for ${section.title}:`, err);
+    const tag=document.getElementById('tag-'+section.id);
+    if(tag){ tag.className='report-chapter-tag failed'; tag.textContent=isHi?'⚠ अध्याय अधूरा — पुनः प्रयास आवश्यक':'⚠ Chapter incomplete — retry required'; }
     if(li){ li.classList.remove('active','done'); li.classList.add('failed'); }
-    progressErrorEl.innerHTML = `<div class=\"error\">${escapeHtml(err.message || 'The chapter could not be completed.')} <button type=\"button\" class=\"small\" onclick=\"retrySingleSection(${index})\">Retry chapter ↻</button></div>`;
-    throw err;
+    progressErrorEl.innerHTML='';
+    const e=document.createElement('div'); e.className='error';
+    e.innerHTML=`<strong>${isHi?'अध्याय पूरा नहीं हो सका।':'Chapter could not be completed.'}</strong> ${escapeHtml(err.message||'AI streaming interrupted.')} <button type="button" class="small" onclick="retrySingleSection(${index})">${isHi?'पुनः प्रयास':'Retry chapter'}</button>`;
+    progressErrorEl.appendChild(e);
+    if(contentDiv && liveTextEl && liveTextEl.textContent.trim()){
+      const note=document.createElement('div'); note.className='report-live-interrupted'; note.textContent=isHi?'लेखन बीच में रुक गया है। ऊपर का पाठ सुरक्षित है; पुनः प्रयास से अध्याय पूरा किया जाएगा.':'Writing was interrupted. The text already received is preserved; retry will resume the chapter.';
+      contentDiv.appendChild(note);
+    }
+    return false;
   }
+
+  if(streamFailed || !generatedText) return false;
+  reportChapterMemory.push(makeChapterMemory(section.title, generatedText));
 
   // 3. Update section UI with final text & badge
   fullReportText += `\n\n## ${section.title}\n\n${generatedText}`;
@@ -10453,21 +10392,14 @@ PRESENTATION:
     li.classList.remove('active', 'failed');
     li.classList.add('done');
   }
-  const memorySource = cleanAstroText(generatedText).replace(/\s+/g,' ').slice(0,1800);
-  chapterMemories.push(memorySource);
-  chapterTimings.push({id:section.id, seconds:Math.max(1,Math.round((Date.now()-sectionStartedAt)/1000))});
-  playChapterCompleteSound();
-  const st=document.getElementById('generationStatus'); if(st){ st.innerHTML=`<b>✓ ${escapeHtml(section.title)} completed</b><span>Chapter saved to report memory. Preparing the next chapter…</span>`; }
   return true;
 }
 
 async function runFrom(startIndex, reportBody, stepListEl, progressErrorEl, endIndex=null){
   document.getElementById('genBtn').disabled = true;
   document.getElementById('matchBtn').disabled = true;
-  const pc=document.getElementById('progressCard');
-  if(pc && !document.getElementById('generationStatus')){ const st=document.createElement('div'); st.id='generationStatus'; st.className='generation-status'; st.innerHTML='<b>✦ Sit back and relax</b><span>Your Sacred Chart Reading is being written in real time. Please keep this page open.</span>'; pc.appendChild(st); }
-
   if(startIndex===0){
+    reportChapterMemory = [];
     try{
       if(currentMode==='individual') await verifyIndividualChart();
       else await verifyKundliCharts();
@@ -10479,15 +10411,14 @@ async function runFrom(startIndex, reportBody, stepListEl, progressErrorEl, endI
     }
   }
   for(let i = startIndex; i < (endIndex ?? activeSections.length); i++){
-    try { await generateSection(i, reportBody, stepListEl, progressErrorEl); } catch (chapterErr) {
+    const ok = await generateSection(i, reportBody, stepListEl, progressErrorEl);
+    if(!ok){
+      // Never advance to the next chapter after an incomplete generation.
       document.getElementById('genBtn').disabled = false;
       document.getElementById('matchBtn').disabled = false;
       return;
     }
-    // Add polite 300ms pacing between sections to prevent AI rate throttling
-    if(i + 1 < (endIndex ?? activeSections.length)){
-      await sleep(300);
-    }
+    if(i + 1 < (endIndex ?? activeSections.length)) await sleep(150);
   }
   if(endIndex !== null && endIndex < activeSections.length){
     document.getElementById('genBtn').disabled = false;
@@ -10497,6 +10428,7 @@ async function runFrom(startIndex, reportBody, stepListEl, progressErrorEl, endI
   document.getElementById('genBtn').disabled = false;
   document.getElementById('matchBtn').disabled = false;
   document.getElementById('matchBtn').disabled = false;
+  unlockChat();
   
   const isVip = Boolean(window.vipAccess || document.body.classList.contains('vip-active'));
   if(currentMode === 'individual'){
@@ -10509,7 +10441,6 @@ async function runFrom(startIndex, reportBody, stepListEl, progressErrorEl, endI
       : `Match again · ₹${window.SERVER_CONFIG?.prices?.match || 99}`;
   }
   if(typeof updateVipUi === 'function') updateVipUi();
-  unlockChat();
   try{
     const name=currentMode==='individual'?(document.getElementById('f_name')?.value||'Unnamed reading'):`${document.getElementById('k1_name')?.value||'Male'} & ${document.getElementById('k2_name')?.value||'Female'}`;
     const email=currentMode==='individual'?(document.getElementById('f_email')?.value||'') : '';
@@ -10560,7 +10491,6 @@ document.getElementById('genBtn').onclick = async () => {
   chatLog.innerHTML = '<div class="empty-hint" id="chatHint">The chart is being cast — you can start asking questions the moment the first section appears above.</div>';
 
   document.getElementById('progressCard').scrollIntoView({behavior:'smooth', block:'start'});
-  chapterMemories = []; chapterTimings = []; reportGenerationStartedAt = Date.now();
   await runFrom(0, reportBody, stepList, document.getElementById('progressError'));
 };
 
@@ -11063,7 +10993,6 @@ window.unlockDetailedKundliReport = async function() {
 
   document.getElementById('chatLog').innerHTML = '<div class="empty-hint" id="chatHint">The complete compatibility reading is being cast — ask specific questions once the reading finishes.</div>';
   document.getElementById('progressCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  chapterMemories = []; chapterTimings = []; reportGenerationStartedAt = Date.now();
   await runFrom(0, reportBody, stepList, document.getElementById('progressError'));
 };
 
@@ -11097,7 +11026,6 @@ document.getElementById('matchBtn').onclick = () => {
   };
 
   const milanResult = calculateAshtaKootaGunaMilan(p1, p2);
-  lastMilanResult = milanResult;
   renderGunaMilanResultCard(milanResult);
 
   // Hide AI generation loaders, show reportCard with Guna Milan Scorecard
@@ -13233,9 +13161,6 @@ button:hover{transform:translateY(-1px);filter:brightness(1.035);}
 }
 .report-section-content strong { color: #f5d78f !important; }
 
-
-.generation-status{margin-top:14px;padding:13px 16px;border:1px solid rgba(201,168,76,.22);background:rgba(201,168,76,.055);border-radius:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;color:var(--ivory);font-size:13px;line-height:1.5}.generation-status b{color:#f5d78f}.generation-status span{color:var(--muted)}.report-streaming-text{font-family:'Cormorant Garamond',Georgia,serif;font-size:17px;line-height:1.9;white-space:pre-wrap;color:#e9e2d6}.report-streaming-text::after{content:'▌';animation:streamCaret 1s steps(1) infinite;color:#d9bf7e}@keyframes streamCaret{50%{opacity:0}}
-.report-chapter-tag.failed{color:#f0a6a6!important;border-color:rgba(220,100,100,.35)!important}
 </style>
 <script>
 // Direct Razorpay checkout: paid actions open Razorpay immediately.
@@ -13264,15 +13189,10 @@ button:hover{transform:translateY(-1px);filter:brightness(1.035);}
       const orderId = order.order_id || order.orderId || order.id;
       const amount = order.amount;
 
-      // Ensure Razorpay Checkout is available even if the script was delayed.
+      // If Razorpay SDK is not loaded on the window yet
       if (!window.Razorpay) {
-        await new Promise((resolve,reject)=>{
-          const existing=document.querySelector('script[data-razorpay-sdk]');
-          if(existing){ existing.addEventListener('load',resolve,{once:true}); existing.addEventListener('error',reject,{once:true}); return; }
-          const sc=document.createElement('script'); sc.src='https://checkout.razorpay.com/v1/checkout.js'; sc.async=true; sc.dataset.razorpaySdk='1'; sc.onload=resolve; sc.onerror=()=>reject(new Error('Razorpay Checkout could not be loaded.')); document.head.appendChild(sc);
-        });
+        throw new Error('Razorpay Checkout SDK is still loading. Please check your internet connection and retry.');
       }
-      if (!window.Razorpay) throw new Error('Razorpay Checkout is unavailable. Please refresh and retry.');
       if (!key) {
         throw new Error('Razorpay Public Key was not provided by the server.');
       }
